@@ -41,7 +41,7 @@ define(['jquery', 'core/ajax'], function ($, ajax) {
             }]);
         };
 
-        this.germanFormatters = d3.locale({
+        this.germanFormatters = d3.timeFormatDefaultLocale({
             "decimal": ",",
             "thousands": ".",
             "grouping": [3],
@@ -56,16 +56,22 @@ define(['jquery', 'core/ajax'], function ($, ajax) {
             "shortMonths": ["Jän", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"]
         });
 
-        this.customTimeFormat = this.germanFormatters.timeFormat.multi([
-            [".%L", function (d) { return d.getMilliseconds(); }],
-            [":%S", function (d) { return d.getSeconds(); }],
-            ["%I:%M", function (d) { return d.getMinutes(); }],
-            ["%Hh", function (d) { return d.getHours(); }],
-            ["%a %e.%m.", function (d) { return d.getDay() && d.getDate() !== 1; }], // Mo 8.02.
-            ["%e.%m.", function (d) { return d.getDate() != 1; }], // 7.12.
-            ["%B", function (d) { return d.getMonth(); }],
-            ["%Y", function () { return true; }]
-        ]);
+        this.customTimeFormat = function(date){//this.germanFormatters.timeFormat.multi([
+            if (date.getMinutes()) return d3.timeFormat("%I:%M")(date); 
+            if (date.getMilliseconds()) return d3.timeFormat(".%L")(date); 
+            if (date.getSeconds()) return d3.timeFormat(":%S")(date); 
+            if (date.getHours()) return d3.timeFormat("%Hh")(date); 
+            if (date.getDay()) return d3.timeFormat("%a %e.%m.")(date); // Mo 8.02.
+            if (date.getMonth()) return d3.timeFormat("%B")(date); //7.12. 
+            return d3.getDate("%Y");
+            
+        /*   , function (d) { return d.; }],
+            [ function (d) { return d.getDay() && d.getDate() !== 1; }], 
+            ["%e.%m.", function (d) { return d.getDate() != 1; }], // 
+            [, function (d) { return d.; }],
+            [, function () { return true; }]
+            */
+        };
 
 
         /**

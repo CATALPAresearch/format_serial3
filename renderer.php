@@ -60,8 +60,9 @@ class format_ladtopics_renderer extends format_section_renderer_base {
 <div class="container dc-chart" id="dc-chart">
     <span hidden id="courseid">'. $COURSE->id .'</span>
     <div id="alert"></div>
-    <div id="timeline" class="col-12"></div>
-    <div id="drilldown-chart" class="col-12"></div>
+    <div id="milestone-chart" class="col-12"></div>
+    <div id="timeline-chart" class="col-12"></div>
+    <div id="filter-chart" class="col-12"></div>
     <div id="date-chart" class="col-12"></div>
     <div id="accordion-resizer" class="col-12">
       <div id="accordion" class="tabs">

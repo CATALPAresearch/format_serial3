@@ -9,16 +9,15 @@ define(['jquery', 'core/ajax'], function ($, ajax) {
      * @param dc (Object) Dimensional Javascript Charting Library
      * @param utils (Object) Custome util class
      */
-    let Timeline = function (d3, dc, utils) {
+    let Timeline = function (d3, dc, crossfilter, utils) {
 
         const color_range = ['yellow', 'blue', 'purple', 'red', 'orange', 'green', 'black'];
 
         const action_types = ['mod_glossary', 'mod_forum'];
-        const activity_types = {'viewed':'betrachtet', 'updates':'bearbeitet', 'deleleted':'gelöscht','created':'erstellt'};
+        const label = { 'mod_forum': 'Forum', 'mod_glossary': 'Glossar' };
+        const activity_types = { 'viewed': 'betrachtet', 'updates': 'bearbeitet', 'deleleted': 'gelöscht', 'created': 'erstellt' };
         let width = document.getElementById('dc-chart').offsetWidth;
         const margins = { top: 20, right: 20, bottom: 30, left: 60 };
-        const label = { 'mod_forum': 'Forum', 'mod_glossary': 'Glossar' };
-
         const course = {
             id: parseInt($('#courseid').html())/*,
             module: parseInt($('#moduleid').html())*/
@@ -37,22 +36,63 @@ define(['jquery', 'core/ajax'], function ($, ajax) {
         });
 
         let draw = function (the_data) {
-            let dateTimeFormat = d3.time.format('%d/%m/%Y');
+
+            const locale = d3.timeFormatLocale({
+                "decimal": ",",
+                "thousands": ".",
+                "grouping": [3],
+                "currency": ["€", ""],
+                "dateTime": "%a %b %e %X %Y",
+                "date": "%d.%m.%Y",
+                "time": "%H:%M:%S",
+                "periods": ["AM", "PM"],
+                "days": ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"],
+                "shortDays": ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"],
+                "months": ["Jänner", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"],
+                "shortMonths": ["Jän", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"]
+            });
+
+            let formatMillisecond = locale.format(".%L"),
+                formatSecond = locale.format(":%S"),
+                formatMinute = locale.format("%I:%M"),
+                formatHour = locale.format("%Hh"),
+                formatDay = locale.format("%a %e.%m."),
+                formatDate = locale.format("%d.%m.%Y"),
+                formatDate2 = locale.format("%d/%m/%Y"),
+                formatWeek = locale.format("%b %d"),
+                formatWeekNum = locale.format("%U");
+                formatMonth = locale.format("%B"),
+                formatYear = locale.format("%Y");
+            
+
+            function multiFormat(date) {
+                return (d3.timeSecond(date) < date ? formatMillisecond
+                    : d3.timeMinute(date) < date ? formatSecond
+                        : d3.timeHour(date) < date ? formatMinute
+                            : d3.timeDay(date) < date ? formatHour
+                                : d3.timeMonth(date) < date ? (d3.timeWeek(date) < date ? formatDay : formatWeek)
+                                    : d3.timeYear(date) < date ? formatMonth
+                                        : formatYear)(date);
+            }
+
+            
             the_data.forEach(function (d, i) {
-                d.date = dateTimeFormat.parse((new Date(d.utc * 1000)).toLocaleDateString());
-                //d.month = d3.time.month(new Date(d.utc * 1000));
+                //d.date = dateTimeFormat((new Date(d.utc * 1000)).toLocaleDateString());
+                d.date = new Date(d.utc * 1000);
+                //d.month = d3.timeMnth(new Date(d.utc * 1000));
                 d.action_type = action_types.indexOf(d.action_type);
             });
 
-            const chart = dc.bubbleChart("#drilldown-chart");
-            const timeFilterChart = dc.barChart("#date-chart");
+            //const milestoneChart = dc.rowChart("#milestone-chart");
+            const chart = dc.bubbleChart("#timeline-chart");
+            const timeFilterChart = dc.barChart("#filter-chart");
             const facts = crossfilter(the_data);
 
 
-            let volumeByDate = facts.dimension(function (d) {
+            let mainDimension = facts.dimension(function (d) {
                 return [d.date, d.action_type, d.action];
             });
-            let volumeByDateGroup = volumeByDate.group().reduce(
+            let mainGroup = mainDimension.group().reduce(
                 /* callback for when data is added to the current filter results */
                 function (p, v) {
                     ++p.count;
@@ -75,11 +115,12 @@ define(['jquery', 'core/ajax'], function ($, ajax) {
                 });
 
             let xRange = [
-                d3.min(volumeByDateGroup.all(), function (d) { return d.key[0]; }),
-                d3.max(volumeByDateGroup.all(), function (d) { return d.key[0]; })
+                d3.min(mainGroup.all(), function (d) { return d.key[0]; }),
+                d3.max(mainGroup.all(), function (d) { return d.key[0]; })
             ];
 
-            //xRange = [new Date("2019,3,21"), new Date("2019,5,21")];
+            let colorBand = d3.scaleOrdinal().domain(action_types).range(color_range);
+            
             chart
                 .width(width)
                 .height(100)
@@ -88,11 +129,11 @@ define(['jquery', 'core/ajax'], function ($, ajax) {
                 .renderLabel(false)
                 .minRadius(1)
                 .maxBubbleRelativeSize(0.3)
-                .x(d3.time.scale().domain(xRange))
+                .x(d3.scaleTime().domain(xRange))
                 //.y(d3.scale.ordinal().range([0,3]))
                 .brushOn(true)
-                .dimension(volumeByDate)
-                .group(volumeByDateGroup)
+                .dimension(mainDimension)
+                .group(mainGroup)
                 .keyAccessor(function (p) {
                     return p.value.date;
                 })
@@ -103,20 +144,33 @@ define(['jquery', 'core/ajax'], function ($, ajax) {
                     return p.value.count;
                 })
                 .colorAccessor(function (kv) { return kv.value.action_type; })
-                .colors(d3.scale.ordinal().domain('action_type').range(color_range))
+                .colors(colorBand)
                 .title(function (p) {
                     return [
-                        "Datum: " + utils.p.value.date,
-                        "Ort: " + action_types[p.value.action_type],
+                        "Datum: " + formatDate(p.value.date), 
+                        "Ort: " + label[action_types[p.value.action_type]],
                         "Aktivität: " + activity_types[p.value.action],
                         "Häufigkeit: " + p.value.count
                     ].join("\n");
                 })
-                //.elasticX(true) // not working together with filters
-                //.xAxisPadding(5) // only working with elasticX
-                .xAxis().tickFormat(utils.customTimeFormat)
+                .xAxis(d3.axisBottom())
                 ;
+            //.elasticX(true) // not working together with filters
+            //.xAxisPadding(5) // only working with elasticX
+            //                .xAxis()
+            //.tickFormat(function(d){ return utils.customTimeFormat(d))
+            //.tickFormat(d3.timeFormat("%Y-%m-%d"))
 
+            //.tickFormat(function (d) {
+            //  return d < 999 ? d3.format(",d")(d) : d3.format(".2s")(d);
+            //})
+            ;
+            chart.xAxis().tickFormat(multiFormat);
+
+            chart.on('pretransition', function () {
+                //chart.select('g.x').attr('transform', 'translate(0,0)');
+                chart.selectAll('line.grid-line').attr('y2', chart.effectiveHeight());
+            });
             chart
                 .elasticY(true)
                 .yAxisPadding(0) // for values greater 0 the second tick label disappears
@@ -127,9 +181,25 @@ define(['jquery', 'core/ajax'], function ($, ajax) {
                         return label[action_types[d]];
                     }
                 });
+            
+            /*
+            http://computationallyendowed.com/blog/2013/01/21/bounded-panning-in-d3.html
+            var zoom = d3.behavior.zoom().scaleExtent([1, 1]);
+            zoom.on('zoom', function () {
+                var t = zoom.translate(),
+                    tx = t[0],
+                    ty = t[1];
 
+                tx = Math.min(tx, 0);
+                tx = Math.max(tx, width - max);
+                zoom.translate([tx, ty]);
 
-            let timeFilterDim = facts.dimension(function (d) { return d3.time.week(d.date); });
+                // chart.chartBodyG();
+                svg.select('.chart-body').attr('d', line);
+            }); */
+
+            // FILTER CHART
+            let timeFilterDim = facts.dimension(function (d) { return d.date; });
             let timeFilterGroup = timeFilterDim.group().reduceCount(function (d) { return d.date; });
 
             timeFilterChart
@@ -142,16 +212,17 @@ define(['jquery', 'core/ajax'], function ($, ajax) {
                 //.centerBar(true)
                 .barPadding(0)
                 .gap(0)
-                .x(d3.time.scale().domain(xRange))
-                .round(d3.time.weeks.round)
+                .x(d3.scaleTime().domain(xRange))
+                //.round(d3.timeWeeks.round)
                 .elasticX(true)
                 .elasticY(true)
                 .alwaysUseRounding(true)
-                //.xUnits(d3.time.week) 
+                //.xUnits(d3.timeWeek) 
                 .xAxisLabel('KW', 3)
                 .xAxis()
-                .ticks(d3.time.weeks, 4)
-                .tickFormat(d3.time.format('%U'))
+                //.ticks(d3.timeWeeks, 4)
+                //.tickFormat(formatWeekNum)
+                .tickFormat(multiFormat)
                 ;
             timeFilterChart
                 .yAxisLabel('Aktivität', 10)
@@ -160,44 +231,213 @@ define(['jquery', 'core/ajax'], function ($, ajax) {
                 ;
 
 
+
+            // milestone chart
+            const milestones = [
+                {
+                    name: 'MS2',
+                    objective: 'Alles lernen',
+                    start: '05/29/2019',
+                    end: '06/02/2019',
+                    ressources: [],
+                    strategies: []
+                },
+                {
+                    name: 'MS2',
+                    objective: 'Alles lernen',
+                    start: '05/14/2019',
+                    end: '06/01/2019',
+                    ressources: [],
+                    strategies: []
+                }
+            ];
+
+
+            milestones.forEach(function (d, i) {
+                d.start = new Date(d.start);//formatDate2(new Date(d.start));
+                d.end = new Date(d.end);//formatDate2(new Date(d.end));
+                d.g = 1;
+            });
+
+
+            var
+                height = 100,
+                xmin = d3.min(milestones, function (d) {
+                    return d.start;
+                }),
+                xmax = d3.max(milestones, function (d) {
+                    return d.end;
+                }),
+                ymax = milestones.length,
+                barheight = 30,
+                x = d3.scaleTime()
+                    .domain([xmin, xmax])
+                    //.domain(xRange)
+                    .range([0, width]),
+                y = d3.scaleLinear()
+                    .domain([0, ymax])
+                    .range([0, height]),
+                z = d3.scaleOrdinal()
+                    .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
+
+            // Define the axes
+            var xAxis = d3.axisBottom().scale(x)
+                .ticks(10);
+
+            var yAxis = d3.axisLeft().scale(y)
+                .ticks(0);
+
+            // Tooltip
+            /* var tip = d3.tip()
+                .attr('class', 'd3-tip')
+                .direction('se')
+                .offset([-10, 0])
+                .html(function (d, i) {
+                    return arr = [
+                        "n: " + i,
+                        "Group: " + d.g
+                    ].join('<br>');
+                });
+            */
+
+            // Adds the svg canvas
+            let milestoneChart = d3.select('#milestone-chart')
+                .append("svg")
+                .attr("width", width)
+                .attr("height", height + margins.top + margins.bottom)
+                .append("g")
+                .attr("transform", "translate(" + margins.left + "," + margins.top + ")");
+
+            var bars = milestoneChart.selectAll(".bar")
+                .data(milestones)
+                .enter()
+                .append("g");
+
+            bars.append("rect")
+                .attr("class", "bar")
+                .attr("x", function (d) {
+                    return x(d.start);
+                })
+                .attr("y", function (d, i) {
+                    return y(i) - (barheight / 2);
+                })
+                .attr("height", barheight)
+                .attr("width", function (d) {
+                    return x(d.end);
+                })
+                .attr("fill", function (d) {
+                    return z(parseInt(d.g, 10));
+                })
+                .attr("data-legend", function (d) {
+                    return parseInt(d.g, 10);
+                })
+                //.on('mouseover', tip.show)
+                //.on('mouseout', tip.hide)
+                ;
+
+
+            // Add the X Axis
+            let x_axis_call = milestoneChart.append("g").attr("class", "x axis").attr("transform", "translate(0," + height + ")").call(xAxis);
+            let y_axis_call = milestoneChart.append("g").attr("class", "y axis").call(yAxis);
+
+            // Title
+            milestoneChart.append("text")
+                .attr("x", (width / 2))
+                .attr("y", 0 - (margins.top / 2))
+                .attr("text-anchor", "middle")
+                .attr("class", "chart-title")
+                .text("");
+
+            // Axis label
+            milestoneChart.append("text") // y
+                .attr("text-anchor", "middle")
+                .attr("transform", "translate(" + (-10) + "," + (height / 2) + ")rotate(-90)") // text is drawn off the screen top left, move down and out and rotate
+                .text("yy");
+
+            milestoneChart.append("text") // x
+                .attr("text-anchor", "middle")
+                .attr("transform", "translate(" + (width / 2) + "," + (height + margins.bottom - 3) + ")") // centre below axis
+                .text("");
+
+            /*milestoneChart.call(d3.zoom().on("zoom", function () {
+                // filter milestone chart
+                let new_x_scale = d3.event.transform.rescaleX(x);
+                let new_y_scale = d3.event.transform.rescaleY(y);
+
+                x_axis_call.transition().duration(100).call(xAxis.scale(new_x_scale));
+
+                y_axis_call.transition().duration(0).call(yAxis.scale(new_y_scale));
+
+                bars
+                    .attr("x", function (d) {
+                        return new_x_scale(d.start);
+                    })
+                    .attr("y", function (d, i) {
+                        return new_y_scale(i) - (barheight / 2);
+                    })
+                    .attr("width", function (d) {
+                        return new_y_scale(d.end);
+                    });
+            }));*/
+
+            dc.registerChart(milestoneChart, mainGroup);
+
+
             /**
-             * 
+             * filterTime
+             * @description Estimated the time range from the timeFilterChart and redefines the x-axis of the main chart arcodingly.
              * @param {*} chart 
              */
-            function calc_domain(the_chart) {
-                let fromm, to, range;
-                if (timeFilterChart.filters()[0] === undefined){
-                    range = xRange;
-                }else{
-                    fromm = timeFilterChart.filters()[0][0],
-                    to = timeFilterChart.filters()[0][1];
-                    console.log('filters', fromm, to);
-                    range = [fromm, to];
-                }
-                chart
-                    .x(d3.time.scale().domain(range))
-                    .keyAccessor(function (p) {
-                        return p.value.date;
+            function filterTime(the_chart) {
+                let range = timeFilterChart.filters()[0] === undefined ? xRange : timeFilterChart.filters()[0];
+                // filter the main chart
+                chart.x(d3.scaleTime().domain(range));
+
+                //
+                range = timeFilterChart.filters()[0] === undefined ? [xmin,xmax] : timeFilterChart.filters()[0];
+                //console.log(xmin,xmax,range);
+                let new_x_scale = d3.scaleTime().domain(range).range([0, width]);
+                let new_y_scale = d3.scaleLinear().domain([0, ymax]).range([0, height]);
+
+                x_axis_call.transition().duration(100).call(xAxis.scale(new_x_scale).ticks(10));
+                y_axis_call.transition().duration(0).call(yAxis.scale(new_y_scale));
+                //x_axis_call = milestoneChart.append("g").attr("class", "x axis").attr("transform", "translate(0," + height + ")").call(new_x_scale);
+                //y_axis_call = milestoneChart.append("g").attr("class", "y axis").call(new_y_scale);
+
+                milestoneChart.selectAll(".bar").remove();
+                bars = milestoneChart.selectAll(".bar")
+                    .data(milestones)
+                    .enter()
+                    .append("g");
+                    
+                bars
+                    .append("rect")
+                    .attr("class", "bar")
+                    .attr("x", function (d) {
+                        //console.log(x(d.start), new_x_scale(d.start));
+                        //console.log('range',range)
+                        return new_x_scale(d.start);
                     })
-                    .valueAccessor(function (p) { //console.log('pp',p)
-                        return p.value.action_type;
+                    .attr("y", function (d, i) {
+                        return new_y_scale(i) - (barheight / 2);
                     })
-                    .radiusValueAccessor(function (p) {
-                        return p.value.count;
+                    .attr("fill", function (d) {
+                        return z(parseInt(d.g, 10));
                     })
-                    .dimension(volumeByDate)
-                    .group(volumeByDateGroup)
-                    ;
+                    .attr("height", barheight)
+                    .attr("width", function (d) {
+                        return new_y_scale(d.end);
+                    })
+                    .attr("data-legend", function (d) {
+                        return parseInt(d.g, 10);
+                    });
             }
-            //chart.on('preRender', calc_domain);
-            //timeFilterChart.on('preRedraw', calc_domain);
-            timeFilterChart.on('filtered', calc_domain);
+            timeFilterChart.on('filtered', filterTime);// other events: preRender, preRedraw
+
 
             dc.renderAll();
-        };
-
-        return;
-    };
+        };// end draw
+    };// end Timeline
 
     return Timeline;
 });

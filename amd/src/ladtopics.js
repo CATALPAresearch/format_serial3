@@ -16,8 +16,11 @@ define([
             baseUrl:"/moodle/course/format/ladtopics/lib/",
             paths: {
                 "crossfilter": "crossfilter",
-                "d3": "d3",
-                "dc": "dc",
+                //"crossfilter2": "crossfilter.v2",
+                "d3": "d3.v4.min",
+                //"d3": "d3",
+                "dc": "dc.v3",
+                //"dc": "dc",
                 "reductio": "reductio",
                 "universe": "universe"
                 /*
@@ -69,7 +72,7 @@ define([
             require(['crossfilter', 'd3', 'dc', 'reductio', 'universe'], function (crossfilter, d3, dc, reduction, universe) {
                
                 const utils = new Utils(dc, d3);
-                new Timeline(d3, dc, utils);
+                new Timeline(d3, dc, crossfilter, utils);
 
                 /*$(document.body).append('<div id="timeline"></div>');
                 

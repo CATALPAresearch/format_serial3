@@ -1,7 +1,7 @@
 /* not working */
 @import "css/bootstrap.min.css";
 @import url("//moodle/course/format/ladtopics/css/dc.min.css");
-@import "//moodle/course/format/ladtopics/css/dc.min.css";
+@import "//moodle/course/format/ladtopics/css/dc.css";
 @import url("/moodle/course/format/ladtopics/css/ladtopics.css");
 
 
