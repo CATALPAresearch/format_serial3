@@ -73,6 +73,24 @@ define(['jquery', 'core/ajax'], function ($, ajax) {
             */
         };
 
+        this.numberToWord = function (num, postfix) {
+            postfix = postfix === undefined ? '' : postfix;
+            switch (num) {
+                case 0: return 'kein' + postfix;
+                case 1: return 'ein' + postfix;
+                case 2: return 'zwei' + postfix;
+                case 3: return 'drei' + postfix;
+                case 4: return 'vier' + postfix;
+                case 5: return 'fünf' + postfix;
+                case 6: return 'sechs' + postfix;
+                case 7: return 'sieben' + postfix;
+                case 8: return 'acht' + postfix;
+                case 9: return 'neun' + postfix;
+                case 10: return 'zehn' + postfix;
+                case 11: return 'elf' + postfix;
+                default: return num + ' ' + postfix;
+            }
+        };
 
         /**
          * DC.js util to create filter charts. 

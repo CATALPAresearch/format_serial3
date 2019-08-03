@@ -12,26 +12,32 @@ define([
     'jquery', 'jqueryui', '/moodle/course/format/ladtopics/amd/src/timeline.js', '/moodle/course/format/ladtopics/amd/src/Utils.js'
 ],
     function ($, jqueryui, Timeline, Utils) {
+        
         require.config({
-            baseUrl:"/moodle/course/format/ladtopics/lib/",
-            paths: {
-                "crossfilter": "crossfilter",
-                //"crossfilter2": "crossfilter.v2",
-                "d3": "d3.v4.min",
-                //"d3": "d3",
-                "dc": "dc.v3",
-                //"dc": "dc",
-                "reductio": "reductio",
-                "universe": "universe"
+            enforceDefine: false,
+            baseUrl: M.cfg.wwwroot + "/course/format/ladtopics/lib/",
+            paths: { 
+                "vue259": ["https://cdn.jsdelivr.net/npm/vue@2.5.9/dist/vue", "vue"],
+               // "vuetreeselect": [ "vue-treeselect.min" ],
+                "crossfilter": ["crossfilter"],
+                "d3": [ "d3.v4.min"],
+                "dc": [ "dc.v3"],
+                "reductio": ["https://rawgit.com/crossfilter/reductio/master/reductio", "reductio"],
+                "universe": ["https://npmcdn.com/universe@latest/universe", "universe"],
+                "bootstrap_select": ["https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/js/bootstrap-select.min", "bootstrap-select.min"]
                 /*
+                "crossfilter2": "crossfilter.v2",
                 "crossfilter": "https://cdnjs.cloudflare.com/ajax/libs/crossfilter/1.3.5/crossfilter",
-                "d3": "https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.3/d3",
-                "dc": "https://cdnjs.cloudflare.com/ajax/libs/dc/2.1.0-dev/dc",
-                "reductio": "https://rawgit.com/crossfilter/reductio/master/reductio",
-                "universe": "https://npmcdn.com/universe@latest/universe"
                 */
             },
             shim: {
+                'vue259' : {
+                    exports: 'Vue'
+                },
+                /*'vuetreeselect': {
+                    deps: ['vue259'],
+                    exports: 'VueTreeselect'
+                },*/
                 'crossfilter': {
                     exports: 'crossfilter'
                 },
@@ -47,86 +53,43 @@ define([
             }
         });
 
+        
         function start() {
-            
-            
-
-            // add style sheets
-                
-                    var css = [
-                        "/course/format/ladtopics/css/bootstrap.min.css",
-                        "/course/format/ladtopics/css/ladtopics.css"
-                    ];
-                    for(var i=0; i< css.length;i++){
-                        var link = document.createElement("link");
-                        link.rel = "stylesheet";
-                        link.type = "text/css";
-                        link.href = css[i];
-                        document.getElementsByTagName("head")[0].appendChild(link);
-                    }
-                //})();
-            
+        
+            // add style sheets        
+            const css = [
+                //"/moodle/course/format/ladtopics/css/bootstrap3.min.css", 
+                M.cfg.wwwroot + "/course/format/ladtopics/css/ladtopics.css",
+                M.cfg.wwwroot + "/course/format/ladtopics/css/dc.css",
+                M.cfg.wwwroot + "/course/format/ladtopics/css/bootstrap-select.min.css"
+            ];
+            let link = '';
+            for(let i=0; i< css.length;i++){
+                link = document.createElement("link");
+                link.rel = "stylesheet";
+                link.type = "text/css";
+                link.href = css[i];
+                document.getElementsByTagName("head")[0].appendChild(link);
+            }
+                    
             $('#accordion').tab();
 
-
-            require(['crossfilter', 'd3', 'dc', 'reductio', 'universe'], function (crossfilter, d3, dc, reduction, universe) {
-               
+            require([
+               'vue259',
+               // 'vuetreeselect', 
+                'crossfilter', 
+                'd3', 
+                'dc', 
+                'reductio', 
+                'universe',
+                'bootstrap_select'
+            ], function (vue, crossfilter, d3, dc, reduction, universe,bselect) {
+                
                 const utils = new Utils(dc, d3);
-                new Timeline(d3, dc, crossfilter, utils);
-
-                /*$(document.body).append('<div id="timeline"></div>');
-                
-                var chart = dc.barChart("#timeline");
-               
-                var experiments = [{
-                    "Run": 300,
-                    "Speed": 100
-                },
-                {
-                    "Run": 330,
-                    "Speed": 600
-                },
-                {
-                    "Run": 333,
-                    "Speed": 500
-                },
-                {
-                    "Run": 400,
-                    "Speed": 400
-                }];
-                experiments = data.data;
-                
-                $.each(experiments, function (i, x) {
-                    x.glossary = x.action;
-                    let d = new Date(0);
-                    x.date = new Date(d.setUTCSeconds(x.utc));
-                });
-                console.log(experiments);
-                var ndx = crossfilter(experiments),
-                    dateDimension = ndx.dimension(function (d) { return +d.date; }),
-                    glossarySumGroup = dateDimension.group().reduceSum(function (d) { return d.utc; });
-                
-                var xRange = [d3.min(glossarySumGroup.all(), function (d) { return d.utc; }), d3.max(glossarySumGroup.all(), function (d) { return d.utc; })];
-                console.log(glossarySumGroup)
-                chart
-                    .width(768)
-                    .height(200)
-                    .x(d3.scale.linear().domain(xRange))
-                    .brushOn(false)
-                    .yAxisLabel("This is the Y Axis!")
-                    .dimension(dateDimension)
-                    .group(glossarySumGroup)
-                    .on('renderlet', function (chart) {
-                        chart.selectAll('rect').on("click", function (d) {
-                            console.log("click!", d);
-                        });
-                    });
-                chart.render();
-
-*/
-
+                new Timeline(vue, d3, dc, crossfilter, bselect, utils);
             });
         }
+
         return {
             init: function () {
                 try{

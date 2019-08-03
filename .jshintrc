@@ -89,5 +89,10 @@
     // Custom Globals
     "globals"       : {},        // additional predefined global variables
 
-    "es6": true
+    "es6": true,
+    "predef": [ // Extra globals.
+        "require",
+        "define",
+        "escape"
+    ]
 }

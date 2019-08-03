@@ -57,29 +57,106 @@ class format_ladtopics_renderer extends format_section_renderer_base {
         global $CFG, $DB, $PAGE, $COURSE;
         //print_r($COURSE);
         $content = '
-<div class="container dc-chart" id="dc-chart">
-    <span hidden id="courseid">'. $COURSE->id .'</span>
-    <div id="alert"></div>
-    <div id="milestone-chart" class="col-12"></div>
-    <div id="timeline-chart" class="col-12"></div>
-    <div id="filter-chart" class="col-12"></div>
-    <div id="date-chart" class="col-12"></div>
-    <div id="accordion-resizer" class="col-12">
-      <div id="accordion" class="tabs">
-        <ul class="nav nav-tabs" role="tablist">
-          <li class="nav-item active"><a class="nav-link active" data-toggle="tab" href="#timemanagement" role="tab">Zeitmanagement</a></li>
-          <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#strategy" role="tab">Strategie</a></li>
-          <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#quiz" role="tab">Quiz</a></li>
-          <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#learningstatus" role="tab">Lernstand</a></li>
-        </ul>
-        <div class="tab-content">
-          <div class="tab-pane active" id="timemanagement" role="tabpanel">Zeitmanagement</div>
-          <div class="tab-pane" id="strategy" role="tabpanel">Strategie</div>
-          <div class="tab-pane" id="quiz" role="tabpanel">Quiz</div>
-          <div class="tab-pane" id="learningstatus" role="tabpanel">Status</div>
+        <span hidden id="courseid">'. $COURSE->id .'</span>
+        <div id="alert"></div>
+
+
+    
+
+
+<div class="container dc-chart" id="dc-chart">      
+    <div class="row">
+        <!-- Milestone chart -->
+        <div id="milestone-chart" class="col-12">
+            <!-- Chart -->
+            <div class="chart"></div>
+            <div id="theMilestoneModal" v-if="modalVisible" class="modal fade" tabindex="-1" role="dialog">
+                <div class="modal-dialog modal-lg" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="MilestoneModalLabel" v-text="getSelectedMilestone().name"></h5>
+                                <button @click="$emit(\'close\')" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <form>
+                                    <div class="form-group row">
+                                        <label for="inputMSname" class="col-sm-2 col-form-label">Name</label>
+                                        <div class="col-sm-10">
+                                        <input v-model="getSelectedMilestone().name" type="text" class="form-control" id="inputMSname" placeholder="Name des Meilensteins">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="inputObjectic" class="col-sm-2 col-form-label">Lernziel</label>
+                                        <div class="col-sm-10">
+                                        <input v-model="getSelectedMilestone().objective" type="text" class="form-control" id="inputPassword3" placeholder="Welches lernziel verfolgen Sie?">
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row">
+                                        <!-- Ressourcen -->
+                                        <div id="resources" class="col-md">
+                                            <button type="button" class="btn btn-info"><i class="fa fa-plus"></i> Lernressource hinzufügren</button>
+                                        </div>
+                                        <!-- Strategien -->
+                                        <div id="strategies" class="col-md">
+                                            <ul>
+                                                <li v-for="s in getSelectedMilestone().strategies" class="form-check">
+                                                    <label class="form-check-label" for="defaultCheck1">{{ s.name }} <i class="fa fa-info"></i></label>
+                                                    <input class="form-check-input" type="checkbox" value="" id="strategyCheck">
+                                                </li>
+                                            </ul>
+                                            <div class="select-wrapper btn btn-info">
+                                                <span id="before-select"><i class="fa fa-plus"></i> </span>
+                                                <select @change="strategySelected" class="" id="modal_strategy-select" class="">
+                                                    <option selected disabled>Lernstrategie</option>
+                                                    <optgroup label="Fachbegriffe">
+                                                        <option v-for="s in strategiesByCategory(\'terms\')" :value="s.id">{{ s.name }}</option>
+                                                    </optgroup>
+                                                    <optgroup label="Zusammenhänge">
+                                                        <option v-for="s in strategiesByCategory(\'relations\')" :value="s.id">{{ s.name }}</option>
+                                                    </optgroup>
+                                                    <optgroup label="Abläufe">
+                                                        <option v-for="s in strategiesByCategory(\'processes\')" :value="s.id">{{ s.name }}</option>
+                                                    </optgroup>
+                                                    <optgroup label="Sonstige">
+                                                        <option v-for="s in strategiesByCategory(\'misc\')" :value="s.id">{{ s.name }}</option>
+                                                    </optgroup>
+                                                </select>
+                                            </div>    
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div> 
         </div>
-      </div>
-    </div><br>
+        <!-- DC charts -->
+        <div id="timeline-chart" class="col-12"></div>
+        <div id="filter-chart" class="col-12"></div>
+        <div id="date-chart" class="col-12"></div>
+    </div>
+    <br>
+    <div class="row">
+        <ul class="nav nav-tabs">    
+            <li class="nav-item active"><a class="nav-link active" data-toggle="tab" href="#timemanagement" role="tab">Zeitmanagement</a></li>
+            <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#strategy" role="tab">Strategie</a></li>
+            <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#quiz" role="tab">Quiz</a></li>
+            <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#learningstatus" role="tab">Lernstand</a></li>
+        </ul>
+        <br>
+        <div class="tab-content" style="display:block;">
+            <div class="tab-pane fade active" id="timemanagement" role="tabpanel">Zeitmanagement</div>
+            <div class="tab-pane fade" id="strategy" role="tabpanel">Strategie</div>
+            <div class="tab-pane fade" id="quiz" role="tabpanel">Quiz</div>
+            <div class="tab-pane fade" id="learningstatus" role="tabpanel">Status</div>
+        </div>  
+    </div>
+    
+    <br>
 </div>';
         return 
             html_writer::start_tag('div', array('class' => 'container dc-chart')) 

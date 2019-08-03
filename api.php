@@ -60,7 +60,15 @@ class format_ladtopics_external extends external_api {
 
         global $DB, $USER;
         $transaction = $DB->start_delegated_transaction(); 
-        $query ='SELECT * FROM ' . $CFG->prefix . 'logstore_standard_log WHERE userid=' . $USER->id . ' AND ( component="mod_glossary" OR component="mod_forum");';
+        $query ='SELECT * FROM ' . $CFG->prefix . 'logstore_standard_log WHERE userid=' . $USER->id . ' AND 
+        ( 
+            component="mod_glossary" OR 
+            component="mod_forum" OR
+            component="mod_wiki" OR
+            component="mod_studentquiz" OR
+            component="mod_assignment" OR
+            component="mod_quiz"
+        );';
         $data = $DB->get_records_sql($query);//($table, array('userid'=>'2', 'component'=>'mod_glossary'));//, '','*',0,100);
         $transaction->allow_commit();
         $arr=array();
