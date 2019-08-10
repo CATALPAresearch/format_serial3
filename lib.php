@@ -75,7 +75,7 @@ class format_ladtopics extends format_base {
     public function get_default_section_name($section) {
         if ($section->section == 0) {
             // Return the general section.
-            return get_string('section0name', 'format_topics');
+            return get_string('section0name', 'format_ladtopics');
         } else {
             // Use format_base::get_default_section_name implementation which
             // will display the section name in "Topic n" format.
@@ -349,11 +349,11 @@ class format_ladtopics extends format_base {
     public function inplace_editable_render_section_name($section, $linkifneeded = true,
                                                          $editable = null, $edithint = null, $editlabel = null) {
         if (empty($edithint)) {
-            $edithint = new lang_string('editsectionname', 'format_topics');
+            $edithint = new lang_string('editsectionname', 'format_ladtopics');
         }
         if (empty($editlabel)) {
             $title = get_section_name($section->course, $section);
-            $editlabel = new lang_string('newsectionname', 'format_topics', $title);
+            $editlabel = new lang_string('newsectionname', 'format_ladtopics', $title);
         }
         return parent::inplace_editable_render_section_name($section, $linkifneeded, $editable, $edithint, $editlabel);
     }
@@ -392,7 +392,7 @@ class format_ladtopics extends format_base {
 
         // For show/hide actions call the parent method and return the new content for .section_availability element.
         $rv = parent::section_action($section, $action, $sr);
-        $renderer = $PAGE->get_renderer('format_topics');
+        $renderer = $PAGE->get_renderer('format_ladtopics');
         $rv['section_availability'] = $renderer->section_availability($this->get_section($section));
         return $rv;
     }
@@ -412,7 +412,7 @@ function format_ladtopics_inplace_editable($itemtype, $itemid, $newvalue) {
     if ($itemtype === 'sectionname' || $itemtype === 'sectionnamenl') {
         $section = $DB->get_record_sql(
             'SELECT s.* FROM {course_sections} s JOIN {course} c ON s.course = c.id WHERE s.id = ? AND c.format = ?',
-            array($itemid, 'topics'), MUST_EXIST);
+            array($itemid, 'ladtopics'), MUST_EXIST);
         return course_get_format($section->course)->inplace_editable_update_section_name($section, $itemtype, $newvalue);
     }
 }

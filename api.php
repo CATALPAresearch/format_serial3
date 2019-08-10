@@ -33,18 +33,14 @@ class format_ladtopics_external extends external_api {
 
 
     /*
-     * Get the metadata of videos that are related to a course
+     * Get logstore data
      **/    
      public static function logstore_parameters() {
         //  VALUE_REQUIRED, VALUE_OPTIONAL, or VALUE_DEFAULT. If not mentioned, a value is VALUE_REQUIRED 
         return new external_function_parameters(
-            //array(
-                //'data' => new external_single_structure(
-                    array(
-                        'courseid' => new external_value(PARAM_INT, 'id of the course', VALUE_OPTIONAL)
-                    )
-        //        )
-            //)
+            array(
+                'courseid' => new external_value(PARAM_INT, 'course id')
+            )
         );
     }
     public static function logstore_returns() {
@@ -58,7 +54,6 @@ class format_ladtopics_external extends external_api {
     public static function logstore($data) {
         global $CFG, $DB, $USER;
 
-        global $DB, $USER;
         $transaction = $DB->start_delegated_transaction(); 
         $query ='SELECT * FROM ' . $CFG->prefix . 'logstore_standard_log WHERE userid=' . $USER->id . ' AND 
         ( 
@@ -96,6 +91,97 @@ class format_ladtopics_external extends external_api {
     public static function logstore_is_allowed_from_ajax() { return true; }
     
 
+    /*
+     * Get course structure
+     **/    
+     public static function coursestructure_parameters() {
+        //  VALUE_REQUIRED, VALUE_OPTIONAL, or VALUE_DEFAULT. If not mentioned, a value is VALUE_REQUIRED 
+        return new external_function_parameters(
+            array(
+                'courseid' => new external_value(PARAM_INT, 'course id')
+            )
+        );
+    }
+    public static function coursestructure_returns() {
+        return new external_single_structure(
+            array(
+                'data' => new external_value(PARAM_RAW, 'data')
+                //,'user' => new external_value(PARAM_RAW, 'data')
+            )
+        );
+    }
+    public static function coursestructure($courseid) {
+        global $CFG, $DB, $USER;
+        $transaction = $DB->start_delegated_transaction(); 
+        $query ='SELECT name, visible, section FROM ' . $CFG->prefix . 'course_sections WHERE course='. (int)$courseid .';';
+        $sections = $DB->get_records_sql($query);//($table, array('userid'=>'2', 'component'=>'mod_glossary'));//, '','*',0,100);
+        $transaction->allow_commit();
+        
+        /* 
+         FROM moodlecourse_modules AS cm 
+INNER JOIN moodle_modules AS m
+ON cm.module = m.id 
+INNER JOIN (
+SELECT id, name 
+FROM moodlefeedback
+UNION ALL
+SELECT id, name
+FROM moodleforum
+UNION ALL
+SELECT id, name
+FROM moodlequiz
+UNION ALL
+SELECT id, name
+FROM moodlepage
+UNION ALL
+SELECT id, name
+FROM moodlefeedback
+) AS u
+ON cm.instance = u.id
+WHERE cm.course = 2
+        */
+        //$transaction = $DB->start_delegated_transaction(); 
+        $e_________________query ='
+            FROM ' . $CFG->prefix . 'course_modules AS cm 
+            INNER JOIN ' . $CFG->prefix . '_modules AS m
+            ON cm.module = m.id 
+            INNER JOIN (
+            SELECT id, name 
+            FROM ' . $CFG->prefix . 'feedback
+            UNION ALL
+            SELECT id, name
+            FROM ' . $CFG->prefix . 'forum
+            UNION ALL
+            SELECT id, name
+            FROM ' . $CFG->prefix . 'quiz
+            UNION ALL
+            SELECT id, name
+            FROM ' . $CFG->prefix . 'page
+            UNION ALL
+            SELECT id, name
+            FROM ' . $CFG->prefix . 'feedback
+            ) AS u
+            ON cm.instance = u.id
+            WHERE cm.course = 2;';
+        //$modules = $DB->get_records_sql($query);//($table, array('userid'=>'2', 'component'=>'mod_glossary'));//, '','*',0,100);
+        //$transaction->allow_commit();
+        
+        $arr=array();
+        $id=0;
+        foreach($sections as $bu){
+            $entry = array(
+                    'id' => $id,
+                    'section' => $bu->section,
+                    'name' => $bu->name,
+                    'visible' => $bu->visible
+            );
+            array_push($arr, $entry);
+            $id++;
+        }
+    
+        return array('data'=>json_encode($arr));
+    }
+    public static function coursestructure_is_allowed_from_ajax() { return true; }
 
 
     /**

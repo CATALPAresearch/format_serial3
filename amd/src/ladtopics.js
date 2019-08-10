@@ -72,7 +72,7 @@ define([
                 document.getElementsByTagName("head")[0].appendChild(link);
             }
                     
-            $('#accordion').tab();
+            //$('#accordion').tab();
 
             require([
                'vue259',
@@ -84,7 +84,6 @@ define([
                 'universe',
                 'bootstrap_select'
             ], function (vue, crossfilter, d3, dc, reduction, universe,bselect) {
-                
                 const utils = new Utils(dc, d3);
                 new Timeline(vue, d3, dc, crossfilter, bselect, utils);
             });

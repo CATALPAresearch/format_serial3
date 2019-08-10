@@ -61,15 +61,21 @@ class format_ladtopics_renderer extends format_section_renderer_base {
         <div id="alert"></div>
 
 
-    
-
-
 <div class="container dc-chart" id="dc-chart">      
     <div class="row">
         <!-- Milestone chart -->
         <div id="milestone-chart" class="col-12">
             <!-- Chart -->
-            <div class="chart"></div>
+            <div class="chart">
+                <button @click="showEmptyMilestone()" class="btn btn-sm right add-milestone" data-toggle="modal" data-target="#theMilestoneModal"><i class="fa fa-plus"></i></button>
+                <svg :width="width" :height="height+margins.top+10">
+                    <g :transform="\'translate(\'+( margins.left + 10 ) +\',\'+ margins.top +\')\'">
+                        <rect v-for="m in milestones" @click="showModal(m.id)" class="milestone-learning-progress" :x="x(m.end)" :y="y(1)-barheight/2" :height="barheight" :width="barwidth * m.progress" data-toggle="modal" data-target="#theMilestoneModal"></rect>
+                        <rect v-for="m in milestones" @click="showModal(m.id)" :class="\'milestone-bar milestone-\'+ m.status" :id="\'milestoneBar_\'+m.id" :x="x(m.end)" :y="y(1)-barheight/2" :height="barheight" :width="barwidth" data-legend="1" data-toggle="modal" data-target="#theMilestoneModal"></rect>
+                        <text v-for="m in milestones" @click="showModal(m.id)" class="milestone-label" :x="x(m.end) + barwidth / 2" :y="y(1)+4" data-toggle="modal" data-target="#theMilestoneModal">{{ m.name }}</text>
+                    </g>
+                </svg>
+            </div>
             <div id="theMilestoneModal" v-if="modalVisible" class="modal fade" tabindex="-1" role="dialog">
                 <div class="modal-dialog modal-lg" role="document">
                         <div class="modal-content">
@@ -80,7 +86,6 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                                 </button>
                             </div>
                             <div class="modal-body">
-                                <form>
                                     <div class="form-group row">
                                         <label for="inputMSname" class="col-sm-2 col-form-label">Name</label>
                                         <div class="col-sm-10">
@@ -90,15 +95,39 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                                     <div class="form-group row">
                                         <label for="inputObjectic" class="col-sm-2 col-form-label">Lernziel</label>
                                         <div class="col-sm-10">
-                                        <input v-model="getSelectedMilestone().objective" type="text" class="form-control" id="inputPassword3" placeholder="Welches lernziel verfolgen Sie?">
+                                        <input v-model="getSelectedMilestone().objective" type="text" class="form-control" id="inputLearningObjective" placeholder="Welches lernziel verfolgen Sie?">
                                         </div>
                                     </div>
-                                    
+                                     <div class="form-group row">
+                                        <label for="inputObjectic" class="col-sm-2 col-form-label">Datum</label>
+                                        <div class="row">
+                                            <div class="col-4">
+                                            <select @change="daySelected" id="select_day" :class="dayInvalid == true ? \' red-border \' : \'\'">
+                                                <option v-for="d in dayRange()" :selected="d==(new Date()).getDate()">{{ d }}</option>
+                                            </select>
+                                            </div>
+                                            <div class="col-4">
+                                            <select @change="monthSelected" id="select_month">
+                                                <option v-for="d in monthRange()" :selected="d-1 === (new Date()).getMonth()">{{ d }}</option>
+                                            </select>
+                                            </div>
+                                            <div class="col-4">
+                                            <select @change="yearSelected" id="select_year">
+                                                <option v-for="d in yearRange()" :selected="d === (new Date()).getFullYear()">{{ d }}</option>
+                                            </select>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div class="row">
                                         <!-- Ressourcen -->
-                                        <div id="resources" class="col-md">
-                                            <button type="button" class="btn btn-info"><i class="fa fa-plus"></i> Lernressource hinzufügren</button>
-                                        </div>
+                                        <div id="ressources" class="col-md">
+                                            <ul>
+                                                <li v-for="s in getSelectedMilestone().ressources" class="form-check">
+                                                    <label class="form-check-label" for="defaultCheck1">{{ s.name }} <i class="fa fa-info"></i></label>
+                                                    <input class="form-check-input" type="checkbox" value="" id="ressourceCheck">
+                                                </li>
+                                            </ul>
+                                        </div>  
                                         <!-- Strategien -->
                                         <div id="strategies" class="col-md">
                                             <ul>
@@ -107,10 +136,25 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                                                     <input class="form-check-input" type="checkbox" value="" id="strategyCheck">
                                                 </li>
                                             </ul>
-                                            <div class="select-wrapper btn btn-info">
+                                            
+                                        </div>
+                                    </div>
+                                    <!-- Select Buttons -->
+                                    <div class="row">
+                                        <div class="col-md">
+                                            <div class="select-wrapper">
+                                                <span id="before-select"><i class="fa fa-plus"></i> </span>
+                                                <select @change="resourceSelected" class="" id="modal_strategy-select" class="">
+                                                    <option :selected="true" disabled value="default">Lernressource</option>
+                                                    <option v-for="s in ressources" :value="s.id">{{ s.name }}</option>
+                                                </select>
+                                            </div> 
+                                        </div>
+                                        <div class="col-md">
+                                            <div class="select-wrapper">
                                                 <span id="before-select"><i class="fa fa-plus"></i> </span>
                                                 <select @change="strategySelected" class="" id="modal_strategy-select" class="">
-                                                    <option selected disabled>Lernstrategie</option>
+                                                    <option :selected="true" disabled>Lernstrategie</option>
                                                     <optgroup label="Fachbegriffe">
                                                         <option v-for="s in strategiesByCategory(\'terms\')" :value="s.id">{{ s.name }}</option>
                                                     </optgroup>
@@ -127,7 +171,12 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                                             </div>    
                                         </div>
                                     </div>
-                                </form>
+                                    <!-- Save new milestone-->
+                                    <div v-if="selectedMilestone == -1">
+                                        <button @click="saveMilestone" class="btn btn-default btn-sm" data-dismiss="modal">Speichern</button>
+                                        <button class="right btn btn-link" data-dismiss="modal" aria-label="abbrechen">abbrechen</a>
+                                    </div>
+                                
                             </div>
                         </div>
                     </div>
@@ -139,21 +188,22 @@ class format_ladtopics_renderer extends format_section_renderer_base {
         <div id="filter-chart" class="col-12"></div>
         <div id="date-chart" class="col-12"></div>
     </div>
-    <br>
-    <div class="row">
-        <ul class="nav nav-tabs">    
-            <li class="nav-item active"><a class="nav-link active" data-toggle="tab" href="#timemanagement" role="tab">Zeitmanagement</a></li>
-            <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#strategy" role="tab">Strategie</a></li>
-            <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#quiz" role="tab">Quiz</a></li>
-            <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#learningstatus" role="tab">Lernstand</a></li>
-        </ul>
-        <br>
-        <div class="tab-content" style="display:block;">
-            <div class="tab-pane fade active" id="timemanagement" role="tabpanel">Zeitmanagement</div>
-            <div class="tab-pane fade" id="strategy" role="tabpanel">Strategie</div>
-            <div class="tab-pane fade" id="quiz" role="tabpanel">Quiz</div>
-            <div class="tab-pane fade" id="learningstatus" role="tabpanel">Status</div>
-        </div>  
+    <div class="container row">
+        <div class="col-md-12">
+            <ul class="nav">    
+                <li class="nav-item active"><a class="nav-link active" data-toggle="tab" href="#timemanagement" role="tab">Zeitmanagement</a></li>
+                <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#strategy" role="tab">Strategie</a></li>
+                <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#quiz" role="tab">Quiz</a></li>
+                <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#learningstatus" role="tab">Lernstand</a></li>
+            </ul>
+            <br>
+            <div class="tab-content" style="display:block;">
+                <div class="tab-pane fade active" id="timemanagement" role="tabpanel">Zeitmanagement</div>
+                <div class="tab-pane fade" id="strategy" role="tabpanel">Strategie</div>
+                <div class="tab-pane fade" id="quiz" role="tabpanel">Quiz</div>
+                <div class="tab-pane fade" id="learningstatus" role="tabpanel">Status</div>
+            </div>  
+        </div>
     </div>
     
     <br>

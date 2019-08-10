@@ -24,7 +24,7 @@ define(['jquery', 'core/ajax'], function ($, ajax) {
             external = external === undefined ? false : external;
             ajax.call([{
                 methodname: external ? ws : 'format_ladtopics_' + ws,
-                args: { courseid: 3 },
+                args: params,
                 done: function (msg) {
                     if (msg.hasOwnProperty('exception')) {
                         $('#alert')

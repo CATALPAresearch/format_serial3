@@ -25,6 +25,14 @@ $functions = array(
                 'description' => 'Obtain logstore date from database',
                 'type'        => 'read',
                 'ajax'        => true 
+        ),
+        'format_ladtopics_coursestructure' => array(
+                'classname'   => 'format_ladtopics_external',
+                'methodname'  => 'coursestructure',
+                'classpath'   => 'course/format/ladtopics/api.php',
+                'description' => 'Obtain course structure from database',
+                'type'        => 'read',
+                'ajax'        => true 
         )
 );
 
