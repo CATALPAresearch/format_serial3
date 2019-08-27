@@ -309,65 +309,68 @@ define([
                     };
                 },
                 mounted: function () {
-                    let _this = this;
-                    // obtain course structure form DB
-                    utils.get_ws('coursestructure', {
-                        courseid: parseInt(course.id, 10)
-                    }, function (e) {
-                        try {
-                            _this.resources = JSON.parse(e.data);
-                        } catch (e) {
-                            console.error(e);
-                        }
-                    });
-                    this.margins = margins;
-                    this.width = width;
-                    this.milestones.forEach(function (d, i) {
-                        d.start = new Date(d.start);//formatDate2(new Date(d.start));
-                        d.end = new Date(d.end);//formatDate2(new Date(d.end));
-                        d.g = 1;
-                    });
-
-                    this.xmin = d3.min(this.milestones, function (d) {
-                        return d.start;
-                    });
-                    this.xmax = d3.max(this.milestones, function (d) {
-                        return d.end;
-                    });
-                    this.ymax = this.milestones.length;
-
-                    const x = d3.scaleTime()
-                        .domain(xRange) // .x(d3.scaleTime().domain(xRange) // [this.xmin, this.xmax]
-                        .range([0, this.width - this.padding]); // 
-                    const y = d3.scaleLinear()
-                        .domain([0, this.ymax])
-                        .range([0, this.height]);
-                    const z = d3.scaleOrdinal()
-                        .range(this.colors);
-
-                    this.xAxis = d3.axisTop().scale(x).ticks(10).tickFormat(multiFormat);
-                    this.yAxis = d3.axisLeft().scale(y).ticks(0);
-
-                    // Tooltip
-                    /* var tip = d3.tip()
-                        .attr('class', 'd3-tip').direction('se').offset([-10, 0])
-                        .html(function (d, i) { return arr = [ "n: " + i, "Group: " + d.g ].join('<br>'); });
-                    */
-
-                    // Adds the svg canvas
-                    this.chart = d3.select('#milestone-chart .chart svg g');
-
-                    // Add the Axis
-                    this.x_axis_call = this.chart.append("g").attr("class", "x axis").attr("transform", "translate(0," + this.height + ")").call(this.xAxis);
-                    this.y_axis_call = this.chart.append("g").attr("class", "y axis").call(this.yAxis);
-                    this.x = x;
-                    this.y = y;
-                    this.zoomUpdate(x, y, z);
-
-                    dc.registerChart(this.chart, mainGroup);
-
+                    this.initializeChart();
                 },
                 methods: {
+                    initializeChart: function(){
+                        let _this = this;
+                        // obtain course structure form DB
+                        utils.get_ws('coursestructure', {
+                            courseid: parseInt(course.id, 10)
+                        }, function (e) {
+                            try {
+                                _this.resources = JSON.parse(e.data);
+                            } catch (e) {
+                                console.error(e);
+                            }
+                        });
+                        this.margins = margins;
+                        this.width = width;
+                        this.milestones.forEach(function (d, i) {
+                            d.start = new Date(d.start);//formatDate2(new Date(d.start));
+                            d.end = new Date(d.end);//formatDate2(new Date(d.end));
+                            d.g = 1;
+                        });
+
+                        this.xmin = d3.min(this.milestones, function (d) {
+                            return d.start;
+                        });
+                        this.xmax = d3.max(this.milestones, function (d) {
+                            return d.end;
+                        });
+                        this.ymax = this.milestones.length;
+
+                        const x = d3.scaleTime()
+                            .domain(xRange) // .x(d3.scaleTime().domain(xRange) // [this.xmin, this.xmax]
+                            .range([0, this.width - this.padding]); // 
+                        const y = d3.scaleLinear()
+                            .domain([0, this.ymax])
+                            .range([0, this.height]);
+                        const z = d3.scaleOrdinal()
+                            .range(this.colors);
+
+                        this.xAxis = d3.axisTop().scale(x).ticks(10).tickFormat(multiFormat);
+                        this.yAxis = d3.axisLeft().scale(y).ticks(0);
+
+                        // Tooltip
+                        /* var tip = d3.tip()
+                            .attr('class', 'd3-tip').direction('se').offset([-10, 0])
+                            .html(function (d, i) { return arr = [ "n: " + i, "Group: " + d.g ].join('<br>'); });
+                        */
+
+                        // Adds the svg canvas
+                        this.chart = d3.select('#milestone-chart .chart svg g');
+
+                        // Add the Axis
+                        this.x_axis_call = this.chart.append("g").attr("class", "x axis").attr("transform", "translate(0," + this.height + ")").call(this.xAxis);
+                        this.y_axis_call = this.chart.append("g").attr("class", "y axis").call(this.yAxis);
+                        this.x = x;
+                        this.y = y;
+                        this.updateChart(x, y, z);
+
+                        dc.registerChart(this.chart, mainGroup);
+
+                    },
                     getMilestones: function(){
                         return this.milestones;
                     },
@@ -388,82 +391,18 @@ define([
                     getYLane: function(id){
                         return id % 3;
                     },
-                    zoomUpdate: function (new_x_scale, new_y_scale, z) {
-                        let _this = this;
+                    updateChart: function (new_x_scale, new_y_scale, z) {
                         this.x = new_x_scale;
                         this.y = new_y_scale;
+           
                         z = d3.scaleOrdinal()
                             .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
 
                         this.x_axis_call.transition().duration(500).call(this.xAxis.scale(new_x_scale).ticks(10).tickFormat(multiFormat));
                         this.y_axis_call.transition().duration(0).call(this.yAxis.scale(new_y_scale));
-
-                        /*
-                        this.bars = this.chart.selectAll(".milesstone-bar")
-                            .data(this.milestones).enter().append("g");
                         
-                        this.chart.selectAll(".milestone-label")
-                            //.attr('transform', function (d) { console.log(new_x_scale(d.end)); return 'translate(' + new_x_scale(d.end) +',0)'; });
-                            .attr("x", function (d) { return new_x_scale(d.end); });
-
+                        //this.chart = d3.select('#milestone-chart .chart svg g');
                         
-                        // learning progress  
-                        this.chart.selectAll(".milestone-learning-progress").remove();
-                        this.bars.append("rect")
-                            .attr("class", "milestone-learning-progress")
-                            .attr("x", function (d) {
-                                return new_x_scale(d.end);
-                            })
-                            .attr("y", function (d, i) {
-                                return new_y_scale(i) - (_this.barheight / 2);
-                            })
-                            .attr("height", this.barheight)
-                            .attr("width", function (d) {
-                                return _this.barwidth * d.progress;
-                            })
-                            .on("click", function (d) { _this.showModal(d.id); })
-                            .attr('data-toggle', "modal")
-                            .attr('data-target', "#theMilestoneModal")
-                            ;
-
-                        // MS box representing MS state
-                        this.chart.selectAll(".milestone-bar").remove();
-                        this.bars
-                            .append("rect")
-                            .attr("class", function (d) {
-                                return "milestone-bar " + " milestone-" + d.status;
-                            })
-                            .attr("id", function (d) {
-                                return 'milestoneBar_' + d.id;
-                            })
-                            .attr("x", function (d) {
-                                return new_x_scale(d.end);
-                            })
-                            .attr("y", function (d, i) {
-                                return new_y_scale(i) - (_this.barheight / 2);
-                            })
-                            .attr("height", this.barheight)
-                            .attr("width", this.barwidth)//return new_y_scale(d.end);
-                            .attr("data-legend", function (d) {
-                                return parseInt(d.g, 10);
-                            })
-                            .on("click", function (d) { _this.showModal(d.id); })
-                            .attr('data-toggle', "modal")
-                            .attr('data-target', "#theMilestoneModal")
-                            ;
-                        // MS label
-                        this.chart.selectAll(".milestone-label").remove();
-                        this.bars
-                            .append("text")
-                            .attr("class", "milestone-label")
-                            .attr("x", function (d) { return new_x_scale(d.end) + _this.barwidth / 2; })
-                            .attr("y", function (d, i) { return new_y_scale(i) + 4; })
-                            .text(function (d) { return d.name; })
-                            .on("click", function (d) { _this.showModal(d.id); })
-                            .attr('data-toggle', "modal")
-                            .attr('data-target', "#theMilestoneModal")
-                            ;
-*/
                         // today
                         const today = new Date();
                         this.chart.selectAll(".today-line").remove();
@@ -522,7 +461,7 @@ define([
                         this.milestones.push(this.emptyMilestone);
                         let x = d3.scaleTime().domain(xRange).range([0, width]);
                         let y = d3.scaleLinear().domain([0, this.ymax]).range([0, this.height]);
-                        this.zoomUpdate(x, y);
+                        this.updateChart(x, y);
                         console.log(this.milestones)
                         // reset the empty milestone
                     },
@@ -687,7 +626,7 @@ define([
                 let new_x_scale = d3.scaleTime().domain(range).range([0, width]);
                 let new_y_scale = d3.scaleLinear().domain([0, milestoneApp.ymax]).range([0, milestoneApp.height]);
 
-                milestoneApp.zoomUpdate(new_x_scale, new_y_scale);
+                milestoneApp.updateChart(new_x_scale, new_y_scale);
             }
             timeFilterChart.on('filtered', filterTime);// other events: preRender, preRedraw
 
