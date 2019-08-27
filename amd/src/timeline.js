@@ -1,17 +1,18 @@
 /**
- * TODO
- * - delete ressources and strategies
- * - setFilterPreset(preset) NOT WORKING because of setting filters
- * - resize if navigation drawer opens
- * - save new MS
+ * Timeline
+ *
+ * @module     format/ladtopics
+ * @package    format_ladtopics
+ * @class      Timeline
+ * @copyright  2019 Niels Seidel, niels.seidel@fernuni-hagen.de
+ * @license    MIT
+ * @since      3.1
  */
 
 define([
     'jquery',
-    'core/ajax',
-    // '/moodle/course/format/ladtopics/amd/src/lib/vue.js',
-    /*, '/moodle/course/format/ladtopics/amd/src/components/Milestones.js'*/
-], function ($, ajax/*, Milestones*/) {
+    'core/ajax'
+], function ($, ajax) {
 
 
     /**
@@ -20,11 +21,12 @@ define([
      * @param dc (Object) Dimensional Javascript Charting Library
      * @param utils (Object) Custome util class
      */
-    let Timeline = function (Vue, d3, dc, crossfilter, bselect, utils) {
+    let Timeline = function (Vue, d3, dc, crossfilter, moment, bselect, utils) {
 
         //const vuemilestone = new Milestones(d3);
 
         const color_range = ['yellow', 'blue', 'purple', 'red', 'orange', 'green', 'black'];
+        const color_ms_status_range = ["#ffa500", "#ff0000", "#008000", "#008000", "#0000ff"];
         const label = {
             'mod_forum': 'Forum',
             'mod_glossary': 'Glossar',
@@ -56,7 +58,7 @@ define([
             }
         });
 
-        
+
 
 
         let draw = function (the_data) {
@@ -142,6 +144,8 @@ define([
                 d3.min(mainGroup.all(), function (d) { return d.key[0]; }),
                 d3.max(mainGroup.all(), function (d) { return d.key[0]; })
             ];
+            xRange[1] = moment(xRange[1]).isSameOrBefore(new Date()) ? new Date() : xRange[1];
+            console.log(xRange);
 
             let colorBand = d3.scaleOrdinal().domain(action_types).range(color_range);
             let aa = [];
@@ -219,9 +223,6 @@ define([
                 svg.select('.chart-body').attr('d', line);
             }); */
 
-
-
-
             /* let modal = Vue.component('modal', {
                  template: '#modalMilestone',
                  props: ['data'],
@@ -265,18 +266,18 @@ define([
                                 end: '06/01/2019',
                                 status: 'urgent',
                                 progress: 0.10,
-                                ressources: [],
+                                resources: [],
                                 strategies: []
                             },
                             {
                                 id: 1,
                                 name: 'Meilenstein 2',
-                                objective: 'Alles lernen',
+                                objective: 'Mehr lernen',
                                 start: '06/01/2019',
                                 end: '06/02/2019',
                                 status: 'progress', // progress, ready, urgent, missed, reflected
                                 progress: 0.80,
-                                ressources: [],
+                                resources: [],
                                 strategies: []
                             }
                         ],
@@ -284,16 +285,16 @@ define([
                             id: 10,
                             name: '',
                             objective: '',
-                            start: '07/01/2019',
-                            end: '07/02/2019',
+                            start: '01/10/2019',
+                            end: '02/10/2019',
                             status: 'progress', // progress, ready, urgent, missed, reflected
                             progress: 0.0,
-                            ressources: [],
+                            resources: [],
                             strategies: []
                         },
-                        selectedDay:1,
-                        selectedMonth:1,
-                        selectedYear:2019,
+                        selectedDay: 1,
+                        selectedMonth: 1,
+                        selectedYear: 2019,
                         dayInvalid: false,
                         selectedMilestone: 0,
                         modalVisible: false,
@@ -304,17 +305,17 @@ define([
                             { id: 'repeat', name: 'Wiederholung', url: "http://www.heise.de/", category: 'terms' },
                             { id: 'group', name: 'Gruppenarbeit', url: "http://www.heise.de/", category: 'misc' }
                         ],
-                        ressources:[]
+                        resources: []
                     };
                 },
-                mounted: function () { 
-                    let _this = this; 
+                mounted: function () {
+                    let _this = this;
                     // obtain course structure form DB
                     utils.get_ws('coursestructure', {
                         courseid: parseInt(course.id, 10)
                     }, function (e) {
                         try {
-                            _this.ressources = JSON.parse(e.data); 
+                            _this.resources = JSON.parse(e.data);
                         } catch (e) {
                             console.error(e);
                         }
@@ -355,7 +356,7 @@ define([
 
                     // Adds the svg canvas
                     this.chart = d3.select('#milestone-chart .chart svg g');
-                    
+
                     // Add the Axis
                     this.x_axis_call = this.chart.append("g").attr("class", "x axis").attr("transform", "translate(0," + this.height + ")").call(this.xAxis);
                     this.y_axis_call = this.chart.append("g").attr("class", "y axis").call(this.yAxis);
@@ -367,17 +368,26 @@ define([
 
                 },
                 methods: {
-                    x: function(){ return  d3.scaleTime()
-                        .domain(xRange) // .x(d3.scaleTime().domain(xRange) // [this.xmin, this.xmax]
-                        .range([0, this.width - this.padding]); // 
-                    },    
-                    y: function(){ return d3.scaleLinear()
-                        .domain([0, this.ymax])
-                        .range([0, this.height]);
-                    },    
-                    z: function(){ return d3.scaleOrdinal()
-                        .range(this.colors);
-                    },    
+                    getMilestones: function(){
+                        return this.milestones;
+                    },
+                    x: function () {
+                        return d3.scaleTime()
+                            .domain(xRange) // .x(d3.scaleTime().domain(xRange) // [this.xmin, this.xmax]
+                            .range([0, this.width - this.padding]); // 
+                    },
+                    y: function () {
+                        return d3.scaleLinear()
+                            .domain([0, this.ymax])
+                            .range([0, this.height]);
+                    },
+                    z: function () {
+                        return d3.scaleOrdinal()
+                            .range(this.colors);
+                    },
+                    getYLane: function(id){
+                        return id % 3;
+                    },
                     zoomUpdate: function (new_x_scale, new_y_scale, z) {
                         let _this = this;
                         this.x = new_x_scale;
@@ -455,7 +465,7 @@ define([
                             ;
 */
                         // today
-                        const today = new Date(2019, 4, 31);//new Date();
+                        const today = new Date();
                         this.chart.selectAll(".today-line").remove();
                         this.chart.append("line")
                             .attr("class", "today-line")
@@ -490,7 +500,7 @@ define([
                         this.modalVisible = false;
                     },
                     getSelectedMilestone: function () {
-                        if (this.selectedMilestone === -1){
+                        if (this.selectedMilestone === -1) {
                             // xxx: set end-Date
                             return this.emptyMilestone;
                         }
@@ -499,47 +509,47 @@ define([
                             return d.id === _this.selectedMilestone;
                         })[0];
                     },
-                    showEmptyMilestone: function(e){ 
-                        this.selectedMilestone = -1; 
+                    showEmptyMilestone: function (e) {
+                        this.selectedMilestone = -1;
                         this.modalVisible = true;
                     },
-                    saveMilestone: function(e){
-                        this.emptyMilestone.id = Math.random()*1000;
-                        this.emptyMilestone.end = new Date(this.selectedMonth+'/'+this.selectedDay+'/'+ this.selectedYear );
+                    saveMilestone: function (e) {
+                        this.emptyMilestone.id = Math.random() * 1000;
+                        this.emptyMilestone.end = new Date(this.selectedMonth + '/' + this.selectedDay + '/' + this.selectedYear);
                         const d = new Date();
-                        this.emptyMilestone.start = new Date( ( d.getMonth()+1 ) + '/' + d.getDate() + '/' + d.getFullYear() ); 
-                        
-                        this.milestones.push( this.emptyMilestone );
+                        this.emptyMilestone.start = new Date((d.getMonth() + 1) + '/' + d.getDate() + '/' + d.getFullYear());
+
+                        this.milestones.push(this.emptyMilestone);
                         let x = d3.scaleTime().domain(xRange).range([0, width]);
                         let y = d3.scaleLinear().domain([0, this.ymax]).range([0, this.height]);
                         this.zoomUpdate(x, y);
                         console.log(this.milestones)
                         // reset the empty milestone
                     },
-                    daySelected: function (event){ 
-                        if ([4, 6, 9, 11].indexOf(this.selectedMonth) !== -1 && event.target.value === 31){
+                    daySelected: function (event) {
+                        if ([4, 6, 9, 11].indexOf(this.selectedMonth) !== -1 && event.target.value === 31) {
                             this.dayInvalid = true;
                             return;
-                        } else if (this.selectedMonth === 2 && event.target.value > 29){
+                        } else if (this.selectedMonth === 2 && event.target.value > 29) {
                             this.dayInvalid = true;
                             return;
                         } else if (this.selectedMonth === 2 && event.target.value === 29 && !(this.selectedYear % 4 === 0 && this.selectedYear % 100 !== 0 || this.selectedYear % 400 === 0)) {
                             this.dayInvalid = true;
                             return;
-                        }else {
+                        } else {
                             this.dayInvalid = false;
                         }
                         this.selectedDay = event.target.value;
                     },
                     monthSelected: function (event) { this.selectedMonth = event.target.value; },
                     yearSelected: function (event) { this.selectedYear = event.target.value; },
-                    dayRange: function(){
+                    dayRange: function () {
                         return [...Array(32).keys()].slice(1, 32);
                     },
-                    monthRange: function(){
+                    monthRange: function () {
                         return [...Array(13).keys()].slice(1, 13);
                     },
-                    yearRange: function () { 
+                    yearRange: function () {
                         return [2019, 2020]; // xxx should become a plugin setting
                     },
                     strategiesByCategory: function (cat) {
@@ -552,18 +562,46 @@ define([
                             return s.id === id ? true : false;
                         })[0];
                     },
-                    ressourceById: function (id) { 
-                        return this.ressources.filter(function (s) {
-                            return parseInt(s.id, 10) === parseInt(id,10) ? true : false;
+                    resourceById: function (id) {
+                        return this.resources.filter(function (s) {
+                            return parseInt(s.id, 10) === parseInt(id, 10) ? true : false;
                         })[0];
                     },
                     strategySelected: function (event) {
-                        // xxx Set back to the default value
                         this.getSelectedMilestone().strategies.push(this.strategyById(event.target.value));
                     },
-                    resourceSelected: function(event) {
-                        // xxx Set back to the default value
-                        this.getSelectedMilestone().ressources.push(this.ressourceById(event.target.value));
+                    strategyRemove: function (id) {
+                        for (let s = 0; s < this.getSelectedMilestone().strategies.length; s++) {
+                            if (this.getSelectedMilestone().strategies[s].id === id) {
+                                this.getSelectedMilestone().strategies.splice(s, 1);
+                            }
+                        }
+                    },
+                    resourceSelected: function (event) {
+                        this.getSelectedMilestone().resources.push(this.resourceById(event.target.value));
+                    },
+                    resourceRemove: function (id) {
+                        for (let s = 0; s < this.getSelectedMilestone().resources.length; s++) {
+                            if (this.getSelectedMilestone().resources[s].id === id) {
+                                this.getSelectedMilestone().resources.splice(s, 1);
+                            }
+                        }
+                    },
+                    setFilterPreset: function (preset) {
+                        let range = [];
+                        const now = new Date();
+                        switch (preset) {
+                            case "last-week":
+                                range = [new Date(now.getTime() - 1000 * 3600 * 24 * 7), now];
+                                break;
+                            case "last-month":
+                                range = [new Date(now.getTime() - 1000 * 3600 * 24 * 30), now];
+                                break;
+                            case "semester": // semester
+                                range = [new Date(2019, 9, 1, 0, 0, 0, 0), new Date(2020, 2, 31, 23, 59, 59, 0)];
+                        }
+                        timeFilterChart.replaceFilter(dc.filters.RangedFilter(range[0], range[1])); //new Date(2019, 5, 9), new Date(2019, 5, 10)
+                        filterTime();
                     }
                 }
             });
@@ -573,24 +611,42 @@ define([
             let timeFilterDim = facts.dimension(function (d) { return d.date; });
             let timeFilterGroup = timeFilterDim.group().reduceCount(function (d) { return d.date; });
 
-            const msData = crossfilter(milestoneApp);
-            let msFilterDim = msData.dimension(function (d) { return d.end; });
+            let milestoneData = milestoneApp.getMilestones();
+            for(let i=0; i < milestoneData.length; i++){ milestoneData[i].y = i % 2 +1; }
+            const msData = crossfilter(milestoneData);
+            let msFilterDim = msData.dimension(function (d) { return [d.status, d.end, d.y]; });
             let msFilterGroup = msFilterDim.group().reduceCount(function (d) { return d.end; });
-            //margins.left = margins.left-10;
+           
             timeFilterChart
                 .width(width)
                 .height(80)
-                .margins({ top: 10, bottom: 10, left: margins.left-10, right: margins.right })
+                .margins({ top: 10, bottom: 10, left: margins.left - 10, right: margins.right })
                 .compose([
                     dc.barChart(timeFilterChart)
                         .dimension(timeFilterDim)
-                        .group(timeFilterGroup)//, "Wähle einen Zeitraum um zu zoomen")
+                        .group(timeFilterGroup)
                         .barPadding(0)
                         .gap(0)
-                        .alwaysUseRounding(true)/*, // not working
-                    dc.barChart(timeFilterChart)
+                        .alwaysUseRounding(true),
+                    dc.bubbleChart(timeFilterChart)
                         .dimension(msFilterDim)
-                        .group(msFilterGroup)*/
+                        .group(msFilterGroup)
+                        .keyAccessor(function (p) {
+                            return p.key[1];
+                        })
+                        .valueAccessor(function (p) {
+                            return p.key[2];
+                        })
+                        .radiusValueAccessor(function (p) {
+                            return 0.4;
+                        })
+                        .colors(
+                            d3.scaleOrdinal()
+                                .domain(["urgent", "missed", "progress", "ready", "refelcted"])
+                                .range(color_ms_status_range))
+                        .colorAccessor(function (d) { return d.key[0]; })
+                        .renderLabel(false)
+                        .renderTitle(false)
                 ])
                 .x(d3.scaleTime().domain(xRange).range([0, width]))
                 //.round(d3.timeWeeks.round)
@@ -609,7 +665,7 @@ define([
                 .yAxis()
                 .ticks(2)
                 ;
-
+            timeFilterChart.x(d3.scaleTime().domain(xRange).range([0, width]));
 
 
 
@@ -636,42 +692,20 @@ define([
             timeFilterChart.on('filtered', filterTime);// other events: preRender, preRedraw
 
 
-            /**
-             * Set predefined Filter
-             * See: https://dc-js.github.io/dc.js/docs/html/dc.baseMixin.html
-             * xxx
-             */
-            function setFilterPreset(preset){
-                let range = [];
-                const now = new Date();
-                switch (preset){
-                    case "last-week":
-                        range = [new Date(now.getTime() - 1000*3600*24*7),now];
-                        break;
-                    case "last-month":
-                        range = [new Date(now.getTime() - 1000 * 3600 * 24 * 30), now];
-                        break;                        
-                }
-                console.log(range);
-                //timeFilterChart.filters()[0] = [new Date(2019, 6, 9), new Date(2019, 6, 10)];
-                //filterTime();
-                ///timeFilterChart.replaceFilter(dc.filters.RangedFilter(new Date(2019, 5, 9), new Date(2019, 5, 10)));
-                //timeFilterChart.x(d3.scaleTime().domain([new Date(2019, 5, 9), new Date(2019, 5, 10)]));
-                //.x(d3.scaleTime().domain(xRange).range([0, width]))
-                ///dc.redrawGroup(mainGroup);
-            }
-            
-            
 
             /**
-             * 
+             * Resize charte if window sizes change
              */
             window.onresize = function (event) {
                 width = document.getElementById('dc-chart').offsetWidth;
                 milestoneApp.width = width - margins.right;
                 chart.width(width).transitionDuration(0);
-                timeFilterChart.width(width).transitionDuration(0);
-                dc.redrawAll(mainGroup);
+                chart.group(mainGroup);
+
+                timeFilterChart.width(width);//.transitionDuration(0);
+                //dc.redrawAll(mainGroup);
+                
+                
                 filterTime();
 
             };

@@ -9,9 +9,15 @@
     float:right;
 }
 
+.red{
+    color:red;
+}
+
 .red-border{
     border: solid 1px red;
 }
+
+.row-smooth { margin-top:10px; }
 
 .dc-chart {
     margin: 0;
@@ -106,28 +112,28 @@ div.container.dc-chart{
 
 
 #milestone-chart .milestone-urgent {
-    stroke:orange;
+    stroke:#ffa500;
     stroke-width:2px;
 }
 
 #milestone-chart .milestone-missed {
-    stroke: red;
+    stroke: #ff0000;
     stroke-width:2px;
 }
 
 #milestone-chart .milestone-progress {
-    stroke:green;
+    stroke:#008000;
     stroke-opacity: 0.3;
     stroke-width:4px;
 }
 
 #milestone-chart .milestone-ready {
-    stroke:green;
+    stroke:#008000;
     stroke-width:2px;
 }
 
 #milestone-chart .milestone-reflected {
-    stroke:blue;
+    stroke:#0000ff;
     stroke-width:4px;
 }
 
@@ -166,38 +172,52 @@ div.container.dc-chart{
  select {
     border: none;
     background: transparent;
-     appearance: none;
+    width:100%;
+    appearance: none;
     padding-top: 0px;
     background-size: 20px;
     font-size:30px;
   }
 
-  select option {
-    color:#424146;
+ select option {
+    color:#007bff;
     background:#ffffff;
+}
+
+select#select_day, select#select_month, select#select_year {
+    border:1px solid #ced4da;
+    border-radius: 0.25rem;
 }
 
 .modal .fa-plus { color: #333; }
 
-.select-wrapper{
-    padding: 4px 6px;
-    border-radius: 5px;
+.modal .form-check-label .fa-close { color: red; }
+.modal .form-check-label .fa-info { color: #777; }
+.modal .form-check-label .fa-info:hover { color: #111; text-align: right; }
+
+.modal .select-wrapper{
+    padding: 6px 12px;
+    height: 38px;
+    border: 1px solid #ddd;
+    border-radius: 0.25rem;
     background-color: #ddd;
 }
-.select-wrapper:hover {
+.modal .select-wrapper:hover {
     background-color: #007bff;
+    border-color: #007bff;
     color:#fff;
 }
 
-.select-wrapper:hover > select {
+.modal .select-wrapper > select {
+    width:90%;
+}
+
+.modal .select-wrapper:hover > select {
     color:#fff;
 }
 
-#milestone-chart .chart .add-milestone{
-    position:absolute;
-    z-index:300;
-    left:50px;
-    top:50px;
+#milestone-chart .chart .ms-btn{
+    margin-left:4px;
 }
 
 

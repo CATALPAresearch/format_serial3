@@ -67,12 +67,15 @@ class format_ladtopics_renderer extends format_section_renderer_base {
         <div id="milestone-chart" class="col-12">
             <!-- Chart -->
             <div class="chart">
-                <button @click="showEmptyMilestone()" class="btn btn-sm right add-milestone" data-toggle="modal" data-target="#theMilestoneModal"><i class="fa fa-plus"></i></button>
+                <button @click="showEmptyMilestone()" class="btn btn-sm right btn-primary ms-btn" data-toggle="modal" data-target="#theMilestoneModal"><i class="fa fa-plus"></i></button>
+                <button @click="setFilterPreset(\'last-week\')" class="btn btn-sm ms-btn right" >lw</button>
+                <button @click="setFilterPreset(\'last-month\')" class="btn btn-sm ms-btn right" >lm</button>
+                <button @click="setFilterPreset(\'semester\')" class="btn btn-sm right" >se</button>
                 <svg :width="width" :height="height+margins.top+10">
                     <g :transform="\'translate(\'+( margins.left + 10 ) +\',\'+ margins.top +\')\'">
-                        <rect v-for="m in milestones" @click="showModal(m.id)" class="milestone-learning-progress" :x="x(m.end)" :y="y(1)-barheight/2" :height="barheight" :width="barwidth * m.progress" data-toggle="modal" data-target="#theMilestoneModal"></rect>
-                        <rect v-for="m in milestones" @click="showModal(m.id)" :class="\'milestone-bar milestone-\'+ m.status" :id="\'milestoneBar_\'+m.id" :x="x(m.end)" :y="y(1)-barheight/2" :height="barheight" :width="barwidth" data-legend="1" data-toggle="modal" data-target="#theMilestoneModal"></rect>
-                        <text v-for="m in milestones" @click="showModal(m.id)" class="milestone-label" :x="x(m.end) + barwidth / 2" :y="y(1)+4" data-toggle="modal" data-target="#theMilestoneModal">{{ m.name }}</text>
+                        <rect v-for="m in milestones" @click="showModal(m.id)" class="milestone-learning-progress" :x="x(m.end)" :y="y(getYLane(m.id))-barheight/2" :height="barheight" :width="barwidth * m.progress" data-toggle="modal" data-target="#theMilestoneModal"></rect>
+                        <rect v-for="m in milestones" @click="showModal(m.id)" :class="\'milestone-bar milestone-\'+ m.status" :id="\'milestoneBar_\'+m.id" :x="x(m.end)" :y="y(getYLane(m.id))-barheight/2" :height="barheight" :width="barwidth" data-legend="1" data-toggle="modal" data-target="#theMilestoneModal"></rect>
+                        <text v-for="m in milestones" @click="showModal(m.id)" class="milestone-label" :x="x(m.end) + barwidth / 2" :y="y(getYLane(m.id))+4" data-toggle="modal" data-target="#theMilestoneModal">{{ m.name }}</text>
                     </g>
                 </svg>
             </div>
@@ -86,97 +89,111 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                                 </button>
                             </div>
                             <div class="modal-body">
-                                    <div class="form-group row">
-                                        <label for="inputMSname" class="col-sm-2 col-form-label">Name</label>
-                                        <div class="col-sm-10">
-                                        <input v-model="getSelectedMilestone().name" type="text" class="form-control" id="inputMSname" placeholder="Name des Meilensteins">
-                                        </div>
+                                <div class="form-group row">
+                                    <label for="inputMSname" class="col-sm-2 col-form-label">Name</label>
+                                    <div class="col-sm-10">
+                                    <input v-model="getSelectedMilestone().name" type="text" class="form-control" id="inputMSname" placeholder="Name des Meilensteins">
                                     </div>
-                                    <div class="form-group row">
-                                        <label for="inputObjectic" class="col-sm-2 col-form-label">Lernziel</label>
-                                        <div class="col-sm-10">
-                                        <input v-model="getSelectedMilestone().objective" type="text" class="form-control" id="inputLearningObjective" placeholder="Welches lernziel verfolgen Sie?">
-                                        </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="inputObjectic" class="col-sm-2 col-form-label">Lernziel</label>
+                                    <div class="col-sm-10">
+                                    <input v-model="getSelectedMilestone().objective" type="text" class="form-control" id="inputLearningObjective" placeholder="Welches Lernziel verfolgen Sie?">
                                     </div>
-                                     <div class="form-group row">
-                                        <label for="inputObjectic" class="col-sm-2 col-form-label">Datum</label>
-                                        <div class="row">
-                                            <div class="col-4">
-                                            <select @change="daySelected" id="select_day" :class="dayInvalid == true ? \' red-border \' : \'\'">
-                                                <option v-for="d in dayRange()" :selected="d==(new Date()).getDate()">{{ d }}</option>
-                                            </select>
-                                            </div>
-                                            <div class="col-4">
-                                            <select @change="monthSelected" id="select_month">
-                                                <option v-for="d in monthRange()" :selected="d-1 === (new Date()).getMonth()">{{ d }}</option>
-                                            </select>
-                                            </div>
-                                            <div class="col-4">
-                                            <select @change="yearSelected" id="select_year">
-                                                <option v-for="d in yearRange()" :selected="d === (new Date()).getFullYear()">{{ d }}</option>
-                                            </select>
-                                            </div>
-                                        </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="inputObjectic" class="col-2 col-form-label">Termin</label>
+                                    <div class="col-1">
+                                    <select @change="daySelected" id="select_day" :class="dayInvalid == true ? \' red-border \' : \'\'">
+                                        <option v-for="d in dayRange()" :selected="d==(new Date()).getDate()">{{ d }}</option>
+                                    </select>
                                     </div>
-                                    <div class="row">
-                                        <!-- Ressourcen -->
-                                        <div id="ressources" class="col-md">
-                                            <ul>
-                                                <li v-for="s in getSelectedMilestone().ressources" class="form-check">
-                                                    <label class="form-check-label" for="defaultCheck1">{{ s.name }} <i class="fa fa-info"></i></label>
-                                                    <input class="form-check-input" type="checkbox" value="" id="ressourceCheck">
-                                                </li>
-                                            </ul>
-                                        </div>  
-                                        <!-- Strategien -->
-                                        <div id="strategies" class="col-md">
-                                            <ul>
-                                                <li v-for="s in getSelectedMilestone().strategies" class="form-check">
-                                                    <label class="form-check-label" for="defaultCheck1">{{ s.name }} <i class="fa fa-info"></i></label>
+                                    <div class="col-1">
+                                    <select @change="monthSelected" id="select_month">
+                                        <option v-for="d in monthRange()" :selected="d-1 === (new Date()).getMonth()">{{ d }}</option>
+                                    </select>
+                                    </div>
+                                    <div class="col-1">
+                                    <select @change="yearSelected" id="select_year">
+                                        <option v-for="d in yearRange()" :selected="d === (new Date()).getFullYear()">{{ d }}</option>
+                                    </select>
+                                    </div>
+                                    <div class="col-7"></div>
+                                </div>
+                                <div class="row">
+                                    <!-- Resourcen -->
+                                    <div id="resources" class="col-md">
+                                        <ul>
+                                            <li v-for="s in getSelectedMilestone().resources" class="form-check">
+                                                <label class="form-check-label" for="defaultCheck1">
+                                                    <input class="form-check-input" type="checkbox" value="" id="resourceCheck">
+                                                    {{ s.name }} 
+                                                    <i class="fa fa-info"></i>
+                                                    <i class="fa fa-close left" @click="resourceRemove(s.id)"></i>
+                                                </label>
+                                            </li>
+                                        </ul>
+                                    </div>  
+                                    <!-- Strategien -->
+                                    <div id="strategies" class="col-md">
+                                        <ul>
+                                            <li v-for="s in getSelectedMilestone().strategies" class="form-check">
+                                                <label class="form-check-label" for="defaultCheck1">
                                                     <input class="form-check-input" type="checkbox" value="" id="strategyCheck">
-                                                </li>
-                                            </ul>
-                                            
+                                                    {{ s.name }} 
+                                                    <i class="fa fa-info"></i>
+                                                    <i class="fa fa-close left" @click="strategyRemove(s.id)"></i>
+                                                </label>
+                                            </li>
+                                        </ul>
+                                        
+                                    </div>
+                                </div>
+                                <!-- Select Buttons -->
+                                <div class="row">
+                                    <div class="col-md">
+                                        <div class="select-wrapper">
+                                            <span id="before-select"><i class="fa fa-plus"></i> </span>
+                                            <select @change="resourceSelected" class="" id="modal_strategy-select" class="">
+                                                <option :selected="true" disabled value="default">Lernressource</option>
+                                                <option v-for="s in resources" :value="s.id">{{ s.name }}</option>
+                                            </select>
+                                        </div> 
+                                    </div>
+                                    <div class="col-md">
+                                        <div class="select-wrapper">
+                                            <span id="before-select"><i class="fa fa-plus"></i> </span>
+                                            <select @change="strategySelected" class="" id="modal_strategy-select" class="">
+                                                <option :selected="true" disabled>Lernstrategie</option>
+                                                <optgroup label="Fachbegriffe">
+                                                    <option v-for="s in strategiesByCategory(\'terms\')" :value="s.id">{{ s.name }}</option>
+                                                </optgroup>
+                                                <optgroup label="Zusammenhänge">
+                                                    <option v-for="s in strategiesByCategory(\'relations\')" :value="s.id">{{ s.name }}</option>
+                                                </optgroup>
+                                                <optgroup label="Abläufe">
+                                                    <option v-for="s in strategiesByCategory(\'processes\')" :value="s.id">{{ s.name }}</option>
+                                                </optgroup>
+                                                <optgroup label="Sonstige">
+                                                    <option v-for="s in strategiesByCategory(\'misc\')" :value="s.id">{{ s.name }}</option>
+                                                </optgroup>
+                                            </select>
+                                        </div>    
+                                    </div>
+                                    <div class="col-md">
+                                        <button disabled class="btn btn-primary">Reflexion beginnen</button>
+                                    </div>
+                                </div>
+                                <!-- Save new milestone-->
+                                <div class="row row-smooth">
+                                    <div class="col-md">
+                                        <div v-if="selectedMilestone == -1">
+                                            <button @click="saveMilestone" class="btn btn-default btn-sm" data-dismiss="modal">Speichern</button>
+                                            <!--<button class="right btn btn-link" data-dismiss="modal" aria-label="abbrechen">abbrechen</a>-->
+                                            <button class="right btn btn-link red" aria-label="entfernen">entfernen</a>
                                         </div>
                                     </div>
-                                    <!-- Select Buttons -->
-                                    <div class="row">
-                                        <div class="col-md">
-                                            <div class="select-wrapper">
-                                                <span id="before-select"><i class="fa fa-plus"></i> </span>
-                                                <select @change="resourceSelected" class="" id="modal_strategy-select" class="">
-                                                    <option :selected="true" disabled value="default">Lernressource</option>
-                                                    <option v-for="s in ressources" :value="s.id">{{ s.name }}</option>
-                                                </select>
-                                            </div> 
-                                        </div>
-                                        <div class="col-md">
-                                            <div class="select-wrapper">
-                                                <span id="before-select"><i class="fa fa-plus"></i> </span>
-                                                <select @change="strategySelected" class="" id="modal_strategy-select" class="">
-                                                    <option :selected="true" disabled>Lernstrategie</option>
-                                                    <optgroup label="Fachbegriffe">
-                                                        <option v-for="s in strategiesByCategory(\'terms\')" :value="s.id">{{ s.name }}</option>
-                                                    </optgroup>
-                                                    <optgroup label="Zusammenhänge">
-                                                        <option v-for="s in strategiesByCategory(\'relations\')" :value="s.id">{{ s.name }}</option>
-                                                    </optgroup>
-                                                    <optgroup label="Abläufe">
-                                                        <option v-for="s in strategiesByCategory(\'processes\')" :value="s.id">{{ s.name }}</option>
-                                                    </optgroup>
-                                                    <optgroup label="Sonstige">
-                                                        <option v-for="s in strategiesByCategory(\'misc\')" :value="s.id">{{ s.name }}</option>
-                                                    </optgroup>
-                                                </select>
-                                            </div>    
-                                        </div>
-                                    </div>
-                                    <!-- Save new milestone-->
-                                    <div v-if="selectedMilestone == -1">
-                                        <button @click="saveMilestone" class="btn btn-default btn-sm" data-dismiss="modal">Speichern</button>
-                                        <button class="right btn btn-link" data-dismiss="modal" aria-label="abbrechen">abbrechen</a>
-                                    </div>
-                                
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -188,7 +205,7 @@ class format_ladtopics_renderer extends format_section_renderer_base {
         <div id="filter-chart" class="col-12"></div>
         <div id="date-chart" class="col-12"></div>
     </div>
-    <div class="container row">
+    <div class="container row" hidden>
         <div class="col-md-12">
             <ul class="nav">    
                 <li class="nav-item active"><a class="nav-link active" data-toggle="tab" href="#timemanagement" role="tab">Zeitmanagement</a></li>
