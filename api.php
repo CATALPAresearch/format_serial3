@@ -112,60 +112,11 @@ class format_ladtopics_external extends external_api {
     }
     public static function coursestructure($courseid) {
         global $CFG, $DB, $USER;
+        /*
         $transaction = $DB->start_delegated_transaction(); 
         $query ='SELECT name, visible, section FROM ' . $CFG->prefix . 'course_sections WHERE course='. (int)$courseid .';';
         $sections = $DB->get_records_sql($query);//($table, array('userid'=>'2', 'component'=>'mod_glossary'));//, '','*',0,100);
         $transaction->allow_commit();
-        
-        /* 
-         FROM moodlecourse_modules AS cm 
-INNER JOIN moodle_modules AS m
-ON cm.module = m.id 
-INNER JOIN (
-SELECT id, name 
-FROM moodlefeedback
-UNION ALL
-SELECT id, name
-FROM moodleforum
-UNION ALL
-SELECT id, name
-FROM moodlequiz
-UNION ALL
-SELECT id, name
-FROM moodlepage
-UNION ALL
-SELECT id, name
-FROM moodlefeedback
-) AS u
-ON cm.instance = u.id
-WHERE cm.course = 2
-        */
-        //$transaction = $DB->start_delegated_transaction(); 
-        $e_________________query ='
-            FROM ' . $CFG->prefix . 'course_modules AS cm 
-            INNER JOIN ' . $CFG->prefix . '_modules AS m
-            ON cm.module = m.id 
-            INNER JOIN (
-            SELECT id, name 
-            FROM ' . $CFG->prefix . 'feedback
-            UNION ALL
-            SELECT id, name
-            FROM ' . $CFG->prefix . 'forum
-            UNION ALL
-            SELECT id, name
-            FROM ' . $CFG->prefix . 'quiz
-            UNION ALL
-            SELECT id, name
-            FROM ' . $CFG->prefix . 'page
-            UNION ALL
-            SELECT id, name
-            FROM ' . $CFG->prefix . 'feedback
-            ) AS u
-            ON cm.instance = u.id
-            WHERE cm.course = 2;';
-        //$modules = $DB->get_records_sql($query);//($table, array('userid'=>'2', 'component'=>'mod_glossary'));//, '','*',0,100);
-        //$transaction->allow_commit();
-        
         $arr=array();
         $id=0;
         foreach($sections as $bu){
@@ -177,6 +128,178 @@ WHERE cm.course = 2
             );
             array_push($arr, $entry);
             $id++;
+        }
+        return array('data'=>json_encode($arr));
+        */
+
+        /*
+        http://127.0.0.1/adminer.php?username=root&db=moodle&select=moodlecourse_sections
+        http://127.0.0.1/adminer.php?username=root&db=moodle&select=moodlecourse_modules&order%5B0%5D=course
+        http://127.0.0.1/adminer.php?username=root&db=moodle&select=moodle_modules
+        http://127.0.0.1/adminer.php?username=root&db=moodle&select=moodlefeedback
+        TestQuery:
+
+        SELECT 
+        cm.course AS course_id, 
+        cm.module AS module_id, 
+
+        cm.section AS section_id, 
+        cs.name AS section_name,
+
+        cm.instance AS instance_id, 
+        m.name AS instance_type, 
+        f.name AS instance_title 
+
+        FROM moodlecourse_modules AS cm
+
+        JOIN moodle_modules AS m 
+        ON m.id = cm.module
+
+        JOIN moodlecourse_sections AS cs 
+        ON cs.section = cm.section
+
+        RIGHT OUTER JOIN moodlefeedback AS f
+        ON cm.instance = f.id 
+
+        WHERE cm.course = 2 AND cs.course = 2 AND f.course = 2 AND m.name='feedback'
+
+         */
+
+        
+         // missing: page, assign, studentquiz,  
+        
+        $transaction = $DB->start_delegated_transaction(); 
+        $query='
+        SELECT
+        cm.instance AS instance_id,     
+        m.name AS instance_type, 
+        m.visible AS instance_visible,
+        f.name AS instance_title,
+        cm.id AS instance_url_id,
+        cm.course AS course_id, 
+        cm.module AS module_id, 
+        cm.section AS section_id, 
+        cs.name AS section_name
+        FROM ' . $CFG->prefix . 'course_modules AS cm
+        JOIN ' . $CFG->prefix . '_modules AS m 
+        ON m.id = cm.module
+        JOIN moodlecourse_sections AS cs 
+        ON cs.section = cm.section
+        RIGHT OUTER JOIN ' . $CFG->prefix . 'feedback AS f
+        ON cm.instance = f.id 
+        WHERE cm.course = '. (int)$courseid .' AND cs.course = '. (int)$courseid .' AND f.course = '. (int)$courseid .' AND m.name="feedback"
+
+        UNION
+
+        SELECT 
+        cm.instance AS instance_id,     
+        m.name AS instance_type, 
+        m.visible AS instance_visible,
+        f.name AS instance_title,
+        cm.id AS instance_url_id,
+        cm.course AS course_id, 
+        cm.module AS module_id, 
+        cm.section AS section_id, 
+        cs.name AS section_name
+        FROM ' . $CFG->prefix . 'course_modules AS cm
+        JOIN ' . $CFG->prefix . '_modules AS m 
+        ON m.id = cm.module
+        JOIN moodlecourse_sections AS cs 
+        ON cs.section = cm.section
+        RIGHT OUTER JOIN ' . $CFG->prefix . 'forum AS f
+        ON cm.instance = f.id 
+        WHERE cm.course = '. (int)$courseid .' AND cs.course = '. (int)$courseid .' AND f.course = '. (int)$courseid .' AND m.name="forum"
+
+        UNION
+
+        SELECT 
+        cm.instance AS instance_id,     
+        m.name AS instance_type, 
+        m.visible AS instance_visible,
+        f.name AS instance_title,
+        cm.id AS instance_url_id,
+        cm.course AS course_id, 
+        cm.module AS module_id, 
+        cm.section AS section_id, 
+        cs.name AS section_name
+        FROM ' . $CFG->prefix . 'course_modules AS cm
+        JOIN ' . $CFG->prefix . '_modules AS m 
+        ON m.id = cm.module
+        JOIN moodlecourse_sections AS cs 
+        ON cs.section = cm.section
+        RIGHT OUTER JOIN ' . $CFG->prefix . 'glossary AS f
+        ON cm.instance = f.id 
+        WHERE cm.course = '. (int)$courseid .' AND cs.course = '. (int)$courseid .' AND f.course = '. (int)$courseid .' AND m.name="glossary"
+
+        UNION
+
+        SELECT 
+        cm.instance AS instance_id,     
+        m.name AS instance_type, 
+        m.visible AS instance_visible,
+        f.name AS instance_title,
+        cm.id AS instance_url_id,
+        cm.course AS course_id, 
+        cm.module AS module_id, 
+        cm.section AS section_id, 
+        cs.name AS section_name
+        FROM ' . $CFG->prefix . 'course_modules AS cm
+        JOIN ' . $CFG->prefix . '_modules AS m 
+        ON m.id = cm.module
+        JOIN moodlecourse_sections AS cs 
+        ON cs.section = cm.section
+        RIGHT OUTER JOIN ' . $CFG->prefix . 'quiz AS f
+        ON cm.instance = f.id 
+        WHERE cm.course = '. (int)$courseid .' AND cs.course = '. (int)$courseid .' AND f.course = '. (int)$courseid .' AND m.name="quiz"
+
+        UNION
+
+        SELECT 
+        cm.instance AS instance_id,     
+        m.name AS instance_type, 
+        m.visible AS instance_visible,
+        f.name AS instance_title,
+        cm.id AS instance_url_id,
+        cm.course AS course_id, 
+        cm.module AS module_id, 
+        cm.section AS section_id, 
+        cs.name AS section_name
+        FROM ' . $CFG->prefix . 'course_modules AS cm
+        JOIN ' . $CFG->prefix . '_modules AS m 
+        ON m.id = cm.module
+        JOIN moodlecourse_sections AS cs 
+        ON cs.section = cm.section
+        RIGHT OUTER JOIN ' . $CFG->prefix . 'wiki AS f
+        ON cm.instance = f.id 
+        WHERE cm.course = '. (int)$courseid .' AND cs.course = '. (int)$courseid .' AND f.course = '. (int)$courseid .' AND m.name="wiki"
+
+        ;
+        ';
+        $res = $DB->get_records_sql($query); 
+        // debug: error_log(print_r($res,true));
+        $transaction->allow_commit();
+        // prepare results
+        $arr=array();
+        $id=0;
+        foreach($res as $e){
+            if($e->instance_visible == 1){ 
+                $entry = array(
+                    'id' => $id,
+                    'course_id' => $e->course_id, 
+                    'module_id' => $e->module_id, 
+                    'section_id' => $e->section_id, 
+                    'section_name' => $e->section_name,
+                    'instance_id' => $e->instance_id,
+                    'instance_url_id' => $e->instance_url_id, 
+                    'instance_type' => $e->instance_type, 
+                    'instance_title' => $e->instance_title,
+                    // addition
+                    'section' => $e->section_id, 
+                    'name' => $e->instance_title 
+                );
+                array_push($arr, $entry);
+                $id++;
+            }   
         }
     
         return array('data'=>json_encode($arr));
