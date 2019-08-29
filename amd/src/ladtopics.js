@@ -25,8 +25,8 @@ define([
                 "reductio": ["https://rawgit.com/crossfilter/reductio/master/reductio", "reductio"],
                 "universe": ["https://npmcdn.com/universe@latest/universe", "universe"],
                 "bootstrap_select": ["https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/js/bootstrap-select.min", "bootstrap-select.min"],
-                "moment224": ["moment.min"]
-
+                "moment224": ["moment.min"],
+                "sortable110": ["sortable.min"]
                 /*
                 "crossfilter2": "crossfilter.v2",
                 "crossfilter": "https://cdnjs.cloudflare.com/ajax/libs/crossfilter/1.3.5/crossfilter",
@@ -38,6 +38,9 @@ define([
                 },
                 "moment224":{
                     exports: 'moment'
+                },
+                "sortable110":{
+                    exports: 'Sortable'
                 },
                 /*'vuetreeselect': {
                     deps: ['vue259'],
@@ -86,10 +89,11 @@ define([
                 'reductio',
                 'universe',
                 'bootstrap_select',
-                'moment224'
-            ], function (vue, crossfilter, d3, dc, reduction, universe, bselect, moment) {
+                'moment224',
+                'sortable110'
+            ], function (vue, crossfilter, d3, dc, reduction, universe, bselect, moment,  sortable) {
                 const utils = new Utils(dc, d3);
-                new Timeline(vue, d3, dc, crossfilter, moment, bselect, utils);
+                new Timeline(vue, d3, dc, crossfilter, moment, sortable, bselect, utils);
             });
         }
 

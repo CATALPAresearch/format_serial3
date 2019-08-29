@@ -60,60 +60,175 @@ class format_ladtopics_renderer extends format_section_renderer_base {
         <span hidden id="courseid">'. $COURSE->id .'</span>
         <div id="alert"></div>
 
+<!-- Initial survey -->
+<div id="planningsurvey">
+    <div class="row survey-btn">
+        <div class="col-sm-2 col-centered">
+            <div @click="showModal()" class="survey-starter" data-toggle="modal" data-target="#theSurveyModal">
+                <i class="fa fa-question"></i><br/>
+                <span>Lernen mit Plan</span>
+            </div>
+        </div>
+    </div>
+    <div id="theSurveyModal" class="modal" tabindex="-1" role="dialog">
+        <div v-if="modalSurveyVisible" class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="MilestoneModalLabel">Eingangsbefragung</h5>
+                    <button @click="closeModal()" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-check row">
+                        <label for="" class="col-12 col-form-label survey-objective-label">Welches Ziel verfolgen Sie in diesem Kurs/Modul?</label>
+                        <div class="form-check">
+                            <input :checked="objectives == \'f1a\'" @change="e => objectives = e.target.value" class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1" value="f1a">
+                            <label class="form-check-label" for="exampleRadios1">
+                                Die Prüfung erfolgreich absolvieren
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios2" value="f1b" v-model="objectives">
+                            <label class="form-check-label" for="exampleRadios2">
+                                Orientierung im Themengebiet erlangen
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios3" value="f1c" v-model="objectives">
+                            <label class="form-check-label" for="exampleRadios3">
+                                Meinen eigenen eigenen Interessen bzgl. bestimmter Themengebiete nachgehen
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios4" value="f1d" v-model="objectives">
+                            <label class="form-check-label" for="exampleRadios4">
+                                keine Angaben
+                            </label>
+                        </div>
+                    </div> 
+                    <hr>
+                    <div class="form-group row">
+                        <label for="inputMSname" class="col-10 col-form-label">Wie viele Stunden können Sie voraussichtlich für das Lernen in diesem Kurs/Modul aufwenden?</label>
+                        <div class="col-2">
+                            <input type="number" class="form-control" id="inputMSname" placeholder="0" v-model="availableTime">
+                        </div>
+                    </div>
+                    <hr v-if="objectives === \'f1a\'">
+                    <div v-if="objectives === \'f1a\'" class="form-group row">
+                        <label for="inputObjectic" class="col-10 col-form-label">Wann beabsichtigen Sie die Prüfung abzulegen bzw. die Klausur zu schreiben?</label>
+                        <div class="col-4">
+                            <select @change="monthSelected" id="select_month">
+                                <option v-for="d in monthRange()" :selected="d.num-1 === (new Date(getSelectedMilestone().end)).getMonth()" :value="d.num">{{ d.name }}</option>
+                            </select>
+                        
+                            <select @change="yearSelected" id="select_year">
+                                <option v-for="d in yearRange()" :selected="d === (new Date()).getFullYear()">{{ d }}</option>
+                            </select>
+                        </div>
+                        <div class="col-7"></div>
+                    </div>
+                    <hr v-if="objectives === \'f1c\'">
+                    <div v-if="objectives === \'f1c\'" class="row">
+                        <label class="col-12 col-form-label">Wählen Sie die Themen, Materialien und Aktivitäten aus, die Sie besonders interessieren und sortieren Sie diese absteigend nach Ihrem Interesse:</label>
+                        <div id="resources" class="col-md">
+                            <ul id="selected_resources">
+                                <li v-for="s in resources" class="form-check">
+                                    <label class="form-check-label" for="defaultCheck1">
+                                        <i class="fa fa-sort" title="Reihenfolge ändern"></i>
+                                        {{ s.name }} 
+                                        <span class="remove-btn">
+                                            <i class="fa fa-trash" @click="resourceRemove(s.id)" title="entfernen"></i>
+                                        </span>
+                                    </label>
+                                </li>
+                            </ul>
+                        </div>  
+                    </div>
+                    <div v-if="objectives === \'f1c\'" class="row">
+                        <div class="col-md">
+                            <div class="select-wrapper">
+                                <span id="before-select"><i class="fa fa-plus"></i> </span>
+                                <select @change="resourceSelected" class="" id="modal_strategy-select" class="">
+                                    <option :selected="true" disabled value="default">Wählen Sie Themen, Materialien und Aktivitäten</option>
+                                    <option v-for="s in availableResources" :value="s.id">{{ s.name }}</option>
+                                </select>
+                            </div> 
+                        </div> 
+                    </div>
+                    <br />
+                    <div class="row row-smooth">
+                        <div class="col-md">
+                            <div>
+                                <button :disabled="objectives !== \'\' && availableTime > 0 ? false : true" @click="saveSurvey()" class="btn btn-primary btn-sm" data-dismiss="modal">Speichern</button>
+                                <button class="right btn btn-link right" data-dismiss="modal" aria-label="abbrechen">abbrechen</a>
+                            </div>
+                        </div>
+                    </div>   
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-<div class="container dc-chart" id="dc-chart">      
+<div class="container dc-chart" id="dc-chart"> 
     <div class="row">
         <!-- Milestone chart -->
         <div id="milestone-chart" class="col-12">
             <!-- Chart -->
-            <div class="chart">
+            <div class="chart ms-chart">
                 <button @click="showEmptyMilestone()" class="btn btn-sm right btn-primary ms-btn" data-toggle="modal" data-target="#theMilestoneModal"><i class="fa fa-plus"></i></button>
-                <button @click="setFilterPreset(\'last-week\')" class="btn btn-sm ms-btn right" >lw</button>
-                <button @click="setFilterPreset(\'last-month\')" class="btn btn-sm ms-btn right" >lm</button>
-                <button @click="setFilterPreset(\'semester\')" class="btn btn-sm right" >se</button>
+                <button @click="setFilterPreset(\'today\')" class="btn btn-sm ms-btn btn-link right" >heute</button>
+                <button @click="setFilterPreset(\'last-week\')" class="btn btn-sm btn-link ms-btn right" >letzte Woche</button>
+                <button @click="setFilterPreset(\'last-month\')" class="btn btn-sm btn-link ms-btn right" >letzten 4 Wochen</button>
+                <button @click="setFilterPreset(\'semester\')" class="btn btn-link btn-sm right" >WS 19/20</button>
                 <svg :width="width" :height="height+margins.top+10">
                     <g :transform="\'translate(\'+( margins.left + 10 ) +\',\'+ margins.top +\')\'">
-                        <rect v-for="m in milestones" @click="showModal(m.id)" class="milestone-learning-progress" :x="x(m.end)" :y="y(getYLane(m.id))-barheight/2" :height="barheight" :width="barwidth * m.progress" data-toggle="modal" data-target="#theMilestoneModal"></rect>
-                        <rect v-for="m in milestones" @click="showModal(m.id)" :class="\'milestone-bar milestone-\'+ m.status" :id="\'milestoneBar_\'+m.id" :x="x(m.end)" :y="y(getYLane(m.id))-barheight/2" :height="barheight" :width="barwidth" data-legend="1" data-toggle="modal" data-target="#theMilestoneModal"></rect>
-                        <text v-for="m in milestones" @click="showModal(m.id)" class="milestone-label" :x="x(m.end) + barwidth / 2" :y="y(getYLane(m.id))+4" data-toggle="modal" data-target="#theMilestoneModal">{{ m.name }}</text>
+                        <rect v-for="m in milestones" @click="showModal(m.id)" class="milestone-learning-progress" :x="xx(m.end)" :y="y(getYLane(m.id))-barheight/2" :height="barheight" :width="barwidth * m.progress" data-toggle="modal" data-target="#theMilestoneModal"></rect>
+                        <rect v-for="m in milestones" @click="showModal(m.id)" :class="\'milestone-bar milestone-\'+ m.status" :id="\'milestoneBar_\'+m.id" :x="xx(m.end)" :y="y(getYLane(m.id))-barheight/2" :height="barheight" :width="barwidth" data-legend="1" data-toggle="modal" data-target="#theMilestoneModal"></rect>
+                        <text v-for="m in milestones" @click="showModal(m.id)" class="milestone-label" :x="xx(m.end) + barwidth / 2" :y="y(getYLane(m.id))+4" data-toggle="modal" data-target="#theMilestoneModal">{{ limitTextLength( m.name, 14 ) }}</text>
                     </g>
                 </svg>
             </div>
-            <div id="theMilestoneModal" v-if="modalVisible" class="modal fade" tabindex="-1" role="dialog">
-                <div class="modal-dialog modal-lg" role="document">
+
+            <!-- Modal milestone window -->
+            <div id="theMilestoneModal" class="modal" tabindex="-1" role="dialog">
+                <div v-if="modalVisible" class="modal-dialog modal-lg" role="document">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title" id="MilestoneModalLabel" v-text="getSelectedMilestone().name"></h5>
-                                <button @click="$emit(\'close\')" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <div class="modal-header-completion" :style="\'width:\'+ (getSelectedMilestone().progress * 100) +\'%;\'"></div>
+                                <h5 class="modal-title" id="MilestoneModalLabel">Meilenstein: {{ getSelectedMilestone().name }}</h5>
+                                <span v-if="getSelectedMilestone().name !== \'\'">
+                                    <i @click="removeMilestone()" class="fa fa-trash ms-remove"></i>
+                                </span>
+                                <button @click="closeModal()" type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                                 </button>
                             </div>
                             <div class="modal-body">
                                 <div class="form-group row">
-                                    <label for="inputMSname" class="col-sm-2 col-form-label">Name</label>
+                                    <label for="inputMSname" class="col-sm-2 col-form-label">Name *</label>
                                     <div class="col-sm-10">
                                     <input v-model="getSelectedMilestone().name" type="text" class="form-control" id="inputMSname" placeholder="Name des Meilensteins">
                                     </div>
                                 </div>
                                 <div class="form-group row">
-                                    <label for="inputObjectic" class="col-sm-2 col-form-label">Lernziel</label>
+                                    <label for="inputObjectic" class="col-sm-2 col-form-label">Lernziel *</label>
                                     <div class="col-sm-10">
                                     <input v-model="getSelectedMilestone().objective" type="text" class="form-control" id="inputLearningObjective" placeholder="Welches Lernziel verfolgen Sie?">
                                     </div>
                                 </div>
                                 <div class="form-group row">
-                                    <label for="inputObjectic" class="col-2 col-form-label">Termin</label>
-                                    <div class="col-1">
+                                    <label for="inputObjectic" class="col-2 col-form-label">Termin *</label>
+                                    <div class="col-4">
                                     <select @change="daySelected" id="select_day" :class="dayInvalid == true ? \' red-border \' : \'\'">
-                                        <option v-for="d in dayRange()" :selected="d==(new Date()).getDate()">{{ d }}</option>
+                                        <option v-for="d in dayRange()" :selected="d==(new Date(getSelectedMilestone().end)).getDate()">{{ d }}</option>
                                     </select>
-                                    </div>
-                                    <div class="col-1">
+                                    
                                     <select @change="monthSelected" id="select_month">
-                                        <option v-for="d in monthRange()" :selected="d-1 === (new Date()).getMonth()">{{ d }}</option>
+                                        <option v-for="d in monthRange()" :selected="d.num-1 === (new Date(getSelectedMilestone().end)).getMonth()" :value="d.num">{{ d.name }}</option>
                                     </select>
-                                    </div>
-                                    <div class="col-1">
+                                    
                                     <select @change="yearSelected" id="select_year">
                                         <option v-for="d in yearRange()" :selected="d === (new Date()).getFullYear()">{{ d }}</option>
                                     </select>
@@ -126,10 +241,12 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                                         <ul>
                                             <li v-for="s in getSelectedMilestone().resources" class="form-check">
                                                 <label class="form-check-label" for="defaultCheck1">
-                                                    <input class="form-check-input" type="checkbox" value="" id="resourceCheck">
-                                                    {{ s.name }} 
-                                                    <i class="fa fa-info"></i>
-                                                    <i class="fa fa-close left" @click="resourceRemove(s.id)"></i>
+                                                    <input class="form-check-input" type="checkbox" v-model="s.checked" v-bind:id="s.id">
+                                                    <a :href="getMoodlePath() + \'/mod/\' + s.instance_type + \'/view.php?id=\'+ s.instance_url_id">{{ s.name }}</a>
+                                                    <!--<i class="fa fa-info"></i>-->
+                                                    <span class="remove-btn">
+                                                        <i class="fa fa-trash left" @click="resourceRemove(s.id)"></i>
+                                                    </span>
                                                 </label>
                                             </li>
                                         </ul>
@@ -140,9 +257,11 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                                             <li v-for="s in getSelectedMilestone().strategies" class="form-check">
                                                 <label class="form-check-label" for="defaultCheck1">
                                                     <input class="form-check-input" type="checkbox" value="" id="strategyCheck">
-                                                    {{ s.name }} 
+                                                    {{ s.name }}
                                                     <i class="fa fa-info"></i>
-                                                    <i class="fa fa-close left" @click="strategyRemove(s.id)"></i>
+                                                    <span class="remove-btn">
+                                                        <i class="fa fa-trash" @click="strategyRemove(s.id)"></i>
+                                                    </span>
                                                 </label>
                                             </li>
                                         </ul>
@@ -155,7 +274,7 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                                         <div class="select-wrapper">
                                             <span id="before-select"><i class="fa fa-plus"></i> </span>
                                             <select @change="resourceSelected" class="" id="modal_strategy-select" class="">
-                                                <option :selected="true" disabled value="default">Lernressource</option>
+                                                <option :selected="true" disabled value="default">Lernressource *</option>
                                                 <option v-for="s in resources" :value="s.id">{{ s.name }}</option>
                                             </select>
                                         </div> 
@@ -181,19 +300,43 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                                         </div>    
                                     </div>
                                     <div class="col-md">
-                                        <button disabled class="btn btn-primary">Reflexion beginnen</button>
+                                        <button @click="toggleReflectionsForm()" :class="getSelectedMilestone().progress === 1 && ! reflectionsFormVisisble ? \'btn btn-primary\' : \'btn disabled\'">Reflexion beginnen</button>
                                     </div>
                                 </div>
                                 <!-- Save new milestone-->
                                 <div class="row row-smooth">
                                     <div class="col-md">
                                         <div v-if="selectedMilestone == -1">
-                                            <button @click="saveMilestone" class="btn btn-default btn-sm" data-dismiss="modal">Speichern</button>
+                                            <button
+                                                :disabled="validateMilestoneForm() ? false : true"
+                                                @click="createMilestone" 
+                                                class="btn btn-default btn-sm" 
+                                                data-dismiss="modal">
+                                                Speichern
+                                            </button>
                                             <!--<button class="right btn btn-link" data-dismiss="modal" aria-label="abbrechen">abbrechen</a>-->
-                                            <button class="right btn btn-link red" aria-label="entfernen">entfernen</a>
+                                            <!--<button class="right btn btn-link red" data-dismiss="modal" ria-label="entfernen">entfernen</a>-->
                                         </div>
                                     </div>
                                 </div>
+                                <!-- Reflection form -->
+                                <div v-if="reflectionsFormVisisble" class="ms-reflection">
+                                    <hr />
+                                    <h5>Reflexion des Meilenstein {{ getSelectedMilestone().name }}</h5>
+                                    <div class="form-group row">
+                                        <label class="col-sm-12 col-form-label" for="ref0">Eine zweite Reflexionsfrage</label>
+                                        <div class="col-sm-12">
+                                            <textarea v-model="getSelectedMilestone().reflections[0]" class="orm-control" id="ref0" rows="2"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="col-sm-12 col-form-label" for="ref1">Eine zweite Reflexionsfrage</label>
+                                        <div class="col-sm-12">
+                                            <textarea v-model="getSelectedMilestone().reflections[1]" cass="form-control" id="ref1" rows="2"></textarea>
+                                        </div>    
+                                    </div>
+                                </div>
+                                <button v-if="reflectionsFormVisisble" class="btn btn-default btn-sm" data-dismiss="modal">Reflexion abschließen</button>
                             </div>
                         </div>
                     </div>

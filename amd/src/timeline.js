@@ -21,18 +21,19 @@ define([
      * @param dc (Object) Dimensional Javascript Charting Library
      * @param utils (Object) Custome util class
      */
-    let Timeline = function (Vue, d3, dc, crossfilter, moment, bselect, utils) {
+    let Timeline = function (Vue, d3, dc, crossfilter, moment, sortable, bselect, utils) {
 
         //const vuemilestone = new Milestones(d3);
 
         const color_range = ['yellow', 'blue', 'purple', 'red', 'orange', 'green', 'black'];
-        const color_ms_status_range = ["#ffa500", "#ff0000", "#008000", "#008000", "#0000ff"];
+        const color_ms_status_range = ["#ffa500", "ff420e", "#80bd9e", "#89da59", "#004C97"];
+        //["#ffa500", "#ff0000", "#008000", "#008000", "#0000ff"];
         const label = {
             'mod_forum': 'Forum',
             'mod_glossary': 'Glossar',
             'mod_wiki': 'Wiki',
-            'mod_assignment': 'EA',
-            'mod_studentquiz': 'SQ',
+            'mod_assignment': 'Aufgabe',
+            'mod_studentquiz': 'StudentQuiz',
             'mod_quiz': 'Quiz'
         };
         let action_types = Object.keys(label); //['mod_glossary', 'mod_forum', 'mod_wiki'];
@@ -233,13 +234,118 @@ define([
                  }
              });*/
 
+            let surveyForm = new Vue({
+                el: '#planningsurvey',
+                data: function(){
+                    return {
+                        modalSurveyVisible:false,
+                        objectives: '',
+                        availableTime: 0,
+                        selectedMonth:0,
+                        selectedYear:0,
+                        resources: [],
+                        availableResources: [],
+                    };
+                },
+                mounted: function () {
+                    // obtain course structure form DB
+                    let _this = this;
+                    utils.get_ws('coursestructure', {
+                        courseid: parseInt(course.id, 10)
+                    }, function (e) {
+                        try {
+                            //let r = JSON.parse(e.data);
+
+                            _this.availableResources = JSON.parse(e.data);
+                        } catch (e) {
+                            console.error(e);
+                        }
+                    });
+                },
+                methods: {
+                    showModal: function (e) {
+                        this.modalSurveyVisible = true;
+                    },
+                    closeModal: function (e) {
+                        this.modalSurveyVisible = false;
+                    },
+                    monthRange: function () {
+                        return [...Array(13).keys()].slice(1, 13);
+                    },
+                    yearRange: function () {
+                        return [2019, 2020, 2021, 2022]; // xxx should become a plugin setting
+                    },
+                    monthSelected: function (event) {
+                        this.selectedMonth = event.target.value;
+                    },
+                    yearSelected: function (event) {
+                        this.selectedYear = event.target.value;
+                    },
+                    resourceById: function (id) {
+                        return this.availableResources.filter(function (s) {
+                            return parseInt(s.id, 10) === parseInt(id, 10) ? true : false;
+                        })[0];
+                    },
+                    resourceSelected: function (event) {
+                        this.resources.push(this.resourceById(event.target.value));
+                        const el = document.getElementById('selected_resources');
+                        let sor = sortable.create(el, {});
+                    },
+                    resourceRemove: function (id) {
+                        for (let s = 0; s < this.resources.length; s++) {
+                            if (this.resources[s].id === id) {
+                                this.resources.splice(s, 1);
+                            }
+                        }
+                    },
+                    updateObjective: function(e){ console.log('lklll ',e.target)
+                        this.objectives = e.target.value;
+                    },
+                    saveSurvey:function(){
+                        const today = new Date();
+                        let milestones = [];
+                        const milestoneTemplate = {};
+                        let ms = {};
+
+                        // generate milestones automatically
+                        switch(this.objective){
+                            case 'f1a': // wants examination
+                                ms = Object.assign({}, milestoneTemplate, {});
+                                ms.name = "Prüfung / Klausur";
+                                if (this.selectedMonth !== today.getMonth() && this.selectedYear !== today.getFullYear()){
+                                    ms.end = new Date(0, this.selectedMonth, this.selectedYear);
+                                }else{
+                                    ms.end = new Date(0, 2, 2020); // last montg of the semester as default
+                                }
+                                milestones.push(ms);
+                                break;
+                            case 'f1b': // wants orientation
+                                break;
+                            case 'f1c': // wants certain topics
+                                break;
+                            case 'f1d': // doesn't want anything
+                                break;
+                        }
+                        milestoneApp.milestones.concat(milestones);
+                        // set survey as done
+                        milestoneApp.survey = true;
+                        $('.ms-chart').show(); // xxx bad jquery hack
+                        $('.survey-btn').hide();
+                    }
+                }
+            });
+            $('.ms-chart').hide(); // xxx bad jquery hack
+            $('.ms-chart').show(); // xxx bad jquery hack
+            $('.survey-btn').hide();
+            
             let milestoneApp = new Vue({
                 el: '#milestone-chart',
                 components: {
-                    //   'modal': modal
+                   // 'survey': surveyForm
                 },
                 data: function () {
                     return {
+                        survey:true,
                         chart: '',
                         xAxis: '',
                         yAxis: '',
@@ -257,6 +363,7 @@ define([
                         xmax: 0,
                         ymin: 0,
                         ymax: 0,
+                        range: [],
                         milestones: [
                             {
                                 id: 0,
@@ -265,9 +372,10 @@ define([
                                 start: '05/31/2019',
                                 end: '06/01/2019',
                                 status: 'urgent',
-                                progress: 0.10,
+                                progress: 1.00,
                                 resources: [],
-                                strategies: []
+                                strategies: [],
+                                reflections: [],
                             },
                             {
                                 id: 1,
@@ -278,19 +386,21 @@ define([
                                 status: 'progress', // progress, ready, urgent, missed, reflected
                                 progress: 0.80,
                                 resources: [],
-                                strategies: []
+                                strategies: [],
+                                reflections: [],
                             }
                         ],
                         emptyMilestone: {
                             id: 10,
                             name: '',
                             objective: '',
-                            start: '01/10/2019',
-                            end: '02/10/2019',
+                            start: '',
+                            end: '',
                             status: 'progress', // progress, ready, urgent, missed, reflected
                             progress: 0.0,
                             resources: [],
-                            strategies: []
+                            strategies: [],
+                            reflections: [],
                         },
                         selectedDay: 1,
                         selectedMonth: 1,
@@ -298,6 +408,7 @@ define([
                         dayInvalid: false,
                         selectedMilestone: 0,
                         modalVisible: false,
+                        reflectionsFormVisisble: false,
                         strategies: [
                             { id: 'mindmap', name: 'Mindmap', url: "http://www.heise.de/", category: 'relations' },
                             { id: 'flashcards', name: 'Lernkarten', url: "http://www.heise.de/", category: 'terms' },
@@ -309,11 +420,26 @@ define([
                     };
                 },
                 mounted: function () {
+                    let _this = this;
+                    this.emptyMilestone.end = new Date();
+                    this.updateMilestoneStatus();
                     this.initializeChart();
+                    window.addEventListener('keyup', function (event) {
+                        if ( event.keyCode === 27 && this.modalVisible ) {
+                            _this.closeModal();
+                        }
+                    });
                 },
                 methods: {
-                    initializeChart: function(){
+                    getMoodlePath: function(){
+                        return M.cfg.wwwroot;
+                    },
+                    initializeChart: function () {
                         let _this = this;
+                        this.range = xRange;
+                        this.selectedDay = (new Date()).getDate();
+                        this.selectedMonth = (new Date()).getMonth()+1;
+                        this.selectedYear = (new Date()).getFullYear();
                         // obtain course structure form DB
                         utils.get_ws('coursestructure', {
                             courseid: parseInt(course.id, 10)
@@ -341,7 +467,7 @@ define([
                         this.ymax = this.milestones.length;
 
                         const x = d3.scaleTime()
-                            .domain(xRange) // .x(d3.scaleTime().domain(xRange) // [this.xmin, this.xmax]
+                            .domain(this.range) // .x(d3.scaleTime().domain(xRange) // [this.xmin, this.xmax]
                             .range([0, this.width - this.padding]); // 
                         const y = d3.scaleLinear()
                             .domain([0, this.ymax])
@@ -366,18 +492,24 @@ define([
                         this.y_axis_call = this.chart.append("g").attr("class", "y axis").call(this.yAxis);
                         this.x = x;
                         this.y = y;
-                        this.updateChart(x, y, z);
+                        this.updateChart(this.range);
 
                         dc.registerChart(this.chart, mainGroup);
 
                     },
-                    getMilestones: function(){
+                    getMilestones: function () {
                         return this.milestones;
                     },
                     x: function () {
                         return d3.scaleTime()
-                            .domain(xRange) // .x(d3.scaleTime().domain(xRange) // [this.xmin, this.xmax]
+                            .domain(this.range)
                             .range([0, this.width - this.padding]); // 
+                    },
+                    xx: function(x){
+                        let x_ = d3.scaleTime()
+                            .domain(this.range) 
+                            .range([0, this.width - this.padding])(x);
+                        return x_;
                     },
                     y: function () {
                         return d3.scaleLinear()
@@ -388,29 +520,27 @@ define([
                         return d3.scaleOrdinal()
                             .range(this.colors);
                     },
-                    getYLane: function(id){
+                    getYLane: function (id) {
                         return id % 3;
                     },
-                    updateChart: function (new_x_scale, new_y_scale, z) {
-                        this.x = new_x_scale;
-                        this.y = new_y_scale;
-           
+                    updateChart: function (range) {
+                        this.range = range;
                         z = d3.scaleOrdinal()
                             .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
 
-                        this.x_axis_call.transition().duration(500).call(this.xAxis.scale(new_x_scale).ticks(10).tickFormat(multiFormat));
-                        this.y_axis_call.transition().duration(0).call(this.yAxis.scale(new_y_scale));
-                        
-                        //this.chart = d3.select('#milestone-chart .chart svg g');
-                        
+                        this.x_axis_call.transition().duration(500).call(this.xAxis.scale(d3.scaleTime()
+                            .domain(this.range)
+                            .range([0, this.width - this.padding])).ticks(10).tickFormat(multiFormat));
+                        this.y_axis_call.transition().duration(0).call(this.yAxis.scale(this.y));
+
                         // today
                         const today = new Date();
                         this.chart.selectAll(".today-line").remove();
                         this.chart.append("line")
                             .attr("class", "today-line")
-                            .attr("x1", new_x_scale(today))  //<<== change your code here
+                            .attr("x1", this.xx(today))  //<<== change your code here
                             .attr("y1", 0)
-                            .attr("x2", new_x_scale(today))  //<<== and here
+                            .attr("x2", this.xx(today))  //<<== and here
                             .attr("y2", this.height)
                             .attr("stroke-width", 2)
                             .attr("stroke", "red")
@@ -421,7 +551,7 @@ define([
                             .append("text")
                             .attr("class", "today-label")
                             .attr("y", 10)
-                            .attr("x", new_x_scale(today) + 4)
+                            .attr("x", this.xx(today) + 4)
                             .attr('text-anchor', 'right')
                             .text("heute")
                             .attr("fill", "red")
@@ -430,6 +560,7 @@ define([
                             .attr("font-family", "sans-serif")
                             .attr("font-size", "10px")
                             ;
+                        this.$forceUpdate();
                     },
                     showModal: function (e) {
                         this.selectedMilestone = e;//parseInt(e.target.id.replace('milestoneBar_', ''), 10);
@@ -437,11 +568,12 @@ define([
                     },
                     closeModal: function (e) {
                         this.modalVisible = false;
+                        this.updateMilestoneStatus();
+                        this.updateChart(this.range);
                     },
                     getSelectedMilestone: function () {
                         if (this.selectedMilestone === -1) {
-                            // xxx: set end-Date
-                            return this.emptyMilestone;
+                           return this.emptyMilestone;
                         }
                         let _this = this;
                         return this.milestones.filter(function (d) {
@@ -452,18 +584,53 @@ define([
                         this.selectedMilestone = -1;
                         this.modalVisible = true;
                     },
-                    saveMilestone: function (e) {
+                    validateMilestoneForm: function(){
+                        let valid = true;
+                        if(this.getSelectedMilestone().name.length > 0){
+                            valid=0;
+                        }
+                        if(this.getSelectedMilestone().objective.length > 0){
+                            valid = 0;
+                        }
+                        if(this.getSelectedMilestone().resources.length > 0){
+                            valid=0;
+                        }
+                        return valid;
+                    },
+                    createMilestone: function (e) {
                         this.emptyMilestone.id = Math.random() * 1000;
-                        this.emptyMilestone.end = new Date(this.selectedMonth + '/' + this.selectedDay + '/' + this.selectedYear);
+                        this.emptyMilestone.end = new Date(this.selectedYear, this.selectedMonth-1, this.selectedDay);
                         const d = new Date();
                         this.emptyMilestone.start = new Date((d.getMonth() + 1) + '/' + d.getDate() + '/' + d.getFullYear());
 
                         this.milestones.push(this.emptyMilestone);
-                        let x = d3.scaleTime().domain(xRange).range([0, width]);
+                        let x = d3.scaleTime().domain(this.range).range([0, width]);
                         let y = d3.scaleLinear().domain([0, this.ymax]).range([0, this.height]);
-                        this.updateChart(x, y);
-                        console.log(this.milestones)
+                        this.updateMilestoneStatus();
+                        this.updateChart(this.range);
                         // reset the empty milestone
+                        this.emptyMilestone = {
+                            id: 10,
+                            name: '',
+                            objective: '',
+                            start: new Date(),
+                            end: new Date(),
+                            status: 'progress', 
+                            progress: 0.0,
+                            resources: [],
+                            strategies: [],
+                            reflections: [],
+                        };
+                    },
+                    removeMilestone(){
+                        this.closeModal();
+                        $('div.modal-backdrop.show').remove();
+                        for (let s = 0; s < this.milestones.length; s++) {
+                            if (this.milestones[s].id === this.selectedMilestone) {
+                                this.milestones.splice(s, 1);
+                                this.selectedMilestone = -1;
+                            }
+                        }
                     },
                     daySelected: function (event) {
                         if ([4, 6, 9, 11].indexOf(this.selectedMonth) !== -1 && event.target.value === 31) {
@@ -479,14 +646,34 @@ define([
                             this.dayInvalid = false;
                         }
                         this.selectedDay = event.target.value;
+                        this.getSelectedMilestone().end = new Date(this.selectedYear, this.selectedMonth - 1, this.selectedDay);
                     },
-                    monthSelected: function (event) { this.selectedMonth = event.target.value; },
-                    yearSelected: function (event) { this.selectedYear = event.target.value; },
+                    monthSelected: function (event) { 
+                        this.selectedMonth = event.target.value; 
+                        this.getSelectedMilestone().end = new Date(this.selectedYear, this.selectedMonth - 1, this.selectedDay);
+                    },
+                    yearSelected: function (event) { 
+                        this.selectedYear = event.target.value; 
+                        this.getSelectedMilestone().end = new Date(this.selectedYear, this.selectedMonth - 1, this.selectedDay);
+                    },
                     dayRange: function () {
                         return [...Array(32).keys()].slice(1, 32);
                     },
                     monthRange: function () {
-                        return [...Array(13).keys()].slice(1, 13);
+                        return [
+                            { num: 1, name: 'Januar' },
+                            { num: 2, name: 'Feburar' },
+                            { num: 3, name: 'März' },
+                            { num: 4, name: 'April' },
+                            { num: 5, name: 'Mai' },
+                            { num: 6, name: 'Juni'},
+                            { num: 7, name: 'Juli' },
+                            { num: 8, name: 'August' },
+                            { num: 9, name: 'September' },
+                            { num: 10, name: 'Oktober' },
+                            { num: 11, name: 'November' },
+                            { num: 12, name: 'Dezember' },
+                        ];
                     },
                     yearRange: function () {
                         return [2019, 2020]; // xxx should become a plugin setting
@@ -507,7 +694,10 @@ define([
                         })[0];
                     },
                     strategySelected: function (event) {
-                        this.getSelectedMilestone().strategies.push(this.strategyById(event.target.value));
+                        let el = this.strategyById(event.target.value);
+                        if (this.getSelectedMilestone().strategies.indexOf(el) === -1 ){
+                            this.getSelectedMilestone().strategies.push(el);
+                        }
                     },
                     strategyRemove: function (id) {
                         for (let s = 0; s < this.getSelectedMilestone().strategies.length; s++) {
@@ -517,7 +707,10 @@ define([
                         }
                     },
                     resourceSelected: function (event) {
-                        this.getSelectedMilestone().resources.push(this.resourceById(event.target.value));
+                        let el = this.resourceById(event.target.value);
+                        if (this.getSelectedMilestone().resources.indexOf(el) === -1 ){
+                            this.getSelectedMilestone().resources.push(el);
+                        }
                     },
                     resourceRemove: function (id) {
                         for (let s = 0; s < this.getSelectedMilestone().resources.length; s++) {
@@ -526,20 +719,59 @@ define([
                             }
                         }
                     },
+                    limitTextLength : function(str, max){
+                        const len = str.length;
+                        if(len > max){
+                            return str.substr(0, max - 4) + '..' + str.substr(len-4, len);
+                        }else {
+                            return str;
+                        }
+                    },
+                    updateMilestoneStatus(){
+                        const t = new Date();
+                        for(let i=0; i < this.milestones.length; i++){
+                            let diff = moment(t).diff(moment(this.milestones[i].end), 'days'); 
+                            
+                            this.milestones[i].status = 'progress';
+                            
+                            if (diff < 3 && this.milestones[i].progress !== 1){
+                                this.milestones[i].status = 'urgent';
+                            }
+
+                            if (diff < 0 && this.milestones[i].progress !== 1) {
+                                this.milestones[i].status = 'missed';
+                            }
+
+                            if (this.milestones[i].progress === 1){
+                                this.milestones[i].status = 'ready';
+                            }
+
+                            if (this.milestones[i].progress === 1 && this.milestones[i].reflections.length > 0) {
+                                this.milestones[i].status = 'reflected';
+                            }
+                            console.log(this.milestones[i].status);
+                        }
+                    },
+                    toggleReflectionsForm: function(){
+                        this.reflectionsFormVisisble = !this.reflectionsFormVisisble; console.log(this.reflectionsFormVisisble)
+                    },
                     setFilterPreset: function (preset) {
                         let range = [];
                         const now = new Date();
                         switch (preset) {
+                            case "today":
+                                range = [new Date(now.getTime() - 1000 * 3600 * 24 * 3), new Date(now.getTime() + 1000 * 3600 * 24 * 3)];
+                                break;
                             case "last-week":
-                                range = [new Date(now.getTime() - 1000 * 3600 * 24 * 7), now];
+                                range = [new Date(now.getTime() - 1000 * 3600 * 24 * 7), new Date(now.getTime() + 1000 * 3600 * 24 * 1)];
                                 break;
                             case "last-month":
-                                range = [new Date(now.getTime() - 1000 * 3600 * 24 * 30), now];
+                                range = [new Date(now.getTime() - 1000 * 3600 * 24 * 30), new Date(now.getTime() + 1000 * 3600 * 24 * 1)];
                                 break;
-                            case "semester": // semester
+                            case "semester": 
                                 range = [new Date(2019, 9, 1, 0, 0, 0, 0), new Date(2020, 2, 31, 23, 59, 59, 0)];
                         }
-                        timeFilterChart.replaceFilter(dc.filters.RangedFilter(range[0], range[1])); //new Date(2019, 5, 9), new Date(2019, 5, 10)
+                        timeFilterChart.replaceFilter(dc.filters.RangedFilter(range[0], range[1]));
                         filterTime();
                     }
                 }
@@ -551,11 +783,11 @@ define([
             let timeFilterGroup = timeFilterDim.group().reduceCount(function (d) { return d.date; });
 
             let milestoneData = milestoneApp.getMilestones();
-            for(let i=0; i < milestoneData.length; i++){ milestoneData[i].y = i % 2 +1; }
+            for (let i = 0; i < milestoneData.length; i++) { milestoneData[i].y = i % 2 + 1; }
             const msData = crossfilter(milestoneData);
             let msFilterDim = msData.dimension(function (d) { return [d.status, d.end, d.y]; });
             let msFilterGroup = msFilterDim.group().reduceCount(function (d) { return d.end; });
-           
+
             timeFilterChart
                 .width(width)
                 .height(80)
@@ -582,6 +814,7 @@ define([
                         .colors(
                             d3.scaleOrdinal()
                                 .domain(["urgent", "missed", "progress", "ready", "refelcted"])
+                                // ["#ffa500","ff420e","#80bd9e", "#89da59", "#004C97"]
                                 .range(color_ms_status_range))
                         .colorAccessor(function (d) { return d.key[0]; })
                         .renderLabel(false)
@@ -614,22 +847,12 @@ define([
              * @param {*} chart 
              */
             function filterTime(the_chart) {
-                //xRange = [new Date(2019, 6, 9), new Date(2019, 6, 10)];
                 let range = timeFilterChart.filters()[0] === undefined ? xRange : timeFilterChart.filters()[0];
-                // filter the main chart
+                // apply filter to main chart and milestone chart
                 chart.x(d3.scaleTime().domain(range));
-
-                //
-                range = timeFilterChart.filters()[0] === undefined ? xRange : timeFilterChart.filters()[0]; // [milestoneApp.xmin, milestoneApp.xmax]
-                //console.log(xmin,xmax,range); 
-                //console.log(timeFilterChart.filters()[0])
-                let new_x_scale = d3.scaleTime().domain(range).range([0, width]);
-                let new_y_scale = d3.scaleLinear().domain([0, milestoneApp.ymax]).range([0, milestoneApp.height]);
-
-                milestoneApp.updateChart(new_x_scale, new_y_scale);
+                milestoneApp.updateChart(range);
             }
             timeFilterChart.on('filtered', filterTime);// other events: preRender, preRedraw
-
 
 
             /**
@@ -643,10 +866,7 @@ define([
 
                 timeFilterChart.width(width);//.transitionDuration(0);
                 //dc.redrawAll(mainGroup);
-                
-                
                 filterTime();
-
             };
 
             dc.renderAll();
