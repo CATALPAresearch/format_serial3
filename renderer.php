@@ -55,6 +55,10 @@ class format_ladtopics_renderer extends format_section_renderer_base {
      */
     protected function start_section_list() {
         global $CFG, $DB, $PAGE, $COURSE;
+        require_once($CFG->libdir.'/completionlib.php');
+        //$completion=new completion_info($COURSE);
+        //$rr = $completion->get_completions(3);
+        //print_r($rr);
         //print_r($COURSE);
         $content = '
         <span hidden id="courseid">'. $COURSE->id .'</span>
@@ -182,11 +186,14 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                 <button @click="setFilterPreset(\'last-week\')" class="btn btn-sm btn-link ms-btn right" >letzte Woche</button>
                 <button @click="setFilterPreset(\'last-month\')" class="btn btn-sm btn-link ms-btn right" >letzten 4 Wochen</button>
                 <button @click="setFilterPreset(\'semester\')" class="btn btn-link btn-sm right" >WS 19/20</button>
-                <svg :width="width" :height="height+margins.top+10">
+                <svg :width="width" :height="height+margins.top">
                     <g :transform="\'translate(\'+( margins.left + 10 ) +\',\'+ margins.top +\')\'">
-                        <rect v-for="m in milestones" @click="showModal(m.id)" class="milestone-learning-progress" :x="xx(m.end)" :y="y(getYLane(m.id))-barheight/2" :height="barheight" :width="barwidth * m.progress" data-toggle="modal" data-target="#theMilestoneModal"></rect>
-                        <rect v-for="m in milestones" @click="showModal(m.id)" :class="\'milestone-bar milestone-\'+ m.status" :id="\'milestoneBar_\'+m.id" :x="xx(m.end)" :y="y(getYLane(m.id))-barheight/2" :height="barheight" :width="barwidth" data-legend="1" data-toggle="modal" data-target="#theMilestoneModal"></rect>
-                        <text v-for="m in milestones" @click="showModal(m.id)" class="milestone-label" :x="xx(m.end) + barwidth / 2" :y="y(getYLane(m.id))+4" data-toggle="modal" data-target="#theMilestoneModal">{{ limitTextLength( m.name, 14 ) }}</text>
+                        <rect v-for="m in milestones" @click="showModal(m.id)" class="milestone-learning-progress" :x="xx(m.end)" :y="getYLane(m.id) * (barheight + bardist)" :height="barheight" :width="barwidth * m.progress" data-toggle="modal" data-target="#theMilestoneModal"></rect>
+                        <rect v-for="m in milestones" @click="showModal(m.id)" :class="\'milestone-bar milestone-\'+ m.status" :id="\'milestoneBar_\'+m.id" :x="xx(m.end)" :y="getYLane(m.id) * (barheight + bardist)" :height="barheight" :width="barwidth" data-legend="1" data-toggle="modal" data-target="#theMilestoneModal"></rect>
+                        <text v-for="m in milestones" @click="showModal(m.id)" class="milestone-label" :x="xx(m.end) + barwidth / 2" :y="getYLane(m.id) * (barheight + bardist) + barheight/2" data-toggle="modal" data-target="#theMilestoneModal">{{ limitTextLength( m.name, 14 ) }}</text>
+                    </g>
+                    <g class="grid-line horizontal" transform="translate(60,10)">
+                        <line v-for="m in [0,1,2]" x1="1" :y1="m * (barheight + bardist) + barheight/2" x2="1060" :y2="m * (barheight + bardist) + barheight/2" opacity="0.5"></line>
                     </g>
                 </svg>
             </div>
@@ -196,10 +203,12 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                 <div v-if="modalVisible" class="modal-dialog modal-lg" role="document">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <div class="modal-header-completion" :style="\'width:\'+ (getSelectedMilestone().progress * 100) +\'%;\'"></div>
+                                <div class="modal-header-completion" :style="\'width:\'+ (getSelectedMilestone().progress * 100) +\'%;\'">
+                                    <div class="modal-header-completion-label"> {{ (getSelectedMilestone().progress * 100) }}%</div>
+                                </div>
                                 <h5 class="modal-title" id="MilestoneModalLabel">Meilenstein: {{ getSelectedMilestone().name }}</h5>
                                 <span v-if="getSelectedMilestone().name !== \'\'">
-                                    <i @click="removeMilestone()" class="fa fa-trash ms-remove"></i>
+                                    <i @click="removeMilestone()" class="fa fa-trash ms-remove" title="Meilenstein entfernen"></i>
                                 </span>
                                 <button @click="closeModal()" type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
@@ -300,17 +309,22 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                                         </div>    
                                     </div>
                                     <div class="col-md">
-                                        <button @click="toggleReflectionsForm()" :class="getSelectedMilestone().progress === 1 && ! reflectionsFormVisisble ? \'btn btn-primary\' : \'btn disabled\'">Reflexion beginnen</button>
+                                        <button @click="toggleReflectionsForm()" 
+                                            :class="getSelectedMilestone().progress === 1 && ! reflectionsFormVisisble ? \'btn btn-primary\' : \'btn disabled\'"
+                                            :disabled="getSelectedMilestone().progress === 1 && ! reflectionsFormVisisble ? false : true"
+                                            >
+                                            Reflexion beginnen
+                                            </button>
                                     </div>
                                 </div>
                                 <!-- Save new milestone-->
                                 <div class="row row-smooth">
                                     <div class="col-md">
-                                        <div v-if="selectedMilestone == -1">
+                                        <div v-if="selectedMilestone === -1">
                                             <button
                                                 :disabled="validateMilestoneForm() ? false : true"
                                                 @click="createMilestone" 
-                                                class="btn btn-default btn-sm" 
+                                                class="btn btn-primary btn-sm" 
                                                 data-dismiss="modal">
                                                 Speichern
                                             </button>
@@ -322,7 +336,7 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                                 <!-- Reflection form -->
                                 <div v-if="reflectionsFormVisisble" class="ms-reflection">
                                     <hr />
-                                    <h5>Reflexion des Meilenstein {{ getSelectedMilestone().name }}</h5>
+                                    <h5>Reflexion des Meilenstein: {{ getSelectedMilestone().name }}</h5>
                                     <div class="form-group row">
                                         <label class="col-sm-12 col-form-label" for="ref0">Eine zweite Reflexionsfrage</label>
                                         <div class="col-sm-12">
@@ -336,7 +350,7 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                                         </div>    
                                     </div>
                                 </div>
-                                <button v-if="reflectionsFormVisisble" class="btn btn-default btn-sm" data-dismiss="modal">Reflexion abschließen</button>
+                                <button @click="submitReflections()" :disabled="validateReflectionForm() ? false : true" v-if="reflectionsFormVisisble" class="btn btn-default btn-sm" data-dismiss="modal">Reflexion abschließen</button>
                             </div>
                         </div>
                     </div>

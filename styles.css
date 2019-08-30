@@ -171,7 +171,7 @@ div.container.dc-chart{
 
 .modal-header{
     position: relative;
-    padding: 0.6rem 1.2rem;
+    padding: 0.4rem 1.2rem;
 }
 
 .modal-header h5, .modal-header span, .modal-header button {
@@ -182,9 +182,22 @@ div.container.dc-chart{
     background-color:#80bd9e;
     position: absolute;
     left:0;
-    top:0;
-    height:100%;
+    bottom:0;
+    height:25%;
     z-index:2;
+}
+.modal-header-completion-label {
+    display:none;
+    color:#fff;
+    position: absolute;
+    bottom:0;
+    right:0;
+    font-size:0.7em;
+    z-index:3;
+    padding: 0px 4px;
+}
+.modal-header-completion:hover .modal-header-completion-label {
+    display: inline;
 }
 
  select {
@@ -209,8 +222,8 @@ select#select_day, select#select_month, select#select_year {
 
 .modal .fa-plus { color: #333; }
 
-.modal .form-check-label .fa-trash { color: #777; right:0;}
-.modal .form-check-label .fa-info { color: #777; }
+.modal .form-check-label .fa-trash { color: #777; right:0; cursor: pointer;}
+.modal .form-check-label .fa-info { color: #777; cursor: pointer; }
 .modal .form-check-label .fa-info:hover { color: #111; text-align: right; }
 
 .modal .select-wrapper{
@@ -240,11 +253,28 @@ select#select_day, select#select_month, select#select_year {
 }
 
 .ms-chart {
-    padding-bottom:0; padding-top:0;
+    padding-bottom:0; 
+    padding-top:0;
+    margin:0;
+}
+
+.ms-chart .x.axis {
+    display:none;
+}
+
+svg{
+    margin-bottom:0;
+
 }
 
 .ms-remove {
     margin-left:10px;
+    font-size: 1.2em;
+    padding: 7px 8px;
+    cursor: pointer;
+}
+.ms-remove:hover {
+    color:#ff420e;
 }
 
 .ms-reflection {
@@ -309,6 +339,10 @@ select#select_day, select#select_month, select#select_year {
 
 .survey-objective-label {
     padding-left:0 !important;
+}
+
+.resource-highlight{
+    border-left:solid 5px #008FAC;
 }
 
 

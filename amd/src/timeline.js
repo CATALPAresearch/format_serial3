@@ -160,7 +160,7 @@ define([
             chart
                 .width(width)
                 .height(20 * countActionTypes)
-                .margins({ top: 10, bottom: 10, left: margins.left, right: margins.right })
+                .margins({ top: 10, bottom: 20, left: margins.left, right: margins.right })
                 .clipPadding(65)
                 .renderLabel(false)
                 .minRadius(1)
@@ -190,7 +190,7 @@ define([
                         " " + activity_types[p.value.action]
                     ].join("");
                 })
-                .xAxis(d3.axisBottom().ticks(0))
+                .xAxis(d3.axisBottom().ticks(10))
                 ;
 
             chart.on('pretransition', function () {
@@ -236,13 +236,13 @@ define([
 
             let surveyForm = new Vue({
                 el: '#planningsurvey',
-                data: function(){
+                data: function () {
                     return {
-                        modalSurveyVisible:false,
+                        modalSurveyVisible: false,
                         objectives: '',
                         availableTime: 0,
-                        selectedMonth:0,
-                        selectedYear:0,
+                        selectedMonth: 0,
+                        selectedYear: 0,
                         resources: [],
                         availableResources: [],
                     };
@@ -298,23 +298,24 @@ define([
                             }
                         }
                     },
-                    updateObjective: function(e){ console.log('lklll ',e.target)
+                    updateObjective: function (e) {
+                        console.log('lklll ', e.target)
                         this.objectives = e.target.value;
                     },
-                    saveSurvey:function(){
+                    saveSurvey: function () {
                         const today = new Date();
                         let milestones = [];
                         const milestoneTemplate = {};
                         let ms = {};
 
                         // generate milestones automatically
-                        switch(this.objective){
+                        switch (this.objective) {
                             case 'f1a': // wants examination
                                 ms = Object.assign({}, milestoneTemplate, {});
                                 ms.name = "Prüfung / Klausur";
-                                if (this.selectedMonth !== today.getMonth() && this.selectedYear !== today.getFullYear()){
+                                if (this.selectedMonth !== today.getMonth() && this.selectedYear !== today.getFullYear()) {
                                     ms.end = new Date(0, this.selectedMonth, this.selectedYear);
-                                }else{
+                                } else {
                                     ms.end = new Date(0, 2, 2020); // last montg of the semester as default
                                 }
                                 milestones.push(ms);
@@ -337,15 +338,15 @@ define([
             $('.ms-chart').hide(); // xxx bad jquery hack
             $('.ms-chart').show(); // xxx bad jquery hack
             $('.survey-btn').hide();
-            
+
             let milestoneApp = new Vue({
                 el: '#milestone-chart',
                 components: {
-                   // 'survey': surveyForm
+                    // 'survey': surveyForm
                 },
                 data: function () {
                     return {
-                        survey:true,
+                        survey: true,
                         chart: '',
                         xAxis: '',
                         yAxis: '',
@@ -355,6 +356,7 @@ define([
                         bars: '',
                         barwidth: 80,
                         barheight: 21,
+                        bardist: 3,
                         width: 730,
                         height: 70,
                         margins: {},
@@ -388,7 +390,31 @@ define([
                                 resources: [],
                                 strategies: [],
                                 reflections: [],
-                            }
+                            }/*,
+                            {
+                                id: 2,
+                                name: 'Meilenstein 3',
+                                objective: 'Mehr lernen',
+                                start: '06/01/2019',
+                                end: '06/02/2019',
+                                status: 'progress', // progress, ready, urgent, missed, reflected
+                                progress: 0.80,
+                                resources: [],
+                                strategies: [],
+                                reflections: [],
+                            },
+                            {
+                                id: 3,
+                                name: 'Meilenstein 4',
+                                objective: 'Mehr lernen',
+                                start: '06/01/2019',
+                                end: '06/02/2019',
+                                status: 'progress', // progress, ready, urgent, missed, reflected
+                                progress: 0.80,
+                                resources: [],
+                                strategies: [],
+                                reflections: [],
+                            }*/
                         ],
                         emptyMilestone: {
                             id: 10,
@@ -425,20 +451,20 @@ define([
                     this.updateMilestoneStatus();
                     this.initializeChart();
                     window.addEventListener('keyup', function (event) {
-                        if ( event.keyCode === 27 && this.modalVisible ) {
+                        if (event.keyCode === 27 && this.modalVisible) {
                             _this.closeModal();
                         }
                     });
                 },
                 methods: {
-                    getMoodlePath: function(){
+                    getMoodlePath: function () {
                         return M.cfg.wwwroot;
                     },
                     initializeChart: function () {
                         let _this = this;
                         this.range = xRange;
                         this.selectedDay = (new Date()).getDate();
-                        this.selectedMonth = (new Date()).getMonth()+1;
+                        this.selectedMonth = (new Date()).getMonth() + 1;
                         this.selectedYear = (new Date()).getFullYear();
                         // obtain course structure form DB
                         utils.get_ws('coursestructure', {
@@ -464,7 +490,7 @@ define([
                         this.xmax = d3.max(this.milestones, function (d) {
                             return d.end;
                         });
-                        this.ymax = this.milestones.length;
+                        this.ymax = 3;// this.milestones.length;
 
                         const x = d3.scaleTime()
                             .domain(this.range) // .x(d3.scaleTime().domain(xRange) // [this.xmin, this.xmax]
@@ -486,7 +512,7 @@ define([
 
                         // Adds the svg canvas
                         this.chart = d3.select('#milestone-chart .chart svg g');
-
+                        
                         // Add the Axis
                         this.x_axis_call = this.chart.append("g").attr("class", "x axis").attr("transform", "translate(0," + this.height + ")").call(this.xAxis);
                         this.y_axis_call = this.chart.append("g").attr("class", "y axis").call(this.yAxis);
@@ -505,9 +531,9 @@ define([
                             .domain(this.range)
                             .range([0, this.width - this.padding]); // 
                     },
-                    xx: function(x){
+                    xx: function (x) {
                         let x_ = d3.scaleTime()
-                            .domain(this.range) 
+                            .domain(this.range)
                             .range([0, this.width - this.padding])(x);
                         return x_;
                     },
@@ -563,6 +589,7 @@ define([
                         this.$forceUpdate();
                     },
                     showModal: function (e) {
+                        this.reflectionsFormVisisble = this.getSelectedMilestone().status === 'reflected' ? true : false;
                         this.selectedMilestone = e;//parseInt(e.target.id.replace('milestoneBar_', ''), 10);
                         this.modalVisible = true;
                     },
@@ -570,10 +597,15 @@ define([
                         this.modalVisible = false;
                         this.updateMilestoneStatus();
                         this.updateChart(this.range);
+                        // highlight selected activities
+                        for (let i = 0; i < this.getSelectedMilestone().resources.length; i++) {
+                            console.log(this.getSelectedMilestone().resources[i].instance_url_id)
+                            $('#module-' + this.getSelectedMilestone().resources[i].instance_url_id).addClass('resource-highlight');
+                        }
                     },
                     getSelectedMilestone: function () {
                         if (this.selectedMilestone === -1) {
-                           return this.emptyMilestone;
+                            return this.emptyMilestone;
                         }
                         let _this = this;
                         return this.milestones.filter(function (d) {
@@ -584,22 +616,22 @@ define([
                         this.selectedMilestone = -1;
                         this.modalVisible = true;
                     },
-                    validateMilestoneForm: function(){
+                    validateMilestoneForm: function () {
                         let valid = true;
-                        if(this.getSelectedMilestone().name.length > 0){
-                            valid=0;
+                        if (this.getSelectedMilestone().name.length === 0) {
+                            valid = false;
                         }
-                        if(this.getSelectedMilestone().objective.length > 0){
-                            valid = 0;
+                        if (this.getSelectedMilestone().objective.length === 0) {
+                            valid = false;
                         }
-                        if(this.getSelectedMilestone().resources.length > 0){
-                            valid=0;
+                        if (this.getSelectedMilestone().resources.length === 0) {
+                            valid = false;
                         }
                         return valid;
                     },
                     createMilestone: function (e) {
                         this.emptyMilestone.id = Math.random() * 1000;
-                        this.emptyMilestone.end = new Date(this.selectedYear, this.selectedMonth-1, this.selectedDay);
+                        this.emptyMilestone.end = new Date(this.selectedYear, this.selectedMonth - 1, this.selectedDay);
                         const d = new Date();
                         this.emptyMilestone.start = new Date((d.getMonth() + 1) + '/' + d.getDate() + '/' + d.getFullYear());
 
@@ -615,14 +647,14 @@ define([
                             objective: '',
                             start: new Date(),
                             end: new Date(),
-                            status: 'progress', 
+                            status: 'progress',
                             progress: 0.0,
                             resources: [],
                             strategies: [],
                             reflections: [],
                         };
                     },
-                    removeMilestone(){
+                    removeMilestone() {
                         this.closeModal();
                         $('div.modal-backdrop.show').remove();
                         for (let s = 0; s < this.milestones.length; s++) {
@@ -648,12 +680,12 @@ define([
                         this.selectedDay = event.target.value;
                         this.getSelectedMilestone().end = new Date(this.selectedYear, this.selectedMonth - 1, this.selectedDay);
                     },
-                    monthSelected: function (event) { 
-                        this.selectedMonth = event.target.value; 
+                    monthSelected: function (event) {
+                        this.selectedMonth = event.target.value;
                         this.getSelectedMilestone().end = new Date(this.selectedYear, this.selectedMonth - 1, this.selectedDay);
                     },
-                    yearSelected: function (event) { 
-                        this.selectedYear = event.target.value; 
+                    yearSelected: function (event) {
+                        this.selectedYear = event.target.value;
                         this.getSelectedMilestone().end = new Date(this.selectedYear, this.selectedMonth - 1, this.selectedDay);
                     },
                     dayRange: function () {
@@ -666,7 +698,7 @@ define([
                             { num: 3, name: 'März' },
                             { num: 4, name: 'April' },
                             { num: 5, name: 'Mai' },
-                            { num: 6, name: 'Juni'},
+                            { num: 6, name: 'Juni' },
                             { num: 7, name: 'Juli' },
                             { num: 8, name: 'August' },
                             { num: 9, name: 'September' },
@@ -695,7 +727,7 @@ define([
                     },
                     strategySelected: function (event) {
                         let el = this.strategyById(event.target.value);
-                        if (this.getSelectedMilestone().strategies.indexOf(el) === -1 ){
+                        if (this.getSelectedMilestone().strategies.indexOf(el) === -1) {
                             this.getSelectedMilestone().strategies.push(el);
                         }
                     },
@@ -708,7 +740,7 @@ define([
                     },
                     resourceSelected: function (event) {
                         let el = this.resourceById(event.target.value);
-                        if (this.getSelectedMilestone().resources.indexOf(el) === -1 ){
+                        if (this.getSelectedMilestone().resources.indexOf(el) === -1) {
                             this.getSelectedMilestone().resources.push(el);
                         }
                     },
@@ -719,22 +751,22 @@ define([
                             }
                         }
                     },
-                    limitTextLength : function(str, max){
+                    limitTextLength: function (str, max) {
                         const len = str.length;
-                        if(len > max){
-                            return str.substr(0, max - 4) + '..' + str.substr(len-4, len);
-                        }else {
+                        if (len > max) {
+                            return str.substr(0, max - 4) + '..' + str.substr(len - 4, len);
+                        } else {
                             return str;
                         }
                     },
-                    updateMilestoneStatus(){
+                    updateMilestoneStatus() {
                         const t = new Date();
-                        for(let i=0; i < this.milestones.length; i++){
-                            let diff = moment(t).diff(moment(this.milestones[i].end), 'days'); 
-                            
+                        for (let i = 0; i < this.milestones.length; i++) {
+                            let diff = moment(t).diff(moment(this.milestones[i].end), 'days');
+
                             this.milestones[i].status = 'progress';
-                            
-                            if (diff < 3 && this.milestones[i].progress !== 1){
+
+                            if (diff < 3 && this.milestones[i].progress !== 1) {
                                 this.milestones[i].status = 'urgent';
                             }
 
@@ -742,7 +774,7 @@ define([
                                 this.milestones[i].status = 'missed';
                             }
 
-                            if (this.milestones[i].progress === 1){
+                            if (this.milestones[i].progress === 1) {
                                 this.milestones[i].status = 'ready';
                             }
 
@@ -752,8 +784,21 @@ define([
                             console.log(this.milestones[i].status);
                         }
                     },
-                    toggleReflectionsForm: function(){
+                    toggleReflectionsForm: function () {
                         this.reflectionsFormVisisble = !this.reflectionsFormVisisble; console.log(this.reflectionsFormVisisble)
+                    },
+                    validateReflectionForm: function () {
+                        let valid = true;
+                        let r = this.getSelectedMilestone().reflections;
+                        for (let i = 0; i < r.length; i++) {
+                            if (r[i].length === 0) {
+                                valid = false;
+                            }
+                        }
+                        return r.length === 2 ? valid : false;
+                    },
+                    submitReflections: function () {
+                        this.getSelectedMilestone().status = 'reflected';
                     },
                     setFilterPreset: function (preset) {
                         let range = [];
@@ -768,7 +813,7 @@ define([
                             case "last-month":
                                 range = [new Date(now.getTime() - 1000 * 3600 * 24 * 30), new Date(now.getTime() + 1000 * 3600 * 24 * 1)];
                                 break;
-                            case "semester": 
+                            case "semester":
                                 range = [new Date(2019, 9, 1, 0, 0, 0, 0), new Date(2020, 2, 31, 23, 59, 59, 0)];
                         }
                         timeFilterChart.replaceFilter(dc.filters.RangedFilter(range[0], range[1]));
