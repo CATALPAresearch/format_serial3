@@ -1,7 +1,0 @@
-0000000000000000000000000000000000000000 d7080de8ab645c66a812eb81e7a789fd9888cfb9 nise <niels.seidel@nise81.com> 1560420556 +0200	commit (initial): Initial commit
-d7080de8ab645c66a812eb81e7a789fd9888cfb9 e6613ffd30b0ec8c8e952763f97ae51a247fccc7 nise <niels.seidel@nise81.com> 1560936919 +0200	commit: D3v4 upgrade
-e6613ffd30b0ec8c8e952763f97ae51a247fccc7 798dd5f303f50c5cc496d7bfe8ec41f05939f3de nise <niels.seidel@nise81.com> 1563915359 +0200	commit: Tests for including vue
-798dd5f303f50c5cc496d7bfe8ec41f05939f3de 0596b4e8094f07cd139293767a891373a604cabd nise <niels.seidel@nise81.com> 1564479149 +0200	commit: Basisc Added time range filter to d3 and dc charts;
-0596b4e8094f07cd139293767a891373a604cabd e7b757a92931079ff49b650ac86988fa2d48302f nise <niels.seidel@nise81.com> 1564479170 +0200	commit: Basis framework setup and dependency settings
-e7b757a92931079ff49b650ac86988fa2d48302f f2f34a95472bc3684a148cc04eb60374e3a22c7f nise <niels.seidel@nise81.com> 1564672900 +0200	commit: Improved timeline navigation
-f2f34a95472bc3684a148cc04eb60374e3a22c7f fe73d5c637cc5e09edccd65d545988f29a4fa3a4 nise <niels.seidel@nise81.com> 1564672921 +0200	commit: Added instructions to get started with the plugin

@@ -25,7 +25,7 @@ define([
 
         //const vuemilestone = new Milestones(d3);
 
-        const color_range = ['yellow', 'blue', 'purple', 'red', 'orange', 'green', 'black'];
+        const color_range = ['#004C97', '#004C97', '#004C97', '#004C97', '#004C97', '#004C97', '#004C97']//['yellow', 'blue', 'purple', 'red', 'orange', 'green', 'black'];
         const color_ms_status_range = ["#ffa500", "ff420e", "#80bd9e", "#89da59", "#004C97"];
         //["#ffa500", "#ff0000", "#008000", "#008000", "#0000ff"];
         const label = {
@@ -39,7 +39,7 @@ define([
         let action_types = Object.keys(label); //['mod_glossary', 'mod_forum', 'mod_wiki'];
         const activity_types = { 'viewed': 'betrachtet', 'updates': 'bearbeitet', 'deleleted': 'gelöscht', 'created': 'erstellt' };
         let width = document.getElementById('dc-chart').offsetWidth;
-        const margins = { top: 15, right: 20, bottom: 20, left: 60 };
+        const margins = { top: 15, right: 10, bottom: 20, left: 10 };
         const course = {
             id: $('#courseid').text()/*,
             module: parseInt($('#moduleid').html())*/
@@ -148,6 +148,8 @@ define([
             xRange[1] = moment(xRange[1]).isSameOrBefore(new Date()) ? new Date() : xRange[1];
             console.log(xRange);
 
+            const maxRadius = d3.max(mainGroup.all(), function (d) { return d.value.count; });
+
             let colorBand = d3.scaleOrdinal().domain(action_types).range(color_range);
             let aa = [];
             for (let i = 0; i < the_data.length; i++) {
@@ -164,6 +166,7 @@ define([
                 .clipPadding(65)
                 .renderLabel(false)
                 .minRadius(1)
+                //.r([0,4])
                 .maxBubbleRelativeSize(0.3)
                 .x(d3.scaleTime().domain(xRange).range([0, width]))
                 //.y(d3.scale.ordinal().range([0,3]))
@@ -178,9 +181,9 @@ define([
                     return p.value.action_type;
                 })
                 .radiusValueAccessor(function (p) {
-                    return p.value.count;
+                    return p.value.count / maxRadius;
                 })
-                .colorAccessor(function (kv) { return kv.value.action_type; })
+                //.colorAccessor(function (kv) { return kv.value.action_type; })
                 .colors(colorBand)
                 .title(function (p) {
                     return [
@@ -192,6 +195,8 @@ define([
                 })
                 .xAxis(d3.axisBottom().ticks(10))
                 ;
+
+            chart.selectAll('.axis.y .tick').attr('transform', "translate(50,0)");
 
             chart.on('pretransition', function () {
                 //chart.select('g.x').attr('transform', 'translate(0,0)');
@@ -365,6 +370,7 @@ define([
                         xmax: 0,
                         ymin: 0,
                         ymax: 0,
+                        done:[],
                         range: [],
                         milestones: [
                             {
@@ -436,11 +442,22 @@ define([
                         modalVisible: false,
                         reflectionsFormVisisble: false,
                         strategies: [
-                            { id: 'mindmap', name: 'Mindmap', url: "http://www.heise.de/", category: 'relations' },
-                            { id: 'flashcards', name: 'Lernkarten', url: "http://www.heise.de/", category: 'terms' },
-                            { id: 'exerp', name: 'Exzerpieren', url: "http://www.heise.de/", category: 'relations' },
-                            { id: 'repeat', name: 'Wiederholung', url: "http://www.heise.de/", category: 'terms' },
-                            { id: 'group', name: 'Gruppenarbeit', url: "http://www.heise.de/", category: 'misc' }
+                            { id: 'mindmap', name: 'Mindmap', desc:'Eine Mindmap hilft dabei, Zusammenhänge darzustellen.', url: "http://www.heise.de/", category: 'organization' },
+                            { id: 'exzerpte', name: 'Exzerpt', desc: 'Ein Exzerpt ist mehr als nur eine einfache Zusammenfassung der wichtigsten Inhalte.', url: "http://www.heise.de/", category: 'organization' },
+                            { id: 'gliederung', name: 'Gliederung', desc: 'Themenfelder lassen sich mit einer Gliederung übersichtlich strukturieren.', url: "http://www.heise.de/", category: 'organization' },
+                            { id: 'strukturierung', name: 'Strukturierung von Wissen', desc: 'Fachausdrücke oder Definitionen lassen sich gut in Listen oder Tabellen sammeln.', url: "http://www.heise.de/", category: 'organization' },
+
+                            { id: 'transfer', name: 'Übertragung von neuem Wissen auf bekannte Schemata', desc: 'Neues Wissen kann durch die Verknüpfung mit dem eigenen Erleben leichter veranschaulicht und gelernt werden.', url: "http://www.heise.de/", category: 'elaboration' },
+                            { id: 'examples', name: 'Beispiel aus dem Alltag/Arbeitsumfeld für neue Schemata', desc: 'Ein Beispiel aus dem eigenen Umfeld hilft dabei, neue Wissensschemata schneller zu lernen.', url: "http://www.heise.de/", category: 'elaboration' },
+                            { id: 'critical', name: 'kritisches Hinterfragen', desc: 'Durch kritisches Hinterfragen kann man seine Aufmerksamkeit beim Lesen steigern.', url: "http://www.heise.de/", category: 'elaboration' },
+                            { id: 'structuring', name: 'Bezug zu anderen Fächern herstellen', desc: 'Bekanntes Wissen und Bezüge zu anderen Kursen erleichtern das Verständnis von Zusammenhängen.', url: "http://www.heise.de/", category: 'elaboration' },
+                            { id: 'pq4r', name: 'PQ4R-Methode', desc: 'Hinter dem Kürzel verstecken sich sechs Schritte: (1) Preview – Übersicht gewinnen; (2) Questions – Fragen an den Text stellen;  (3) Read – Zweiter Leseschritt - Gründliches Lesen des Textes; (4) Reflect – Gedankliche Auseinandersetzung mit dem Text; (5) Recite – Wiederholen und aus dem Gedächtnis Verfassen; (6) Review – Rückblick und Überprüfung', url: "http://www.heise.de/", category: 'elaboration' },
+
+                            { id: 'flashcards', name: 'Systematisches Wiederholen mit der Lernkartei', desc: 'Mit Lernkarten kann man Dinge systematisch wiederholen bis alles für die Prüfung sitzt. ', url: "http://www.heise.de/", category: 'repeatition' },
+                            { id: 'repeatition', name: 'Repetieren', desc: 'Mit vielen Wiederholungen festigt sich das Wissen. ', url: "http://www.heise.de/", category: 'repeatition' },
+                            { id: 'assoc', name: 'Eselsbrücken als Erinnerungshilfe', desc: 'Mit einem Reim oder einer Eselsbrücke kann man sich Begriffe oder Reihenfolgen leichter merken.', url: "http://www.heise.de/", category: 'repeatition' },
+                            { id: 'loci', name: 'Loci Methode', desc: 'Bei der Loci Methode verknüpft man Lerninhalte mit Orten oder Gegenständen. Für Abfolgen übt man eine Strecke/einen Spaziergang ein.', url: "http://www.heise.de/", category: 'repeatition' }
+
                         ],
                         resources: []
                     };
@@ -795,7 +812,7 @@ define([
                                 valid = false;
                             }
                         }
-                        return r.length === 2 ? valid : false;
+                        return r.length === 4 ? valid : false;
                     },
                     submitReflections: function () {
                         this.getSelectedMilestone().status = 'reflected';
@@ -822,8 +839,12 @@ define([
                 }
             });
 
-
+            
             // FILTER CHART
+            const semesterLimit = crossfilter([{ date: new Date(2019, 9, 1), y: 1 }, { date: new Date(2020, 2, 31), y: 1 }]);
+            let timeFilterLimitDim = semesterLimit.dimension(function (d) { return d.date; });
+            let timeFilterLimitGroup = timeFilterLimitDim.group().reduceCount(function (d) { return [0, d.date, 1]; });
+
             let timeFilterDim = facts.dimension(function (d) { return d.date; });
             let timeFilterGroup = timeFilterDim.group().reduceCount(function (d) { return d.date; });
 
@@ -838,6 +859,22 @@ define([
                 .height(80)
                 .margins({ top: 10, bottom: 10, left: margins.left - 10, right: margins.right })
                 .compose([
+                    dc.barChart(timeFilterChart)
+                        .dimension(timeFilterLimitDim)
+                        .group(timeFilterLimitGroup)
+                        /*.keyAccessor(function (p) {
+                            return p.key[1];
+                        })
+                        .valueAccessor(function (p) {
+                            return p.key[2];
+                        })
+                        .radiusValueAccessor(function (p) {
+                            return 0.4;
+                        })*/
+                        ,
+                        //.barPadding(0)
+                        //.gap(0)
+                        //.alwaysUseRounding(true),
                     dc.barChart(timeFilterChart)
                         .dimension(timeFilterDim)
                         .group(timeFilterGroup)
@@ -874,7 +911,7 @@ define([
                 //.ticks(d3.timeWeeks, 4)
                 //.tickFormat(formatWeekNum)
                 ;
-
+            
             timeFilterChart.xAxis(d3.axisTop().ticks(10));
             timeFilterChart.xAxis().tickFormat(multiFormat);
             timeFilterChart
@@ -883,7 +920,8 @@ define([
                 .ticks(2)
                 ;
             timeFilterChart.x(d3.scaleTime().domain(xRange).range([0, width]));
-
+            
+            
 
 
             /**
@@ -906,6 +944,7 @@ define([
             window.onresize = function (event) {
                 width = document.getElementById('dc-chart').offsetWidth;
                 milestoneApp.width = width - margins.right;
+                //milestoneApp.width(width);
                 chart.width(width).transitionDuration(0);
                 chart.group(mainGroup);
 
@@ -915,6 +954,21 @@ define([
             };
 
             dc.renderAll();
+            var t = d3.select('#filter-chart svg');
+            var g = t.insert('g',':first-child')
+                .attr('transform', 'translate(' + 0 + ', ' + 10 + ')')
+                .append('rect', ':first-child')
+                    .attr('class', 'filter-background')
+                    .attr('width', '100%') 
+                    .attr('height', 58 )
+                ;
+            /* xxx 
+                t.select('.y')
+                .attr('transform','translate(100,10)');
+            
+                t.selectAll('g.y    g.tick text')
+                .attr('text-anchor', 'start');
+                */
         };// end draw
     };// end Timeline
 

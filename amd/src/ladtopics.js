@@ -18,7 +18,6 @@ define([
             baseUrl: M.cfg.wwwroot + "/course/format/ladtopics/lib/",
             paths: {
                 "vue259": ["https://cdn.jsdelivr.net/npm/vue@2.5.9/dist/vue", "vue"],
-                // "vuetreeselect": [ "vue-treeselect.min" ],
                 "crossfilter": ["crossfilter"],
                 "d3": ["d3.v4.min"],
                 "dc": ["dc.v3"],
@@ -42,10 +41,6 @@ define([
                 "sortable110":{
                     exports: 'Sortable'
                 },
-                /*'vuetreeselect': {
-                    deps: ['vue259'],
-                    exports: 'VueTreeselect'
-                },*/
                 'crossfilter': {
                     exports: 'crossfilter'
                 },

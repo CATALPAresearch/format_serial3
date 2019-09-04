@@ -35,8 +35,8 @@ define(['jquery', 'core/ajax'], function ($, ajax) {
                     }
                 },
                 fail: function (e) {
-                    console.log(params);
-                    console.error(ws, e);
+                    console.log(params, ws);
+                    console.error(e);
                 }
             }]);
         };
