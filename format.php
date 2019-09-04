@@ -60,8 +60,6 @@ course_create_sections_if_missing($course, 0);
 //$PAGE->requires->css( '/course/format/ladtopics/styles.css', true );
 //echo $OUTPUT->header();
 
-// get log data
-
 //
 $PAGE->requires->js_call_amd('format_ladtopics/ladtopics', 'init');//, array(array('data'=>$arr, 'user'=>$user_data)));
 

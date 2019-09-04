@@ -55,16 +55,17 @@ class format_ladtopics_external extends external_api {
         global $CFG, $DB, $USER;
 
         $transaction = $DB->start_delegated_transaction(); 
-        $query ='SELECT * FROM ' . $CFG->prefix . 'logstore_standard_log WHERE userid=' . $USER->id . ' AND 
+        $query ='SELECT * FROM ' . $CFG->prefix . 'logstore_standard_log 
+            WHERE userid=' . $USER->id . ' AND 
         ( 
-            component="mod_glossary" OR 
-            component="mod_forum" OR
-            component="mod_wiki" OR
-            component="mod_studentquiz" OR
-            component="mod_assignment" OR
-            component="mod_quiz"
+            component=\'mod_glossary\' OR 
+            component=\'mod_forum\' OR
+            component=\'mod_wiki\' OR
+            component=\'mod_studentquiz\' OR
+            component=\'mod_assignment\' OR
+            component=\'mod_quiz\'
         );';
-        $data = $DB->get_records_sql($query);//($table, array('userid'=>'2', 'component'=>'mod_glossary'));//, '','*',0,100);
+        $data = $DB->get_records_sql($query);
         $transaction->allow_commit();
         $arr=array();
         foreach($data as $bu){
@@ -181,13 +182,13 @@ class format_ladtopics_external extends external_api {
         cm.section AS section_id, 
         cs.name AS section_name
         FROM ' . $CFG->prefix . 'course_modules AS cm
-        JOIN ' . $CFG->prefix . '_modules AS m 
+        JOIN ' . $CFG->prefix . 'modules AS m 
         ON m.id = cm.module
-        JOIN moodlecourse_sections AS cs 
+        JOIN ' . $CFG->prefix . 'course_sections AS cs 
         ON cs.section = cm.section
         RIGHT OUTER JOIN ' . $CFG->prefix . 'feedback AS f
         ON cm.instance = f.id 
-        WHERE cm.course = '. (int)$courseid .' AND cs.course = '. (int)$courseid .' AND f.course = '. (int)$courseid .' AND m.name="feedback"
+        WHERE cm.course = '. (int)$courseid .' AND cs.course = '. (int)$courseid .' AND f.course = '. (int)$courseid .' AND m.name=\'feedback\'
 
         UNION
 
@@ -202,13 +203,13 @@ class format_ladtopics_external extends external_api {
         cm.section AS section_id, 
         cs.name AS section_name
         FROM ' . $CFG->prefix . 'course_modules AS cm
-        JOIN ' . $CFG->prefix . '_modules AS m 
+        JOIN ' . $CFG->prefix . 'modules AS m 
         ON m.id = cm.module
-        JOIN moodlecourse_sections AS cs 
+        JOIN ' . $CFG->prefix . 'course_sections AS cs 
         ON cs.section = cm.section
         RIGHT OUTER JOIN ' . $CFG->prefix . 'forum AS f
         ON cm.instance = f.id 
-        WHERE cm.course = '. (int)$courseid .' AND cs.course = '. (int)$courseid .' AND f.course = '. (int)$courseid .' AND m.name="forum"
+        WHERE cm.course = '. (int)$courseid .' AND cs.course = '. (int)$courseid .' AND f.course = '. (int)$courseid .' AND m.name=\'forum\'
 
         UNION
 
@@ -223,13 +224,13 @@ class format_ladtopics_external extends external_api {
         cm.section AS section_id, 
         cs.name AS section_name
         FROM ' . $CFG->prefix . 'course_modules AS cm
-        JOIN ' . $CFG->prefix . '_modules AS m 
+        JOIN ' . $CFG->prefix . 'modules AS m 
         ON m.id = cm.module
-        JOIN moodlecourse_sections AS cs 
+        JOIN ' . $CFG->prefix . 'course_sections AS cs 
         ON cs.section = cm.section
         RIGHT OUTER JOIN ' . $CFG->prefix . 'glossary AS f
         ON cm.instance = f.id 
-        WHERE cm.course = '. (int)$courseid .' AND cs.course = '. (int)$courseid .' AND f.course = '. (int)$courseid .' AND m.name="glossary"
+        WHERE cm.course = '. (int)$courseid .' AND cs.course = '. (int)$courseid .' AND f.course = '. (int)$courseid .' AND m.name=\'glossary\'
 
         UNION
 
@@ -244,13 +245,13 @@ class format_ladtopics_external extends external_api {
         cm.section AS section_id, 
         cs.name AS section_name
         FROM ' . $CFG->prefix . 'course_modules AS cm
-        JOIN ' . $CFG->prefix . '_modules AS m 
+        JOIN ' . $CFG->prefix . 'modules AS m 
         ON m.id = cm.module
-        JOIN moodlecourse_sections AS cs 
+        JOIN ' . $CFG->prefix . 'course_sections AS cs 
         ON cs.section = cm.section
         RIGHT OUTER JOIN ' . $CFG->prefix . 'quiz AS f
         ON cm.instance = f.id 
-        WHERE cm.course = '. (int)$courseid .' AND cs.course = '. (int)$courseid .' AND f.course = '. (int)$courseid .' AND m.name="quiz"
+        WHERE cm.course = '. (int)$courseid .' AND cs.course = '. (int)$courseid .' AND f.course = '. (int)$courseid .' AND m.name=\'quiz\'
 
         UNION
 
@@ -265,13 +266,13 @@ class format_ladtopics_external extends external_api {
         cm.section AS section_id, 
         cs.name AS section_name
         FROM ' . $CFG->prefix . 'course_modules AS cm
-        JOIN ' . $CFG->prefix . '_modules AS m 
+        JOIN ' . $CFG->prefix . 'modules AS m 
         ON m.id = cm.module
-        JOIN moodlecourse_sections AS cs 
+        JOIN ' . $CFG->prefix . 'course_sections AS cs 
         ON cs.section = cm.section
         RIGHT OUTER JOIN ' . $CFG->prefix . 'wiki AS f
         ON cm.instance = f.id 
-        WHERE cm.course = '. (int)$courseid .' AND cs.course = '. (int)$courseid .' AND f.course = '. (int)$courseid .' AND m.name="wiki"
+        WHERE cm.course = '. (int)$courseid .' AND cs.course = '. (int)$courseid .' AND f.course = '. (int)$courseid .' AND m.name=\'wiki\'
 
         ;
         ';
