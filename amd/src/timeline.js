@@ -483,6 +483,7 @@ define([
                 },
                 mounted: function () {
                     let _this = this;
+                    // load data from local storage
                     this.emptyMilestone.end = new Date();
                     this.updateMilestoneStatus();
                     this.initializeChart();
