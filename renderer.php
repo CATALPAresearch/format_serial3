@@ -91,8 +91,7 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                                 <div v-if="modalSurveyVisible" class="modal-dialog modal-lg" role="document">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h5 class="modal-title" id="MilestoneModalLabel">Vorbereitung Ihrer Semesterplanung für den Kurs
-                                                XXX</h5>
+                                            <h5 class="modal-title" id="MilestoneModalLabel">Vorbereitung Ihrer Semesterplanung für den Kurs Betriebssysteme und Rechnernetze</h5>
                                             <button @click="closeModal()" type="button" class="close" data-dismiss="modal"
                                                 aria-label="Close">
                                                 <span aria-hidden="true">&times;</span>
@@ -100,14 +99,14 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                                         </div>
                                         <div class="modal-body">
                                             <div class="form-check row">
-                                                Wählen Sie Ziel und Zeiten aus. Wir erstellen einen Planungsvorschlag, den Sie später noch
+                                                <p>Wenn Sie uns Ihre Zielsetzung mitteilen, können wir Ihnen bei der Planung des Lernens helfen.
                                                 anpassen können.
+                                                </p>
                                                 <label for="" class="col-12 col-form-label survey-objective-label">Welches Ziel verfolgen
                                                     Sie in diesem Kurs/Modul?</label>
                                                 <div class="form-check">
-                                                    <input :checked="objectives == \'f1a\'" @change="e => objectives = e.target.value"
-                                                        class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1"
-                                                        value="f1a">
+                                                    <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1"
+                                                        value="f1a" v-model="objectives">
                                                     <label class="form-check-label" for="exampleRadios1">
                                                         Die Prüfung erfolgreich absolvieren
                                                     </label>
@@ -150,7 +149,7 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                                                 <div class="col-4">
                                                     <select @change="monthSelected" id="select_month">
                                                         <option v-for="d in monthRange()"
-                                                            :selected="d.num-1 === (new Date(getSelectedMilestone().end)).getMonth()"
+                                                            :selected="d.num-1 === (new Date()).getMonth()"
                                                             :value="d.num">{{ d.name }}</option>
                                                     </select>
 

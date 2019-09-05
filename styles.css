@@ -97,9 +97,16 @@ div.container.dc-chart{
     display: none;
 }
 
-#filter-chart .axis.y {
+#timeline-chart .y path{
     stroke: none;
     display: none;
+}
+
+.timeline-y-label{
+    margin-left:200px;
+    fill: #777;
+    font-weight: bold;
+    fill-opacity: 0.8;
 }
 
 

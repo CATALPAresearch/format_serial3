@@ -275,7 +275,20 @@ define([
                         this.modalSurveyVisible = false;
                     },
                     monthRange: function () {
-                        return [...Array(13).keys()].slice(1, 13);
+                        return [
+                            { num: 1, name: 'Januar' },
+                            { num: 2, name: 'Feburar' },
+                            { num: 3, name: 'März' },
+                            { num: 4, name: 'April' },
+                            { num: 5, name: 'Mai' },
+                            { num: 6, name: 'Juni' },
+                            { num: 7, name: 'Juli' },
+                            { num: 8, name: 'August' },
+                            { num: 9, name: 'September' },
+                            { num: 10, name: 'Oktober' },
+                            { num: 11, name: 'November' },
+                            { num: 12, name: 'Dezember' },
+                        ];
                     },
                     yearRange: function () {
                         return [2019, 2020, 2021, 2022]; // xxx should become a plugin setting
@@ -321,7 +334,7 @@ define([
                                 if (this.selectedMonth !== today.getMonth() && this.selectedYear !== today.getFullYear()) {
                                     ms.end = new Date(0, this.selectedMonth, this.selectedYear);
                                 } else {
-                                    ms.end = new Date(0, 2, 2020); // last montg of the semester as default
+                                    ms.end = new Date(0, 2, 2020); // last month of the semester as default
                                 }
                                 milestones.push(ms);
                                 break;
@@ -336,13 +349,19 @@ define([
                         // set survey as done
                         milestoneApp.survey = true;
                         $('.ms-chart').show(); // xxx bad jquery hack
+                        $('.activity-chart-container').show();
+                        $('.filter-chart-container').show();
+                        $('.ms-chart').show();
                         $('.survey-btn').hide();
                     }
                 }
             });
             $('.ms-chart').hide(); // xxx bad jquery hack
-            $('.ms-chart').show(); // xxx bad jquery hack
-            $('.survey-btn').hide();
+            $('.activity-chart-container').hide();
+            $('.filter-chart-container').hide();
+
+            //$('.ms-chart').show(); // xxx bad jquery hack
+            //$('.survey-btn').hide();
 
             let milestoneApp = new Vue({
                 el: '#milestone-chart',
@@ -962,13 +981,15 @@ define([
                     .attr('width', '100%') 
                     .attr('height', 58 )
                 ;
-            /* xxx 
-                t.select('.y')
-                .attr('transform','translate(100,10)');
-            
-                t.selectAll('g.y    g.tick text')
-                .attr('text-anchor', 'start');
-                */
+            chart.on('renderlet', function(chart){
+                var y = d3.select('#timeline-chart svg');
+                y.select('g.y')
+                    .attr('transform', 'translate(35,10)');
+
+                y.selectAll('g.y g.tick text')
+                    .attr('text-anchor', 'start')
+                    .attr('class', 'timeline-y-label');
+            }); 
         };// end draw
     };// end Timeline
 
