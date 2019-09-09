@@ -327,16 +327,20 @@ define([
                         let ms = {};
 
                         // generate milestones automatically
-                        switch (this.objective) {
+                        switch (this.objectives) {
                             case 'f1a': // wants examination
                                 ms = Object.assign({}, milestoneTemplate, {});
                                 ms.name = "Prüfung / Klausur";
                                 if (this.selectedMonth !== today.getMonth() && this.selectedYear !== today.getFullYear()) {
-                                    ms.end = new Date(0, this.selectedMonth, this.selectedYear);
+                                    ms.end = this.selectedMonth + '/1/' + this.selectedYear;//new Date(this.selectedYear, this.selectedMonth, 1, 0, 0, 0, 0);
                                 } else {
-                                    ms.end = new Date(0, 2, 2020); // last month of the semester as default
+                                    ms.end = '2,1,2020';//new Date(2020, 2, 1, 0, 0, 0, 0 ); // last month of the semester as default
                                 }
-                                milestones.push(ms);
+                                ms.resources = [];
+                                ms.strategies = [];
+                                milestoneApp.addMilestone(ms);
+                                //milestones.push(ms);
+                                //milestoneApp.milestones.push(ms);
                                 break;
                             case 'f1b': // wants orientation
                                 break;
@@ -345,7 +349,7 @@ define([
                             case 'f1d': // doesn't want anything
                                 break;
                         }
-                        milestoneApp.milestones.concat(milestones);
+                        
                         // set survey as done
                         milestoneApp.survey = true;
                         $('.ms-chart').show(); // xxx bad jquery hack
@@ -393,11 +397,23 @@ define([
                         range: [],
                         milestones: [
                             {
-                                id: 0,
-                                name: 'Meilenstein 1',
-                                objective: 'Alles lernen',
+                                id: 3867650,
+                                name: 'Planung',
+                                objective: 'Mein Semester planen',
                                 start: '05/31/2019',
-                                end: '06/01/2019',
+                                end: '10/10/2019',
+                                status: 'urgent',
+                                progress: 1.00,
+                                resources: [],
+                                strategies: [],
+                                reflections: [],
+                            },
+                            {
+                                id: 0,
+                                name: 'Lesen',
+                                objective: 'Die Kurstexte lesen',
+                                start: '05/31/2019',
+                                end: '11/01/2019',
                                 status: 'urgent',
                                 progress: 1.00,
                                 resources: [],
@@ -406,10 +422,10 @@ define([
                             },
                             {
                                 id: 1,
-                                name: 'Meilenstein 2',
-                                objective: 'Mehr lernen',
+                                name: 'Tests',
+                                objective: 'Alle Tests bestehen',
                                 start: '06/01/2019',
-                                end: '06/02/2019',
+                                end: '12/02/2019',
                                 status: 'progress', // progress, ready, urgent, missed, reflected
                                 progress: 0.80,
                                 resources: [],
@@ -484,6 +500,9 @@ define([
                 mounted: function () {
                     let _this = this;
                     // load data from local storage
+                    if (localStorage.milestones) {
+                        this.milestones = JSON.parse(localStorage.milestones);
+                    }
                     this.emptyMilestone.end = new Date();
                     this.updateMilestoneStatus();
                     this.initializeChart();
@@ -492,6 +511,13 @@ define([
                             _this.closeModal();
                         }
                     });
+                },
+                watch: {
+                    milestones(newMilestone) {
+                        //const parsed = JSON.stringify(this.cats);
+                        //localStorage.setItem('cats', parsed);
+                        localStorage.milestones = JSON.stringify(newMilestone);
+                    }
                 },
                 methods: {
                     getMoodlePath: function () {
@@ -666,6 +692,15 @@ define([
                         }
                         return valid;
                     },
+                    addMilestone: function (ms) { 
+                        ms.end = new Date(ms.end);
+                        ms.start = new Date(ms.start);
+                        this.milestones.push(ms);
+                        this.updateMilestoneStatus();
+                        this.updateChart(this.range);
+                        this.$forceUpdate();
+                        console.log(this.milestones)
+                    },
                     createMilestone: function (e) {
                         this.emptyMilestone.id = Math.random() * 1000;
                         this.emptyMilestone.end = new Date(this.selectedYear, this.selectedMonth - 1, this.selectedDay);
@@ -807,7 +842,7 @@ define([
                                 this.milestones[i].status = 'urgent';
                             }
 
-                            if (diff < 0 && this.milestones[i].progress !== 1) {
+                            if (diff > 0 && this.milestones[i].progress !== 1) {
                                 this.milestones[i].status = 'missed';
                             }
 
@@ -858,7 +893,7 @@ define([
                     }
                 }
             });
-
+            milestoneApp.setFilterPreset('semester');
             
             // FILTER CHART
             const semesterLimit = crossfilter([{ date: new Date(2019, 9, 1), y: 1 }, { date: new Date(2020, 2, 31), y: 1 }]);

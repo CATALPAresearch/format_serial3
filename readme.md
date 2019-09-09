@@ -16,7 +16,6 @@ LAD Topics is a *Learning Analytics Dashboard* for Moodle courses. The dashboard
 3. Open a course of you choice and go to the *course settings* (watch out for the littel cog-icon). Set the 'course format' to 'LAD Topics'.
 
 # Roadmap
-- CRUD milestones
 - show milestones at the ressource pages (e.g. in the forum)
 - add additional dashboards
 
