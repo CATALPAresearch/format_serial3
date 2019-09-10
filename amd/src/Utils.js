@@ -13,7 +13,7 @@ define(['jquery', 'core/ajax'], function ($, ajax) {
     const Utils = function (dc, d3) {
         this.d3 = d3;
         this.dc = dc;
-        
+
         /**
          * Obtains data from a moodle webservice
          * @param {*} ws: Name of the web service 
@@ -56,21 +56,21 @@ define(['jquery', 'core/ajax'], function ($, ajax) {
             "shortMonths": ["Jän", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"]
         });
 
-        this.customTimeFormat = function(date){//this.germanFormatters.timeFormat.multi([
-            if (date.getMinutes()) return d3.timeFormat("%I:%M")(date); 
-            if (date.getMilliseconds()) return d3.timeFormat(".%L")(date); 
-            if (date.getSeconds()) return d3.timeFormat(":%S")(date); 
-            if (date.getHours()) return d3.timeFormat("%Hh")(date); 
+        this.customTimeFormat = function (date) {//this.germanFormatters.timeFormat.multi([
+            if (date.getMinutes()) return d3.timeFormat("%I:%M")(date);
+            if (date.getMilliseconds()) return d3.timeFormat(".%L")(date);
+            if (date.getSeconds()) return d3.timeFormat(":%S")(date);
+            if (date.getHours()) return d3.timeFormat("%Hh")(date);
             if (date.getDay()) return d3.timeFormat("%a %e.%m.")(date); // Mo 8.02.
             if (date.getMonth()) return d3.timeFormat("%B")(date); //7.12. 
             return d3.getDate("%Y");
-            
-        /*   , function (d) { return d.; }],
-            [ function (d) { return d.getDay() && d.getDate() !== 1; }], 
-            ["%e.%m.", function (d) { return d.getDate() != 1; }], // 
-            [, function (d) { return d.; }],
-            [, function () { return true; }]
-            */
+
+            /*   , function (d) { return d.; }],
+                [ function (d) { return d.getDay() && d.getDate() !== 1; }], 
+                ["%e.%m.", function (d) { return d.getDate() != 1; }], // 
+                [, function (d) { return d.; }],
+                [, function () { return true; }]
+                */
         };
 
         this.numberToWord = function (num, postfix) {
@@ -92,6 +92,44 @@ define(['jquery', 'core/ajax'], function ($, ajax) {
             }
         };
 
+        const locale = d3.timeFormatLocale({
+            "decimal": ",",
+            "thousands": ".",
+            "grouping": [3],
+            "currency": ["€", ""],
+            "dateTime": "%a %b %e %X %Y",
+            "date": "%d.%m.%Y",
+            "time": "%H:%M:%S",
+            "periods": ["AM", "PM"],
+            "days": ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"],
+            "shortDays": ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"],
+            "months": ["Jänner", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"],
+            "shortMonths": ["Jän", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"]
+        });
+
+        this.formatMillisecond = locale.format(".%L");
+        this.formatSecond = locale.format(":%S");
+        this.formatMinute = locale.format("%I:%M");
+        this.formatHour = locale.format("%H:%M");
+        this.formatDay = locale.format("%a %e.%m.");
+        this.formatDate = locale.format("%d.%m.%Y");
+        this.formatDate2 = locale.format("%d/%m/%Y");
+        this.formatWeek = locale.format("%b %d");
+        this.formatWeekNum = locale.format("%U");
+        this.formatMonth = locale.format("%B");
+        this.formatYear = locale.format("%Y");
+
+
+        this.multiFormat = function (date) {
+            return (d3.timeSecond(date) < date ? this.formatMillisecond
+                : d3.timeMinute(date) < date ? this.formatSecond
+                    : d3.timeHour(date) < date ? this.formatMinute
+                        : d3.timeDay(date) < date ? this.formatHour
+                            : d3.timeMonth(date) < date ? (d3.timeWeek(date) < date ? this.formatDay : this.formatWeek)
+                                : d3.timeYear(date) < date ? this.formatMonth
+                                    : this.formatYear)(date);
+        };
+
         /**
          * DC.js util to create filter charts. 
          * @param obj (Object) chartType, selector, indepVar, depVar, colors, margins
@@ -107,7 +145,7 @@ define(['jquery', 'core/ajax'], function ($, ajax) {
                 colors = obj.colors === undefined ? filterSingleColors : obj.colors,
                 chart = undefined
                 ;
-                console.log('group', group)
+            console.log('group', group)
             console.log('dim', dimension.group())
             switch (obj.chartType) {
                 case 'rowChart':
@@ -137,20 +175,20 @@ define(['jquery', 'core/ajax'], function ($, ajax) {
         };
 
 
-      
-      this.charts = [];
 
-           this.register = function (chart) {
-                this.charts.push(chart);
-            };
+        this.charts = [];
 
-            this.resetCharts = function () {
-                for (var i = 0; i < this.charts.length; i++) {
-                    console.log(this.charts[i])
-                    this.charts[i].filterAll();
-                }
-                dc.redrawAll();
-            };
+        this.register = function (chart) {
+            this.charts.push(chart);
+        };
+
+        this.resetCharts = function () {
+            for (var i = 0; i < this.charts.length; i++) {
+                console.log(this.charts[i])
+                this.charts[i].filterAll();
+            }
+            dc.redrawAll();
+        };
 
 
     };

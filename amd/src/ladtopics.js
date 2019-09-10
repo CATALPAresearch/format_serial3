@@ -1,3 +1,4 @@
+/* eslint-disable require-jsdoc */
 /**
  * Main method of the plugin. Load depending javascript and css before starting the timeline dashboard.
  *
@@ -9,9 +10,14 @@
  * @since      3.1
  */
 define([
-    'jquery', 'jqueryui', M.cfg.wwwroot + '/course/format/ladtopics/amd/src/timeline.js', M.cfg.wwwroot + '/course/format/ladtopics/amd/src/Utils.js'
+    'jquery', 
+    'jqueryui', 
+    M.cfg.wwwroot + '/course/format/ladtopics/amd/src/timeline.js', 
+    M.cfg.wwwroot + '/course/format/ladtopics/amd/src/Utils.js', 
+    M.cfg.wwwroot + '/course/format/ladtopics/amd/src/FilterChart.js',
+    M.cfg.wwwroot + '/course/format/ladtopics/amd/src/InitialSurvey.js'
 ],
-    function ($, jqueryui, Timeline, Utils) {
+    function ($, jqueryui, Timeline, Utils, filterChart, initialSurvey) {
 
         require.config({
             enforceDefine: false,
@@ -35,10 +41,10 @@ define([
                 'vue259': {
                     exports: 'Vue'
                 },
-                "moment224":{
+                "moment224": {
                     exports: 'moment'
                 },
-                "sortable110":{
+                "sortable110": {
                     exports: 'Sortable'
                 },
                 'crossfilter': {
@@ -58,15 +64,14 @@ define([
 
 
         function start() {
-
             // add style sheets        
-            const css = [
+            var css = [
                 M.cfg.wwwroot + "/course/format/ladtopics/css/ladtopics.css",
                 M.cfg.wwwroot + "/course/format/ladtopics/css/dc.css",
                 M.cfg.wwwroot + "/course/format/ladtopics/css/bootstrap-select.min.css"
             ];
-            let link = '';
-            for (let i = 0; i < css.length; i++) {
+            var link = '';
+            for (var i = 0; i < css.length; i++) {
                 link = document.createElement("link");
                 link.rel = "stylesheet";
                 link.type = "text/css";
@@ -86,9 +91,9 @@ define([
                 'bootstrap_select',
                 'moment224',
                 'sortable110'
-            ], function (vue, crossfilter, d3, dc, reduction, universe, bselect, moment,  sortable) {
-                const utils = new Utils(dc, d3);
-                new Timeline(vue, d3, dc, crossfilter, moment, sortable, bselect, utils);
+            ], function (vue, crossfilter, d3, dc, reduction, universe, bselect, moment, sortable) {
+                var utils = new Utils(dc, d3);
+                new Timeline(vue, d3, dc, crossfilter, moment, sortable, utils, filterChart, initialSurvey);
             });
         }
 
@@ -102,4 +107,4 @@ define([
 
             }
         };
-    }); 
+    });

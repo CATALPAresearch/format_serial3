@@ -77,9 +77,11 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                 <div class="card-body ladtopics">
                     <div class="course-content">
                         <span hidden id="courseid">'. $COURSE->id .'</span>
+                        
+                        
                         <!-- Initial survey -->
                         <div id="planningsurvey">
-                            <div class="row survey-btn">
+                            <div v-if="!surveyComplete" class="row survey-btn">
                                 <div class="col-sm-2 col-centered">
                                     <div @click="showModal()" class="survey-starter" data-toggle="modal" data-target="#theSurveyModal">
                                         <i class="fa fa-question"></i><br />
@@ -104,43 +106,47 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                                                 </p>
                                                 <label for="" class="col-12 col-form-label survey-objective-label">Welches Ziel verfolgen
                                                     Sie in diesem Kurs/Modul?</label>
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1"
-                                                        value="f1a" v-model="objectives">
-                                                    <label class="form-check-label" for="exampleRadios1">
-                                                        Die Prüfung erfolgreich absolvieren
-                                                    </label>
-                                                </div>
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios2"
-                                                        value="f1b" v-model="objectives">
-                                                    <label class="form-check-label" for="exampleRadios2">
-                                                        Orientierung im Themengebiet erlangen
-                                                    </label>
-                                                </div>
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios3"
-                                                        value="f1c" v-model="objectives">
-                                                    <label class="form-check-label" for="exampleRadios3">
-                                                        Meinen eigenen eigenen Interessen bzgl. bestimmter Themengebiete nachgehen
-                                                    </label>
-                                                </div>
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios4"
-                                                        value="f1d" v-model="objectives">
-                                                    <label class="form-check-label" for="exampleRadios4">
-                                                        keine Angaben
-                                                    </label>
-                                                </div>
+                                                <span :style="invalidObjective ? \'display:inline-block; border: solid 1px #ff420e;\' : \'\'">
+                                                    <div class="form-check">
+                                                        <input @change="updateObjective" class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1"
+                                                            value="f1a" v-model="objectives">
+                                                        <label class="form-check-label" for="exampleRadios1">
+                                                            Die Prüfung erfolgreich absolvieren
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input @change="updateObjective" class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios2"
+                                                            value="f1b" v-model="objectives">
+                                                        <label class="form-check-label" for="exampleRadios2">
+                                                            Orientierung im Themengebiet erlangen
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input @change="updateObjective" class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios3"
+                                                            value="f1c" v-model="objectives">
+                                                        <label class="form-check-label" for="exampleRadios3">
+                                                            Meinen eigenen eigenen Interessen bzgl. bestimmter Themengebiete nachgehen
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input @change="updateObjective" class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios4"
+                                                            value="f1d" v-model="objectives">
+                                                        <label class="form-check-label" for="exampleRadios4">
+                                                            keine Angaben
+                                                        </label>
+                                                    </div>
+                                                </span>
+                                                <div class="col-12 alert-invalid" role="alert" v-if="invalidObjective">Entscheiden Sie sich bitte für einer der Auswahlmöglichkeiten</div>
                                             </div>
                                             <hr>
                                             <div class="form-group row">
                                                 <label for="inputMSname" class="col-10 col-form-label">Wie viele Stunden pro Woche können
                                                     planen Sie für das Lernen in diesem Kurs / Modul ein?</label>
                                                 <div class="col-2">
-                                                    <input type="number" class="form-control" id="inputMSname" placeholder="0"
+                                                    <input :style="invalidAvailableTime ? \'border: solid 1px #ff420e;\' : \'\'" type="number" @change="updateAvailableTime()" class="form-control" id="inputMSname" placeholder="0"
                                                         v-model="availableTime">
                                                 </div>
+                                                <div class="col-12 alert-invalid" role="alert" v-if="invalidAvailableTime">Geben Sie bitte eine Anzahl an Stunden, die größer Null ist.</div>
                                             </div>
                                             <hr v-if="objectives === \'f1a\'">
                                             <div v-if="objectives === \'f1a\'" class="form-group row">
@@ -165,6 +171,7 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                                                 <label class="col-12 col-form-label">Wählen Sie die Themen, Materialien und Aktivitäten aus,
                                                     die Sie besonders interessieren und sortieren Sie diese absteigend nach Ihrem
                                                     Interesse:</label>
+                                                <div class="col-12 alert-invalid" role="alert" v-if="invalidResources">Wählen Sie bitte mindestens ein Thema, Material oder eine Aktivität aus.</div>
                                                 <div id="resources" class="col-md">
                                                     <ul id="selected_resources">
                                                         <li v-for="s in resources" class="form-check">
@@ -196,9 +203,7 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                                             <div class="row row-smooth">
                                                 <div class="col-md">
                                                     <div>
-                                                        <button :disabled="objectives !== \'\' && availableTime > 0 ? false : true"
-                                                            @click="saveSurvey()" class="btn btn-primary btn-sm"
-                                                            data-dismiss="modal">Planung anzeigen</button>
+                                                        <button @click="validateSurveyForm()" class="btn btn-primary btn-sm">Planung anzeigen</button>
                                                         <button class="right btn btn-link right" data-dismiss="modal"
                                                             aria-label="abbrechen">abbrechen</a>
                                                     </div>
@@ -210,12 +215,13 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                             </div>
                         </div>
 
-                        <div class="container dc-chart" id="dc-chart">
-                            <div class="row">
+                        <!-- Dashboard -->
+                        
+                        <div id="planing-component" v-cloak class="container dc-chart">
+                            <div v-if="surveyDone===true" class="row">
                                 <!-- Milestone chart -->
-                                <div id="milestone-chart" class="col-12">
-                                    
-                                    <!-- Chart -->
+                                <div class="col-12">
+                                    <!-- Milestone chart -->
                                     <div class="chart ms-chart">
                                         <div class="ms-chart-header">
                                             <span class="ms-title">Meine Semesterplanung</span>
@@ -565,7 +571,6 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                                     <div id="filter-chart"></div>
                                 </div>
                             </div>
-                            <!--<div id="date-chart" class="col-12"></div>-->
                         </div>
                         <div class="container row" hidden>
                             <div class="col-md-12">
