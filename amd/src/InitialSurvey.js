@@ -1,3 +1,6 @@
+/* eslint-disable space-before-function-paren */
+/* eslint-disable spaced-comment */
+/* eslint-disable capitalized-comments */
 
 /* eslint-disable valid-jsdoc */
 /**
@@ -11,8 +14,8 @@
  * @since      3.1
  */
 
-define([
-], function () {
+define(['jquery'
+], function ($) {
 
     /**
      * Render a survey form
@@ -21,7 +24,7 @@ define([
      */
     var survey = function (Vue, Sortable, milestoneApp, utils, course) {
 
-        var surveyForm = new Vue({
+        new Vue({
             el: '#planningsurvey',
             data: function () {
                 return {
@@ -39,10 +42,11 @@ define([
                 };
             },
             mounted: function () {
-                // obtain course structure form DB
+                // Obtain course structure form DB
                 var _this = this;
                 utils.get_ws('coursestructure', {
                     courseid: parseInt(course.id, 10)
+                // eslint-disable-next-line space-before-function-paren
                 }, function (e) {
                     try {
                         _this.availableResources = JSON.parse(e.data);
@@ -52,7 +56,7 @@ define([
                 });
                 // load status
                 if (localStorage.surveyComplete) {
-                    //this.surveyComplete = localStorage.surveyComplete;
+                    this.surveyComplete = localStorage.surveyComplete; console.log('local ',localStorage.surveyComplete)
                 }
             },
             watch: {
@@ -68,20 +72,7 @@ define([
                     this.modalSurveyVisible = false;
                 },
                 monthRange: function () {
-                    return [
-                        { num: 1, name: 'Januar' },
-                        { num: 2, name: 'Feburar' },
-                        { num: 3, name: 'März' },
-                        { num: 4, name: 'April' },
-                        { num: 5, name: 'Mai' },
-                        { num: 6, name: 'Juni' },
-                        { num: 7, name: 'Juli' },
-                        { num: 8, name: 'August' },
-                        { num: 9, name: 'September' },
-                        { num: 10, name: 'Oktober' },
-                        { num: 11, name: 'November' },
-                        { num: 12, name: 'Dezember' },
-                    ];
+                    return utils.monthRange;
                 },
                 yearRange: function () {
                     return [2019, 2020, 2021, 2022]; // xxx should become a plugin setting

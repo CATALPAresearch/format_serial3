@@ -93,7 +93,7 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                                 <div v-if="modalSurveyVisible" class="modal-dialog modal-lg" role="document">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h5 class="modal-title" id="MilestoneModalLabel">Vorbereitung Ihrer Semesterplanung für den Kurs Betriebssysteme und Rechnernetze</h5>
+                                            <h5 class="modal-title" id="MilestoneModalLabel">Vorbereitung Ihrer Semesterplanung für diesen Kurs</h5>
                                             <button @click="closeModal()" type="button" class="close" data-dismiss="modal"
                                                 aria-label="Close">
                                                 <span aria-hidden="true">&times;</span>
@@ -143,7 +143,7 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                                                 <label for="inputMSname" class="col-10 col-form-label">Wie viele Stunden pro Woche können
                                                     planen Sie für das Lernen in diesem Kurs / Modul ein?</label>
                                                 <div class="col-2">
-                                                    <input :style="invalidAvailableTime ? \'border: solid 1px #ff420e;\' : \'\'" type="number" @change="updateAvailableTime()" class="form-control" id="inputMSname" placeholder="0"
+                                                    <input :style="invalidAvailableTime ? \'border: solid 1px #ff420e;\' : \'\'" type="number" @change="updateAvailableTime()" class="form-control" id="inputMSname" placeholder="0" min="0"
                                                         v-model="availableTime">
                                                 </div>
                                                 <div class="col-12 alert-invalid" role="alert" v-if="invalidAvailableTime">Geben Sie bitte eine Anzahl an Stunden, die größer Null ist.</div>
@@ -218,7 +218,7 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                         <!-- Dashboard -->
                         
                         <div id="planing-component" v-cloak class="container dc-chart">
-                            <div v-if="surveyDone===true" class="row">
+                            <div v-if="surveyDone" class="row">
                                 <!-- Milestone chart -->
                                 <div class="col-12">
                                     <!-- Milestone chart -->
@@ -230,12 +230,12 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                                                     data-toggle="tooltip" data-placement="bottom" title="Neuen Meilenstein hinzufügen"><i
                                                         class="fa fa-plus"></i></button>
                                             </span>
-                                            <button @click="setFilterPreset(\'today\')" class="btn btn-sm ms-btn btn-link right">heute</button>
-                                            <button @click="setFilterPreset(\'last-week\')" class="btn btn-sm btn-link ms-btn right">letzte
+                                            <button @click="setFilterPreset(\'today\')" :style="filterPreset === \'today\' ? \'text-decoration: underline;\' : \'text-decoration:none;\'" class="btn btn-sm ms-btn btn-link right">heute</button>
+                                            <button @click="setFilterPreset(\'last-week\')" :style="filterPreset === \'last-week\' ? \'text-decoration: underline;\' : \'text-decoration:none;\'" class="btn btn-sm btn-link ms-btn right">letzte
                                                 Woche</button>
-                                            <button @click="setFilterPreset(\'last-month\')" class="btn btn-sm btn-link ms-btn right">letzten 4
+                                            <button @click="setFilterPreset(\'last-month\')" :style="filterPreset === \'last-month\' ? \'text-decoration: underline;\' : \'text-decoration:none;\'" class="btn btn-sm btn-link ms-btn right">letzten 4
                                                 Wochen</button>
-                                            <button @click="setFilterPreset(\'semester\')" class="btn btn-link btn-sm right">WS 19/20</button>
+                                            <button @click="setFilterPreset(\'semester\')" :style="filterPreset === \'semester\' ? \'text-decoration: underline;\' : \'text-decoration:none;\'" class="btn btn-link btn-sm right">WS 19/20</button>
                                         </div>    
                                         <div class="relative milestone-chart-container">
                                             <div class="chart-label-milestone"></div>
@@ -251,7 +251,7 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                                                         :width="barwidth" data-legend="1" data-toggle="modal" data-target="#theMilestoneModal">
                                                     </rect>
                                                     <text v-for="m in milestones" @click="showModal(m.id)" class="milestone-label"
-                                                        :x="xx(m.end) + barwidth / 2" :y="getYLane(m.id) * (barheight + bardist) + (barheight)/2"
+                                                        :x="xx(m.end) + barwidth / 2" :y="getYLane(m.id) * (barheight + bardist) + (barheight)/2 + 2"
                                                         data-toggle="modal"
                                                         data-target="#theMilestoneModal">{{ limitTextLength( m.name, 14 ) }}</text>
                                                 </g>
@@ -277,6 +277,7 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                                             </svg>
                                         </div>
                                     </div>
+
 
                                     <!-- Modal milestone window -->
                                     <div id="theMilestoneModal" class="modal" tabindex="-1" role="dialog">
@@ -310,17 +311,19 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                                                     <div class="form-group row">
                                                         <label for="inputMSname" class="col-sm-2 col-form-label">Titel *</label>
                                                         <div class="col-sm-10">
-                                                            <input v-model="getSelectedMilestone().name" type="text" class="form-control"
+                                                            <input @change="updateName" :style="invalidName ? \'border: solid 1px #ff420e;\' : \'\'" v-model="getSelectedMilestone().name" type="text" class="form-control"
                                                                 id="inputMSname" placeholder="Name des Meilensteins">
                                                         </div>
+                                                        <div class="col-sm-10 alert-invalid" v-if="invalidName">Geben Sie bitte einen Namen für den Meilenstein an.</div>
                                                     </div>
                                                     <div class="form-group row">
                                                         <label for="inputObjectic" class="col-sm-2 col-form-label">Lernziel *</label>
                                                         <div class="col-sm-10">
-                                                            <input v-model="getSelectedMilestone().objective" type="text"
+                                                            <input @change="updateObjective" :style="invalidObjective ? \'border: solid 1px #ff420e;\' : \'\'" v-model="getSelectedMilestone().objective" type="text"
                                                                 class="form-control" id="inputLearningObjective"
                                                                 placeholder="Welches Lernziel verfolgen Sie?">
                                                         </div>
+                                                        <div class="col-sm-10 alert-invalid" v-if="invalidObjective">Geben Sie bitte ein Lernziel an.</div>
                                                     </div>
                                                     <div class="form-group row">
                                                         <label for="inputObjectic" class="col-2 col-form-label">Termin *</label>
@@ -389,7 +392,7 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                                                     </div>
                                                     <div class="row">
                                                         <div class="col-md-6">
-                                                            <div class="select-wrapper">
+                                                            <div class="select-wrapper" :style="invalidResources ? \'border: solid 1px #ff420e;\' : \'\'">
                                                                 <span id="before-select"><i class="fa fa-plus"></i> </span>
                                                                 <select @change="resourceSelected" class="" id="modal_strategy-select"
                                                                     class="">
@@ -439,9 +442,7 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                                                     <div class="row row-smooth">
                                                         <div class="col-md">
                                                             <div v-if="selectedMilestone === -1">
-                                                                <button :disabled="validateMilestoneForm() ? false : true"
-                                                                    @click="createMilestone" class="btn btn-primary btn-sm"
-                                                                    data-dismiss="modal">
+                                                                <button @click="validateMilestoneForm()" class="btn btn-primary btn-sm">
                                                                     Speichern
                                                                 </button>
                                                                 <!--<button class="right btn btn-link" data-dismiss="modal" aria-label="abbrechen">abbrechen</a>-->
@@ -567,7 +568,9 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                                     </div>
                                 </div>
                                 <div class="col-12 filter-chart-container">
-                                    <div class="relative"><div class="chart-label-filter"></div></div>
+                                    <div class="relative">
+                                        <div class="chart-label-filter"></div>
+                                    </div>
                                     <div id="filter-chart"></div>
                                 </div>
                             </div>

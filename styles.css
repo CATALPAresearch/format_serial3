@@ -24,8 +24,19 @@
 .row-smooth { margin-top:10px; }
 
 
-#region-main > .card:nth-child(1) {
-    min-height: 4rem;
+/* remove unwanted box above the planning component */
+/* xxx */
+#region-main-box:nth-child(1) {
+    /*display:none !important;*/
+    border: red 1px solid;
+    max-height: 2px;
+}
+
+#page > #page-content .card-body.ladtopics{
+    min-height: 2rem;
+}
+
+#region-main > .card {
     margin-bottom:20px;
 }
 
@@ -267,7 +278,7 @@ select#select_day, select#select_month, select#select_year {
 .modal .select-wrapper{
     padding: 6px 12px;
     height: 38px;
-    border: 1px solid #ddd;
+    border: 1px solid none;
     border-radius: 0.25rem;
     background-color: #ddd;
 }
@@ -483,3 +494,4 @@ svg{
     padding:6px 0;
     display: inline-block;
 }
+

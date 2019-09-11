@@ -1,3 +1,6 @@
+/* eslint-disable capitalized-comments */
+/* eslint-disable space-before-function-paren */
+/* eslint-disable valid-jsdoc */
 /**
  * FilterChart
  *
@@ -11,6 +14,8 @@
 
 define([
 ], function () {
+    var timeFilterChart = '';
+    
 
     /**
      * Plot a timeline
@@ -19,8 +24,10 @@ define([
      * @param utils (Object) Custome util class
      */
     var filterChart = function (d3, dc, crossfilter, facts, xRange, milestoneApp, activityApp, utils) {
-
-        var timeFilterChart = dc.compositeChart("#filter-chart");
+        //console.log(document.getElementById("filter-chart").textContent);
+        timeFilterChart = dc.compositeChart("#filter-chart");
+        this.xRange = xRange;
+        this.milestoneApp = milestoneApp;
         var width = document.getElementById('planing-component').offsetWidth;
         var margins = { top: 15, right: 10, bottom: 20, left: 10 };
         var color_ms_status_range = ["#ffa500", "ff420e", "#80bd9e", "#89da59", "#004C97"];
@@ -47,20 +54,7 @@ define([
             .compose([
                 dc.barChart(timeFilterChart)
                     .dimension(timeFilterLimitDim)
-                    .group(timeFilterLimitGroup)
-                /*.keyAccessor(function (p) {
-                    return p.key[1];
-                })
-                .valueAccessor(function (p) {
-                    return p.key[2];
-                })
-                .radiusValueAccessor(function (p) {
-                    return 0.4;
-                })*/
-                ,
-                //.barPadding(0)
-                //.gap(0)
-                //.alwaysUseRounding(true),
+                    .group(timeFilterLimitGroup),
                 dc.barChart(timeFilterChart)
                     .dimension(timeFilterDim)
                     .group(timeFilterGroup)
@@ -108,24 +102,15 @@ define([
         timeFilterChart.x(d3.scaleTime().domain(xRange).range([0, width]));
 
 
-        /**
-         * filterTime
-         * @description Estimated the time range from the timeFilterChart and redefines the x-axis of the main chart arcodingly.
-         * @param {*} chart 
-         */
-        this.filterTime = function (the_chart) {
-            var range = timeFilterChart.filters()[0] === undefined ? xRange : timeFilterChart.filters()[0];
-            // apply filter to main chart and milestone chart
-            activityApp.x(d3.scaleTime().domain(range));
-            milestoneApp.updateChart(range);
-        };
+
         timeFilterChart.on('filtered', this.filterTime);// other events: preRender, preRedraw
 
-        timeFilterChart.render();
+        //timeFilterChart.render();
+        dc.renderAll();
 
         // cheating
         var t = d3.select('#filter-chart svg');
-        var g = t.insert('g', ':first-child')
+        t.insert('g', ':first-child')
             .attr('transform', 'translate(' + 0 + ', ' + 10 + ')')
             .append('rect', ':first-child')
             .attr('class', 'filter-background')
@@ -140,7 +125,7 @@ define([
             width = document.getElementById('planing-component').offsetWidth;
             timeFilterChart.width(width);//.transitionDuration(0);
             //dc.redrawAll(mainGroup);
-            //filterTime();
+            this.filterTime();
         };
 
         /**
@@ -150,7 +135,31 @@ define([
             timeFilterChart.replaceFilter(range);
         };
 
-    }
+        /**
+         * filterTime
+         * @description Estimated the time range from the timeFilterChart and redefines the x-axis of the main chart arcodingly.
+         * @param {*} chart 
+         */
+        this.filterTime = function (the_chart) { 
+            var range = timeFilterChart.filters()[0] === undefined ? this.xRange : timeFilterChart.filters()[0];
+            // apply filter to main chart and milestone chart
+            //activityApp.x(d3.scaleTime().domain(range));
+            this.milestoneApp.updateChart(range);
+        };
 
+        /**
+         * Register charts 
+         */
+        this.registerChart = function(){
+
+        };
+
+
+    };
+
+        /* filterChart.replaceFilter = function (range) {
+            timeFilterChart.replaceFilter(range);
+        };*/
+ 
     return filterChart;
 });

@@ -21,23 +21,9 @@ define([
      * @param dc (Object) Dimensional Javascript Charting Library
      * @param utils (Object) Custome util class
      */
-        var Timeline = function (Vue, d3, dc, crossfilter, moment, Sortable, utils, FilterChart, InitialSurvey) {
+    var Timeline = function (Vue, d3, dc, crossfilter, moment, Sortable, utils, FilterChart, ActivityChart, InitialSurvey) {
 
-        //var vuemilestone = new Milestones(d3);
-
-        var color_range = ['#004C97', '#004C97', '#004C97', '#004C97', '#004C97', '#004C97', '#004C97'];//['yellow', 'blue', 'purple', 'red', 'orange', 'green', 'black'];
-        
-        //["#ffa500", "#ff0000", "#008000", "#008000", "#0000ff"];
-        var label = {
-            'mod_forum': 'Forum',
-            'mod_glossary': 'Glossar',
-            'mod_wiki': 'Wiki',
-            'mod_assignment': 'Aufgabe',
-            'mod_studentquiz': 'StudentQuiz',
-            'mod_quiz': 'Quiz'
-        };
-        var action_types = Object.keys(label); //['mod_glossary', 'mod_forum', 'mod_wiki'];
-        var activity_types = { 'viewed': 'betrachtet', 'updates': 'bearbeitet', 'deleleted': 'gelöscht', 'created': 'erstellt' };
+            
         var width = document.getElementById('planing-component').offsetWidth;
         var margins = { top: 15, right: 10, bottom: 20, left: 10 };
         var course = {
@@ -49,132 +35,21 @@ define([
             'courseid': parseInt(course.id, 10)
         }, function (e) {
             try {
-                //console.log('Data:', JSON.parse(e.data));
-                //console.log('User:', JSON.parse(e.user));
                 draw(JSON.parse(e.data));
             } catch (e) {
                 console.error(e);
             }
         });
 
-
-
-
+        /**
+         * 
+         * @param {*} the_data 
+         */
         var draw = function (the_data) {
 
+            var activityChart = new ActivityChart(d3, dc, crossfilter, moment, the_data, utils);
+            var xRange = activityChart.getXRange();
             
-
-
-            the_data.forEach(function (d, i) {
-                //d.date = dateTimeFormat((new Date(d.utc * 1000)).toLocaleDateString());
-                d.date = new Date(d.utc * 1000);
-                //d.month = d3.timeMnth(new Date(d.utc * 1000));
-                d.action_type = action_types.indexOf(d.action_type);
-            });
-
-            // charts
-            var chart = dc.bubbleChart("#timeline-chart");
-            
-
-            var facts = crossfilter(the_data);
-
-            var mainDimension = facts.dimension(function (d) {
-                return [d.date, d.action_type, d.action];
-            });
-            var mainGroup = mainDimension.group().reduce(
-                /* callback for when data is added to the current filter results */
-                function (p, v) {
-                    ++p.count;
-                    p.date = v.date;
-                    p.action = v.action;
-                    p.action_type = v.action_type;
-                    return p;
-                },
-                /* callback for when data is removed from the current filter results */
-                function (p, v) {
-                    --p.count;
-                    p.date = v.date;
-                    p.action = v.action;
-                    p.action_type = v.action_type;
-                    return p;
-                },
-                // init filter 
-                function () {
-                    return { count: 0, date: 0, action: '', action_type: '' };
-                });
-
-            var xRange = [
-                d3.min(mainGroup.all(), function (d) { return d.key[0]; }),
-                d3.max(mainGroup.all(), function (d) { return d.key[0]; })
-            ];
-            xRange[1] = moment(xRange[1]).isSameOrBefore(new Date()) ? new Date() : xRange[1];
-            console.log(xRange);
-
-            var maxRadius = d3.max(mainGroup.all(), function (d) { return d.value.count; });
-
-            var colorBand = d3.scaleOrdinal().domain(action_types).range(color_range);
-            var aa = [];
-            for (var i = 0; i < the_data.length; i++) {
-                aa.push(the_data[i].action_type);
-            }
-            var countActionTypes = aa.filter(function (value, index, self) {
-                return self.indexOf(value) === index;
-            }).length;
-
-            chart
-                .width(width)
-                .height(20 * countActionTypes)
-                .margins({ top: 10, bottom: 20, left: margins.left, right: margins.right })
-                .clipPadding(65)
-                .renderLabel(false)
-                .minRadius(1)
-                //.r([0,4])
-                .maxBubbleRelativeSize(0.3)
-                .x(d3.scaleTime().domain(xRange).range([0, width]))
-                //.y(d3.scale.ordinal().range([0,3]))
-                .brushOn(true)
-                .dimension(mainDimension)
-                .group(mainGroup)
-                .renderHorizontalGridLines(true)
-                .keyAccessor(function (p) {
-                    return p.value.date;
-                })
-                .valueAccessor(function (p) {
-                    return p.value.action_type;
-                })
-                .radiusValueAccessor(function (p) {
-                    return p.value.count / maxRadius;
-                })
-                //.colorAccessor(function (kv) { return kv.value.action_type; })
-                .colors(colorBand)
-                .title(function (p) {
-                    return [
-                        "Am " + formatDate(p.value.date),
-                        " haben Sie " + utils.numberToWord(p.value.count, 'mal'),
-                        " das " + label[action_types[p.value.action_type]],
-                        " " + activity_types[p.value.action]
-                    ].join("");
-                })
-                .xAxis(d3.axisBottom().ticks(10))
-                ;
-
-            chart.selectAll('.axis.y .tick').attr('transform', "translate(50,0)");
-
-            chart.on('pretransition', function () {
-                //chart.select('g.x').attr('transform', 'translate(0,0)');
-                chart.selectAll('line.grid-line').attr('y2', chart.effectiveHeight());
-            });
-            chart
-                .elasticY(true)
-                .yAxisPadding(0) // for values greater 0 the second tick label disappears
-                .yAxis()
-                .ticks(countActionTypes)
-                .tickFormat(function (d) {
-                    if (d === Math.ceil(d)) {
-                        return label[action_types[d]];
-                    }
-                });
-
             /*
             http://computationallyendowed.com/blog/2013/01/21/bounded-panning-in-d3.html
             var zoom = d3.behavior.zoom().scaleExtent([1, 1]);
@@ -209,7 +84,7 @@ define([
                 },
                 data: function () {
                     return {
-                        surveyDone: false,
+                        surveyDone: false, 
                         chart: '',
                         timeFilterChart:'',
                         xAxis: '',
@@ -228,7 +103,7 @@ define([
                         xmin: 0,
                         xmax: 0,
                         ymin: 0,
-                        ymax: 0,
+                        ymax: 3,
                         done:[],
                         range: [],
                         milestones: [
@@ -236,8 +111,8 @@ define([
                                 id: 3867650,
                                 name: 'Planung',
                                 objective: 'Mein Semester planen',
-                                start: '05/31/2019',
-                                end: '10/10/2019',
+                                start: '2019,9,1',
+                                end: '2019,10,1',
                                 status: 'urgent',
                                 progress: 1.00,
                                 resources: [],
@@ -248,8 +123,8 @@ define([
                                 id: 0,
                                 name: 'Lesen',
                                 objective: 'Die Kurstexte lesen',
-                                start: '05/31/2019',
-                                end: '11/01/2019',
+                                start: '2019,9,1',
+                                end: '2019,9,7',
                                 status: 'urgent',
                                 progress: 1.00,
                                 resources: [],
@@ -260,8 +135,8 @@ define([
                                 id: 1,
                                 name: 'Tests',
                                 objective: 'Alle Tests bestehen',
-                                start: '06/01/2019',
-                                end: '12/02/2019',
+                                start: '2020,1,15',
+                                end: '2020,2,15',
                                 status: 'progress', // progress, ready, urgent, missed, reflected
                                 progress: 0.80,
                                 resources: [],
@@ -305,10 +180,14 @@ define([
                             strategies: [],
                             reflections: [],
                         },
+                        invalidName: false,
+                        invalidObjective: false,
+                        invalidResources: false,
                         selectedDay: 1,
                         selectedMonth: 1,
                         selectedYear: 2019,
                         dayInvalid: false,
+                        filterPreset: '',
                         selectedMilestone: 0,
                         modalVisible: false,
                         reflectionsFormVisisble: false,
@@ -350,14 +229,19 @@ define([
                             _this.closeModal();
                         }
                     });
-                    this.timeFilterChart = new FilterChart(d3, dc, crossfilter, facts, xRange, this, chart, utils);
+                    
+                    
+                },
+                created: function () {
+                    var facts = crossfilter(the_data);
+                    this.timeFilterChart = new FilterChart(d3, dc, crossfilter, facts, xRange, this, activityChart, utils);
                 },
                 watch: {
-                    milestones(newMilestone) {
+                    milestones: function(newMilestone) {
                         //localStorage.setItem('cats', parsed);
                         localStorage.milestones = JSON.stringify(newMilestone);
                     },
-                    surveyDone(surveyStatus){
+                    surveyDone: function (surveyStatus){
                         localStorage.surveyDone = surveyStatus;
                     }
                 },
@@ -384,8 +268,8 @@ define([
                         this.margins = margins;
                         this.width = width;
                         this.milestones.forEach(function (d, i) {
-                            d.start = new Date(d.start);//formatDate2(new Date(d.start));
-                            d.end = new Date(d.end);//formatDate2(new Date(d.end));
+                            d.start = new Date(d.start);
+                            d.end = new Date(d.end);
                             d.g = 1;
                         });
 
@@ -416,7 +300,7 @@ define([
                         */
 
                         // Adds the svg canvas
-                        this.chart = d3.select('.ms.chart .chart svg g');
+                        this.chart = d3.select('.chart.ms-chart .milestone-chart-container svg g');
                         
                         // Add the Axis
                         this.x_axis_call = this.chart.append("g").attr("class", "x axis").attr("transform", "translate(0," + this.height + ")").call(this.xAxis);
@@ -425,13 +309,14 @@ define([
                         this.y = y;
                         this.updateChart(this.range);
 
-                        dc.registerChart(this.chart, mainGroup);
+                        dc.registerChart(this.chart, activityChart.getGroup());
+                        //this.timeFilterChart = timeFilterChart; 
 
                     },
-                    getMilestones: function () {
+                    getMilestones: function() {
                         return this.milestones;
                     },
-                    x: function () {
+                    x: function() {
                         return d3.scaleTime()
                             .domain(this.range)
                             .range([0, this.width - this.padding]); // 
@@ -462,16 +347,21 @@ define([
                         this.x_axis_call.transition().duration(500).call(this.xAxis.scale(d3.scaleTime()
                             .domain(this.range)
                             .range([0, this.width - this.padding])).ticks(10).tickFormat(utils.multiFormat));
-                        this.y_axis_call.transition().duration(0).call(this.yAxis.scale(this.y));
+                        //this.y_axis_call.transition().duration(0).call(this.yAxis.scale(this.y));
+                        this.y_axis_call.transition().duration(0).call(this.yAxis.scale(d3.scaleLinear()
+                            .domain([0, this.ymax])
+                            .range([0, this.height])));
+                        console.log(11)
+                        
 
                         // today
                         var today = new Date();
                         this.chart.selectAll(".today-line").remove();
                         this.chart.append("line")
                             .attr("class", "today-line")
-                            .attr("x1", this.xx(today))  //<<== change your code here
+                            .attr("x1", this.x(today)) 
                             .attr("y1", 0)
-                            .attr("x2", this.xx(today))  //<<== and here
+                            .attr("x2", this.xx(today)) 
                             .attr("y2", this.height)
                             .attr("stroke-width", 2)
                             .attr("stroke", "red")
@@ -491,6 +381,7 @@ define([
                             .attr("font-family", "sans-serif")
                             .attr("font-size", "10px")
                             ;
+                
                         this.$forceUpdate();
                     },
                     showModal: function (e) {
@@ -521,18 +412,29 @@ define([
                         this.selectedMilestone = -1;
                         this.modalVisible = true;
                     },
+                    updateName: function (e) {
+                        this.invalidName = this.getSelectedMilestone().name === '' ? true : false;
+                    },
+                    updateObjective: function (e) {
+                        this.invalidObjective = this.getSelectedMilestone().objective === '' ? true : false;
+                    },
                     validateMilestoneForm: function () {
-                        var valid = true;
+                        var isValid = true;
                         if (this.getSelectedMilestone().name.length === 0) {
-                            valid = false;
+                            this.invalidName = true;
+                            isValid = false;
                         }
                         if (this.getSelectedMilestone().objective.length === 0) {
-                            valid = false;
+                            this.invalidObjective = true;
+                            isValid = false;
                         }
-                        if (this.getSelectedMilestone().resources.length === 0) {
-                            valid = false;
+                        if (this.getSelectedMilestone().resources.length === 0 && this.resources.length > 0) {
+                            this.invalidResources = true;
+                            isValid = false;
                         }
-                        return valid;
+                        if (isValid) {
+                            this.createMilestone();
+                        }
                     },
                     addMilestone: function (ms) { 
                         ms.end = new Date(ms.end);
@@ -547,7 +449,7 @@ define([
                         this.emptyMilestone.id = Math.random() * 1000;
                         this.emptyMilestone.end = new Date(this.selectedYear, this.selectedMonth - 1, this.selectedDay);
                         var d = new Date();
-                        this.emptyMilestone.start = new Date((d.getMonth() + 1) + '/' + d.getDate() + '/' + d.getFullYear());
+                        this.emptyMilestone.start = new Date(d.getFullYear() + '/' + (d.getMonth()) + '/' + d.getDate() );
 
                         this.milestones.push(this.emptyMilestone);
                         var x = d3.scaleTime().domain(this.range).range([0, width]);
@@ -567,8 +469,9 @@ define([
                             strategies: [],
                             reflections: [],
                         };
+                        $('#theMilestoneModal').modal('hide');
                     },
-                    removeMilestone() {
+                    removeMilestone: function() {
                         this.closeModal();
                         $('div.modal-backdrop.show').remove();
                         for (var s = 0; s < this.milestones.length; s++) {
@@ -606,20 +509,7 @@ define([
                         return [...Array(32).keys()].slice(1, 32);
                     },
                     monthRange: function () {
-                        return [
-                            { num: 1, name: 'Januar' },
-                            { num: 2, name: 'Feburar' },
-                            { num: 3, name: 'März' },
-                            { num: 4, name: 'April' },
-                            { num: 5, name: 'Mai' },
-                            { num: 6, name: 'Juni' },
-                            { num: 7, name: 'Juli' },
-                            { num: 8, name: 'August' },
-                            { num: 9, name: 'September' },
-                            { num: 10, name: 'Oktober' },
-                            { num: 11, name: 'November' },
-                            { num: 12, name: 'Dezember' },
-                        ];
+                        return utils.monthRange;
                     },
                     yearRange: function () {
                         return [2019, 2020]; // xxx should become a plugin setting
@@ -657,6 +547,7 @@ define([
                         if (this.getSelectedMilestone().resources.indexOf(el) === -1) {
                             this.getSelectedMilestone().resources.push(el);
                         }
+                        this.invalidResources = this.getSelectedMilestone().resources.length > 0 ? false : true;
                     },
                     resourceRemove: function (id) {
                         for (var s = 0; s < this.getSelectedMilestone().resources.length; s++) {
@@ -664,6 +555,7 @@ define([
                                 this.getSelectedMilestone().resources.splice(s, 1);
                             }
                         }
+                        this.invalidResources = this.getSelectedMilestone().resources.length > 0 ? false : true;
                     },
                     limitTextLength: function (str, max) {
                         var len = str.length;
@@ -673,7 +565,7 @@ define([
                             return str;
                         }
                     },
-                    updateMilestoneStatus() {
+                    updateMilestoneStatus: function() {
                         var t = new Date();
                         for (var i = 0; i < this.milestones.length; i++) {
                             var diff = moment(t).diff(moment(this.milestones[i].end), 'days');
@@ -717,6 +609,7 @@ define([
                     setFilterPreset: function (preset) {
                         var range = [];
                         var now = new Date();
+                        this.filterPreset = preset;
                         switch (preset) {
                             case "today":
                                 range = [new Date(now.getTime() - 1000 * 3600 * 24 * 3), new Date(now.getTime() + 1000 * 3600 * 24 * 3)];
@@ -747,24 +640,13 @@ define([
             window.onresize = function (event) {
                 width = document.getElementById('planing-component').offsetWidth;
                 milestoneApp.width = width - margins.right;
-                chart.width(width).transitionDuration(0);
-                chart.group(mainGroup);
-
                 //dc.redrawAll(mainGroup);
                 milestoneApp.timeFilterChart.filterTime();
             };
 
             //dc.renderAll();
             
-            chart.on('renderlet', function(chart){
-                var y = d3.select('#timeline-chart svg');
-                y.select('g.y')
-                    .attr('transform', 'translate(35,10)');
-
-                y.selectAll('g.y g.tick text')
-                    .attr('text-anchor', 'start')
-                    .attr('class', 'timeline-y-label');
-            }); 
+            
         };// end draw
     };// end Timeline
 

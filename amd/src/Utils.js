@@ -73,6 +73,21 @@ define(['jquery', 'core/ajax'], function ($, ajax) {
                 */
         };
 
+        this.monthRange = [
+            { num: 1, name: 'Januar' },
+            { num: 2, name: 'Feburar' },
+            { num: 3, name: 'März' },
+            { num: 4, name: 'April' },
+            { num: 5, name: 'Mai' },
+            { num: 6, name: 'Juni' },
+            { num: 7, name: 'Juli' },
+            { num: 8, name: 'August' },
+            { num: 9, name: 'September' },
+            { num: 10, name: 'Oktober' },
+            { num: 11, name: 'November' },
+            { num: 12, name: 'Dezember' },
+        ];
+
         this.numberToWord = function (num, postfix) {
             postfix = postfix === undefined ? '' : postfix;
             switch (num) {
@@ -121,13 +136,13 @@ define(['jquery', 'core/ajax'], function ($, ajax) {
 
 
         this.multiFormat = function (date) {
-            return (d3.timeSecond(date) < date ? this.formatMillisecond
+            return d3.timeSecond(date) < date ? this.formatMillisecond
                 : d3.timeMinute(date) < date ? this.formatSecond
                     : d3.timeHour(date) < date ? this.formatMinute
                         : d3.timeDay(date) < date ? this.formatHour
                             : d3.timeMonth(date) < date ? (d3.timeWeek(date) < date ? this.formatDay : this.formatWeek)
                                 : d3.timeYear(date) < date ? this.formatMonth
-                                    : this.formatYear)(date);
+                                    : this.formatYear; //(date);
         };
 
         /**
