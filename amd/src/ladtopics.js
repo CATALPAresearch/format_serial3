@@ -12,13 +12,14 @@
 define([
     'jquery', 
     'jqueryui', 
-    M.cfg.wwwroot + '/course/format/ladtopics/amd/src/timeline.js', 
+    M.cfg.wwwroot + '/course/format/ladtopics/amd/src/Timeline.js', 
     M.cfg.wwwroot + '/course/format/ladtopics/amd/src/Utils.js', 
     M.cfg.wwwroot + '/course/format/ladtopics/amd/src/FilterChart.js',
     M.cfg.wwwroot + '/course/format/ladtopics/amd/src/ActivityChart.js',
-    M.cfg.wwwroot + '/course/format/ladtopics/amd/src/InitialSurvey.js'
+    M.cfg.wwwroot + '/course/format/ladtopics/amd/src/InitialSurvey.js',
+    M.cfg.wwwroot + '/course/format/ladtopics/amd/src/Assessment.js'
 ],
-    function ($, jqueryui, Timeline, Utils, filterChart, activityChart, initialSurvey) {
+    function ($, jqueryui, Timeline, Utils, filterChart, activityChart, initialSurvey, Assessment) {
 
         require.config({
             enforceDefine: false,
@@ -95,6 +96,7 @@ define([
             ], function (vue, crossfilter, d3, dc, reduction, universe, bselect, moment, sortable) {
                 var utils = new Utils(dc, d3);
                 new Timeline(vue, d3, dc, crossfilter, moment, sortable, utils, filterChart, activityChart, initialSurvey);
+                new Assessment(vue, d3, dc, crossfilter, moment,
             });
         }
 

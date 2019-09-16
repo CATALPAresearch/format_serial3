@@ -56,7 +56,8 @@ define(['jquery'
                 });
                 // load status
                 if (localStorage.surveyComplete) {
-                    this.surveyComplete = localStorage.surveyComplete; console.log('local ',localStorage.surveyComplete)
+                    this.surveyComplete = localStorage.surveyComplete; 
+                    //console.log('local ',localStorage.surveyComplete)
                 }
             },
             watch: {

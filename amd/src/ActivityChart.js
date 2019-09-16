@@ -134,9 +134,17 @@ define([
             })
             .xAxis(d3.axisBottom().ticks(10))
             ;
+        this.update = function(range) { 
+            chart.x(d3.scaleTime().domain(range));
+        };
+
+        chart.render();
+        //dc.renderAll();
 
         // correct axis positioning
-        chart.selectAll('.axis.y .tick').attr('transform', "translate(50,0)");
+        chart.selectAll('.axis.y .tick')
+            .attr('transform', "translate(50,0)")
+            .style('transition-duration', '0');
 
         chart.on('pretransition', function () {
             chart.selectAll('line.grid-line').attr('y2', chart.effectiveHeight());
@@ -156,6 +164,7 @@ define([
         chart.on('renderlet', function (chart) {
             var y = d3.select('#timeline-chart svg');
             y.select('g.y')
+                .style('transition-duration', '0')
                 .attr('transform', 'translate(35,10)');
 
             y.selectAll('g.y g.tick text')
@@ -164,16 +173,16 @@ define([
         });
     };
 
-        /**
-                 * Resize charte if window sizes change
-                 */
-        window.onresize = function (event) {
-            width = document.getElementById('planing-component').offsetWidth;
-            chart.width(width).transitionDuration(0);
-            chart.group(activityChart.getGroup());
+    /**
+     * Resize charte if window sizes change
+     */
+    window.onresize = function (event) {
+        width = document.getElementById('planing-component').offsetWidth;
+        chart.width(width).transitionDuration(0);
+        chart.group(activityChart.getGroup());
 
-            //dc.redrawAll(mainGroup);
-        };
+        //dc.redrawAll(activityChart.getGroup());
+    };
 
     return activityChart;
 

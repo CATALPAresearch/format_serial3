@@ -42,7 +42,7 @@ define([
         var timeFilterGroup = timeFilterDim.group().reduceCount(function (d) { return d.date; });
 
         var milestoneData = milestoneApp.getMilestones();
-        for (var i = 0; i < milestoneData.length; i++) { milestoneData[i].y = i % 2 + 1; }
+        for (var i = 0; i < milestoneData.length; i++) { milestoneData[i].y = i % 3 + 1; }
         var msData = crossfilter(milestoneData);
         var msFilterDim = msData.dimension(function (d) { return [d.status, d.end, d.y]; });
         var msFilterGroup = msFilterDim.group().reduceCount(function (d) { return d.end; });
@@ -102,11 +102,13 @@ define([
         timeFilterChart.x(d3.scaleTime().domain(xRange).range([0, width]));
 
 
+        var _this = this;
+        timeFilterChart.on('filtered', function() {
+            _this.filterTime(_this);
+        });// other events: preRender, preRedraw
 
-        timeFilterChart.on('filtered', this.filterTime);// other events: preRender, preRedraw
-
-        //timeFilterChart.render();
-        dc.renderAll();
+        timeFilterChart.render();
+        //dc.renderAll();
 
         // cheating
         var t = d3.select('#filter-chart svg');
@@ -121,11 +123,13 @@ define([
         /**
          * Resize charte if window sizes change
          */
+        var _this = this;
         window.onresize = function (event) {
             width = document.getElementById('planing-component').offsetWidth;
             timeFilterChart.width(width);//.transitionDuration(0);
             //dc.redrawAll(mainGroup);
-            this.filterTime();
+            _this.filterTime();
+            timeFilterChart.render();
         };
 
         /**
@@ -140,11 +144,12 @@ define([
          * @description Estimated the time range from the timeFilterChart and redefines the x-axis of the main chart arcodingly.
          * @param {*} chart 
          */
+        
         this.filterTime = function (the_chart) { 
             var range = timeFilterChart.filters()[0] === undefined ? this.xRange : timeFilterChart.filters()[0];
             // apply filter to main chart and milestone chart
-            //activityApp.x(d3.scaleTime().domain(range));
-            this.milestoneApp.updateChart(range);
+            activityApp.update(range);
+            _this.milestoneApp.updateChart(range);
         };
 
         /**

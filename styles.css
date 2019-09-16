@@ -203,6 +203,18 @@ div.container.dc-chart{
   stroke-width: 0;
 }
 
+.today line.today-line {
+    stroke-width: 2px;
+    stroke: #ff420e;
+    opacity: 0.7;
+    fill:none;
+}
+.today text.today-label {
+    fill: #ff420e;
+    opacity: 0.8;
+    font-family: "sans-serif";
+    font-size: 0.7em
+}
 
 /* Modal */
 .background-darken {

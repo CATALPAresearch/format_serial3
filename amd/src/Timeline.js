@@ -230,11 +230,11 @@ define([
                         }
                     });
                     
-                    
-                },
-                created: function () {
                     var facts = crossfilter(the_data);
                     this.timeFilterChart = new FilterChart(d3, dc, crossfilter, facts, xRange, this, activityChart, utils);
+                },
+                created: function () {
+                    
                 },
                 watch: {
                     milestones: function(newMilestone) {
@@ -305,33 +305,33 @@ define([
                         // Add the Axis
                         this.x_axis_call = this.chart.append("g").attr("class", "x axis").attr("transform", "translate(0," + this.height + ")").call(this.xAxis);
                         this.y_axis_call = this.chart.append("g").attr("class", "y axis").call(this.yAxis);
-                        this.x = x;
-                        this.y = y;
+                        //this.x = x;
+                        //this.y = y;
                         this.updateChart(this.range);
 
-                        dc.registerChart(this.chart, activityChart.getGroup());
+                        //xxx dc.registerChart(this.chart, activityChart.getGroup());
                         //this.timeFilterChart = timeFilterChart; 
 
                     },
                     getMilestones: function() {
                         return this.milestones;
                     },
-                    x: function() {
+                    /*x_: function() {
                         return d3.scaleTime()
                             .domain(this.range)
                             .range([0, this.width - this.padding]); // 
-                    },
+                    },*/
                     xx: function (x) {
                         var x_ = d3.scaleTime()
                             .domain(this.range)
                             .range([0, this.width - this.padding])(x);
                         return x_;
                     },
-                    y: function () {
+                    /*y_: function () {
                         return d3.scaleLinear()
                             .domain([0, this.ymax])
                             .range([0, this.height]);
-                    },
+                    },*/
                     z: function () {
                         return d3.scaleOrdinal()
                             .range(this.colors);
@@ -341,8 +341,7 @@ define([
                     },
                     updateChart: function (range) {
                         this.range = range;
-                        z = d3.scaleOrdinal()
-                            .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
+                        //var z = d3.scaleOrdinal().range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
 
                         this.x_axis_call.transition().duration(500).call(this.xAxis.scale(d3.scaleTime()
                             .domain(this.range)
@@ -351,37 +350,7 @@ define([
                         this.y_axis_call.transition().duration(0).call(this.yAxis.scale(d3.scaleLinear()
                             .domain([0, this.ymax])
                             .range([0, this.height])));
-                        console.log(11)
-                        
-
-                        // today
-                        var today = new Date();
-                        this.chart.selectAll(".today-line").remove();
-                        this.chart.append("line")
-                            .attr("class", "today-line")
-                            .attr("x1", this.x(today)) 
-                            .attr("y1", 0)
-                            .attr("x2", this.xx(today)) 
-                            .attr("y2", this.height)
-                            .attr("stroke-width", 2)
-                            .attr("stroke", "red")
-                            .attr("opacity", '0.7')
-                            .attr("fill", "none");
-                        this.chart.selectAll(".today-label").remove();
-                        this.chart
-                            .append("text")
-                            .attr("class", "today-label")
-                            .attr("y", 10)
-                            .attr("x", this.xx(today) + 4)
-                            .attr('text-anchor', 'right')
-                            .text("heute")
-                            .attr("fill", "red")
-                            .attr("opacity", "0.7")
-                            .attr("opacity", "0.7")
-                            .attr("font-family", "sans-serif")
-                            .attr("font-size", "10px")
-                            ;
-                
+    
                         this.$forceUpdate();
                     },
                     showModal: function (e) {
@@ -446,7 +415,7 @@ define([
                         console.log(this.milestones)
                     },
                     createMilestone: function (e) {
-                        this.emptyMilestone.id = Math.random() * 1000;
+                        this.emptyMilestone.id = Math.ceil(Math.random() * 1000);
                         this.emptyMilestone.end = new Date(this.selectedYear, this.selectedMonth - 1, this.selectedDay);
                         var d = new Date();
                         this.emptyMilestone.start = new Date(d.getFullYear() + '/' + (d.getMonth()) + '/' + d.getDate() );
@@ -506,7 +475,7 @@ define([
                         this.getSelectedMilestone().end = new Date(this.selectedYear, this.selectedMonth - 1, this.selectedDay);
                     },
                     dayRange: function () {
-                        return [...Array(32).keys()].slice(1, 32);
+                        return [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31];
                     },
                     monthRange: function () {
                         return utils.monthRange;
@@ -587,7 +556,6 @@ define([
                             if (this.milestones[i].progress === 1 && this.milestones[i].reflections.length > 0) {
                                 this.milestones[i].status = 'reflected';
                             }
-                            console.log(this.milestones[i].status);
                         }
                     },
                     toggleReflectionsForm: function () {

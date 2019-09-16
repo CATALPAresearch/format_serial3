@@ -223,19 +223,21 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                                 <div class="col-12">
                                     <!-- Milestone chart -->
                                     <div class="chart ms-chart">
-                                        <div class="ms-chart-header">
-                                            <span class="ms-title">Meine Semesterplanung</span>
-                                            <span data-toggle="modal" data-target="#theMilestoneModal">
-                                                <button @click="showEmptyMilestone()" class="btn btn-sm right btn-primary ms-btn"
-                                                    data-toggle="tooltip" data-placement="bottom" title="Neuen Meilenstein hinzufügen"><i
-                                                        class="fa fa-plus"></i></button>
-                                            </span>
-                                            <button @click="setFilterPreset(\'today\')" :style="filterPreset === \'today\' ? \'text-decoration: underline;\' : \'text-decoration:none;\'" class="btn btn-sm ms-btn btn-link right">heute</button>
-                                            <button @click="setFilterPreset(\'last-week\')" :style="filterPreset === \'last-week\' ? \'text-decoration: underline;\' : \'text-decoration:none;\'" class="btn btn-sm btn-link ms-btn right">letzte
-                                                Woche</button>
-                                            <button @click="setFilterPreset(\'last-month\')" :style="filterPreset === \'last-month\' ? \'text-decoration: underline;\' : \'text-decoration:none;\'" class="btn btn-sm btn-link ms-btn right">letzten 4
-                                                Wochen</button>
-                                            <button @click="setFilterPreset(\'semester\')" :style="filterPreset === \'semester\' ? \'text-decoration: underline;\' : \'text-decoration:none;\'" class="btn btn-link btn-sm right">WS 19/20</button>
+                                        <div class="ms-chart-header row">
+                                            <div class="ms-title col-sm-12 col-md-4 col-lg-4">Meine Semesterplanung</div>
+                                            <div class="col-sm-12 col-md-8 col-lg-8">
+                                                <span data-toggle="modal" data-target="#theMilestoneModal">
+                                                    <button @click="showEmptyMilestone()" class="btn btn-sm right btn-primary ms-btn"
+                                                        data-toggle="tooltip" data-placement="bottom" title="Neuen Meilenstein hinzufügen"><i
+                                                            class="fa fa-plus"></i></button>
+                                                </span>
+                                                <button @click="setFilterPreset(\'today\')" :style="filterPreset === \'today\' ? \'text-decoration: underline;\' : \'text-decoration:none;\'" class="btn btn-sm ms-btn btn-link right">heute</button>
+                                                <button @click="setFilterPreset(\'last-week\')" :style="filterPreset === \'last-week\' ? \'text-decoration: underline;\' : \'text-decoration:none;\'" class="btn btn-sm btn-link ms-btn right">letzte
+                                                    Woche</button>
+                                                <button @click="setFilterPreset(\'last-month\')" :style="filterPreset === \'last-month\' ? \'text-decoration: underline;\' : \'text-decoration:none;\'" class="btn btn-sm btn-link ms-btn right">letzten 4
+                                                    Wochen</button>
+                                                <button @click="setFilterPreset(\'semester\')" :style="filterPreset === \'semester\' ? \'text-decoration: underline;\' : \'text-decoration:none;\'" class="btn btn-link btn-sm right">WS 19/20</button>
+                                            </div>
                                         </div>    
                                         <div class="relative milestone-chart-container">
                                             <div class="chart-label-milestone"></div>
@@ -259,6 +261,11 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                                                     :transform="\'translate(\'+( margins.left  ) +\',\'+ margins.top +\')\'">
                                                     <line v-for="m in [0,1,2]" x1="1" :y1="m * (barheight + bardist) + barheight/2" :x2="width"
                                                         :y2="m * (barheight + bardist) + barheight/2" opacity="0.5"></line>
+                                                </g>
+                                                <g class="today"
+                                                    :transform="\'translate(\'+( margins.left  ) +\',\'+ margins.top +\')\'">
+                                                    <line class="today-line" :x1="xx(new Date())" y1="0" :x2="xx(new Date())" :y2="height"></line>
+                                                    <text class="today-label" y="10" :x="xx(new Date()) + 4">heute</text>                                               
                                                 </g>
                                                 <!--<g id="title-label">
                                                 <text :transform="\'translate(\'+( margins.left  ) +\',\'+ margins.top+100 +\')\'"
@@ -559,8 +566,8 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                                         </div>
                                     </div>
                                 </div>
-                            
-                                <!-- DC charts -->
+                            </div>
+                            <div class="row">
                                 <div class="col-12 activity-chart-container">
                                     <div class="relative">
                                         <div class="chart-label-activities"></div>
@@ -575,6 +582,7 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                                 </div>
                             </div>
                         </div>
+                        
                         <div class="container row" hidden>
                             <div class="col-md-12">
                                 <ul class="nav">
