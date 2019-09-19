@@ -1,3 +1,5 @@
+/* eslint-disable valid-jsdoc */
+/* eslint-disable capitalized-comments */
 /**
  * Timeline
  *
@@ -17,18 +19,14 @@ define([
 
     /**
      * Plot a timeline
-     * @param d3 (Object) Data Driven Documents
-     * @param dc (Object) Dimensional Javascript Charting Library
-     * @param utils (Object) Custome util class
      */
     var Timeline = function (Vue, d3, dc, crossfilter, moment, Sortable, utils, FilterChart, ActivityChart, InitialSurvey) {
 
-            
         var width = document.getElementById('planing-component').offsetWidth;
         var margins = { top: 15, right: 10, bottom: 20, left: 10 };
         var course = {
-            id: $('#courseid').text()/*,
-            module: parseInt($('#moduleid').html())*/
+            id: $('#courseid').text()
+            // module: parseInt($('#moduleid').html()) 
         };
         
         utils.get_ws('logstore', {

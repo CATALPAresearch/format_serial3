@@ -96,7 +96,7 @@ define([
             ], function (vue, crossfilter, d3, dc, reduction, universe, bselect, moment, sortable) {
                 var utils = new Utils(dc, d3);
                 new Timeline(vue, d3, dc, crossfilter, moment, sortable, utils, filterChart, activityChart, initialSurvey);
-                new Assessment(vue, d3, dc, crossfilter, moment,
+                new Assessment(vue, d3, dc, crossfilter, moment);
             });
         }
 
