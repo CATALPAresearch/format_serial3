@@ -45,8 +45,7 @@ define([
          */
         var draw = function (the_data) {
 
-            var activityChart = new ActivityChart(d3, dc, crossfilter, moment, the_data, utils);
-            var xRange = activityChart.getXRange();
+            var xRange = [new Date(2019,4,28), new Date(2020,231)];
             
             /*
             http://computationallyendowed.com/blog/2013/01/21/bounded-panning-in-d3.html
@@ -229,7 +228,8 @@ define([
                     });
                     
                     var facts = crossfilter(the_data);
-                    this.timeFilterChart = new FilterChart(d3, dc, crossfilter, facts, xRange, this, activityChart, utils);
+                    this.timeFilterChart = new FilterChart(d3, dc, crossfilter, facts, xRange, this, utils);
+                    
                 },
                 created: function () {
                     
@@ -501,6 +501,7 @@ define([
                         if (this.getSelectedMilestone().strategies.indexOf(el) === -1) {
                             this.getSelectedMilestone().strategies.push(el);
                         }
+                        localStorage.milestones = JSON.stringify(this.milestones);
                     },
                     strategyRemove: function (id) {
                         for (var s = 0; s < this.getSelectedMilestone().strategies.length; s++) {
@@ -508,6 +509,7 @@ define([
                                 this.getSelectedMilestone().strategies.splice(s, 1);
                             }
                         }
+                        localStorage.milestones = JSON.stringify(this.milestones);
                     },
                     resourceSelected: function (event) {
                         var el = this.resourceById(event.target.value);
@@ -515,6 +517,7 @@ define([
                             this.getSelectedMilestone().resources.push(el);
                         }
                         this.invalidResources = this.getSelectedMilestone().resources.length > 0 ? false : true;
+                        localStorage.milestones = JSON.stringify(this.milestones);
                     },
                     resourceRemove: function (id) {
                         for (var s = 0; s < this.getSelectedMilestone().resources.length; s++) {
@@ -523,6 +526,7 @@ define([
                             }
                         }
                         this.invalidResources = this.getSelectedMilestone().resources.length > 0 ? false : true;
+                        localStorage.milestones = JSON.stringify(this.milestones);
                     },
                     limitTextLength: function (str, max) {
                         var len = str.length;
@@ -598,7 +602,9 @@ define([
             
             
             var survey = new InitialSurvey(Vue, Sortable, milestoneApp, utils, course);
-            
+            var activityChart = new ActivityChart(d3, dc, crossfilter, moment, the_data, utils);
+            xRange = activityChart.getXRange();
+            milestoneApp.timeFilterChart.registerChart(activityChart);
 
             /**
              * Resize charte if window sizes change
@@ -610,9 +616,6 @@ define([
                 milestoneApp.timeFilterChart.filterTime();
             };
 
-            //dc.renderAll();
-            
-            
         };// end draw
     };// end Timeline
 

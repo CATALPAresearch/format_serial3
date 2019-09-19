@@ -46,7 +46,7 @@ define(['jquery'
                 var _this = this;
                 utils.get_ws('coursestructure', {
                     courseid: parseInt(course.id, 10)
-                // eslint-disable-next-line space-before-function-paren
+                    // eslint-disable-next-line space-before-function-paren
                 }, function (e) {
                     try {
                         _this.availableResources = JSON.parse(e.data);
@@ -56,7 +56,7 @@ define(['jquery'
                 });
                 // load status
                 if (localStorage.surveyComplete) {
-                    this.surveyComplete = localStorage.surveyComplete; 
+                    this.surveyComplete = localStorage.surveyComplete;
                     //console.log('local ',localStorage.surveyComplete)
                 }
             },
@@ -147,10 +147,171 @@ define(['jquery'
                             ms.resources = [];
                             ms.strategies = [];
                             milestoneApp.addMilestone(ms);
+
+                            var biwiPlaningPruefung = [
+                                {
+                                    id: 1001,
+                                    name: 'Willkommen im Modul 1D',
+                                    objective: 'Orientierung im Modul 1D; Seminare belegen; Lernpartner finden; Lernen vorbereiten',
+                                    start: '2019,9,1',
+                                    end: '2019,9,6',
+                                    status: 'progress', // progress, ready, urgent, missed, reflected
+                                    progress: 0.0,
+                                    resources: [],
+                                    strategies: [{ "id": "gliederung", "name": "Gliederung", "desc": "Themenfelder lassen sich mit einer Gliederung übersichtlich strukturieren.", "url": "http://www.heise.de/", "category": "organization" }],
+                                    reflections: [
+                                        
+                                    ]
+                                },
+                                {
+                                    id: 1002,
+                                    name: 'KE 33060 Bildung in der digitalisierten Gesellschaft (2SWS)',
+                                    objective: 'Wissen aus der Kurseinheit erarbeiten und Wissen vertiefen',
+                                    start: '2019,9,7',
+                                    end: '2019,10,3',
+                                    status: 'progress', // progress, ready, urgent, missed, reflected
+                                    progress: 0.0,
+                                    resources: [],
+                                    strategies: [
+                                        { id: 'mindmap', name: 'Mindmap', desc: 'Eine Mindmap hilft dabei, Zusammenhänge darzustellen.', url: "http://www.heise.de/", category: 'organization' },
+                                        { id: 'exzerpte', name: 'Exzerpt', desc: 'Ein Exzerpt ist mehr als nur eine einfache Zusammenfassung der wichtigsten Inhalte.', url: "http://www.heise.de/", category: 'organization' },
+                                        { id: 'gliederung', name: 'Gliederung', desc: 'Themenfelder lassen sich mit einer Gliederung übersichtlich strukturieren.', url: "http://www.heise.de/", category: 'organization' },
+                                        { id: 'strukturierung', name: 'Strukturierung von Wissen', desc: 'Fachausdrücke oder Definitionen lassen sich gut in Listen oder Tabellen sammeln.', url: "http://www.heise.de/", category: 'organization' },
+
+                                        { id: 'transfer', name: 'Übertragung von neuem Wissen auf bekannte Schemata', desc: 'Neues Wissen kann durch die Verknüpfung mit dem eigenen Erleben leichter veranschaulicht und gelernt werden.', url: "http://www.heise.de/", category: 'elaboration' },
+                                        { id: 'examples', name: 'Beispiel aus dem Alltag/Arbeitsumfeld für neue Schemata', desc: 'Ein Beispiel aus dem eigenen Umfeld hilft dabei, neue Wissensschemata schneller zu lernen.', url: "http://www.heise.de/", category: 'elaboration' },
+                                        { id: 'critical', name: 'kritisches Hinterfragen', desc: 'Durch kritisches Hinterfragen kann man seine Aufmerksamkeit beim Lesen steigern.', url: "http://www.heise.de/", category: 'elaboration' },
+                                        { id: 'structuring', name: 'Bezug zu anderen Fächern herstellen', desc: 'Bekanntes Wissen und Bezüge zu anderen Kursen erleichtern das Verständnis von Zusammenhängen.', url: "http://www.heise.de/", category: 'elaboration' },
+                                        { id: 'pq4r', name: 'PQ4R-Methode', desc: 'Hinter dem Kürzel verstecken sich sechs Schritte: (1) Preview – Übersicht gewinnen; (2) Questions – Fragen an den Text stellen;  (3) Read – Zweiter Leseschritt - Gründliches Lesen des Textes; (4) Reflect – Gedankliche Auseinandersetzung mit dem Text; (5) Recite – Wiederholen und aus dem Gedächtnis Verfassen; (6) Review – Rückblick und Überprüfung', url: "http://www.heise.de/", category: 'elaboration' },
+                                    ],
+                                    reflections: [
+
+                                    ]
+                                },
+                                {
+                                    id: 1003,
+                                    name: 'KE 33061 Der Wandel von Kommunikations- und Medienkulturen durch digitale Medien und die Herausforderung für die Bildungswissenschaft (2SWS)',
+                                    objective: 'Wissen aus der Kurseinheit erarbeiten und Wissen vertiefen',
+                                    start: '2019,10,4',
+                                    end: '2019,11,1',
+                                    status: 'progress', // progress, ready, urgent, missed, reflected
+                                    progress: 0.0,
+                                    resources: [],
+                                    strategies: [
+                                        { id: 'mindmap', name: 'Mindmap', desc: 'Eine Mindmap hilft dabei, Zusammenhänge darzustellen.', url: "http://www.heise.de/", category: 'organization' },
+                                        { id: 'exzerpte', name: 'Exzerpt', desc: 'Ein Exzerpt ist mehr als nur eine einfache Zusammenfassung der wichtigsten Inhalte.', url: "http://www.heise.de/", category: 'organization' },
+                                        { id: 'gliederung', name: 'Gliederung', desc: 'Themenfelder lassen sich mit einer Gliederung übersichtlich strukturieren.', url: "http://www.heise.de/", category: 'organization' },
+                                        { id: 'strukturierung', name: 'Strukturierung von Wissen', desc: 'Fachausdrücke oder Definitionen lassen sich gut in Listen oder Tabellen sammeln.', url: "http://www.heise.de/", category: 'organization' },
+
+                                        { id: 'transfer', name: 'Übertragung von neuem Wissen auf bekannte Schemata', desc: 'Neues Wissen kann durch die Verknüpfung mit dem eigenen Erleben leichter veranschaulicht und gelernt werden.', url: "http://www.heise.de/", category: 'elaboration' },
+                                        { id: 'examples', name: 'Beispiel aus dem Alltag/Arbeitsumfeld für neue Schemata', desc: 'Ein Beispiel aus dem eigenen Umfeld hilft dabei, neue Wissensschemata schneller zu lernen.', url: "http://www.heise.de/", category: 'elaboration' },
+                                        { id: 'critical', name: 'kritisches Hinterfragen', desc: 'Durch kritisches Hinterfragen kann man seine Aufmerksamkeit beim Lesen steigern.', url: "http://www.heise.de/", category: 'elaboration' },
+                                        { id: 'structuring', name: 'Bezug zu anderen Fächern herstellen', desc: 'Bekanntes Wissen und Bezüge zu anderen Kursen erleichtern das Verständnis von Zusammenhängen.', url: "http://www.heise.de/", category: 'elaboration' },
+                                        { id: 'pq4r', name: 'PQ4R-Methode', desc: 'Hinter dem Kürzel verstecken sich sechs Schritte: (1) Preview – Übersicht gewinnen; (2) Questions – Fragen an den Text stellen;  (3) Read – Zweiter Leseschritt - Gründliches Lesen des Textes; (4) Reflect – Gedankliche Auseinandersetzung mit dem Text; (5) Recite – Wiederholen und aus dem Gedächtnis Verfassen; (6) Review – Rückblick und Überprüfung', url: "http://www.heise.de/", category: 'elaboration' },
+                                    ],
+                                    reflections: [
+
+                                    ]
+                                },
+                                {
+                                    id: 1004,
+                                    name: 'KE 33045 Entwicklung und Kommunikation als Grundbegriffe der Bildungswissenschaft (4SWS)',
+                                    objective: 'Wissen aus der Kurseinheit erarbeiten und Wissen vertiefen',
+                                    start: '2019,11,2',
+                                    end: '2020,1,2',
+                                    status: 'progress', // progress, ready, urgent, missed, reflected
+                                    progress: 0.0,
+                                    resources: [],
+                                    strategies: [
+                                        { id: 'mindmap', name: 'Mindmap', desc: 'Eine Mindmap hilft dabei, Zusammenhänge darzustellen.', url: "http://www.heise.de/", category: 'organization' },
+                                        { id: 'exzerpte', name: 'Exzerpt', desc: 'Ein Exzerpt ist mehr als nur eine einfache Zusammenfassung der wichtigsten Inhalte.', url: "http://www.heise.de/", category: 'organization' },
+                                        { id: 'gliederung', name: 'Gliederung', desc: 'Themenfelder lassen sich mit einer Gliederung übersichtlich strukturieren.', url: "http://www.heise.de/", category: 'organization' },
+                                        { id: 'strukturierung', name: 'Strukturierung von Wissen', desc: 'Fachausdrücke oder Definitionen lassen sich gut in Listen oder Tabellen sammeln.', url: "http://www.heise.de/", category: 'organization' },
+
+                                        { id: 'transfer', name: 'Übertragung von neuem Wissen auf bekannte Schemata', desc: 'Neues Wissen kann durch die Verknüpfung mit dem eigenen Erleben leichter veranschaulicht und gelernt werden.', url: "http://www.heise.de/", category: 'elaboration' },
+                                        { id: 'examples', name: 'Beispiel aus dem Alltag/Arbeitsumfeld für neue Schemata', desc: 'Ein Beispiel aus dem eigenen Umfeld hilft dabei, neue Wissensschemata schneller zu lernen.', url: "http://www.heise.de/", category: 'elaboration' },
+                                        { id: 'critical', name: 'kritisches Hinterfragen', desc: 'Durch kritisches Hinterfragen kann man seine Aufmerksamkeit beim Lesen steigern.', url: "http://www.heise.de/", category: 'elaboration' },
+                                        { id: 'structuring', name: 'Bezug zu anderen Fächern herstellen', desc: 'Bekanntes Wissen und Bezüge zu anderen Kursen erleichtern das Verständnis von Zusammenhängen.', url: "http://www.heise.de/", category: 'elaboration' },
+                                        { id: 'pq4r', name: 'PQ4R-Methode', desc: 'Hinter dem Kürzel verstecken sich sechs Schritte: (1) Preview – Übersicht gewinnen; (2) Questions – Fragen an den Text stellen;  (3) Read – Zweiter Leseschritt - Gründliches Lesen des Textes; (4) Reflect – Gedankliche Auseinandersetzung mit dem Text; (5) Recite – Wiederholen und aus dem Gedächtnis Verfassen; (6) Review – Rückblick und Überprüfung', url: "http://www.heise.de/", category: 'elaboration' },
+                                    ],
+                                    reflections: [
+
+                                    ]
+                                },
+                                {
+                                    id: 1005,
+                                    name: 'Prüfungsvorbereitung',
+                                    objective: 'Inhalte wiederholen und Aufgaben für die Klausur üben',
+                                    start: '2020,1,2',
+                                    end: '2020,2,2',
+                                    status: 'progress', // progress, ready, urgent, missed, reflected
+                                    progress: 0.0,
+                                    resources: [],
+                                    strategies: [
+                                        { id: 'exzerpte', name: 'Exzerpt', desc: 'Ein Exzerpt ist mehr als nur eine einfache Zusammenfassung der wichtigsten Inhalte.', url: "http://www.heise.de/", category: 'organization' },
+                                        { id: 'flashcards', name: 'Systematisches Wiederholen mit der Lernkartei', desc: 'Mit Lernkarten kann man Dinge systematisch wiederholen bis alles für die Prüfung sitzt. ', url: "http://www.heise.de/", category: 'repeatition' },
+                                        { id: 'repeatition', name: 'Repetieren', desc: 'Mit vielen Wiederholungen festigt sich das Wissen. ', url: "http://www.heise.de/", category: 'repeatition' },
+                                        { id: 'assoc', name: 'Eselsbrücken als Erinnerungshilfe', desc: 'Mit einem Reim oder einer Eselsbrücke kann man sich Begriffe oder Reihenfolgen leichter merken.', url: "http://www.heise.de/", category: 'repeatition' },
+                                        { id: 'loci', name: 'Loci Methode', desc: 'Bei der Loci Methode verknüpft man Lerninhalte mit Orten oder Gegenständen. Für Abfolgen übt man eine Strecke/einen Spaziergang ein.', url: "http://www.heise.de/", category: 'repeatition' }
+
+                                    ],
+                                    reflections: [
+
+                                    ]
+                                },
+                                {
+                                    id: 1006,
+                                    name: 'Klausur Modul 1D am 02.März .2020, 14-18 Uhr in xxxx',
+                                    objective: 'Klausur bestehen',
+                                    start: '2020,2,2',
+                                    end: '2020,2,2',
+                                    status: 'progress', // progress, ready, urgent, missed, reflected
+                                    progress: 0.0,
+                                    resources: [],
+                                    strategies: [
+                                        { id: 'assoc', name: 'Eselsbrücken als Erinnerungshilfe', desc: 'Mit einem Reim oder einer Eselsbrücke kann man sich Begriffe oder Reihenfolgen leichter merken.', url: "http://www.heise.de/", category: 'repeatition' },
+                                        { id: 'loci', name: 'Loci Methode', desc: 'Bei der Loci Methode verknüpft man Lerninhalte mit Orten oder Gegenständen. Für Abfolgen übt man eine Strecke/einen Spaziergang ein.', url: "http://www.heise.de/", category: 'repeatition' }
+                                    ],
+                                    reflections: [
+
+                                    ]
+                                }
+                            ];
+
                             //milestones.push(ms);
                             //milestoneApp.milestones.push(ms);
                             break;
                         case 'f1b': // wants orientation
+                            var biwiPlaningOrientation = [
+                                {
+                                    id: 1001,
+                                    name: 'Willkommen im Modul 1D',
+                                    objective: 'Orientierung im Modul 1D; Seminare belegen; Lernpartner finden; Lernen vorbereiten',
+                                    start: '2019,9,1',
+                                    end: '2019,9,6',
+                                    status: 'progress', // progress, ready, urgent, missed, reflected
+                                    progress: 0.0,
+                                    resources: [],
+                                    strategies: [{ "id": "gliederung", "name": "Gliederung", "desc": "Themenfelder lassen sich mit einer Gliederung übersichtlich strukturieren.", "url": "http://www.heise.de/", "category": "organization" }],
+                                    reflections: [
+
+                                    ]
+                                },
+                                {
+                                    id: 1002,
+                                    name: 'Willkommen im Modul 1D',
+                                    objective: 'Orientierung im Modul 1D; Seminare belegen; Lernpartner finden; Lernen vorbereiten',
+                                    start: '2019,9,1',
+                                    end: '2019,9,6',
+                                    status: 'progress', // progress, ready, urgent, missed, reflected
+                                    progress: 0.0,
+                                    resources: [],
+                                    strategies: [{ "id": "gliederung", "name": "Gliederung", "desc": "Themenfelder lassen sich mit einer Gliederung übersichtlich strukturieren.", "url": "http://www.heise.de/", "category": "organization" }],
+                                    reflections: [
+
+                                    ]
+                                }
+                            ];
                             break;
                         case 'f1c': // wants certain topics
                             break;

@@ -15,7 +15,7 @@
 define([
 ], function () {
     var timeFilterChart = '';
-    
+
 
     /**
      * Plot a timeline
@@ -23,8 +23,8 @@ define([
      * @param dc (Object) Dimensional Javascript Charting Library
      * @param utils (Object) Custome util class
      */
-    var filterChart = function (d3, dc, crossfilter, facts, xRange, milestoneApp, activityApp, utils) {
-        //console.log(document.getElementById("filter-chart").textContent);
+    var filterChart = function (d3, dc, crossfilter, facts, xRange, milestoneApp, utils) {
+
         timeFilterChart = dc.compositeChart("#filter-chart");
         this.xRange = xRange;
         this.milestoneApp = milestoneApp;
@@ -83,13 +83,9 @@ define([
                     .renderTitle(false)
             ])
             .x(d3.scaleTime().domain(xRange).range([0, width]))
-            //.round(d3.timeWeeks.round)
             .elasticX(true)
             .elasticY(true)
-            //.xUnits(d3.timeWeek) 
             .xAxisLabel('', 3)
-            //.ticks(d3.timeWeeks, 4)
-            //.tickFormat(formatWeekNum)
             ;
 
         timeFilterChart.xAxis(d3.axisTop().ticks(10));
@@ -103,12 +99,11 @@ define([
 
 
         var _this = this;
-        timeFilterChart.on('filtered', function() {
+        timeFilterChart.on('filtered', function () {
             _this.filterTime(_this);
         });// other events: preRender, preRedraw
 
         timeFilterChart.render();
-        //dc.renderAll();
 
         // cheating
         var t = d3.select('#filter-chart svg');
@@ -121,7 +116,7 @@ define([
             ;
 
         /**
-         * Resize charte if window sizes change
+         * Resize chart if window sizes change
          */
         var _this = this;
         window.onresize = function (event) {
@@ -133,7 +128,7 @@ define([
         };
 
         /**
-         * 
+         * Interface for changing the time range filter
          */
         this.replaceFilter = function (range) {
             timeFilterChart.replaceFilter(range);
@@ -144,27 +139,25 @@ define([
          * @description Estimated the time range from the timeFilterChart and redefines the x-axis of the main chart arcodingly.
          * @param {*} chart 
          */
-        
-        this.filterTime = function (the_chart) { 
+        this.filterTime = function (the_chart) {
             var range = timeFilterChart.filters()[0] === undefined ? this.xRange : timeFilterChart.filters()[0];
             // apply filter to main chart and milestone chart
-            activityApp.update(range);
             _this.milestoneApp.updateChart(range);
+            for (var i = 0; i < registeredCharts.length; i++) {
+                registeredCharts[i].update(range);
+            }
         };
 
+        var registeredCharts = [];
         /**
-         * Register charts 
+         * Register charts in order to update the selected x range
          */
-        this.registerChart = function(){
-
+        this.registerChart = function (chart) {
+            registeredCharts.push(chart);
         };
 
 
     };
 
-        /* filterChart.replaceFilter = function (range) {
-            timeFilterChart.replaceFilter(range);
-        };*/
- 
     return filterChart;
 });

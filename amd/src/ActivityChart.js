@@ -40,6 +40,8 @@ define([
         // charts
         chart = dc.bubbleChart("#timeline-chart");
 
+        this.chart = function(){ return chart; };
+
         data.forEach(function (d, i) {
             d.date = new Date(d.utc * 1000);
             d.action_type = actionTypes.indexOf(d.action_type);
@@ -134,6 +136,7 @@ define([
             })
             .xAxis(d3.axisBottom().ticks(10))
             ;
+
         this.update = function(range) { 
             chart.x(d3.scaleTime().domain(range));
         };
