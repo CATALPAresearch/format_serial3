@@ -12,8 +12,8 @@
  * @since      3.1
  */
 
-define([
-], function () {
+define(['jquery'
+], function ($) {
     var chart = '';
     var color_range = ['#004C97', '#004C97', '#004C97', '#004C97', '#004C97', '#004C97', '#004C97'];//['yellow', 'blue', 'purple', 'red', 'orange', 'green', 'black'];
     //['mod_glossary', 'mod_forum', 'mod_wiki'];
@@ -100,7 +100,7 @@ define([
         var countActionTypes = tmp.filter(function (value, index, self) {
             return self.indexOf(value) === index;
         }).length;
-
+        countActionTypes = countActionTypes < 2 ? 5 : countActionTypes;
         chart
             .width(width)
             .height(20 * countActionTypes)
@@ -175,6 +175,13 @@ define([
                 .attr('class', 'timeline-y-label');
         });
     };
+        if (localStorage.surveyDone) {
+            $('.activity-chart-container').show();
+            $('.filter-chart-container').show();
+        } else {
+            $('.activity-chart-container').hide();
+            $('.filter-chart-container').hide();
+        }
 
     /**
      * Resize charte if window sizes change

@@ -98,6 +98,10 @@ div.container.dc-chart{
     white-space: nowrap;
 }
 
+#resources ul li.form-check {
+    padding-left:0 !important;
+}
+
 
 
 
@@ -415,12 +419,11 @@ svg{
 }
 
 #theSurveyModal li.form-check, .modal li.form-check{
-    max-width:300px;
+    max-width:100%;
 }
 
 .remove-btn {
-   position:absolute;
-   right:0;
+   margin-left: 6px; /* xxx should better float right */
 }
 
 .survey-objective-label {
@@ -428,7 +431,19 @@ svg{
 }
 
 .resource-highlight{
-    border-left:solid 5px #008FAC;
+    border-left: solid 10px #ff420e;
+    border-top: solid 1px #ff420e;
+    border-bottom: solid 1px #ff420e;
+    border-right: solid 1px #ff420e;
+    background-color: #ff420050;
+}
+
+.resource-highlight-done{
+    border-left: solid 10px #80bd9e;
+    border-top: solid 1px #80bd9e;
+    border-bottom: solid 1px #80bd9e;
+    border-right: solid 1px #80bd9e;
+    background-color: #80bd9e50;
 }
 
 
@@ -443,7 +458,7 @@ svg{
     left:0;
     height:85px;
     width:20px;
-    background-image: url('/moodle/course/format/ladtopics/img/label-milestone.png');
+    background-image: url('https://aple.fernuni-hagen.de/course/format/ladtopics/img/label-milestone.png');
     background-repeat: no-repeat;
     background-position: center; /* Center the image */
     background-color: #004C97;
@@ -453,9 +468,10 @@ svg{
     position: absolute;
     top:0;
     left:0;
+    display: inline-block;
     height:80px;
     width:20px;
-    background-image: url('/moodle/course/format/ladtopics/img/label-activities.png');
+    background-image: url('https://aple.fernuni-hagen.de/course/format/ladtopics/img/label-activities.png');
     background-repeat: no-repeat;
     background-position: center; /* Center the image */
     background-color: #004C97;
@@ -468,7 +484,7 @@ svg{
     left:0;
     height:58px;
     width:20px;
-    background-image: url('/moodle/course/format/ladtopics/img/label-semester.png');
+    background-image: url('https://aple.fernuni-hagen.de/course/format/ladtopics/img/label-semester.png');
     background-repeat: no-repeat;
     background-position: center; /* Center the image */
     background-color: #004C97;

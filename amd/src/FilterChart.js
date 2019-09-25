@@ -12,8 +12,8 @@
  * @since      3.1
  */
 
-define([
-], function () {
+define(['jquery'
+], function ($) {
     var timeFilterChart = '';
 
 
@@ -114,6 +114,14 @@ define([
             .attr('width', '100%')
             .attr('height', 58)
             ;
+        
+        if (localStorage.surveyDone) {
+            $('.activity-chart-container').show();
+            $('.filter-chart-container').show();
+        } else {
+            $('.activity-chart-container').hide();
+            $('.filter-chart-container').hide();
+        }
 
         /**
          * Resize chart if window sizes change

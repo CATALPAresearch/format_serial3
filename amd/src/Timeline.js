@@ -28,7 +28,7 @@ define([
             id: $('#courseid').text()
             // module: parseInt($('#moduleid').html()) 
         };
-        
+
         utils.get_ws('logstore', {
             'courseid': parseInt(course.id, 10)
         }, function (e) {
@@ -45,8 +45,8 @@ define([
          */
         var draw = function (the_data) {
 
-            var xRange = [new Date(2019,4,28), new Date(2020,231)];
-            
+            var xRange = [new Date(2019, 4, 28), new Date(2020, 231)];
+
             /*
             http://computationallyendowed.com/blog/2013/01/21/bounded-panning-in-d3.html
             var zoom = d3.behavior.zoom().scaleExtent([1, 1]);
@@ -73,7 +73,7 @@ define([
                  }
              });*/
 
-            
+
             var milestoneApp = new Vue({
                 el: '#planing-component',
                 components: {
@@ -81,9 +81,9 @@ define([
                 },
                 data: function () {
                     return {
-                        surveyDone: false, 
+                        surveyDone: false,
                         chart: '',
-                        timeFilterChart:'',
+                        timeFilterChart: '',
                         xAxis: '',
                         yAxis: '',
                         x_axis_call: '',
@@ -101,7 +101,7 @@ define([
                         xmax: 0,
                         ymin: 0,
                         ymax: 3,
-                        done:[],
+                        done: [],
                         range: [],
                         milestones: [
                             {
@@ -189,7 +189,7 @@ define([
                         modalVisible: false,
                         reflectionsFormVisisble: false,
                         strategies: [
-                            { id: 'mindmap', name: 'Mindmap', desc:'Eine Mindmap hilft dabei, Zusammenhänge darzustellen.', url: "http://www.heise.de/", category: 'organization' },
+                            { id: 'mindmap', name: 'Mindmap', desc: 'Eine Mindmap hilft dabei, Zusammenhänge darzustellen.', url: "http://www.heise.de/", category: 'organization' },
                             { id: 'exzerpte', name: 'Exzerpt', desc: 'Ein Exzerpt ist mehr als nur eine einfache Zusammenfassung der wichtigsten Inhalte.', url: "http://www.heise.de/", category: 'organization' },
                             { id: 'gliederung', name: 'Gliederung', desc: 'Themenfelder lassen sich mit einer Gliederung übersichtlich strukturieren.', url: "http://www.heise.de/", category: 'organization' },
                             { id: 'strukturierung', name: 'Strukturierung von Wissen', desc: 'Fachausdrücke oder Definitionen lassen sich gut in Listen oder Tabellen sammeln.', url: "http://www.heise.de/", category: 'organization' },
@@ -217,6 +217,13 @@ define([
                     }
                     if (localStorage.surveyDone) {
                         this.surveyDone = localStorage.surveyDone;
+                        if (this.surveyDone) {
+                            $('.activity-chart-container').show();
+                            $('.filter-chart-container').show();
+                        } else {
+                            $('.activity-chart-container').hide();
+                            $('.filter-chart-container').hide();
+                        }
                     }
                     this.emptyMilestone.end = new Date();
                     this.updateMilestoneStatus();
@@ -226,21 +233,28 @@ define([
                             _this.closeModal();
                         }
                     });
-                    
                     var facts = crossfilter(the_data);
                     this.timeFilterChart = new FilterChart(d3, dc, crossfilter, facts, xRange, this, utils);
-                    
+
                 },
                 created: function () {
-                    
+
                 },
                 watch: {
-                    milestones: function(newMilestone) {
+                    milestones: function (newMilestone) {
                         //localStorage.setItem('cats', parsed);
                         localStorage.milestones = JSON.stringify(newMilestone);
                     },
-                    surveyDone: function (surveyStatus){
+                    surveyDone: function (surveyStatus) {
+
                         localStorage.surveyDone = surveyStatus;
+                        if (this.surveyDone) {
+                            $('.activity-chart-container').show();
+                            $('.filter-chart-container').show();
+                        } else {
+                            $('.activity-chart-container').hide();
+                            $('.filter-chart-container').hide();
+                        }
                     }
                 },
                 methods: {
@@ -259,6 +273,8 @@ define([
                         }, function (e) {
                             try {
                                 _this.resources = JSON.parse(e.data);
+                                console.log('course-structure-result', _this.resources);
+                                console.log('debug', JSON.parse(e.debug));
                             } catch (e) {
                                 console.error(e);
                             }
@@ -299,7 +315,7 @@ define([
 
                         // Adds the svg canvas
                         this.chart = d3.select('.chart.ms-chart .milestone-chart-container svg g');
-                        
+
                         // Add the Axis
                         this.x_axis_call = this.chart.append("g").attr("class", "x axis").attr("transform", "translate(0," + this.height + ")").call(this.xAxis);
                         this.y_axis_call = this.chart.append("g").attr("class", "y axis").call(this.yAxis);
@@ -311,7 +327,7 @@ define([
                         //this.timeFilterChart = timeFilterChart; 
 
                     },
-                    getMilestones: function() {
+                    getMilestones: function () {
                         return this.milestones;
                     },
                     /*x_: function() {
@@ -348,7 +364,7 @@ define([
                         this.y_axis_call.transition().duration(0).call(this.yAxis.scale(d3.scaleLinear()
                             .domain([0, this.ymax])
                             .range([0, this.height])));
-    
+
                         this.$forceUpdate();
                     },
                     showModal: function (e) {
@@ -360,11 +376,6 @@ define([
                         this.modalVisible = false;
                         this.updateMilestoneStatus();
                         this.updateChart(this.range);
-                        // highlight selected activities
-                        for (var i = 0; i < this.getSelectedMilestone().resources.length; i++) {
-                            console.log(this.getSelectedMilestone().resources[i].instance_url_id)
-                            $('#module-' + this.getSelectedMilestone().resources[i].instance_url_id).addClass('resource-highlight');
-                        }
                     },
                     getSelectedMilestone: function () {
                         if (this.selectedMilestone === -1) {
@@ -403,20 +414,21 @@ define([
                             this.createMilestone();
                         }
                     },
-                    addMilestone: function (ms) { 
+                    addMilestone: function (ms) {
+                        console.log('addMS ',ms.end);
                         ms.end = new Date(ms.end);
                         ms.start = new Date(ms.start);
                         this.milestones.push(ms);
                         this.updateMilestoneStatus();
                         this.updateChart(this.range);
                         this.$forceUpdate();
-                        console.log(this.milestones)
+                        console.log(this.milestones);
                     },
                     createMilestone: function (e) {
                         this.emptyMilestone.id = Math.ceil(Math.random() * 1000);
                         this.emptyMilestone.end = new Date(this.selectedYear, this.selectedMonth - 1, this.selectedDay);
                         var d = new Date();
-                        this.emptyMilestone.start = new Date(d.getFullYear() + '/' + (d.getMonth()) + '/' + d.getDate() );
+                        this.emptyMilestone.start = new Date(d.getFullYear() + '/' + (d.getMonth()) + '/' + d.getDate());
 
                         this.milestones.push(this.emptyMilestone);
                         var x = d3.scaleTime().domain(this.range).range([0, width]);
@@ -434,11 +446,11 @@ define([
                             progress: 0.0,
                             resources: [],
                             strategies: [],
-                            reflections: [],
+                            reflections: []
                         };
                         $('#theMilestoneModal').modal('hide');
                     },
-                    removeMilestone: function() {
+                    removeMilestone: function () {
                         this.closeModal();
                         $('div.modal-backdrop.show').remove();
                         for (var s = 0; s < this.milestones.length; s++) {
@@ -473,7 +485,7 @@ define([
                         this.getSelectedMilestone().end = new Date(this.selectedYear, this.selectedMonth - 1, this.selectedDay);
                     },
                     dayRange: function () {
-                        return [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31];
+                        return [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31];
                     },
                     monthRange: function () {
                         return utils.monthRange;
@@ -490,6 +502,23 @@ define([
                         return this.strategies.filter(function (s) {
                             return s.id === id ? true : false;
                         })[0];
+                    },
+                    resourcesBySection: function (id) {
+                        return this.resources.filter(function (s) {
+                            return parseInt(s.section_id, 10) === parseInt(id, 10) ? true : false;
+                        });
+                    },
+                    resourceSections: function () {
+                        var sections = {};
+                        for (var i = 0; i < this.resources.length; i++) {
+                            //if (this.resources[i].section_name === ' ')
+                            // console.log(this.resources[i].section_id + '__' + this.resources[i].section_name + '__' + this.resources[i].name)
+                            sections[this.resources[i].section_id] = {
+                                name: this.resources[i].section_name === ' ' ? '(Einführung)' : this.resources[i].section_name,
+                                id: this.resources[i].section_id
+                            };
+                        }
+                        return sections;
                     },
                     resourceById: function (id) {
                         return this.resources.filter(function (s) {
@@ -536,12 +565,35 @@ define([
                             return str;
                         }
                     },
-                    updateMilestoneStatus: function() {
+                    determineMilestoneProgress: function (milestone) {
+                        var resourceProgress = 0;
+                        var strategiesProgress = 0;
+
+                        if (milestone.resources.length === 0) {
+                            return 0;
+                        }
+                        resourceProgress = milestone.resources.filter(function (e) {
+                            return e.checked === true ? true : false;
+                        }).length / milestone.resources.length;
+
+                        if (milestone.strategies.length > 0) {
+                            strategiesProgress = milestone.strategies.filter(function (e) {
+                                return e.checked === true ? true : false;
+                            }).length / milestone.strategies.length;
+                        } else {
+                            strategiesProgress = 1;
+                        }
+                        return ((resourceProgress + strategiesProgress) / 2);
+                    },
+                    updateMilestoneStatus: function () {
                         var t = new Date();
                         for (var i = 0; i < this.milestones.length; i++) {
                             var diff = moment(t).diff(moment(this.milestones[i].end), 'days');
 
                             this.milestones[i].status = 'progress';
+
+                            // update progress
+                            this.milestones[i].progress = this.determineMilestoneProgress(this.milestones[i]);
 
                             if (diff < 3 && this.milestones[i].progress !== 1) {
                                 this.milestones[i].status = 'urgent';
@@ -557,6 +609,22 @@ define([
 
                             if (this.milestones[i].progress === 1 && this.milestones[i].reflections.length > 0) {
                                 this.milestones[i].status = 'reflected';
+                            }
+                        }
+                        // highlight selected activities
+                        this.hightlightSelectedResources();
+                    },
+                    hightlightSelectedResources: function () {
+                        for (var j = 0; j < this.milestones.length; j++) {
+                            for (var i = 0; i < this.milestones[j].resources.length; i++) {
+                                console.log('selected module-ids: ', this.milestones[j].resources[i].instance_url_id)
+                                $('#module-' + this.milestones[j].resources[i].instance_url_id)
+                                    .removeClass('resource-highlight')
+                                    .removeClass('resource-highlight-done')
+                                    .addClass(this.milestones[j].resources[i].checked ? 'resource-highlight-done' : 'resource-highlight')
+                                    .attr('title', this.milestones[j].resources[i].checked ? 'Dieses Element haben Sie bereits als "erledigt" markiert.' : 'Dieses Element haben Sie zur Bearbeitung in einem Meilenstein ausgewählt.')
+                                    .attr('data-toggle', 'tooltip')
+                                    ;
                             }
                         }
                     },
@@ -581,6 +649,12 @@ define([
                         var now = new Date();
                         this.filterPreset = preset;
                         switch (preset) {
+                            case "next-week":
+                                range = [new Date(now.getTime() + 1000 * 3600 * 24 * 7), new Date(now.getTime() + 1000 * 3600 * 24 * 1)];
+                                break;
+                            case "next-month":
+                                range = [new Date(now.getTime() + 1000 * 3600 * 24 * 30), new Date(now.getTime() + 1000 * 3600 * 24 * 1)];
+                                break;
                             case "today":
                                 range = [new Date(now.getTime() - 1000 * 3600 * 24 * 3), new Date(now.getTime() + 1000 * 3600 * 24 * 3)];
                                 break;
@@ -599,8 +673,8 @@ define([
                 }
             });
             milestoneApp.setFilterPreset('semester');
-            
-            
+
+
             var survey = new InitialSurvey(Vue, Sortable, milestoneApp, utils, course);
             var activityChart = new ActivityChart(d3, dc, crossfilter, moment, the_data, utils);
             xRange = activityChart.getXRange();

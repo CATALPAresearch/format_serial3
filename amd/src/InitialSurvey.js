@@ -84,6 +84,21 @@ define(['jquery'
                 yearSelected: function (event) {
                     this.selectedYear = event.target.value;
                 },
+                resourcesBySection: function (id) {
+                    return this.availableResources.filter(function (s) {
+                        return parseInt(s.section_id, 10) === parseInt(id, 10) ? true : false;
+                    });
+                },
+                resourceSections: function () {
+                    var sections = {};
+                    for (var i = 0; i < this.availableResources.length; i++) {
+                        sections[this.availableResources[i].section_id] = {
+                            name: this.availableResources[i].section_name === ' ' ? '(Einführung)' : this.availableResources[i].section_name,
+                            id: this.availableResources[i].section_id
+                        };
+                    }
+                    return sections;
+                },
                 resourceById: function (id) {
                     return this.availableResources.filter(function (s) {
                         return parseInt(s.id, 10) === parseInt(id, 10) ? true : false;
@@ -139,11 +154,14 @@ define(['jquery'
                         case 'f1a': // wants examination
                             ms = Object.assign({}, milestoneTemplate, {});
                             ms.name = "Prüfung / Klausur";
+                            ms.objective = "Die Prüfung sehr gut bestehen";
                             if (this.selectedMonth !== today.getMonth() && this.selectedYear !== today.getFullYear()) {
-                                ms.end = this.selectedMonth + '/1/' + this.selectedYear;//new Date(this.selectedYear, this.selectedMonth, 1, 0, 0, 0, 0);
+                                ms.end = Date.parse('' + this.selectedYear + ',' + this.selectedMonth + ',1');
                             } else {
-                                ms.end = '2,1,2020';//new Date(2020, 2, 1, 0, 0, 0, 0 ); // last month of the semester as default
+                                ms.end = Date.parse("2020,2,1"); // last month of the semester as default
+
                             }
+                            //console.log("2020,2,1", new Date("2020, 2, 1"));
                             ms.resources = [];
                             ms.strategies = [];
                             milestoneApp.addMilestone(ms);
@@ -160,7 +178,7 @@ define(['jquery'
                                     resources: [],
                                     strategies: [{ "id": "gliederung", "name": "Gliederung", "desc": "Themenfelder lassen sich mit einer Gliederung übersichtlich strukturieren.", "url": "http://www.heise.de/", "category": "organization" }],
                                     reflections: [
-                                        
+
                                     ]
                                 },
                                 {
@@ -323,6 +341,8 @@ define(['jquery'
                     milestoneApp.surveyDone = true;
                     this.surveyComplete = true;
                     $('#theSurveyModal').modal('hide');
+                    //$('#activity-chart-container').show();
+                    //$('#filter-chart-container').show();
                 }
             }
         });

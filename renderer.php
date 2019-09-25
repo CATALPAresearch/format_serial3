@@ -125,7 +125,7 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                                                         <input @change="updateObjective" class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios3"
                                                             value="f1c" v-model="objectives">
                                                         <label class="form-check-label" for="exampleRadios3">
-                                                            Meinen eigenen eigenen Interessen bzgl. bestimmter Themengebiete nachgehen
+                                                            Meinen eigenen Interessen bzgl. bestimmter Themengebiete nachgehen
                                                         </label>
                                                     </div>
                                                     <div class="form-check">
@@ -140,8 +140,7 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                                             </div>
                                             <hr>
                                             <div class="form-group row">
-                                                <label for="inputMSname" class="col-10 col-form-label">Wie viele Stunden pro Woche können
-                                                    planen Sie für das Lernen in diesem Kurs / Modul ein?</label>
+                                                <label for="inputMSname" class="col-10 col-form-label">Wie viele Stunden pro Woche planen Sie für das Lernen in diesem Kurs / Modul ein?</label>
                                                 <div class="col-2">
                                                     <input :style="invalidAvailableTime ? \'border: solid 1px #ff420e;\' : \'\'" type="number" @change="updateAvailableTime()" class="form-control" id="inputMSname" placeholder="0" min="0"
                                                         v-model="availableTime">
@@ -194,7 +193,10 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                                                         <select @change="resourceSelected" class="" id="modal_strategy-select" class="">
                                                             <option :selected="true" disabled value="default">Wählen Sie Themen, Materialien
                                                                 und Aktivitäten</option>
-                                                            <option v-for="s in availableResources" :value="s.id">{{ s.name }}</option>
+                                                            <optgroup v-for="section in resourceSections()" :label="section.name">
+                                                                <option :value="\'complete-section-\'+section.id">Alles im Abschnitt: {{section.name}}</option>
+                                                                <option v-for="s in resourcesBySection(section.id)" :value="s.id">{{ s.instance_type }}: {{ s.name }}</option>
+                                                            </optgroup>
                                                         </select>
                                                     </div>
                                                 </div>
@@ -224,13 +226,19 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                                     <!-- Milestone chart -->
                                     <div class="chart ms-chart">
                                         <div class="ms-chart-header row">
-                                            <div class="ms-title col-sm-12 col-md-4 col-lg-4">Meine Semesterplanung</div>
+                                            <div class="ms-title col-sm-12 col-md-4 col-lg-4">
+                                                Meine Semesterplanung
+                                                <!--<span class="btn-link btn fa fa-project-diagram"></span>
+                                                <span class="btn-link btn fa fa-list"></span>-->
+                                            </div>
                                             <div class="col-sm-12 col-md-8 col-lg-8">
                                                 <span data-toggle="modal" data-target="#theMilestoneModal">
                                                     <button @click="showEmptyMilestone()" class="btn btn-sm right btn-primary ms-btn"
                                                         data-toggle="tooltip" data-placement="bottom" title="Neuen Meilenstein hinzufügen"><i
                                                             class="fa fa-plus"></i></button>
                                                 </span>
+                                                <button @click="setFilterPreset(\'next-month\')" :style="filterPreset === \'next-month\' ? \'text-decoration: underline;\' : \'text-decoration:none;\'" class="btn btn-sm ms-btn btn-link right">nächster Monat</button>
+                                                <button @click="setFilterPreset(\'next-week\')" :style="filterPreset === \'next-week\' ? \'text-decoration: underline;\' : \'text-decoration:none;\'" class="btn btn-sm ms-btn btn-link right">nächste Woche</button>
                                                 <button @click="setFilterPreset(\'today\')" :style="filterPreset === \'today\' ? \'text-decoration: underline;\' : \'text-decoration:none;\'" class="btn btn-sm ms-btn btn-link right">heute</button>
                                                 <button @click="setFilterPreset(\'last-week\')" :style="filterPreset === \'last-week\' ? \'text-decoration: underline;\' : \'text-decoration:none;\'" class="btn btn-sm btn-link ms-btn right">letzte
                                                     Woche</button>
@@ -365,7 +373,11 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                                                                 <li v-for="s in getSelectedMilestone().resources" class="form-check">
                                                                     <span :class="s.checked ? \'ms-wrapper-resource ms-done\' : \'ms-wrapper-resource ms-not-done\'">
                                                                         <label class="form-check-label" for="defaultCheck1">
-                                                                            <input class="s.checked ? \'form-check-input ms-done\' : \'form-check-input ms-not-done\'" type="checkbox" v-model="s.checked"
+                                                                            <input 
+                                                                                class="s.checked ? \'form-check-input ms-done\' : \'form-check-input ms-not-done\'" 
+                                                                                type="checkbox" v-model="s.checked"
+                                                                                data-toggle="tooltip"
+                                                                                title="Setzen Sie das Häkchen, wenn Sie diese Resource bereits bearbeitet haben."
                                                                                 v-bind:id="s.id">
                                                                             <a :href="getMoodlePath() + \'/mod/\' + s.instance_type + \'/view.php?id=\'+ s.instance_url_id">{{ s.name }} {{ done[s.id] }} {{ s.checked }}</a>
                                                                             <!--<i class="fa fa-info"></i>-->
@@ -383,7 +395,10 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                                                             <ul>
                                                                 <li v-for="s in getSelectedMilestone().strategies" class="form-check">
                                                                     <label :class="s.checked ? \'form-check-label ms-done ms-wrapper-resource\' : \'form-check-label ms-wrapper-resource ms-not-done\'" for="defaultCheck1">
-                                                                        <input :class="s.checked ? \'form-check-input ms-done\' : \'form-check-input ms-not-done\'" type="checkbox" value=""
+                                                                        <input :class="s.checked ? \'form-check-input ms-done\' : \'form-check-input ms-not-done\'" 
+                                                                            type="checkbox" value=""
+                                                                            data-toggle="tooltip"
+                                                                            title="Setzen Sie das Häkchen, wenn Sie diese Lernstrategie bereits angewendet haben."
                                                                             id="strategyCheck" v-model="s.checked" v-bind:id="s.id">
                                                                         <span class="list-label">{{ s.name }}</span>
                                                                         <button type="button" class="btn btn-sm btn-link"
@@ -403,9 +418,10 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                                                                 <span id="before-select"><i class="fa fa-plus"></i> </span>
                                                                 <select @change="resourceSelected" class="" id="modal_strategy-select"
                                                                     class="">
-                                                                    <option :selected="true" disabled value="default">Lernressource *
-                                                                    </option>
-                                                                    <option v-for="s in resources" :value="s.id">{{ s.name }}</option>
+                                                                    <option :selected="true" disabled value="default">Wählen Sie Themen, Materialien und Aktivitäten</option>
+                                                                    <optgroup v-for="section in resourceSections()" :label="section.name">
+                                                                        <option v-for="s in resourcesBySection(section.id)" :value="s.id">{{ s.instance_type }}: {{ s.name }}</option>
+                                                                    </optgroup>
                                                                 </select>
                                                             </div>
                                                         </div>
@@ -448,7 +464,7 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                                                     <!-- Save new milestone-->
                                                     <div class="row row-smooth">
                                                         <div class="col-md">
-                                                            <div v-if="selectedMilestone === -1">
+                                                            <div><!-- v-if="selectedMilestone === -1" -->
                                                                 <button @click="validateMilestoneForm()" class="btn btn-primary btn-sm">
                                                                     Speichern
                                                                 </button>

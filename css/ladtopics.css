@@ -1,4 +1,10 @@
-.test55 {
-    color:green !important;
-    font-weight: bold;
+
+a {
+  color: black !important;
+}
+
+li.section {
+  list-style: none;
+  margin-top:20px;
+  border-top: solid 1px #ccc;
 }

@@ -106,7 +106,8 @@ class format_ladtopics_external extends external_api {
     public static function coursestructure_returns() {
         return new external_single_structure(
             array(
-                'data' => new external_value(PARAM_RAW, 'data')
+                'data' => new external_value(PARAM_RAW, 'data'),
+                'debug' => new external_value(PARAM_RAW, 'debug')
                 //,'user' => new external_value(PARAM_RAW, 'data')
             )
         );
@@ -167,10 +168,72 @@ class format_ladtopics_external extends external_api {
          */
 
         
-         // missing: page, assign, studentquiz,  
+         // missing: , assign,  
         
-        $transaction = $DB->start_delegated_transaction(); 
-        $query='
+         $query='
+         SELECT
+        cm.instance AS instance_id,     
+        m.name AS instance_type, 
+        m.visible AS instance_visible,
+        f.name AS instance_title,
+        cm.id AS instance_url_id,
+        cm.course AS course_id, 
+        cm.module AS module_id, 
+        cm.section AS section_id, 
+        cs.name AS section_name
+        FROM ' . $CFG->prefix . 'course_modules AS cm
+        JOIN ' . $CFG->prefix . 'modules AS m 
+        ON m.id = cm.module
+        JOIN ' . $CFG->prefix . 'course_sections AS cs 
+        ON cs.id = cm.section
+        RIGHT OUTER JOIN ' . $CFG->prefix . 'hvp AS f
+        ON cm.instance = f.id 
+        WHERE cm.course = '. (int)$courseid .' AND cs.course = '. (int)$courseid .' AND f.course = '. (int)$courseid .' AND m.name=\'hvp\'
+
+        UNION
+
+         SELECT
+        cm.instance AS instance_id,     
+        m.name AS instance_type, 
+        m.visible AS instance_visible,
+        f.name AS instance_title,
+        cm.id AS instance_url_id,
+        cm.course AS course_id, 
+        cm.module AS module_id, 
+        cm.section AS section_id, 
+        cs.name AS section_name
+        FROM ' . $CFG->prefix . 'course_modules AS cm
+        JOIN ' . $CFG->prefix . 'modules AS m 
+        ON m.id = cm.module
+        JOIN ' . $CFG->prefix . 'course_sections AS cs 
+        ON cs.id = cm.section
+        RIGHT OUTER JOIN ' . $CFG->prefix . 'checklist AS f
+        ON cm.instance = f.id 
+        WHERE cm.course = '. (int)$courseid .' AND cs.course = '. (int)$courseid .' AND f.course = '. (int)$courseid .' AND m.name=\'checklist\'
+
+        UNION
+
+         SELECT
+        cm.instance AS instance_id,     
+        m.name AS instance_type, 
+        m.visible AS instance_visible,
+        f.name AS instance_title,
+        cm.id AS instance_url_id,
+        cm.course AS course_id, 
+        cm.module AS module_id, 
+        cm.section AS section_id, 
+        cs.name AS section_name
+        FROM ' . $CFG->prefix . 'course_modules AS cm
+        JOIN ' . $CFG->prefix . 'modules AS m 
+        ON m.id = cm.module
+        JOIN ' . $CFG->prefix . 'course_sections AS cs 
+        ON cs.id = cm.section
+        RIGHT OUTER JOIN ' . $CFG->prefix . 'url AS f
+        ON cm.instance = f.id 
+        WHERE cm.course = '. (int)$courseid .' AND cs.course = '. (int)$courseid .' AND f.course = '. (int)$courseid .' AND m.name=\'url\'
+
+        UNION
+
         SELECT
         cm.instance AS instance_id,     
         m.name AS instance_type, 
@@ -185,7 +248,70 @@ class format_ladtopics_external extends external_api {
         JOIN ' . $CFG->prefix . 'modules AS m 
         ON m.id = cm.module
         JOIN ' . $CFG->prefix . 'course_sections AS cs 
-        ON cs.section = cm.section
+        ON cs.id = cm.section
+        RIGHT OUTER JOIN ' . $CFG->prefix . 'resource AS f
+        ON cm.instance = f.id 
+        WHERE cm.course = '. (int)$courseid .' AND cs.course = '. (int)$courseid .' AND f.course = '. (int)$courseid .' AND m.name=\'resource\'
+
+        UNION
+
+        SELECT
+        cm.instance AS instance_id,     
+        m.name AS instance_type, 
+        m.visible AS instance_visible,
+        f.name AS instance_title,
+        cm.id AS instance_url_id,
+        cm.course AS course_id, 
+        cm.module AS module_id, 
+        cm.section AS section_id, 
+        cs.name AS section_name
+        FROM ' . $CFG->prefix . 'course_modules AS cm
+        JOIN ' . $CFG->prefix . 'modules AS m 
+        ON m.id = cm.module
+        JOIN ' . $CFG->prefix . 'course_sections AS cs 
+        ON cs.id = cm.section
+        RIGHT OUTER JOIN ' . $CFG->prefix . 'studentquiz AS f
+        ON cm.instance = f.id 
+        WHERE cm.course = '. (int)$courseid .' AND cs.course = '. (int)$courseid .' AND f.course = '. (int)$courseid .' AND m.name=\'studentquiz\'
+
+        UNION
+
+        SELECT
+        cm.instance AS instance_id,     
+        m.name AS instance_type, 
+        m.visible AS instance_visible,
+        f.name AS instance_title,
+        cm.id AS instance_url_id,
+        cm.course AS course_id, 
+        cm.module AS module_id, 
+        cm.section AS section_id, 
+        cs.name AS section_name
+        FROM ' . $CFG->prefix . 'course_modules AS cm
+        JOIN ' . $CFG->prefix . 'modules AS m 
+        ON m.id = cm.module
+        JOIN ' . $CFG->prefix . 'course_sections AS cs 
+        ON cs.id = cm.section
+        RIGHT OUTER JOIN ' . $CFG->prefix . 'page AS f
+        ON cm.instance = f.id 
+        WHERE cm.course = '. (int)$courseid .' AND cs.course = '. (int)$courseid .' AND f.course = '. (int)$courseid .' AND m.name=\'page\'
+
+        UNION
+
+        SELECT
+        cm.instance AS instance_id,     
+        m.name AS instance_type, 
+        m.visible AS instance_visible,
+        f.name AS instance_title,
+        cm.id AS instance_url_id,
+        cm.course AS course_id, 
+        cm.module AS module_id, 
+        cm.section AS section_id, 
+        cs.name AS section_name
+        FROM ' . $CFG->prefix . 'course_modules AS cm
+        JOIN ' . $CFG->prefix . 'modules AS m 
+        ON m.id = cm.module
+        JOIN ' . $CFG->prefix . 'course_sections AS cs 
+        ON cs.id = cm.section
         RIGHT OUTER JOIN ' . $CFG->prefix . 'feedback AS f
         ON cm.instance = f.id 
         WHERE cm.course = '. (int)$courseid .' AND cs.course = '. (int)$courseid .' AND f.course = '. (int)$courseid .' AND m.name=\'feedback\'
@@ -206,7 +332,7 @@ class format_ladtopics_external extends external_api {
         JOIN ' . $CFG->prefix . 'modules AS m 
         ON m.id = cm.module
         JOIN ' . $CFG->prefix . 'course_sections AS cs 
-        ON cs.section = cm.section
+        ON cs.id = cm.section
         RIGHT OUTER JOIN ' . $CFG->prefix . 'forum AS f
         ON cm.instance = f.id 
         WHERE cm.course = '. (int)$courseid .' AND cs.course = '. (int)$courseid .' AND f.course = '. (int)$courseid .' AND m.name=\'forum\'
@@ -227,7 +353,7 @@ class format_ladtopics_external extends external_api {
         JOIN ' . $CFG->prefix . 'modules AS m 
         ON m.id = cm.module
         JOIN ' . $CFG->prefix . 'course_sections AS cs 
-        ON cs.section = cm.section
+        ON cs.id = cm.section
         RIGHT OUTER JOIN ' . $CFG->prefix . 'glossary AS f
         ON cm.instance = f.id 
         WHERE cm.course = '. (int)$courseid .' AND cs.course = '. (int)$courseid .' AND f.course = '. (int)$courseid .' AND m.name=\'glossary\'
@@ -248,7 +374,7 @@ class format_ladtopics_external extends external_api {
         JOIN ' . $CFG->prefix . 'modules AS m 
         ON m.id = cm.module
         JOIN ' . $CFG->prefix . 'course_sections AS cs 
-        ON cs.section = cm.section
+        ON cs.id = cm.section
         RIGHT OUTER JOIN ' . $CFG->prefix . 'quiz AS f
         ON cm.instance = f.id 
         WHERE cm.course = '. (int)$courseid .' AND cs.course = '. (int)$courseid .' AND f.course = '. (int)$courseid .' AND m.name=\'quiz\'
@@ -269,13 +395,14 @@ class format_ladtopics_external extends external_api {
         JOIN ' . $CFG->prefix . 'modules AS m 
         ON m.id = cm.module
         JOIN ' . $CFG->prefix . 'course_sections AS cs 
-        ON cs.section = cm.section
+        ON cs.id = cm.section
         RIGHT OUTER JOIN ' . $CFG->prefix . 'wiki AS f
         ON cm.instance = f.id 
         WHERE cm.course = '. (int)$courseid .' AND cs.course = '. (int)$courseid .' AND f.course = '. (int)$courseid .' AND m.name=\'wiki\'
 
         ;
         ';
+        $transaction = $DB->start_delegated_transaction();
         $res = $DB->get_records_sql($query); 
         // debug: error_log(print_r($res,true));
         $transaction->allow_commit();
@@ -302,8 +429,42 @@ class format_ladtopics_external extends external_api {
                 $id++;
             }   
         }
-    
-        return array('data'=>json_encode($arr));
+
+        $debug=array('');
+/*
+        $q = 'SELECT 
+        cm.instance AS instance_id,     
+        m.name AS instance_type, 
+        m.visible AS instance_visible,
+        cm.id AS instance_url_id,
+        cm.course AS course_id, 
+        cm.module AS module_id, 
+        cm.section AS section_id,
+        cs.name AS section_name
+        FROM ' . $CFG->prefix . 'course_modules AS cm
+        JOIN ' . $CFG->prefix . 'modules AS m 
+        ON m.id = cm.module
+        
+
+        WHERE m.name=\'forum\'
+        ;';
+
+        $q='
+        SELECT cs.name, cs.section, cs.id
+        FROM ' . $CFG->prefix . 'course_sections AS cs 
+        ';
+
+        $q33='
+        SELECT cm.section, cm.module, cm.instance
+        FROM ' . $CFG->prefix . 'course_modules AS cm
+        ';
+
+        $transaction = $DB->start_delegated_transaction();
+        $res2 = $DB->get_records_sql($q); 
+        $transaction->allow_commit();
+        $debug=array($res2);
+  */  
+        return array('data'=>json_encode($arr), 'debug'=>json_encode($debug));
     }
     public static function coursestructure_is_allowed_from_ajax() { return true; }
 
