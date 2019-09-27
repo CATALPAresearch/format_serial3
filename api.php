@@ -112,66 +112,53 @@ class format_ladtopics_external extends external_api {
             )
         );
     }
+
+
     public static function coursestructure($courseid) {
         global $CFG, $DB, $USER;
         /*
-        $transaction = $DB->start_delegated_transaction(); 
-        $query ='SELECT name, visible, section FROM ' . $CFG->prefix . 'course_sections WHERE course='. (int)$courseid .';';
-        $sections = $DB->get_records_sql($query);//($table, array('userid'=>'2', 'component'=>'mod_glossary'));//, '','*',0,100);
-        $transaction->allow_commit();
-        $arr=array();
-        $id=0;
-        foreach($sections as $bu){
-            $entry = array(
-                    'id' => $id,
-                    'section' => $bu->section,
-                    'name' => $bu->name,
-                    'visible' => $bu->visible
-            );
-            array_push($arr, $entry);
-            $id++;
-        }
-        return array('data'=>json_encode($arr));
-        */
+        This function should be refactored
 
-        /*
         http://127.0.0.1/adminer.php?username=root&db=moodle&select=moodlecourse_sections
         http://127.0.0.1/adminer.php?username=root&db=moodle&select=moodlecourse_modules&order%5B0%5D=course
         http://127.0.0.1/adminer.php?username=root&db=moodle&select=moodle_modules
         http://127.0.0.1/adminer.php?username=root&db=moodle&select=moodlefeedback
-        TestQuery:
 
-        SELECT 
-        cm.course AS course_id, 
-        cm.module AS module_id, 
-
-        cm.section AS section_id, 
-        cs.name AS section_name,
-
-        cm.instance AS instance_id, 
-        m.name AS instance_type, 
-        f.name AS instance_title 
-
-        FROM moodlecourse_modules AS cm
-
-        JOIN moodle_modules AS m 
-        ON m.id = cm.module
-
-        JOIN moodlecourse_sections AS cs 
-        ON cs.section = cm.section
-
-        RIGHT OUTER JOIN moodlefeedback AS f
-        ON cm.instance = f.id 
-
-        WHERE cm.course = 2 AND cs.course = 2 AND f.course = 2 AND m.name='feedback'
-
-         */
-
-        
          // missing: , assign,  
-        
-         $query='
-         SELECT
+            
+         modules: zuordnung ID Aktivity-Type, e.g. "forum"
+         course_sections: nummerierung der Sektionen mit Titel
+         course_modules: 
+        */
+
+        $arr = array();
+        $addActivities = function($data){
+            $arr=array();
+            $id=0;
+            foreach($data as $e){
+                if($e->instance_visible == 1){ 
+                    $entry = array(
+                        'id' => $id,
+                        'course_id' => $e->course_id, 
+                        'module_id' => $e->module_id, 
+                        'section_id' => $e->section_id, 
+                        'section_name' => $e->section_name,
+                        'instance_id' => $e->instance_id,
+                        'instance_url_id' => $e->instance_url_id, 
+                        'instance_type' => $e->instance_type, 
+                        'instance_title' => $e->instance_title,
+                        'section' => $e->section_id, 
+                        'name' => $e->instance_title 
+                    );
+                    array_push($arr, $entry);
+                    $id++;
+                }   
+            }
+            return $arr;
+        };
+
+        $query = '
+        SELECT 
         cm.instance AS instance_id,     
         m.name AS instance_type, 
         m.visible AS instance_visible,
@@ -189,10 +176,14 @@ class format_ladtopics_external extends external_api {
         RIGHT OUTER JOIN ' . $CFG->prefix . 'hvp AS f
         ON cm.instance = f.id 
         WHERE cm.course = '. (int)$courseid .' AND cs.course = '. (int)$courseid .' AND f.course = '. (int)$courseid .' AND m.name=\'hvp\'
+        ';
+        $transaction = $DB->start_delegated_transaction();
+        $res = $DB->get_records_sql($query); 
+        $transaction->allow_commit();
+        $arr = array_merge($arr, $addActivities($res));
 
-        UNION
-
-         SELECT
+        $query = '
+        SELECT 
         cm.instance AS instance_id,     
         m.name AS instance_type, 
         m.visible AS instance_visible,
@@ -210,10 +201,14 @@ class format_ladtopics_external extends external_api {
         RIGHT OUTER JOIN ' . $CFG->prefix . 'checklist AS f
         ON cm.instance = f.id 
         WHERE cm.course = '. (int)$courseid .' AND cs.course = '. (int)$courseid .' AND f.course = '. (int)$courseid .' AND m.name=\'checklist\'
+        ';
+        $transaction = $DB->start_delegated_transaction();
+        $res = $DB->get_records_sql($query); 
+        $transaction->allow_commit();
+        $arr = array_merge($arr, $addActivities($res));
 
-        UNION
-
-         SELECT
+        $query = '
+        SELECT 
         cm.instance AS instance_id,     
         m.name AS instance_type, 
         m.visible AS instance_visible,
@@ -231,31 +226,14 @@ class format_ladtopics_external extends external_api {
         RIGHT OUTER JOIN ' . $CFG->prefix . 'url AS f
         ON cm.instance = f.id 
         WHERE cm.course = '. (int)$courseid .' AND cs.course = '. (int)$courseid .' AND f.course = '. (int)$courseid .' AND m.name=\'url\'
+        ';
+        $transaction = $DB->start_delegated_transaction();
+        $res = $DB->get_records_sql($query); 
+        $transaction->allow_commit();
+        $arr = array_merge($arr, $addActivities($res));
 
-        UNION
-
-        SELECT
-        cm.instance AS instance_id,     
-        m.name AS instance_type, 
-        m.visible AS instance_visible,
-        f.name AS instance_title,
-        cm.id AS instance_url_id,
-        cm.course AS course_id, 
-        cm.module AS module_id, 
-        cm.section AS section_id, 
-        cs.name AS section_name
-        FROM ' . $CFG->prefix . 'course_modules AS cm
-        JOIN ' . $CFG->prefix . 'modules AS m 
-        ON m.id = cm.module
-        JOIN ' . $CFG->prefix . 'course_sections AS cs 
-        ON cs.id = cm.section
-        RIGHT OUTER JOIN ' . $CFG->prefix . 'resource AS f
-        ON cm.instance = f.id 
-        WHERE cm.course = '. (int)$courseid .' AND cs.course = '. (int)$courseid .' AND f.course = '. (int)$courseid .' AND m.name=\'resource\'
-
-        UNION
-
-        SELECT
+        $query = '
+        SELECT 
         cm.instance AS instance_id,     
         m.name AS instance_type, 
         m.visible AS instance_visible,
@@ -273,10 +251,14 @@ class format_ladtopics_external extends external_api {
         RIGHT OUTER JOIN ' . $CFG->prefix . 'studentquiz AS f
         ON cm.instance = f.id 
         WHERE cm.course = '. (int)$courseid .' AND cs.course = '. (int)$courseid .' AND f.course = '. (int)$courseid .' AND m.name=\'studentquiz\'
+        ';
+        $transaction = $DB->start_delegated_transaction();
+        $res = $DB->get_records_sql($query); 
+        $transaction->allow_commit();
+        $arr = array_merge($arr, $addActivities($res));
 
-        UNION
-
-        SELECT
+        $query = '
+        SELECT 
         cm.instance AS instance_id,     
         m.name AS instance_type, 
         m.visible AS instance_visible,
@@ -294,10 +276,15 @@ class format_ladtopics_external extends external_api {
         RIGHT OUTER JOIN ' . $CFG->prefix . 'page AS f
         ON cm.instance = f.id 
         WHERE cm.course = '. (int)$courseid .' AND cs.course = '. (int)$courseid .' AND f.course = '. (int)$courseid .' AND m.name=\'page\'
+        ';
+        $transaction = $DB->start_delegated_transaction();
+        $res = $DB->get_records_sql($query); 
+        $transaction->allow_commit();
+        $arr = array_merge($arr, $addActivities($res));
 
-        UNION
 
-        SELECT
+        $query = '
+        SELECT 
         cm.instance AS instance_id,     
         m.name AS instance_type, 
         m.visible AS instance_visible,
@@ -315,9 +302,13 @@ class format_ladtopics_external extends external_api {
         RIGHT OUTER JOIN ' . $CFG->prefix . 'feedback AS f
         ON cm.instance = f.id 
         WHERE cm.course = '. (int)$courseid .' AND cs.course = '. (int)$courseid .' AND f.course = '. (int)$courseid .' AND m.name=\'feedback\'
+        ';
+        $transaction = $DB->start_delegated_transaction();
+        $res = $DB->get_records_sql($query); 
+        $transaction->allow_commit();
+        $arr = array_merge($arr, $addActivities($res));
 
-        UNION
-
+        $query = '
         SELECT 
         cm.instance AS instance_id,     
         m.name AS instance_type, 
@@ -336,9 +327,38 @@ class format_ladtopics_external extends external_api {
         RIGHT OUTER JOIN ' . $CFG->prefix . 'forum AS f
         ON cm.instance = f.id 
         WHERE cm.course = '. (int)$courseid .' AND cs.course = '. (int)$courseid .' AND f.course = '. (int)$courseid .' AND m.name=\'forum\'
+        ';
+        $transaction = $DB->start_delegated_transaction();
+        $res = $DB->get_records_sql($query); 
+        $transaction->allow_commit();
+        $arr = array_merge($arr, $addActivities($res));
 
-        UNION
+        $query = '
+        SELECT 
+        cm.instance AS instance_id,     
+        m.name AS instance_type, 
+        m.visible AS instance_visible,
+        f.name AS instance_title,
+        cm.id AS instance_url_id,
+        cm.course AS course_id, 
+        cm.module AS module_id, 
+        cm.section AS section_id, 
+        cs.name AS section_name
+        FROM ' . $CFG->prefix . 'course_modules AS cm
+        JOIN ' . $CFG->prefix . 'modules AS m 
+        ON m.id = cm.module
+        JOIN ' . $CFG->prefix . 'course_sections AS cs 
+        ON cs.id = cm.section
+        RIGHT OUTER JOIN ' . $CFG->prefix . 'resource AS f
+        ON cm.instance = f.id 
+        WHERE cm.course = '. (int)$courseid .' AND cs.course = '. (int)$courseid .' AND f.course = '. (int)$courseid .' AND m.name=\'resource\'
+        ';
+        $transaction = $DB->start_delegated_transaction();
+        $res = $DB->get_records_sql($query); 
+        $transaction->allow_commit();
+        $arr = array_merge($arr, $addActivities($res));
 
+        $query = '
         SELECT 
         cm.instance AS instance_id,     
         m.name AS instance_type, 
@@ -357,9 +377,13 @@ class format_ladtopics_external extends external_api {
         RIGHT OUTER JOIN ' . $CFG->prefix . 'glossary AS f
         ON cm.instance = f.id 
         WHERE cm.course = '. (int)$courseid .' AND cs.course = '. (int)$courseid .' AND f.course = '. (int)$courseid .' AND m.name=\'glossary\'
+        ';
+        $transaction = $DB->start_delegated_transaction();
+        $res = $DB->get_records_sql($query); 
+        $transaction->allow_commit();
+        $arr = array_merge($arr, $addActivities($res));
 
-        UNION
-
+        $query = '
         SELECT 
         cm.instance AS instance_id,     
         m.name AS instance_type, 
@@ -378,9 +402,13 @@ class format_ladtopics_external extends external_api {
         RIGHT OUTER JOIN ' . $CFG->prefix . 'quiz AS f
         ON cm.instance = f.id 
         WHERE cm.course = '. (int)$courseid .' AND cs.course = '. (int)$courseid .' AND f.course = '. (int)$courseid .' AND m.name=\'quiz\'
+        ';
+        $transaction = $DB->start_delegated_transaction();
+        $res = $DB->get_records_sql($query); 
+        $transaction->allow_commit();
+        $arr = array_merge($arr, $addActivities($res));
 
-        UNION
-
+        $query = '
         SELECT 
         cm.instance AS instance_id,     
         m.name AS instance_type, 
@@ -399,163 +427,26 @@ class format_ladtopics_external extends external_api {
         RIGHT OUTER JOIN ' . $CFG->prefix . 'wiki AS f
         ON cm.instance = f.id 
         WHERE cm.course = '. (int)$courseid .' AND cs.course = '. (int)$courseid .' AND f.course = '. (int)$courseid .' AND m.name=\'wiki\'
-
-        ;
         ';
-        /*
-         modules: zuordnung ID Aktivity-Type, e.g. "forum"
-         course_sections: nummerierung der Sektionen mit Titel
-         course_modules: 
-          */
-        $query2 = '   SELECT
-        cm.instance AS instance_id,     
-        m.name AS instance_type, 
-        m.visible AS instance_visible,
-        f.name AS instance_title,
-        cm.id AS instance_url_id,
-        cm.course AS course_id, 
-        cm.module AS module_id, 
-        cm.section AS section_id, 
-        cs.name AS section_name
-        FROM ' . $CFG->prefix . 'course_modules AS cm
-        JOIN ' . $CFG->prefix . 'modules AS m 
-        ON m.id = cm.module
-        JOIN ' . $CFG->prefix . 'course_sections AS cs 
-        ON cs.id = cm.section
-        RIGHT OUTER JOIN ' . $CFG->prefix . 'resource AS f
-        ON cm.instance = f.id 
-        WHERE cm.course = '. (int)$courseid .' AND cs.course = '. (int)$courseid .' AND f.course = '. (int)$courseid .' AND m.name=\'resource\'
-
-        UNION ALL
-
-        SELECT 
-        cm.instance AS instance_id,     
-        m.name AS instance_type, 
-        m.visible AS instance_visible,
-        f.name AS instance_title,
-        cm.id AS instance_url_id,
-        cm.course AS course_id, 
-        cm.module AS module_id, 
-        cm.section AS section_id, 
-        cs.name AS section_name
-        FROM ' . $CFG->prefix . 'course_modules AS cm
-        JOIN ' . $CFG->prefix . 'modules AS m 
-        ON m.id = cm.module
-        JOIN ' . $CFG->prefix . 'course_sections AS cs 
-        ON cs.id = cm.section
-        RIGHT OUTER JOIN ' . $CFG->prefix . 'forum AS f
-        ON cm.instance = f.id 
-        WHERE cm.course = '. (int)$courseid .' AND cs.course = '. (int)$courseid .' AND f.course = '. (int)$courseid .' AND m.name=\'forum\'
-
-        UNION ALL
-
-        SELECT 
-        cm.instance AS instance_id,     
-        m.name AS instance_type, 
-        m.visible AS instance_visible,
-        f.name AS instance_title,
-        cm.id AS instance_url_id,
-        cm.course AS course_id, 
-        cm.module AS module_id, 
-        cm.section AS section_id, 
-        cs.name AS section_name
-        FROM ' . $CFG->prefix . 'course_modules AS cm
-        JOIN ' . $CFG->prefix . 'modules AS m 
-        ON m.id = cm.module
-        JOIN ' . $CFG->prefix . 'course_sections AS cs 
-        ON cs.id = cm.section
-        RIGHT OUTER JOIN ' . $CFG->prefix . 'glossary AS f
-        ON cm.instance = f.id 
-        WHERE cm.course = '. (int)$courseid .' AND cs.course = '. (int)$courseid .' AND f.course = '. (int)$courseid .' AND m.name=\'glossary\'
-
-    
-';
-
         $transaction = $DB->start_delegated_transaction();
-        $res = $DB->get_records_sql($query2); 
-        // debug: error_log(print_r($res,true));
+        $res = $DB->get_records_sql($query); 
         $transaction->allow_commit();
-        // prepare results
-        $arr=array();
-        $id=0;
-        foreach($res as $e){
-            if($e->instance_visible == 1){ 
-                $entry = array(
-                    'id' => $id,
-                    'course_id' => $e->course_id, 
-                    'module_id' => $e->module_id, 
-                    'section_id' => $e->section_id, 
-                    'section_name' => $e->section_name,
-                    'instance_id' => $e->instance_id,
-                    'instance_url_id' => $e->instance_url_id, 
-                    'instance_type' => $e->instance_type, 
-                    'instance_title' => $e->instance_title,
-                    // addition
-                    'section' => $e->section_id, 
-                    'name' => $e->instance_title 
-                );
-                array_push($arr, $entry);
-                $id++;
-            }   
-        }
+        $arr = array_merge($arr, $addActivities($res));
+    
 
         $debug=array('');
-
-
-        $modules = get_fast_modinfo($courseid)->get_cms();
-        // ->get_section_info_all()
-        // ->get_sections()
-        // Put the modules into an array in order by the position they are shown in the course.
-        $mods = [];
-        $activitylist = [];
-        //$arr = array();
-        foreach ($modules as $module) {
-            // Only add activities the user can access, aren't in stealth mode and have a url (eg. mod_label does not).
-            if (!$module->uservisible || $module->is_stealth() || empty($module->url) || !$module->visible) {
-                continue;
-            }
-            $mods[$module->id] = $module;
-
-            // Module name.
-            $modname = $module->get_formatted_name();
-            
-            // Module URL.
-            $linkurl = new moodle_url($module->url, array('forceview' => 1));
-            
-            // Add module URL (as key) and name (as value) to the activity list array.
-            $activitylist[$linkurl->out(false)] = $modname;
-            
-            $entry = array(
-                    //'id' => $id,
-                    'course_id' => $courseid, 
-                    'module_id' => $module->id, 
-                    //'section_id' => $e->section_id, 
-                    //'section_name' => $e->section_name,
-                    //'instance_id' => $e->instance_id,
-                    //'instance_url_id' => $e->instance_url_id, 
-                    'instance_type' => $module,//$e->instance_type, 
-                    'instance_title' => $modname,//$e->instance_title,
-                    'url' => $linkurl->out(false),
-                    'test'=>$module->url
-                    //'section' => $e->section_id, 
-                    //'name' => $e->instance_title 
-                );
-            //array_push($arr, $entry);
-        }
-
-        //$nummods = count($mods);
-
-        
-        //$activitynav = new \core_course\output\activity_navigation($prevmod, $nextmod, $activitylist);
-        
-        return array('data'=>json_encode($arr), 'debug'=>json_encode(''));
+        // debug: error_log(print_r($res,true));
+        return array('data'=>json_encode($arr), 'debug'=>json_encode($debug));
     }
     public static function coursestructure_is_allowed_from_ajax() { return true; }
 
 
+    
+
    
 
 }// end class
+
 
 
 ?>
