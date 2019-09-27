@@ -402,8 +402,77 @@ class format_ladtopics_external extends external_api {
 
         ;
         ';
+        /*
+         modules: zuordnung ID Aktivity-Type, e.g. "forum"
+         course_sections: nummerierung der Sektionen mit Titel
+         course_modules: 
+          */
+        $query2 = '   SELECT
+        cm.instance AS instance_id,     
+        m.name AS instance_type, 
+        m.visible AS instance_visible,
+        f.name AS instance_title,
+        cm.id AS instance_url_id,
+        cm.course AS course_id, 
+        cm.module AS module_id, 
+        cm.section AS section_id, 
+        cs.name AS section_name
+        FROM ' . $CFG->prefix . 'course_modules AS cm
+        JOIN ' . $CFG->prefix . 'modules AS m 
+        ON m.id = cm.module
+        JOIN ' . $CFG->prefix . 'course_sections AS cs 
+        ON cs.id = cm.section
+        RIGHT OUTER JOIN ' . $CFG->prefix . 'resource AS f
+        ON cm.instance = f.id 
+        WHERE cm.course = '. (int)$courseid .' AND cs.course = '. (int)$courseid .' AND f.course = '. (int)$courseid .' AND m.name=\'resource\'
+
+        UNION ALL
+
+        SELECT 
+        cm.instance AS instance_id,     
+        m.name AS instance_type, 
+        m.visible AS instance_visible,
+        f.name AS instance_title,
+        cm.id AS instance_url_id,
+        cm.course AS course_id, 
+        cm.module AS module_id, 
+        cm.section AS section_id, 
+        cs.name AS section_name
+        FROM ' . $CFG->prefix . 'course_modules AS cm
+        JOIN ' . $CFG->prefix . 'modules AS m 
+        ON m.id = cm.module
+        JOIN ' . $CFG->prefix . 'course_sections AS cs 
+        ON cs.id = cm.section
+        RIGHT OUTER JOIN ' . $CFG->prefix . 'forum AS f
+        ON cm.instance = f.id 
+        WHERE cm.course = '. (int)$courseid .' AND cs.course = '. (int)$courseid .' AND f.course = '. (int)$courseid .' AND m.name=\'forum\'
+
+        UNION ALL
+
+        SELECT 
+        cm.instance AS instance_id,     
+        m.name AS instance_type, 
+        m.visible AS instance_visible,
+        f.name AS instance_title,
+        cm.id AS instance_url_id,
+        cm.course AS course_id, 
+        cm.module AS module_id, 
+        cm.section AS section_id, 
+        cs.name AS section_name
+        FROM ' . $CFG->prefix . 'course_modules AS cm
+        JOIN ' . $CFG->prefix . 'modules AS m 
+        ON m.id = cm.module
+        JOIN ' . $CFG->prefix . 'course_sections AS cs 
+        ON cs.id = cm.section
+        RIGHT OUTER JOIN ' . $CFG->prefix . 'glossary AS f
+        ON cm.instance = f.id 
+        WHERE cm.course = '. (int)$courseid .' AND cs.course = '. (int)$courseid .' AND f.course = '. (int)$courseid .' AND m.name=\'glossary\'
+
+    
+';
+
         $transaction = $DB->start_delegated_transaction();
-        $res = $DB->get_records_sql($query); 
+        $res = $DB->get_records_sql($query2); 
         // debug: error_log(print_r($res,true));
         $transaction->allow_commit();
         // prepare results
@@ -431,88 +500,60 @@ class format_ladtopics_external extends external_api {
         }
 
         $debug=array('');
-/*
-        $q = 'SELECT 
-        cm.instance AS instance_id,     
-        m.name AS instance_type, 
-        m.visible AS instance_visible,
-        cm.id AS instance_url_id,
-        cm.course AS course_id, 
-        cm.module AS module_id, 
-        cm.section AS section_id,
-        cs.name AS section_name
-        FROM ' . $CFG->prefix . 'course_modules AS cm
-        JOIN ' . $CFG->prefix . 'modules AS m 
-        ON m.id = cm.module
+
+
+        $modules = get_fast_modinfo($courseid)->get_cms();
+        // ->get_section_info_all()
+        // ->get_sections()
+        // Put the modules into an array in order by the position they are shown in the course.
+        $mods = [];
+        $activitylist = [];
+        //$arr = array();
+        foreach ($modules as $module) {
+            // Only add activities the user can access, aren't in stealth mode and have a url (eg. mod_label does not).
+            if (!$module->uservisible || $module->is_stealth() || empty($module->url) || !$module->visible) {
+                continue;
+            }
+            $mods[$module->id] = $module;
+
+            // Module name.
+            $modname = $module->get_formatted_name();
+            
+            // Module URL.
+            $linkurl = new moodle_url($module->url, array('forceview' => 1));
+            
+            // Add module URL (as key) and name (as value) to the activity list array.
+            $activitylist[$linkurl->out(false)] = $modname;
+            
+            $entry = array(
+                    //'id' => $id,
+                    'course_id' => $courseid, 
+                    'module_id' => $module->id, 
+                    //'section_id' => $e->section_id, 
+                    //'section_name' => $e->section_name,
+                    //'instance_id' => $e->instance_id,
+                    //'instance_url_id' => $e->instance_url_id, 
+                    'instance_type' => $module,//$e->instance_type, 
+                    'instance_title' => $modname,//$e->instance_title,
+                    'url' => $linkurl->out(false),
+                    'test'=>$module->url
+                    //'section' => $e->section_id, 
+                    //'name' => $e->instance_title 
+                );
+            //array_push($arr, $entry);
+        }
+
+        //$nummods = count($mods);
+
         
-
-        WHERE m.name=\'forum\'
-        ;';
-
-        $q='
-        SELECT cs.name, cs.section, cs.id
-        FROM ' . $CFG->prefix . 'course_sections AS cs 
-        ';
-
-        $q33='
-        SELECT cm.section, cm.module, cm.instance
-        FROM ' . $CFG->prefix . 'course_modules AS cm
-        ';
-
-        $transaction = $DB->start_delegated_transaction();
-        $res2 = $DB->get_records_sql($q); 
-        $transaction->allow_commit();
-        $debug=array($res2);
-  */  
-        return array('data'=>json_encode($arr), 'debug'=>json_encode($debug));
+        //$activitynav = new \core_course\output\activity_navigation($prevmod, $nextmod, $activitylist);
+        
+        return array('data'=>json_encode($arr), 'debug'=>json_encode(''));
     }
     public static function coursestructure_is_allowed_from_ajax() { return true; }
 
 
-    /**
-     * Make video metadata persistent
    
-    public static function set_video_parameters() {
-        return new external_function_parameters(
-            array(
-                'data' => 
-                    new external_single_structure(
-                        array(
-                            'courseid' => new external_value(PARAM_INT, 'course id', VALUE_OPTIONAL),
-                            'userid' => new external_value(PARAM_INT, 'user id', VALUE_OPTIONAL)
-                        )
-                )
-            )
-        );
-    }
-    public static function set_video_returns() {
-        return new external_single_structure(
-                array( 'data' => new external_value(PARAM_RAW, 'data') )
-        );
-    }
-    public static function set_video($data) {
-        global $CFG, $DB;
-        $table = "videodatabase_videos";
-        $sql = 'DELETE FROM '.$CFG->prefix.'videodatabase_videos WHERE courseid='.(int)$data['courseid'];
-        $res = $DB->execute($sql);
-        $t = array();
-        foreach( $videos = explode(',', $data['videos']) as $video){
-            $r = new stdClass();
-            $r->courseid = (int)$data['courseid'];
-            $r->videofileid = (int)$video;
-            array_push($t, $r);
-        }
-        $transaction = $DB->start_delegated_transaction(); 
-        $res = $DB->insert_records($table, $t);
-        $transaction->allow_commit();
-        
-        $transaction = $DB->start_delegated_transaction(); 
-        $sql='SELECT * FROM '.$CFG->prefix.'videodatabase_videos as d JOIN '.$CFG->prefix.'videofile as f where d.videofileid = f.id';
-        $res = $DB->get_records_sql($sql);
-        $transaction->allow_commit();
-        return array('data'=> json_encode($res));//'{ "status":"ok", "msg": "Successfully saved video id from the videofile pool.'.'."}');
-    }
-    */
 
 }// end class
 
