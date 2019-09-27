@@ -14,8 +14,7 @@
  * @since      3.1
  */
 
-define(['jquery'
-], function ($) {
+define(['jquery'], function ($) {
 
     /**
      * Render a survey form
@@ -341,6 +340,7 @@ define(['jquery'
                     milestoneApp.surveyDone = true;
                     this.surveyComplete = true;
                     $('#theSurveyModal').modal('hide');
+                    $('#planing-component').show();
                     //$('#activity-chart-container').show();
                     //$('#filter-chart-container').show();
                 }

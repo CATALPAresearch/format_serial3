@@ -22,7 +22,7 @@ define([
      */
     var Timeline = function (Vue, d3, dc, crossfilter, moment, Sortable, utils, FilterChart, ActivityChart, InitialSurvey) {
 
-        var width = document.getElementById('planing-component').offsetWidth;
+        var width = document.getElementById('ladtopic-container-0').offsetWidth;
         var margins = { top: 15, right: 10, bottom: 20, left: 10 };
         var course = {
             id: $('#courseid').text()
@@ -139,31 +139,7 @@ define([
                                 resources: [],
                                 strategies: [],
                                 reflections: [],
-                            }/*,
-                            {
-                                id: 2,
-                                name: 'Meilenstein 3',
-                                objective: 'Mehr lernen',
-                                start: '06/01/2019',
-                                end: '06/02/2019',
-                                status: 'progress', // progress, ready, urgent, missed, reflected
-                                progress: 0.80,
-                                resources: [],
-                                strategies: [],
-                                reflections: [],
-                            },
-                            {
-                                id: 3,
-                                name: 'Meilenstein 4',
-                                objective: 'Mehr lernen',
-                                start: '06/01/2019',
-                                end: '06/02/2019',
-                                status: 'progress', // progress, ready, urgent, missed, reflected
-                                progress: 0.80,
-                                resources: [],
-                                strategies: [],
-                                reflections: [],
-                            }*/
+                            }
                         ],
                         emptyMilestone: {
                             id: 10,
@@ -180,6 +156,7 @@ define([
                         invalidName: false,
                         invalidObjective: false,
                         invalidResources: false,
+                        invalidStrategy: false,
                         selectedDay: 1,
                         selectedMonth: 1,
                         selectedYear: 2019,
@@ -218,27 +195,31 @@ define([
                     if (localStorage.surveyDone) {
                         this.surveyDone = localStorage.surveyDone;
                         if (this.surveyDone) {
-                            $('.activity-chart-container').show();
-                            $('.filter-chart-container').show();
+                            $('#planing-component').show();
                         } else {
-                            $('.activity-chart-container').hide();
-                            $('.filter-chart-container').hide();
+                            //$('.activity-chart-container').hide();
+                            //$('.filter-chart-container').hide();
                         }
                     }
                     this.emptyMilestone.end = new Date();
                     this.updateMilestoneStatus();
                     this.initializeChart();
-                    window.addEventListener('keyup', function (event) {
+                    /* window.addEventListener('keyup', function (event) {
                         if (event.keyCode === 27 && this.modalVisible) {
                             _this.closeModal();
                         }
-                    });
+                    });*/
                     var facts = crossfilter(the_data);
                     this.timeFilterChart = new FilterChart(d3, dc, crossfilter, facts, xRange, this, utils);
-
                 },
                 created: function () {
-
+                    var _this = this;
+                    $(document).keyup(function (e) {
+                        e.preventDefault();
+                        if (e.key === "Escape") { // escape key maps to keycode `27`
+                            _this.closeModal();
+                        }
+                    });
                 },
                 watch: {
                     milestones: function (newMilestone) {
@@ -252,10 +233,16 @@ define([
                             $('.activity-chart-container').show();
                             $('.filter-chart-container').show();
                         } else {
-                            $('.activity-chart-container').hide();
-                            $('.filter-chart-container').hide();
+                            //$('.activity-chart-container').hide();
+                            //$('.filter-chart-container').hide();
                         }
-                    }
+                    }/*,
+                    modalVisible: function (flag) {
+                        if (flag === false) {
+                            this.closeModal();
+                        }
+
+                    }*/
                 },
                 methods: {
                     getMoodlePath: function () {
@@ -264,17 +251,17 @@ define([
                     initializeChart: function () {
                         var _this = this;
                         this.range = xRange;
-                        this.selectedDay = (new Date()).getDate();
-                        this.selectedMonth = (new Date()).getMonth() + 1;
-                        this.selectedYear = (new Date()).getFullYear();
+                        this.selectedDay = 1; // (new Date()).getDate();
+                        this.selectedMonth = 1; // (new Date()).getMonth() + 1;
+                        this.selectedYear = 2019; // (new Date()).getFullYear();
                         // obtain course structure form DB
                         utils.get_ws('coursestructure', {
                             courseid: parseInt(course.id, 10)
                         }, function (e) {
                             try {
                                 _this.resources = JSON.parse(e.data);
-                                console.log('course-structure-result', _this.resources);
-                                console.log('debug', JSON.parse(e.debug));
+                                //console.log('course-structure-result', _this.resources);
+                                //console.log('debug', JSON.parse(e.debug));
                             } catch (e) {
                                 console.error(e);
                             }
@@ -410,12 +397,21 @@ define([
                             this.invalidResources = true;
                             isValid = false;
                         }
+                        if (this.getSelectedMilestone().strategies.length === 0) {
+                            this.invalidStrategy = true;
+                            isValid = false;
+                        }
                         if (isValid) {
-                            this.createMilestone();
+                            if (this.selectedMilestone === -1) {
+                                this.createMilestone();
+                            } else {
+                                $('#theMilestoneModal').modal('hide');
+                                this.updateMilestoneStatus();
+                            }
                         }
                     },
                     addMilestone: function (ms) {
-                        console.log('addMS ',ms.end);
+                        console.log('addMS ', ms.end);
                         ms.end = new Date(ms.end);
                         ms.start = new Date(ms.start);
                         this.milestones.push(ms);
@@ -426,7 +422,7 @@ define([
                     },
                     createMilestone: function (e) {
                         this.emptyMilestone.id = Math.ceil(Math.random() * 1000);
-                        this.emptyMilestone.end = new Date(this.selectedYear, this.selectedMonth - 1, this.selectedDay);
+                        this.emptyMilestone.end = new Date(this.selectedYear, this.selectedMonth - 1, this.selectedDay, 12);
                         var d = new Date();
                         this.emptyMilestone.start = new Date(d.getFullYear() + '/' + (d.getMonth()) + '/' + d.getDate());
 
@@ -460,25 +456,33 @@ define([
                             }
                         }
                     },
-                    daySelected: function (event) {
-                        if ([4, 6, 9, 11].indexOf(this.selectedMonth) !== -1 && event.target.value === 31) {
+                    daySelected: function (event, d) {
+                        var day = event ? parseInt(event.target.value) : d;
+                        console.log('day:' + day, 'mon:' + this.selectedMonth, [4, 6, 9, 11].indexOf(parseInt(this.selectedMonth), 10) !== -1, day === 31)
+                        if ([4, 6, 9, 11].indexOf(parseInt(this.selectedMonth, 10)) !== -1 && parseInt(day, 10) === 31) {
+                            this.dayInvalid = true;
+                            this.selectedMonth++;
+                            return;
+                        } else if (parseInt(this.selectedMonth, 10) === 2 && day > 29) {
                             this.dayInvalid = true;
                             return;
-                        } else if (this.selectedMonth === 2 && event.target.value > 29) {
-                            this.dayInvalid = true;
-                            return;
-                        } else if (this.selectedMonth === 2 && event.target.value === 29 && !(this.selectedYear % 4 === 0 && this.selectedYear % 100 !== 0 || this.selectedYear % 400 === 0)) {
+                        } else if (parseInt(this.selectedMonth, 10) === 2 && day === 29 && !(parseInt(this.selectedYear, 10) % 4 === 0 && parseInt(this.selectedYear, 10) % 100 !== 0 || parseInt(this.selectedYear, 10) % 400 === 0)) {
                             this.dayInvalid = true;
                             return;
                         } else {
                             this.dayInvalid = false;
                         }
-                        this.selectedDay = event.target.value;
-                        this.getSelectedMilestone().end = new Date(this.selectedYear, this.selectedMonth - 1, this.selectedDay);
+                        this.selectedDay = day;
+
+                        if (this.dayInvalid === false) {
+                            this.getSelectedMilestone().end = new Date(this.selectedYear, this.selectedMonth - 1, this.selectedDay);
+                            return true;
+                        }
+                        return false;
                     },
                     monthSelected: function (event) {
                         this.selectedMonth = event.target.value;
-                        this.getSelectedMilestone().end = new Date(this.selectedYear, this.selectedMonth - 1, this.selectedDay);
+                        this.daySelected(undefined, this.selectedDay); // check if the combination of day and month is valid
                     },
                     yearSelected: function (event) {
                         this.selectedYear = event.target.value;
@@ -530,6 +534,7 @@ define([
                         if (this.getSelectedMilestone().strategies.indexOf(el) === -1) {
                             this.getSelectedMilestone().strategies.push(el);
                         }
+                        this.invalidStrategy = this.getSelectedMilestone().strategies.length > 0 ? false : true;
                         localStorage.milestones = JSON.stringify(this.milestones);
                     },
                     strategyRemove: function (id) {
@@ -538,6 +543,7 @@ define([
                                 this.getSelectedMilestone().strategies.splice(s, 1);
                             }
                         }
+                        this.invalidStrategy = this.getSelectedMilestone().strategies.length > 0 ? false : true;
                         localStorage.milestones = JSON.stringify(this.milestones);
                     },
                     resourceSelected: function (event) {
@@ -569,20 +575,18 @@ define([
                         var resourceProgress = 0;
                         var strategiesProgress = 0;
 
-                        if (milestone.resources.length === 0) {
-                            return 0;
-                        }
+                        //if (milestone.resources.length === 0) {
+                        //return 0;
+                        //}
+
                         resourceProgress = milestone.resources.filter(function (e) {
                             return e.checked === true ? true : false;
                         }).length / milestone.resources.length;
 
-                        if (milestone.strategies.length > 0) {
-                            strategiesProgress = milestone.strategies.filter(function (e) {
-                                return e.checked === true ? true : false;
-                            }).length / milestone.strategies.length;
-                        } else {
-                            strategiesProgress = 1;
-                        }
+                        strategiesProgress = milestone.strategies.filter(function (e) {
+                            return e.checked === true ? true : false;
+                        }).length / milestone.strategies.length;
+
                         return ((resourceProgress + strategiesProgress) / 2);
                     },
                     updateMilestoneStatus: function () {
@@ -650,10 +654,10 @@ define([
                         this.filterPreset = preset;
                         switch (preset) {
                             case "next-week":
-                                range = [new Date(now.getTime() + 1000 * 3600 * 24 * 7), new Date(now.getTime() + 1000 * 3600 * 24 * 1)];
+                                range = [new Date(now.getTime() + 1000 * 3600 * 24 * 1), new Date(now.getTime() + 1000 * 3600 * 24 * 7)];
                                 break;
                             case "next-month":
-                                range = [new Date(now.getTime() + 1000 * 3600 * 24 * 30), new Date(now.getTime() + 1000 * 3600 * 24 * 1)];
+                                range = [new Date(now.getTime() + 1000 * 3600 * 24 * 1), new Date(now.getTime() + 1000 * 3600 * 24 * 30)];
                                 break;
                             case "today":
                                 range = [new Date(now.getTime() - 1000 * 3600 * 24 * 3), new Date(now.getTime() + 1000 * 3600 * 24 * 3)];
@@ -689,6 +693,8 @@ define([
                 //dc.redrawAll(mainGroup);
                 milestoneApp.timeFilterChart.filterTime();
             };
+
+
 
         };// end draw
     };// end Timeline

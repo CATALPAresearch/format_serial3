@@ -1,46 +1,46 @@
 /* not working */
+
+
 /*@import url("//moodle/course/format/ladtopics/css/bootstrap.min.css");
 @import url("//moodle/course/format/ladtopics/css/dc.min.css");
 @import "//moodle/course/format/ladtopics/css/dc.css";
 @import "/moodle/course/format/ladtopics/css/ladtopics.css";*/
 
-
 [v-cloak] {
- display:none;
+    display: none;
 }
 
-.right{
-    float:right;
+.right {
+    float: right;
 }
 
-
-
-.red{
-    color:#ff420e;
+.red {
+    color: #ff420e;
 }
 
-
-
-.row-smooth { margin-top:10px; }
+.row-smooth {
+    margin-top: 10px;
+}
 
 
 /* remove unwanted box above the planning component */
+
+
 /* xxx */
+
 #region-main-box:nth-child(1) {
     /*display:none !important;*/
     border: red 1px solid;
     max-height: 2px;
 }
 
-#page > #page-content .card-body.ladtopics{
+#page>#page-content .card-body.ladtopics {
     min-height: 2rem;
 }
 
-#region-main > .card {
-    margin-bottom:20px;
+#region-main>.card {
+    margin-bottom: 20px;
 }
-
-
 
 .card-body.ladtopics {
     padding: 1.25rem;
@@ -48,19 +48,19 @@
 
 .dc-chart {
     margin: 0;
-    display:inline-block;
+    display: inline-block;
     padding-left: 0 !important;
     padding-right: 0 !important;
 }
 
-div.container.dc-chart{
+div.container.dc-chart {
     padding-left: 0 !important;
     padding-right: 0 !important;
 }
 
 .course-content ul.topics {
     margin: 0;
-    display:inline-block;
+    display: inline-block;
     list-style: none;
 }
 
@@ -99,33 +99,29 @@ div.container.dc-chart{
 }
 
 #resources ul li.form-check {
-    padding-left:0 !important;
+    padding-left: 0 !important;
 }
-
-
-
 
 #timeline-chart .axis.x path {
     stroke: none;
 }
 
-#timeline-chart .axis.y .tick line{
+#timeline-chart .axis.y .tick line {
     stroke: none;
     display: none;
 }
 
-#timeline-chart .y path{
+#timeline-chart .y path {
     stroke: none;
     display: none;
 }
 
-.timeline-y-label{
-    margin-left:200px;
+.timeline-y-label {
+    margin-left: 200px;
     fill: #777;
     font-weight: bold;
     fill-opacity: 0.8;
 }
-
 
 .ms-chart g.axis.y {
     stroke: none;
@@ -159,60 +155,60 @@ div.container.dc-chart{
     fill: black;
     text-anchor: middle;
     font-size: 11px;
-    font-family: Arial, Helvetica, sans-serif;    
+    font-family: Arial, Helvetica, sans-serif;
     cursor: pointer;
 }
 
-
 .ms-chart .milestone-urgent {
-    stroke:#ffa500;
-    stroke-width:2px;
+    stroke: #ffa500;
+    stroke-width: 2px;
 }
 
 .ms-chart.milestone-missed {
     stroke: #ff420e;
-    stroke-width:2px;
+    stroke-width: 2px;
 }
 
 .ms-chart .milestone-progress {
-    stroke:#80bd9e;
+    stroke: #80bd9e;
     stroke-opacity: 0.8;
-    stroke-width:4px;
+    stroke-width: 4px;
 }
 
 .ms-chart .milestone-ready {
-    stroke:#89da59;
-    stroke-width:2px;
+    stroke: #89da59;
+    stroke-width: 2px;
 }
 
 .ms-chart .milestone-reflected {
-    stroke:#004C97;
-    stroke-width:4px;
+    stroke: #004C97;
+    stroke-width: 4px;
 }
 
-.ms-chart .milestone-learning-progress{
-    fill:#80bd9e;
+.ms-chart .milestone-learning-progress {
+    fill: #80bd9e;
     fill-opacity: 0.8;
     stroke: none;
     cursor: pointer;
 }
 
 .grid line {
-  stroke: lightgrey;
-  stroke-opacity: 0.7;
-  shape-rendering: crispEdges;
+    stroke: lightgrey;
+    stroke-opacity: 0.7;
+    shape-rendering: crispEdges;
 }
 
 .grid path {
-  stroke-width: 0;
+    stroke-width: 0;
 }
 
 .today line.today-line {
     stroke-width: 2px;
     stroke: #ff420e;
     opacity: 0.7;
-    fill:none;
+    fill: none;
 }
+
 .today text.today-label {
     fill: #ff420e;
     opacity: 0.8;
@@ -220,217 +216,249 @@ div.container.dc-chart{
     font-size: 0.7em
 }
 
+
 /* Modal */
+
 .background-darken {
-  background: rgba(0, 0, 0, 0.3);
-}
-.modal {
-  overflow-x: hidden;
-  overflow-y: auto;
-}
-.modal-full {
-  margin-left: 16px;
-  margin-right: 16px;
-  width: auto;
+    background: rgba(0, 0, 0, 0.3);
 }
 
-.modal-header{
+.modal {
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.modal-full {
+    margin-left: 16px;
+    margin-right: 16px;
+    width: auto;
+}
+
+.modal-header {
     position: relative;
     padding: 0.4rem 1.2rem;
 }
 
-.modal-header h5, .modal-header span, .modal-header button {
-    z-index:3;
+.modal-header h5,
+.modal-header span,
+.modal-header button {
+    z-index: 3;
 }
 
 .modal-header-completion {
-    background-color:#80bd9e;
+    background-color: #80bd9e;
     position: absolute;
-    left:0;
-    bottom:0;
-    height:25%;
-    z-index:2;
+    left: 0;
+    bottom: 0;
+    height: 25%;
+    z-index: 2;
 }
+
 .modal-header-completion-label {
-    display:none;
-    color:#fff;
+    display: none;
+    color: #fff;
     position: absolute;
-    bottom:0;
-    right:0;
-    font-size:0.7em;
-    z-index:3;
+    bottom: 0;
+    right: 0;
+    font-size: 0.7em;
+    z-index: 3;
     padding: 0px 4px;
 }
+
 .modal-header-completion:hover .modal-header-completion-label {
     display: inline;
 }
 
- select {
+select {
     border: none;
     background: transparent;
-    width:100%;
+    width: 100%;
     appearance: none;
     padding-top: 0px;
     background-size: 20px;
-    font-size:30px;
-  }
-
- select option {
-    color:#004C97;
-    background:#ffffff;
+    font-size: 30px;
 }
 
-select#select_day, select#select_month, select#select_year {
-    border:1px solid #ced4da;
+select option {
+    color: #004C97;
+    background: #ffffff;
+}
+
+select#select_day,
+select#select_month,
+select#select_year {
+    border: 1px solid #ced4da;
     border-radius: 0.25rem;
 }
 
-.modal .fa-plus { color: #333; }
+.modal .fa-plus {
+    color: #333;
+}
 
-.modal .form-check-label .fa-trash { color: #777; right:0; cursor: pointer;}
-.modal .form-check-label .fa-info { color: #777; cursor: pointer; }
-.modal .form-check-label .fa-info:hover { color: #111; text-align: right; }
+.modal .form-check-label .fa-trash {
+    color: #777;
+    right: 0;
+    cursor: pointer;
+}
 
-.modal .select-wrapper{
+.modal .form-check-label .fa-info {
+    color: #777;
+    cursor: pointer;
+}
+
+.modal .form-check-label .fa-info:hover {
+    color: #111;
+    text-align: right;
+}
+
+.modal .select-wrapper {
     padding: 6px 12px;
     height: 38px;
     border: 1px solid none;
     border-radius: 0.25rem;
     background-color: #ddd;
 }
+
 .modal .select-wrapper:hover {
     background-color: #004C97;
     border-color: #004C97;
-    color:#fff;
+    color: #fff;
 }
 
-.modal .select-wrapper > select {
-    width:90%;
+.modal .select-wrapper>select {
+    width: 90%;
 }
 
-.modal .select-wrapper:hover > select, .modal .select-wrapper:hover .fa {
-    color:#fff;
+.modal .select-wrapper:hover>select,
+.modal .select-wrapper:hover .fa {
+    color: #fff;
 }
 
-.ms-chart .chart .ms-btn{
-    margin-left:2px;
-    font-size:0.8em;
+.ms-chart .chart .ms-btn {
+    margin-left: 2px;
+    font-size: 0.8em;
 }
 
 #planing-component.container {
     max-width: 100% !important;
 }
 
-#filter-chart .chart-body { /* xxx                */
+#filter-chart .chart-body {
+    /* xxx                */
     fill: #008FAC;
     border: solid 1px red;
 }
 
 .ms-chart {
-    padding-bottom:0; 
-    padding-top:0;
-    margin:0;
+    padding-bottom: 0;
+    padding-top: 0;
+    margin: 0;
 }
 
 .ms-chart .x.axis {
-    display:none;
+    display: none;
 }
 
-
-
-svg{
-    margin-bottom:0;
-
+svg {
+    margin-bottom: 0;
 }
 
 .ms-remove {
-    margin-left:10px;
+    margin-left: 10px;
     font-size: 1.2em;
     padding: 7px 8px;
     cursor: pointer;
 }
+
 .ms-remove:hover {
-    color:#ff420e;
+    color: #ff420e;
 }
 
-.ms-wrapper-resource{
-    display:inline-block;
+.ms-wrapper-resource {
+    display: inline-block;
     background-color: none;
 }
 
 .ms-wrapper-resource.ms-done {
-    display:inline-block;
+    display: inline-block;
     background-color: #89da59;
 }
 
 .ms-reflection {
     background-color: rgb(0, 76, 151, 0.7);
-    color:#555;
+    color: #555;
 }
 
-.ms-reflection h5{
-    color:#777;
-    font-size:1.2em;
+.ms-reflection h5 {
+    color: #777;
+    font-size: 1.2em;
 }
+
 .ms-reflection textarea {
-    width:100%;
+    width: 100%;
 }
 
-.ms-chart-header{
+.ms-chart-header {
     margin-bottom: 10px;
 }
 
 .survey-starter {
     text-align: center;
-    width:100px;
-    height:100px;
+    width: 100px;
+    height: 100px;
     background-color: #004C97;
     border: solid transparent 1px;
     border-radius: 50%;
     display: inline-block;
-    color:#fff;
+    color: #fff;
     margin-left: auto;
     margin-right: auto;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
     cursor: pointer;
 }
-.survey-starter:hover{
+
+.survey-starter:hover {
     background-color: #008FAC;
 }
+
 .survey-starter .fa {
-    font-size:2.5em;
-    box-shadow:none;
-    border:none;
-    border-radius:none;
+    font-size: 2.5em;
+    box-shadow: none;
+    border: none;
+    border-radius: none;
 }
+
 .survey-starter span {
-    font-weight:bold;
-    border:none;
-    border-radius:none;
+    font-weight: bold;
+    border: none;
+    border-radius: none;
 }
-.col-centered{
+
+.col-centered {
     float: none;
     margin: 0 auto;
 }
 
 #theSurveyModal label.col-form-label {
     font-weight: bold;
-    margin-left:0;
+    margin-left: 0;
 }
 
-#theSurveyModal li.form-check, .modal li.form-check{
-    max-width:100%;
+#theSurveyModal li.form-check,
+.modal li.form-check {
+    max-width: 100%;
 }
 
 .remove-btn {
-   margin-left: 6px; /* xxx should better float right */
+    margin-left: 6px;
+    /* xxx should better float right */
 }
 
 .survey-objective-label {
-    padding-left:0 !important;
+    padding-left: 0 !important;
 }
 
-.resource-highlight{
+.resource-highlight {
     border-left: solid 10px #ff420e;
     border-top: solid 1px #ff420e;
     border-bottom: solid 1px #ff420e;
@@ -438,7 +466,7 @@ svg{
     background-color: #ff420050;
 }
 
-.resource-highlight-done{
+.resource-highlight-done {
     border-left: solid 10px #80bd9e;
     border-top: solid 1px #80bd9e;
     border-bottom: solid 1px #80bd9e;
@@ -446,80 +474,90 @@ svg{
     background-color: #80bd9e50;
 }
 
-
-.relative{
+.relative {
     position: relative;
 }
 
-
 .chart-label-milestone {
     position: absolute;
-    top:0;
-    left:0;
-    height:85px;
-    width:20px;
+    top: 0;
+    left: 0;
+    height: 85px;
+    width: 20px;
     background-image: url('https://aple.fernuni-hagen.de/course/format/ladtopics/img/label-milestone.png');
     background-repeat: no-repeat;
-    background-position: center; /* Center the image */
+    background-position: center;
+    /* Center the image */
     background-color: #004C97;
 }
 
 .chart-label-activities {
     position: absolute;
-    top:0;
-    left:0;
+    top: 0;
+    left: 0;
     display: inline-block;
-    height:80px;
-    width:20px;
+    height: 80px;
+    width: 20px;
     background-image: url('https://aple.fernuni-hagen.de/course/format/ladtopics/img/label-activities.png');
     background-repeat: no-repeat;
-    background-position: center; /* Center the image */
+    background-position: center;
+    /* Center the image */
     background-color: #004C97;
-    z-index:100;
+    z-index: 100;
 }
 
 .chart-label-filter {
     position: absolute;
-    top:10px;
-    left:0;
-    height:58px;
-    width:20px;
+    top: 10px;
+    left: 0;
+    height: 58px;
+    width: 20px;
     background-image: url('https://aple.fernuni-hagen.de/course/format/ladtopics/img/label-semester.png');
     background-repeat: no-repeat;
-    background-position: center; /* Center the image */
+    background-position: center;
+    /* Center the image */
     background-color: #004C97;
-    z-index:100;
+    z-index: 100;
 }
 
-#filter-chart .filter-background{
-    width:100%;
-    height:58px;
-    fill:rgb(203, 222, 226);
+#filter-chart .filter-background {
+    width: 100%;
+    height: 58px;
+    fill: rgb(203, 222, 226);
     fill-opacity: 0.5;
 }
 
-#filter-chart rect.selection{
-    fill:#004C97;
+#filter-chart rect.selection {
+    fill: #004C97;
     fill-opacity: 0.5;
 }
 
-.milestone-chart-container{
+.milestone-chart-container {
     max-height: 86px;
 }
 
-.activity-chart-container{
+.activity-chart-container {
     max-height: 71px;
 }
 
-.filter-chart-container{
+.filter-chart-container {
     max-height: 80px;
 }
 
-
-.alert-invalid{
-    color:#ff420e;
-    font-size:0.8em;
-    padding:6px 0;
+.alert-invalid {
+    color: #ff420e;
+    font-size: 0.8em;
+    padding: 6px 0;
     display: inline-block;
 }
 
+.ms-title .nav>li>a,
+.ms-title .nav-link {
+    font-size: 0.8em;
+    padding: 1px 2px;
+    margin-left: 4px;
+}
+
+.ms-view {
+    display: inline;
+}

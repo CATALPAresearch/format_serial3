@@ -28,7 +28,7 @@ define(['jquery'
         timeFilterChart = dc.compositeChart("#filter-chart");
         this.xRange = xRange;
         this.milestoneApp = milestoneApp;
-        var width = document.getElementById('planing-component').offsetWidth;
+        var width = document.getElementById('ladtopic-container-0').offsetWidth;
         var margins = { top: 15, right: 10, bottom: 20, left: 10 };
         var color_ms_status_range = ["#ffa500", "ff420e", "#80bd9e", "#89da59", "#004C97"];
 
@@ -49,8 +49,8 @@ define(['jquery'
 
         timeFilterChart
             .width(width)
-            .height(80)
-            .margins({ top: 10, bottom: 10, left: margins.left - 10, right: margins.right })
+            .height(85)
+            .margins({ top: 10, bottom: 15, left: margins.left - 10, right: margins.right })
             .compose([
                 dc.barChart(timeFilterChart)
                     .dimension(timeFilterLimitDim)
@@ -96,7 +96,8 @@ define(['jquery'
             .ticks(2)
             ;
         timeFilterChart.x(d3.scaleTime().domain(xRange).range([0, width]));
-
+        timeFilterChart.xAxis(d3.axisBottom().ticks(10));
+        
 
         var _this = this;
         timeFilterChart.on('filtered', function () {

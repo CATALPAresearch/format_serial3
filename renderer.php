@@ -75,7 +75,7 @@ class format_ladtopics_renderer extends format_section_renderer_base {
         <section id="region-main">
             <div class="card">
                 <div class="card-body ladtopics">
-                    <div class="course-content">
+                    <div id="ladtopic-container-0" class="course-content">
                         <span hidden id="courseid">'. $COURSE->id .'</span>
                         
                         
@@ -219,17 +219,23 @@ class format_ladtopics_renderer extends format_section_renderer_base {
 
                         <!-- Dashboard -->
                         
-                        <div id="planing-component" v-cloak class="container dc-chart">
+                        <div id="planing-component" style="display:none;" v-cloak class="container dc-chart">
                             <div v-if="surveyDone" class="row">
-                                <!-- Milestone chart -->
                                 <div class="col-12">
                                     <!-- Milestone chart -->
                                     <div class="chart ms-chart">
                                         <div class="ms-chart-header row">
                                             <div class="ms-title col-sm-12 col-md-4 col-lg-4">
-                                                Meine Semesterplanung
-                                                <!--<span class="btn-link btn fa fa-project-diagram"></span>
-                                                <span class="btn-link btn fa fa-list"></span>-->
+                                                <ul class="nav nav-pills" id="pills-tab" role="tablist">
+                                                        <li>Meine Semesterplanung</li>
+                                                        <li class="nav-item">
+                                                            <a class="nav-link active" id="pills-profile-tab" data-toggle="pill" href="#view-list" role="tab" aria-controls="view-list" aria-selected="false">(list)</a>
+                                                        </li>
+                                                        <li class="nav-item">
+                                                            <a class="nav-link" id="pills-home-tab" data-toggle="pill" href="#view-timeline" role="tab" aria-controls="view-timeline" aria-selected="true">(timeline)</a>
+                                                        </li>
+                                                    </ul>
+                                                
                                             </div>
                                             <div class="col-sm-12 col-md-8 col-lg-8">
                                                 <span data-toggle="modal" data-target="#theMilestoneModal">
@@ -246,52 +252,75 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                                                     Wochen</button>
                                                 <button @click="setFilterPreset(\'semester\')" :style="filterPreset === \'semester\' ? \'text-decoration: underline;\' : \'text-decoration:none;\'" class="btn btn-link btn-sm right">WS 19/20</button>
                                             </div>
-                                        </div>    
-                                        <div class="relative milestone-chart-container">
-                                            <div class="chart-label-milestone"></div>
-                                            <svg style="border: none;" :width="width" :height="height+margins.top">
-                                                <g :transform="\'translate(\'+( margins.left  ) +\',\'+ margins.top +\')\'">
-                                                    <rect v-for="m in milestones" @click="showModal(m.id)" class="milestone-learning-progress"
-                                                        :x="xx(m.end)" :y="getYLane(m.id) * (barheight + bardist)" :height="barheight"
-                                                        :width="barwidth * m.progress" data-toggle="modal" data-target="#theMilestoneModal">
-                                                    </rect>
-                                                    <rect v-for="m in milestones" @click="showModal(m.id)"
-                                                        :class="\'milestone-bar milestone-\'+ m.status" :id="\'milestoneBar_\'+m.id"
-                                                        :x="xx(m.end)" :y="getYLane(m.id) * (barheight + bardist)" :height="barheight"
-                                                        :width="barwidth" data-legend="1" data-toggle="modal" data-target="#theMilestoneModal">
-                                                    </rect>
-                                                    <text v-for="m in milestones" @click="showModal(m.id)" class="milestone-label"
-                                                        :x="xx(m.end) + barwidth / 2" :y="getYLane(m.id) * (barheight + bardist) + (barheight)/2 + 2"
-                                                        data-toggle="modal"
-                                                        data-target="#theMilestoneModal">{{ limitTextLength( m.name, 14 ) }}</text>
-                                                </g>
-                                                <g class="grid-line horizontal"
-                                                    :transform="\'translate(\'+( margins.left  ) +\',\'+ margins.top +\')\'">
-                                                    <line v-for="m in [0,1,2]" x1="1" :y1="m * (barheight + bardist) + barheight/2" :x2="width"
-                                                        :y2="m * (barheight + bardist) + barheight/2" opacity="0.5"></line>
-                                                </g>
-                                                <g class="today"
-                                                    :transform="\'translate(\'+( margins.left  ) +\',\'+ margins.top +\')\'">
-                                                    <line class="today-line" :x1="xx(new Date())" y1="0" :x2="xx(new Date())" :y2="height"></line>
-                                                    <text class="today-label" y="10" :x="xx(new Date()) + 4">heute</text>                                               
-                                                </g>
-                                                <!--<g id="title-label">
-                                                <text :transform="\'translate(\'+( margins.left  ) +\',\'+ margins.top+100 +\')\'"
-                                                        style="fill:#000000;" 
-                                                        transform="matrix(0,-1,1,0,0,0)" id="text3338" y="0" x="0">
-                                                    Meilenstein</text>    
-                                                <rect
-                                                    y="0"
-                                                    x="0"
-                                                    :height="height + margins.top + margins.bottom"
-                                                    width="20"
-                                                    id="rect3336"
-                                                    style="opacity:1;fill:#004C97;fill-opacity:1;stroke:none;" />
-                                                    
-                                                </g>-->
-                                            </svg>
                                         </div>
+                                        
+
+
+                                        <div class="tab-content" id="pills-tabContent">
+                                            <!-- Milestone list -->
+                                            <div class="tab-pane fade show active" id="view-list" role="tabpanel" aria-labelledby="view-list-tab-tab">
+                                                <ul>
+                                                    <li v-for="m in milestones">
+                                                        Status: {{ m.status }},
+                                                        {{ m.name }}
+                                                    
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                            <div class="tab-pane fade" id="view-timeline" role="tabpanel" aria-labelledby="pills-profile-tab">
+                                                <!-- Timeline charts -->    
+                                                <div class="relative milestone-chart-container">
+                                                    <div class="chart-label-milestone"></div>
+                                                    <svg style="border: none;" :width="width" :height="height+margins.top">
+                                                        <g :transform="\'translate(\'+( margins.left  ) +\',\'+ margins.top +\')\'">
+                                                            <rect v-for="m in milestones" @click="showModal(m.id)" class="milestone-learning-progress"
+                                                                :x="xx(m.end)" :y="getYLane(m.id) * (barheight + bardist)" :height="barheight"
+                                                                :width="barwidth * m.progress" data-toggle="modal" data-target="#theMilestoneModal">
+                                                            </rect>
+                                                            <rect v-for="m in milestones" @click="showModal(m.id)"
+                                                                :class="\'milestone-bar milestone-\'+ m.status" :id="\'milestoneBar_\'+m.id"
+                                                                :x="xx(m.end)" :y="getYLane(m.id) * (barheight + bardist)" :height="barheight"
+                                                                :width="barwidth" data-legend="1" data-toggle="modal" data-target="#theMilestoneModal">
+                                                            </rect>
+                                                            <text v-for="m in milestones" @click="showModal(m.id)" class="milestone-label"
+                                                                :x="xx(m.end) + barwidth / 2" :y="getYLane(m.id) * (barheight + bardist) + (barheight)/2 + 2"
+                                                                data-toggle="modal"
+                                                                data-target="#theMilestoneModal">{{ limitTextLength( m.name, 14 ) }}</text>
+                                                        </g>
+                                                        <g class="grid-line horizontal"
+                                                            :transform="\'translate(\'+( margins.left  ) +\',\'+ margins.top +\')\'">
+                                                            <line v-for="m in [0,1,2]" x1="1" :y1="m * (barheight + bardist) + barheight/2" :x2="width"
+                                                                :y2="m * (barheight + bardist) + barheight/2" opacity="0.5"></line>
+                                                        </g>
+                                                        <g class="today"
+                                                            :transform="\'translate(\'+( margins.left  ) +\',\'+ margins.top +\')\'">
+                                                            <line class="today-line" :x1="xx(new Date())" y1="0" :x2="xx(new Date())" :y2="height"></line>
+                                                            <text class="today-label" y="10" :x="xx(new Date()) + 4">heute</text>                                               
+                                                        </g>
+                                                        <!--<g id="title-label">
+                                                        <text :transform="\'translate(\'+( margins.left  ) +\',\'+ margins.top+100 +\')\'"
+                                                                style="fill:#000000;" 
+                                                                transform="matrix(0,-1,1,0,0,0)" id="text3338" y="0" x="0">
+                                                            Meilenstein</text>    
+                                                        <rect
+                                                            y="0"
+                                                            x="0"
+                                                            :height="height + margins.top + margins.bottom"
+                                                            width="20"
+                                                            id="rect3336"
+                                                            style="opacity:1;fill:#004C97;fill-opacity:1;stroke:none;" />
+                                                            
+                                                        </g>-->
+                                                    </svg>
+                                                </div>
+                                                
+                                                
+                                            </div>
+
+                                        </div>
+                                        
                                     </div>
+                                    <!-- end pill tabs -->
 
 
                                     <!-- Modal milestone window -->
@@ -344,24 +373,28 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                                                         <label for="inputObjectic" class="col-2 col-form-label">Termin *</label>
                                                         <div class="col-4">
                                                             <select @change="daySelected" id="select_day"
-                                                                :class="dayInvalid == true ? \' red-border \' : \'\'">
+                                                                :style="dayInvalid ? \'border: solid 1px #ff420e;\' : \'none\'"
+                                                                >
                                                                 <option v-for="d in dayRange()"
-                                                                    :selected="d==(new Date(getSelectedMilestone().end)).getDate()">{{ d }}
+                                                                    
+                                                                    :value="d">{{ d }}
                                                                 </option>
                                                             </select>
 
                                                             <select @change="monthSelected" id="select_month">
                                                                 <option v-for="d in monthRange()"
-                                                                    :selected="d.num-1 === (new Date(getSelectedMilestone().end)).getMonth()"
+                                                                    
                                                                     :value="d.num">{{ d.name }}</option>
                                                             </select>
 
                                                             <select @change="yearSelected" id="select_year">
                                                                 <option v-for="d in yearRange()"
-                                                                    :selected="d === (new Date()).getFullYear()">{{ d }}</option>
+                                                                    
+                                                                    :value="d">{{ d }}</option>
                                                             </select>
                                                         </div>
-                                                        <div class="col-7"></div>
+                                                        {{dayInvalid}}
+                                                        <div v-if="dayInvalid" class="col-sm-10 alert-invalid">Wählen Sie bitte ein gültiges datum aus. Den {{ selectedDay }}. gibt es im ausgwählten Monat nicht. </div>
                                                     </div>
                                                     <hr />
                                                     <div class="row">
@@ -414,7 +447,7 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                                                     </div>
                                                     <div class="row">
                                                         <div class="col-md-6">
-                                                            <div class="select-wrapper" :style="invalidResources ? \'border: solid 1px #ff420e;\' : \'\'">
+                                                            <div class="select-wrapper" :style="invalidResources ? \'border: solid 1px #ff420e;\' : \'none\'">
                                                                 <span id="before-select"><i class="fa fa-plus"></i> </span>
                                                                 <select @change="resourceSelected" class="" id="modal_strategy-select"
                                                                     class="">
@@ -424,9 +457,10 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                                                                     </optgroup>
                                                                 </select>
                                                             </div>
+                                                            <div class="col-sm-10 alert-invalid" v-if="invalidResources">Wählen Sie bitte Themen, Materialien und Aktivitäten aus.</div>
                                                         </div>
                                                         <div class="col-md-6">
-                                                            <div class="select-wrapper">
+                                                            <div class="select-wrapper" :style="invalidStrategy ? \'border: solid 1px #ff420e;\' : \'none\'">
                                                                 <span id="before-select"><i class="fa fa-plus"></i> </span>
                                                                 <select @change="strategySelected" class="" id="modal_strategy-select"
                                                                     class="">
@@ -449,6 +483,7 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                                                                         </optgroup>-->
                                                                 </select>
                                                             </div>
+                                                            <div class="col-sm-10 alert-invalid" v-if="invalidStrategy">Wählen Sie bitte mindestens eine Lernstrategie aus.</div>
                                                         </div>
                                                     </div>
                                                     <hr />
@@ -585,20 +620,23 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                             </div>
                             <div class="row">
                                 <div class="col-12 activity-chart-container">
-                                    <div class="relative">
-                                        <div class="chart-label-activities"></div>
-                                        <div id="timeline-chart"></div>
-                                    </div>
-                                </div>
-                                <div class="col-12 filter-chart-container">
-                                    <div class="relative">
-                                        <div class="chart-label-filter"></div>
-                                    </div>
-                                    <div id="filter-chart"></div>
-                                </div>
+                                                    <div class="relative">
+                                                        <div class="chart-label-activities"></div>
+                                                        <div id="timeline-chart"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-12 filter-chart-container">
+                                                    <div class="relative">
+                                                        <div class="chart-label-filter"></div>
+                                                    </div>
+                                                    <div id="filter-chart"></div>
+                                                </div>
                             </div>
                         </div>
                         
+
+
+
                         <div class="container row" hidden>
                             <div class="col-md-12">
                                 <ul class="nav">
@@ -636,7 +674,7 @@ class format_ladtopics_renderer extends format_section_renderer_base {
 ';
         return 
             html_writer::start_tag('div', array('class' => 'container chart-container')) 
-            . $content . html_writer::end_tag('div') 
+            . $content . html_writer::end_tag('div')
             . html_writer::start_tag('ul', array('class' => 'topics'))
             ;
     }
