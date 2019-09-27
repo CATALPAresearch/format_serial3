@@ -132,13 +132,13 @@ class format_ladtopics_external extends external_api {
         */
 
         $arr = array();
-        $addActivities = function($data){
+        $activityId=0;
+        $addActivities = function($data) use( &$activityId) {
             $arr=array();
-            $id=0;
             foreach($data as $e){
                 if($e->instance_visible == 1){ 
                     $entry = array(
-                        'id' => $id,
+                        'id' => $activityId,
                         'course_id' => $e->course_id, 
                         'module_id' => $e->module_id, 
                         'section_id' => $e->section_id, 
@@ -151,7 +151,7 @@ class format_ladtopics_external extends external_api {
                         'name' => $e->instance_title 
                     );
                     array_push($arr, $entry);
-                    $id++;
+                    $activityId++;
                 }   
             }
             return $arr;

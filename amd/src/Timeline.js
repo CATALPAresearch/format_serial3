@@ -217,7 +217,9 @@ define([
                     $(document).keyup(function (e) {
                         e.preventDefault();
                         if (e.key === "Escape") { // escape key maps to keycode `27`
-                            _this.closeModal();
+                            //_this.closeModal();
+                            _this.updateMilestoneStatus();
+                            _this.updateChart(this.range);
                         }
                     });
                 },
@@ -260,7 +262,7 @@ define([
                         }, function (e) {
                             try {
                                 _this.resources = JSON.parse(e.data);
-                                //console.log('course-structure-result', _this.resources);
+                                console.log('course-structure-result', _this.resources.map(function(e){ return e.id; }));
                                 //console.log('debug', JSON.parse(e.debug));
                             } catch (e) {
                                 console.error(e);

@@ -220,6 +220,7 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                         <!-- Dashboard -->
                         
                         <div id="planing-component" style="display:none;" v-cloak class="container dc-chart">
+                            <textarea>{{ milestones }}</textarea>
                             <div v-if="surveyDone" class="row">
                                 <div class="col-12">
                                     <!-- Milestone chart -->
