@@ -164,7 +164,7 @@ div.container.dc-chart {
     stroke-width: 2px;
 }
 
-.ms-chart.milestone-missed {
+.ms-chart .milestone-missed {
     stroke: #ff420e;
     stroke-width: 2px;
 }
@@ -562,8 +562,9 @@ svg {
     display: inline;
 }
 
-.milestone-list {
-
+#view-timeline{
+    padding-left:0;
+    padding-right:0;
 }
 
 .milestone-list ul{
@@ -578,7 +579,6 @@ svg {
     padding-left:0;
     font-size: 0.8em;
     vertical-align: middle;
-    
 }
 
 .milestone-element-name[aria-expanded="true"] .element-collapsed,
@@ -587,24 +587,48 @@ svg {
     display: none;
 }
 
+.milestone-element-table-head {
+    display: inline-block;
+    font-size:0.8em;
+    color:#83878b;
+}
+
+.milestone-element-table-head.name{
+    width:180px;
+}
+.milestone-element-table-head.due{
+    width:85px;
+}
 
 .milestone-element-header {
     height: 20px;
     display: table-row;
+    padding: 0px 4px;
 }
 
 .milestone-element-name {
-    width:150px;
+    width:180px;
     display: table-cell;
+    vertical-align: middle;
+    float: none;
+    padding: 0px 4px;
+}
+.milestone-element-name:hover {
+    color:#004C97;
+    text-decoration: underline;
+}
+
+.milestone-element-due{
+    width:85px;
+}
+
+.milestone-element-edit {
     vertical-align: middle;
     float: none;
 }
 
-.milestone-element-edit {
-    width:30px;
-    display: table-cell;
-    vertical-align: middle;
-    float: none;
+.milestone-element-edit:hover {
+    color:#004C97;
 }
 
 .milestone-element-progress {
@@ -626,7 +650,7 @@ svg {
     display: inline-block;
     top:0;
     left:0;
-    height: 15px;
+    height: 13px;
     vertical-align: middle;
 }
 
@@ -636,5 +660,29 @@ svg {
 
 .milestone-entry-details {
     padding-left:10px;
+}
+
+.milestone-list .milestone-urgent {
+    background-color: #ffa500 !important;
+}
+
+.milestone-list .milestone-missed {
+    color: #ff420e !important;
+}
+
+.milestone-list .milestone-progress {
+    color: #80bd9e;
+}
+
+.milestone-list .milestone-ready {
+    color: #80bd9e;
+}
+
+.milestone-list .milestone-reflected {
+    color: #004C97;
+}
+
+.milestone-list .grey {
+    color:#ced4da;
 }
 
