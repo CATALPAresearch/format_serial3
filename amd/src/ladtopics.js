@@ -33,7 +33,7 @@ define([
                 //"reductio": ["https://rawgit.com/crossfilter/reductio/master/reductio", "reductio"],
                 //"universe": ["https://npmcdn.com/universe@latest/universe", "universe"],
                 //"bootstrap_select": ["https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/js/bootstrap-select.min", "bootstrap-select.min"],
-                "moment224": ["moment.min"],
+                "moment224": ["moment-with-locales-gz.min"], // ["moment.min"],
                 "sortable110": ["sortable.min"]
                 /*
                 "crossfilter2": "crossfilter.v2",
@@ -90,26 +90,26 @@ define([
                 'crossfilter',
                 'd3',
                 'dc',
-               // 'reductio',
-               // 'universe',
-               // 'bootstrap_select',
+                // 'reductio',
+                // 'universe',
+                // 'bootstrap_select',
                 'moment224',
                 'sortable110'
             ], function (vue, crossfilter, d3, dc, moment, sortable) {
                 var utils = new Utils(dc, d3);
-                new Timeline(vue, d3, dc, crossfilter, moment, sortable, utils, filterChart, activityChart, initialSurvey);
+                    new Timeline(vue, d3, dc, crossfilter, moment, sortable, utils, filterChart, activityChart, initialSurvey);
                 //new Assessment(vue, d3, dc, crossfilter, moment);
             });
         }
 
-        return {
-            init: function () {
-                try {
-                    start();
-                } catch (e) {
-                    console.error(e);
-                }
+return {
+    init: function () {
+        try {
+            start();
+        } catch (e) {
+            console.error(e);
+        }
 
-            }
-        };
+    }
+};
     });
