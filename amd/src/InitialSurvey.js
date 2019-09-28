@@ -31,6 +31,7 @@ define(['jquery'], function ($) {
                     surveyComplete: false,
                     objectives: '',
                     availableTime: 0,
+                    planingStyle: '',
                     selectedMonth: 0,
                     selectedYear: 0,
                     resources: [],
@@ -123,6 +124,9 @@ define(['jquery'], function ($) {
                 updateAvailableTime: function () {
                     this.invalidAvailableTime = this.availableTime <= 0 ? true : false;
                 },
+                updatePlaningStyle: function (e) {
+                    this.invalidPlaningStyle = this.planingStyle === '' ? true : false;
+                },    
                 validateSurveyForm: function () {
                     var isValid = true;
                     if (this.objectives === '') {
@@ -131,6 +135,10 @@ define(['jquery'], function ($) {
                     }
                     if (this.availableTime <= 0) {
                         this.invalidAvailableTime = true;
+                        isValid = false;
+                    }
+                    if (this.planingStyle === '') {
+                        this.invalidPlaningStyle = true;
                         isValid = false;
                     }
                     if (this.objectives === 'f1c' && this.resources.length === 0 && this.availableResources.length > 0) {

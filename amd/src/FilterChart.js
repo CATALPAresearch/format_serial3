@@ -152,6 +152,7 @@ define(['jquery'
             var range = timeFilterChart.filters()[0] === undefined ? this.xRange : timeFilterChart.filters()[0];
             // apply filter to main chart and milestone chart
             _this.milestoneApp.updateChart(range);
+            //console.log(registeredCharts);
             for (var i = 0; i < registeredCharts.length; i++) {
                 registeredCharts[i].update(range);
             }

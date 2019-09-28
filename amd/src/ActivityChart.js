@@ -139,6 +139,7 @@ define(['jquery'
 
         this.update = function (range) {
             chart.x(d3.scaleTime().domain(range));
+            chart.render();
         };
 
         chart.render();

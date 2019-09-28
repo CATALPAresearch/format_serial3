@@ -121,17 +121,69 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                                                 <div class="col-12 alert-invalid" role="alert" v-if="invalidObjective">Entscheiden Sie sich bitte für einer der Auswahlmöglichkeiten</div>
                                             </div>
                                             <hr>
-                                            <div class="form-group row">
-                                                <label for="inputMSname" class="col-10 col-form-label">Wie viele Stunden pro Woche planen Sie für das Lernen in diesem Kurs / Modul ein?</label>
+                                            <div class="form-check row">
+                                                <label for="inputMSname" class="col-10 col-form-label survey-objective-label">Wie viele Stunden pro Woche planen Sie für das Lernen in diesem Kurs / Modul ein?</label>
                                                 <div class="col-2">
                                                     <input :style="invalidAvailableTime ? \'border: solid 1px #ff420e;\' : \'\'" type="number" @change="updateAvailableTime()" class="form-control" id="inputMSname" placeholder="0" min="0"
                                                         v-model="availableTime">
                                                 </div>
                                                 <div class="col-12 alert-invalid" role="alert" v-if="invalidAvailableTime">Geben Sie bitte eine Anzahl an Stunden, die größer Null ist.</div>
                                             </div>
+                                            <hr>
+                                            <div class="form-check row">
+                                                <label for="" class="col-12 col-form-label survey-objective-label">
+                                                    Wie detailliert planen Sie Ihre Lernaktivitäten?
+                                                    Mein Plan soll 
+                                                </label>
+                                                <span :style="invalidPlaningStyle ? \'display:inline-block; border: solid 1px #ff420e;\' : \'\'">
+                                                    <div class="form-check">
+                                                        <input @change="updatePlaningStyle" class="form-check-input" type="radio" name="planingRadios" id="planingRadios1"
+                                                            value="planing-style-a" v-model="planingStyle">
+                                                        <label class="form-check-label" for="planingRadios1">
+                                                            nur für eine Woche
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input @change="updatePlaningStyle" class="form-check-input" type="radio" name="planingRadios" id="planingRadios2"
+                                                            value="planing-style-b" v-model="planingStyle">
+                                                        <label class="form-check-label" for="planingRadios2">
+                                                            für die nächsten Wochen
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input @change="updatePlaningStyle" class="form-check-input" type="radio" name="planingRadios" id="planingRadios3"
+                                                            value="planing-style-c" v-model="planingStyle">
+                                                        <label class="form-check-label" for="planingRadios3">
+                                                            für das Ganze Semester mit Arbeitspaketen für je eine Woche
+                                                        </label>
+                                                    </div>
+                                                     <div class="form-check">
+                                                        <input @change="updatePlaningStyle" class="form-check-input" type="radio" name="planingRadios" id="planingRadios4"
+                                                            value="planing-style-d" v-model="planingStyle">
+                                                        <label class="form-check-label" for="planingRadios4">
+                                                            für das Ganze Semester mit Arbeitspaketen für je 2 Wochen 
+                                                        </label>
+                                                    </div>
+                                                     <div class="form-check">
+                                                        <input @change="updatePlaningStyle" class="form-check-input" type="radio" name="planingRadios" id="planingRadios5"
+                                                            value="planing-style-e" v-model="planingStyle">
+                                                        <label class="form-check-label" for="planingRadios5">
+                                                            für das Ganze Semester mit Arbeitspaketen für je einen Monat erstellt werden.
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input @change="updatePlaningStyle" class="form-check-input" type="radio" name="planingRadios" id="planingRadios6"
+                                                            value="planing-style-f" v-model="planingStyle">
+                                                        <label class="form-check-label" for="planingRadios6">
+                                                            keine Angaben
+                                                        </label>
+                                                    </div>
+                                                </span>
+                                                <div class="col-12 alert-invalid" role="alert" v-if="invalidPlaningStyle">Verraten Sie uns bitte wie detailliert Sie Ihre Lernaktivitäten planen.</div>
+                                            </div>
                                             <hr v-if="objectives === \'f1a\'">
-                                            <div v-if="objectives === \'f1a\'" class="form-group row">
-                                                <label for="inputObjectic" class="col-10 col-form-label">Wann beabsichtigen Sie die Prüfung
+                                            <div v-if="objectives === \'f1a\'" class="form-check row">
+                                                <label for="inputObjectic" class="col-10 col-form-label survey-objective-label">Wann beabsichtigen Sie die Prüfung
                                                     abzulegen?</label>
                                                 <div class="col-4">
                                                     <select @change="monthSelected" id="select_month">
