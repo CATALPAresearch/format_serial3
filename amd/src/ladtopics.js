@@ -1,3 +1,4 @@
+/* eslint-disable spaced-comment */
 /* eslint-disable require-jsdoc */
 /**
  * Main method of the plugin. Load depending javascript and css before starting the timeline dashboard.
@@ -10,10 +11,10 @@
  * @since      3.1
  */
 define([
-    'jquery', 
-    'jqueryui', 
-    M.cfg.wwwroot + '/course/format/ladtopics/amd/src/Timeline.js', 
-    M.cfg.wwwroot + '/course/format/ladtopics/amd/src/Utils.js', 
+    'jquery',
+    'jqueryui',
+    M.cfg.wwwroot + '/course/format/ladtopics/amd/src/Timeline.js',
+    M.cfg.wwwroot + '/course/format/ladtopics/amd/src/Utils.js',
     M.cfg.wwwroot + '/course/format/ladtopics/amd/src/FilterChart.js',
     M.cfg.wwwroot + '/course/format/ladtopics/amd/src/ActivityChart.js',
     M.cfg.wwwroot + '/course/format/ladtopics/amd/src/InitialSurvey.js',
@@ -29,9 +30,9 @@ define([
                 "crossfilter": ["crossfilter"],
                 "d3": ["d3.v4.min"],
                 "dc": ["dc.v3"],
-                "reductio": ["https://rawgit.com/crossfilter/reductio/master/reductio", "reductio"],
-                "universe": ["https://npmcdn.com/universe@latest/universe", "universe"],
-                "bootstrap_select": ["https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/js/bootstrap-select.min", "bootstrap-select.min"],
+                //"reductio": ["https://rawgit.com/crossfilter/reductio/master/reductio", "reductio"],
+                //"universe": ["https://npmcdn.com/universe@latest/universe", "universe"],
+                //"bootstrap_select": ["https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/js/bootstrap-select.min", "bootstrap-select.min"],
                 "moment224": ["moment.min"],
                 "sortable110": ["sortable.min"]
                 /*
@@ -51,7 +52,8 @@ define([
                 },
                 'crossfilter': {
                     exports: 'crossfilter'
-                },
+                }
+                /*,
                 'reductio': {
                     deps: ['d3', 'crossfilter'],
                     exports: 'reductio'
@@ -59,14 +61,14 @@ define([
                 'universe': {
                     deps: ['d3', 'crossfilter'],
                     exports: 'universe'
-                }
+                } */
 
             }
         });
 
 
         function start() {
-            // add style sheets        
+            // Add style sheets        
             var css = [
                 M.cfg.wwwroot + "/course/format/ladtopics/css/ladtopics.css",
                 M.cfg.wwwroot + "/course/format/ladtopics/css/dc.css",
@@ -81,22 +83,22 @@ define([
                 document.getElementsByTagName("head")[0].appendChild(link);
             }
 
-            //$('#accordion').tab();
+            // $('#accordion').tab();
 
             require([
                 'vue259',
                 'crossfilter',
                 'd3',
                 'dc',
-                'reductio',
-                'universe',
-                'bootstrap_select',
+               // 'reductio',
+               // 'universe',
+               // 'bootstrap_select',
                 'moment224',
                 'sortable110'
-            ], function (vue, crossfilter, d3, dc, reduction, universe, bselect, moment, sortable) {
+            ], function (vue, crossfilter, d3, dc, moment, sortable) {
                 var utils = new Utils(dc, d3);
                 new Timeline(vue, d3, dc, crossfilter, moment, sortable, utils, filterChart, activityChart, initialSurvey);
-                new Assessment(vue, d3, dc, crossfilter, moment);
+                //new Assessment(vue, d3, dc, crossfilter, moment);
             });
         }
 

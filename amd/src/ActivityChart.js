@@ -40,7 +40,7 @@ define(['jquery'
         // charts
         chart = dc.bubbleChart("#timeline-chart");
 
-        this.chart = function(){ return chart; };
+        this.chart = function () { return chart; };
 
         data.forEach(function (d, i) {
             d.date = new Date(d.utc * 1000);
@@ -137,7 +137,7 @@ define(['jquery'
             .xAxis(d3.axisBottom().ticks(10))
             ;
 
-        this.update = function(range) { 
+        this.update = function (range) {
             chart.x(d3.scaleTime().domain(range));
         };
 
@@ -175,22 +175,25 @@ define(['jquery'
                 .attr('class', 'timeline-y-label');
         });
     };
-        if (localStorage.surveyDone) {
-            $('.activity-chart-container').show();
-            $('.filter-chart-container').show();
-        } else {
-            $('.activity-chart-container').hide();
-            $('.filter-chart-container').hide();
-        }
+
+    if (localStorage.surveyDone) {
+        $('.activity-chart-container').show();
+        $('.filter-chart-container').show();
+    } else {
+        $('.activity-chart-container').hide();
+        $('.filter-chart-container').hide();
+    }
 
     /**
      * Resize charte if window sizes change
      */
     window.onresize = function (event) {
+        // not working
+        //console.log(activityChart.chart.width());
         width = document.getElementById('planing-component').offsetWidth;
-        chart.width(width).transitionDuration(0);
-        chart.group(activityChart.getGroup());
-
+        activityChart.chart.width(width).transitionDuration(0);
+        activityChart.chart.group(activityChart.getGroup());
+        
         //dc.redrawAll(activityChart.getGroup());
     };
 

@@ -101,8 +101,7 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                                         </div>
                                         <div class="modal-body">
                                             <div class="form-check row">
-                                                <p>Wenn Sie uns Ihre Zielsetzung mitteilen, können wir Ihnen bei der Planung des Lernens helfen.
-                                                anpassen können.
+                                                <p>Teilen Sie uns bitte hier Ihre Ziele mit, dann können wir Sie in der Semesterplanung besser unterstützen.
                                                 </p>
                                                 <label for="" class="col-12 col-form-label survey-objective-label">Welches Ziel verfolgen
                                                     Sie in diesem Kurs/Modul?</label>
@@ -259,12 +258,31 @@ class format_ladtopics_renderer extends format_section_renderer_base {
 
                                         <div class="tab-content" id="pills-tabContent">
                                             <!-- Milestone list -->
-                                            <div class="tab-pane fade show active" id="view-list" role="tabpanel" aria-labelledby="view-list-tab-tab">
+                                            <div class="tab-pane fade show active milestone-list" id="view-list" role="tabpanel" aria-labelledby="view-list-tab-tab">
                                                 <ul>
-                                                    <li v-for="m in milestones">
-                                                        Status: {{ m.status }},
-                                                        {{ m.name }}
-                                                    
+                                                    <li v-for="m in milestones" class="milestone-element">
+                                                        <div class="milestone-element-header">
+                                                            <a class="milestone-element-name" data-toggle="collapse" :href="\'#milestone-entry-\' + m.id" role="button" aria-expanded="false" :aria-controls="\'milestone-entry-\' + m.id">
+                                                                <i class="element-collapsed fa fa-angle-right"></i> 
+                                                                <i class="element-not-collapsed fa fa-angle-down"></i> 
+                                                                {{ m.name }}
+                                                            </a>
+                                                            <a @click="showModal(m.id)" data-legend="1" data-toggle="modal" data-target="#theMilestoneModal">
+                                                                <span class="fa fa-edit"></span>
+                                                            </a>
+                                                            <div class="milestone-element-progress">
+                                                                <div class="milestone-element-progress-status" :style="\'width:\'+ m.progress * 100 + \'%;\'"></div>
+                                                            </div>
+                                                            <div class="milestone-element-status">
+                                                                {{ m.status }}
+                                                            </div>
+                                                        </div>
+                                                        <div class="milestone-entry-details collapse" :id="\'milestone-entry-\' + m.id">
+                                                            <div class="">
+                                                                {{ m.resources }}
+                                                                {{ m.strategies }}
+                                                            </div>
+                                                        </div>
                                                     </li>
                                                 </ul>
                                             </div>
@@ -281,7 +299,7 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                                                             <rect v-for="m in milestones" @click="showModal(m.id)"
                                                                 :class="\'milestone-bar milestone-\'+ m.status" :id="\'milestoneBar_\'+m.id"
                                                                 :x="xx(m.end)" :y="getYLane(m.id) * (barheight + bardist)" :height="barheight"
-                                                                :width="barwidth" data-legend="1" data-toggle="modal" data-target="#theMilestoneModal">
+                                                                :width="barwidth" :data-legend="m.id" data-toggle="modal" data-target="#theMilestoneModal">
                                                             </rect>
                                                             <text v-for="m in milestones" @click="showModal(m.id)" class="milestone-label"
                                                                 :x="xx(m.end) + barwidth / 2" :y="getYLane(m.id) * (barheight + bardist) + (barheight)/2 + 2"

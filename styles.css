@@ -561,3 +561,80 @@ svg {
 .ms-view {
     display: inline;
 }
+
+.milestone-list {
+
+}
+
+.milestone-list ul{
+    list-style: none;
+    margin-left:0;
+    padding-left:0;
+}
+
+.milestone-list ul li.milestone-element{
+    min-width: 100%;
+    max-width:300px;
+    padding-left:0;
+    font-size: 0.8em;
+    vertical-align: middle;
+    
+}
+
+.milestone-element-name[aria-expanded="true"] .element-collapsed,
+.milestone-element-name[aria-expanded="false"] .element-not-collapsed
+{
+    display: none;
+}
+
+
+.milestone-element-header {
+    height: 20px;
+    display: table-row;
+}
+
+.milestone-element-name {
+    width:150px;
+    display: table-cell;
+    vertical-align: middle;
+    float: none;
+}
+
+.milestone-element-edit {
+    width:30px;
+    display: table-cell;
+    vertical-align: middle;
+    float: none;
+}
+
+.milestone-element-progress {
+    position: relative;
+    display: table-cell;
+    vertical-align: middle;
+    float: none;
+    width:50px;
+    border:solid 1px #ced4da;
+    display: inline-block;
+    height: 15px;
+    
+}
+
+.milestone-element-progress-status {
+    background-color:#80bd9e;
+    z-index: 80;
+    position: absolute;
+    display: inline-block;
+    top:0;
+    left:0;
+    height: 15px;
+    vertical-align: middle;
+}
+
+.milestone-element-status{
+    display: inline-block;
+}
+
+.milestone-entry-details {
+    padding-left:10px;
+}
+

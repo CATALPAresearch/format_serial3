@@ -188,6 +188,7 @@ define([
                 },
                 mounted: function () {
                     var _this = this;
+                    this.range = xRange;
                     // load data from local storage
                     if (localStorage.milestones) {
                         this.milestones = JSON.parse(localStorage.milestones);
@@ -225,7 +226,6 @@ define([
                 },
                 watch: {
                     milestones: function (newMilestone) {
-                        //localStorage.setItem('cats', parsed);
                         localStorage.milestones = JSON.stringify(newMilestone);
                     },
                     surveyDone: function (surveyStatus) {
@@ -257,11 +257,13 @@ define([
                         this.selectedMonth = 1; // (new Date()).getMonth() + 1;
                         this.selectedYear = 2019; // (new Date()).getFullYear();
                         // obtain course structure form DB
+                        var t1 = new Date().getTime();
                         utils.get_ws('coursestructure', {
                             courseid: parseInt(course.id, 10)
                         }, function (e) {
                             try {
                                 _this.resources = JSON.parse(e.data);
+                                console.log('Ladezeit', t1 - (new Date()).getTime());
                                 console.log('course-structure-result', _this.resources.map(function(e){ return e.id; }));
                                 //console.log('debug', JSON.parse(e.debug));
                             } catch (e) {
@@ -325,6 +327,7 @@ define([
                             .range([0, this.width - this.padding]); // 
                     },*/
                     xx: function (x) {
+                        console.log('range', this.range)
                         var x_ = d3.scaleTime()
                             .domain(this.range)
                             .range([0, this.width - this.padding])(x);
@@ -357,8 +360,8 @@ define([
                         this.$forceUpdate();
                     },
                     showModal: function (e) {
+                        this.selectedMilestone = e;
                         this.reflectionsFormVisisble = this.getSelectedMilestone().status === 'reflected' ? true : false;
-                        this.selectedMilestone = e;//parseInt(e.target.id.replace('milestoneBar_', ''), 10);
                         this.modalVisible = true;
                     },
                     closeModal: function (e) {
