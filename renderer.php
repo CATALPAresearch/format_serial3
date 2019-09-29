@@ -701,8 +701,8 @@ $modalMilestone = '
 
 
 <div id="page-content" class="row">
-    <div class="region-main-box col-12">
-        <section id="region-main">
+    <div class="region-main-box col-12 ladtopics-region-main">
+        <section id="region-main" class="ladtopics-region">
             <div class="card">
                 <div class="card-body ladtopics">
                     <div id="ladtopic-container-0" class="course-content">
@@ -722,10 +722,14 @@ $modalMilestone = '
                                                 <ul class="nav nav-pills" id="viewPillsTab" role="tablist">
                                                     <li>Meine Semesterplanung</li>
                                                     <li class="nav-item">
-                                                        <a class="nav-link active" @click="hideAdditionalCharts()" id="milestone-list-tab" data-toggle="tab" href="#view-list" role="tab" aria-controls="view-list" aria-selected="false">(list)</a>
+                                                        <a class="nav-link active" @click="hideAdditionalCharts()" id="milestone-list-tab" data-toggle="pill" href="#view-list" role="tab" aria-controls="view-list" aria-selected="false">
+                                                            <i hidden class="fa fa-list"></i> Liste
+                                                        </a>
                                                     </li>
                                                     <li class="nav-item">
-                                                        <a class="nav-link" @click="showAdditionalCharts()" id="milestone-timeline-tab" data-toggle="pill" href="#view-timeline" role="tab" aria-controls="view-timeline" aria-selected="true">(timeline)</a>
+                                                        <a class="nav-link" @click="showAdditionalCharts()" id="milestone-timeline-tab" data-toggle="pill" href="#view-timeline" role="tab" aria-controls="view-timeline" aria-selected="true">
+                                                            <i class="fa fa-clock"></i>Zeitleiste
+                                                        </a>
                                                     </li>
                                                 </ul>
                                             </div>
@@ -735,6 +739,7 @@ $modalMilestone = '
                                                         data-toggle="tooltip" data-placement="bottom" title="Neuen Meilenstein hinzufügen"><i
                                                             class="fa fa-plus"></i></button>
                                                 </span>
+                                                <span id="filter-presets">
                                                 <button @click="setFilterPreset(\'next-month\')" :style="filterPreset === \'next-month\' ? \'text-decoration: underline;\' : \'text-decoration:none;\'" class="btn btn-sm ms-btn btn-link right">nächster Monat</button>
                                                 <button @click="setFilterPreset(\'next-week\')" :style="filterPreset === \'next-week\' ? \'text-decoration: underline;\' : \'text-decoration:none;\'" class="btn btn-sm ms-btn btn-link right">nächste Woche</button>
                                                 <button @click="setFilterPreset(\'today\')" :style="filterPreset === \'today\' ? \'text-decoration: underline;\' : \'text-decoration:none;\'" class="btn btn-sm ms-btn btn-link right">heute</button>
@@ -743,6 +748,7 @@ $modalMilestone = '
                                                 <button @click="setFilterPreset(\'last-month\')" :style="filterPreset === \'last-month\' ? \'text-decoration: underline;\' : \'text-decoration:none;\'" class="btn btn-sm btn-link ms-btn right">letzten 4
                                                     Wochen</button>
                                                 <button @click="setFilterPreset(\'semester\')" :style="filterPreset === \'semester\' ? \'text-decoration: underline;\' : \'text-decoration:none;\'" class="btn btn-link btn-sm right">WS 19/20</button>
+                                                </span>
                                             </div>
                                         </div>
                                     </div>
@@ -750,10 +756,10 @@ $modalMilestone = '
 
                                 <!-- Pill content -->
                                 <div class="tab-content" id="pills-tabContent">
-                                    <div class="tab-pane col-12 fade" id="view-timeline" role="tabpanel" aria-labelledby="pills-profile-tab">
+                                    <div class="tab-pane col-12 fade" id="view-timeline" role="tabpanel" aria-labelledby="view-timeline">
                                         ' . $milestoneTimeline . '
                                     </div>
-                                    <div class="tab-pane fade show active milestone-list" id="view-list" role="tabpanel"aria-labelledby="view-list-tab">
+                                    <div class="tab-pane fade show active milestone-list" id="view-list" role="tabpanel"aria-labelledby="view-list">
                                         ' . $milestoneList . '
                                     </div>
                                 </div>
@@ -784,8 +790,7 @@ $modalMilestone = '
                         </div>
                         <!-- End planing component -->
 
-
-                        <div class="container row" hidden>
+                        <div class="container row" style="display:none;">
                             <div class="col-md-12">
                                 <ul class="nav">
                                     <li class="nav-item active"><a class="nav-link active" data-toggle="tab" href="#timemanagement"
@@ -805,8 +810,6 @@ $modalMilestone = '
                                 </div>
                             </div>
                         </div>
-
-
                     </div>
                     <!-- End ladtopic container -->
                 </div>

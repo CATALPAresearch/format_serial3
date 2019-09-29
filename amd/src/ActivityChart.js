@@ -143,7 +143,6 @@ define(['jquery'
         };
 
         chart.render();
-        //dc.renderAll();
 
         // correct axis positioning
         chart.selectAll('.axis.y .tick')
@@ -194,7 +193,7 @@ define(['jquery'
         width = document.getElementById('planing-component').offsetWidth;
         activityChart.chart.width(width).transitionDuration(0);
         activityChart.chart.group(activityChart.getGroup());
-        
+
         //dc.redrawAll(activityChart.getGroup());
     };
 

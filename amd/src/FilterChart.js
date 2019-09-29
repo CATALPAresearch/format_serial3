@@ -23,7 +23,7 @@ define(['jquery'
      * @param dc (Object) Dimensional Javascript Charting Library
      * @param utils (Object) Custome util class
      */
-    var filterChart = function (d3, dc, crossfilter, facts, xRange, milestoneApp, utils) {
+    var filterChart = function (d3, dc, crossfilter, facts, xRange, milestoneApp, utils, log) {
 
         timeFilterChart = dc.compositeChart("#filter-chart");
         this.xRange = xRange;
@@ -97,12 +97,26 @@ define(['jquery'
             ;
         timeFilterChart.x(d3.scaleTime().domain(xRange).range([0, width]));
         timeFilterChart.xAxis(d3.axisBottom().ticks(10));
-        
+
 
         var _this = this;
         timeFilterChart.on('filtered', function () {
             _this.filterTime(_this);
         });// other events: preRender, preRedraw
+
+        timeFilterChart.on('renderlet', function (chart) {
+            d3.select('#filter-chart svg rect.selection').on('mouseup', function () {
+                //log.add('timefilter_changed', { range: 3 });
+            });
+            d3.select('#filter-chart svg rect.selection').on('mousedown', function () {
+                //log.add('timefilter_changed', { range: 300 });
+            });
+
+            d3.select('#filter-chart svg rect.overlay').on('mousedown', function () {
+                log.add('timefilter_changed', { range: timeFilterChart.filters()[0] === undefined ? this.xRange : timeFilterChart.filters()[0] });
+            });
+            
+        });
 
         timeFilterChart.render();
 
@@ -115,7 +129,7 @@ define(['jquery'
             .attr('width', '100%')
             .attr('height', 58)
             ;
-        
+
         if (localStorage.surveyDone) {
             $('.activity-chart-container').show();
             $('.filter-chart-container').show();
@@ -145,7 +159,7 @@ define(['jquery'
 
         /**
          * filterTime
-         * @description Estimated the time range from the timeFilterChart and redefines the x-axis of the main chart arcodingly.
+         * @description Obtain the time range from the timeFilterChart and redefines the x-axis of the main chart arcodingly.
          * @param {*} chart 
          */
         this.filterTime = function (the_chart) {
@@ -156,6 +170,7 @@ define(['jquery'
             for (var i = 0; i < registeredCharts.length; i++) {
                 registeredCharts[i].update(range);
             }
+            log.add('timefilter_changed', { range: range });
         };
 
         var registeredCharts = [];

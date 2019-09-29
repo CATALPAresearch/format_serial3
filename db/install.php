@@ -1,4 +1,5 @@
 <?php
+
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -15,16 +16,21 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version details
+ * Page module post install function
  *
- * @package    format
- * @subpackage topics
- * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
+ * This file replaces:
+ *  - STATEMENTS section in db/install.xml
+ *  - lib.php/modulename_install() post installation hook
+ *  - partially defaults.php
+ *
+ * @package mod_page
+ * @copyright  2009 Petr Skoda (http://skodak.org)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+defined('MOODLE_INTERNAL') || die;
 
-$plugin->version   = 2017051528;        // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2017050500;        // Requires this Moodle version.
-$plugin->component = 'format_ladtopics';    // Full name of the plugin (used for diagnostics).
+function xmldb_ladtopics_install() {
+    global $CFG;
+
+}

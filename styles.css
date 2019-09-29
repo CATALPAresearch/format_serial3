@@ -23,18 +23,13 @@
 }
 
 
-/* remove unwanted box above the planning component */
-
-
-/* xxx */
-
-#region-main-box:nth-child(1) {
-    /*display:none !important;*/
-    border: red 1px solid;
-    max-height: 2px;
+/* Bad hack: removes box above the timeline */
+body.format-ladtopics #region-main-box:nth-child(1) {   
+    display:none;
 }
 
-#page>#page-content .card-body.ladtopics {
+/* reset min-height to fit height to the content */
+#region-main.ladtopics-region .card{   
     min-height: 2rem;
 }
 
@@ -567,6 +562,31 @@ svg {
     padding-right:0;
 }
 
+#viewPillsTab li:nth-child(1) {
+    margin-right:10px;
+}
+
+#viewPillsTab li:nth-child(2),
+#viewPillsTab li:nth-child(3) {
+    margin-top:2px;
+    border-radius:0;
+    background-color: #fff;
+}
+
+#viewPillsTab li:nth-child(2) a:hover,
+#viewPillsTab li:nth-child(3) a:hover {
+    border-bottom: solid 3px #004C97;
+    background-color: #fff;
+    border-radius:0;
+}
+
+
+#viewPillsTab.nav-pills .nav-link.active {
+    border-bottom: solid 3px #004C97;
+    background-color: #fff;
+    border-radius:0;
+}
+
 .milestone-list ul{
     list-style: none;
     margin-left:0;
@@ -575,7 +595,6 @@ svg {
 
 .milestone-list ul li.milestone-element{
     min-width: 100%;
-    max-width:300px;
     padding-left:0;
     font-size: 0.8em;
     vertical-align: middle;
@@ -660,6 +679,11 @@ svg {
 
 .milestone-entry-details {
     padding-left:10px;
+}
+
+.milestone-list {
+    padding-left: 15px;
+    padding-right: 15px;
 }
 
 .milestone-list .milestone-urgent {

@@ -18,9 +18,10 @@ define([
     M.cfg.wwwroot + '/course/format/ladtopics/amd/src/FilterChart.js',
     M.cfg.wwwroot + '/course/format/ladtopics/amd/src/ActivityChart.js',
     M.cfg.wwwroot + '/course/format/ladtopics/amd/src/InitialSurvey.js',
-    M.cfg.wwwroot + '/course/format/ladtopics/amd/src/Assessment.js'
+    M.cfg.wwwroot + '/course/format/ladtopics/amd/src/Assessment.js',
+    M.cfg.wwwroot + '/course/format/ladtopics/amd/src/Logging.js'
 ],
-    function ($, jqueryui, Timeline, Utils, filterChart, activityChart, initialSurvey, Assessment) {
+    function ($, jqueryui, Timeline, Utils, filterChart, activityChart, initialSurvey, Assessment, Log) {
 
         require.config({
             enforceDefine: false,
@@ -67,7 +68,7 @@ define([
         });
 
 
-        function start() {
+        function start(courseid) {
             // Add style sheets        
             var css = [
                 M.cfg.wwwroot + "/course/format/ladtopics/css/ladtopics.css",
@@ -97,19 +98,23 @@ define([
                 'sortable110'
             ], function (vue, crossfilter, d3, dc, moment, sortable) {
                 var utils = new Utils(dc, d3);
-                    new Timeline(vue, d3, dc, crossfilter, moment, sortable, utils, filterChart, activityChart, initialSurvey);
-                //new Assessment(vue, d3, dc, crossfilter, moment);
+                var logger = new Log(utils, courseid, {
+                    context: 'format_ladtopics',
+                    outputType: 1 // 0: console, 1: logstore_standard_log
+                });
+                var timeline = new Timeline(vue, d3, dc, crossfilter, moment, sortable, utils, logger, filterChart, activityChart, initialSurvey);
+                // Xvar assessment = new Assessment(vue, d3, dc, crossfilter, moment);
             });
         }
 
-return {
-    init: function () {
-        try {
-            start();
-        } catch (e) {
-            console.error(e);
-        }
+        return {
+            init: function (courseid) {
+                try {
+                    start(2);
+                } catch (e) {
+                    console.error(e);
+                }
 
-    }
-};
+            }
+        };
     });

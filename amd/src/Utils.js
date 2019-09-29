@@ -35,7 +35,7 @@ define(['jquery', 'core/ajax'], function ($, ajax) {
                     }
                 },
                 fail: function (e) {
-                    console.log(params, ws);
+                    //console.log(params, ws);
                     console.error(e);
                 }
             }]);
@@ -203,6 +203,13 @@ define(['jquery', 'core/ajax'], function ($, ajax) {
                 this.charts[i].filterAll();
             }
             dc.redrawAll();
+        };
+
+        this.mergeObjects = function (obj1, obj2) {
+            var obj3 = {};
+            for (var attrname in obj1) { obj3[attrname] = obj1[attrname]; }
+            for (var attrname in obj2) { obj3[attrname] = obj2[attrname]; }
+            return obj3;
         };
 
 

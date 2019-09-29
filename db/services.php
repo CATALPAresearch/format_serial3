@@ -33,7 +33,30 @@ $functions = array(
                 'description' => 'Obtain course structure from database',
                 'type'        => 'read',
                 'ajax'        => true 
+        ),
+        'format_ladtopics_logger' => array(
+                'classname'   => 'format_ladtopics_external',
+                'methodname'  => 'logger',
+                'classpath'   => 'course/format/ladtopics/api.php',
+                'description' => 'Obtain logger date from database',
+                'type'        => 'write',
+                'ajax'        => true,
+                'capabilities'  => 'format/ladtopics:view', 
+        ),
+        'format_ladtopics_getmilestones' => array(
+                'classname'   => 'format_ladtopics_external',
+                'methodname'  => 'getmilestones',
+                'classpath'   => 'course/format/ladtopics/api.php',
+                'description' => 'Obtain mielstones from database',
+                'type'        => 'read',
+                'ajax'        => true
+        ),
+        'format_ladtopics_setmilestones' => array(
+                'classname'   => 'format_ladtopics_external',
+                'methodname'  => 'setmilestones',
+                'classpath'   => 'course/format/ladtopics/api.php',
+                'description' => 'Save mielstones to database',
+                'type'        => 'write',
+                'ajax'        => true
         )
 );
-
-// http://localhost/moodle/webservice/rest/server.php?wstoken=e321c48e338fc44830cda07824833944&wsfunction=local_wstemplate_hello_world

@@ -5,6 +5,7 @@ defined('MOODLE_INTERNAL') || die;
 require_once($CFG->libdir . '/externallib.php');
 
 class format_ladtopics_external extends external_api {
+
     
     /**
      * Obtain plugin name
@@ -70,10 +71,10 @@ class format_ladtopics_external extends external_api {
         $arr=array();
         foreach($data as $bu){
             $entry = array(
-                    'utc' => $bu->timecreated,
-                    'action_type' => $bu->component,
-                    'action'=> $bu->action//,
-                    //'data' => json_encode($bu),
+                'utc' => $bu->timecreated,
+                'action_type' => $bu->component,
+                'action'=> $bu->action//,
+                //'data' => json_encode($bu),
             );
             array_push($arr, $entry);
         }
@@ -81,11 +82,11 @@ class format_ladtopics_external extends external_api {
 
         //
         $user_data = array(
-                    'username' => $USER->username,
-                    'firstname' =>  $USER->firstname,
-                    'lastname' =>  $USER->lastname,
-                    'userid' =>  $USER->id
-                );
+            'username' => $USER->username,
+            'firstname' =>  $USER->firstname,
+            'lastname' =>  $USER->lastname,
+            'userid' =>  $USER->id
+        );
         
         return array('data'=>json_encode($arr), 'user'=>json_encode($user_data));
     }
@@ -440,10 +441,142 @@ class format_ladtopics_external extends external_api {
     }
     public static function coursestructure_is_allowed_from_ajax() { return true; }
 
+/**
+     * Takes video player log data form the client
+     */
+    public static function logger_parameters() {
+        return new external_function_parameters(                
+            array(
+                'data' => 
+                    new external_single_structure(
+                        array(
+                        'courseid' => new external_value(PARAM_INT, 'id of course', VALUE_OPTIONAL),
+                        'utc' => new external_value(PARAM_INT, 'utc time', VALUE_OPTIONAL),
+                        'action' => new external_value(PARAM_TEXT, 'action', VALUE_OPTIONAL),
+                        'entry' => new external_value(PARAM_RAW, 'log data', VALUE_OPTIONAL)
+                    )
+                )
+            )
+        );
+    }
+    public static function logger_returns() {
+        return new external_single_structure(
+                array( 'response' => new external_value(PARAM_RAW, 'Server respons to the incomming log') )
+        );
+    }
+    public static function logger($data) {
+        global $CFG, $DB, $USER;
+        
+        $r = new stdClass();
+        $r->name='format_ladtopics';
+        $r->component='format_ladtopics';
+        $r->eventname='\format_ladtopics\event\\' . $data['action'];
+        $r->action=$data['action'];
+        $r->target='course_format';
+        $r->objecttable='ladtopics';
+        $r->objectid=0;
+        $r->crud='r';
+        $r->edulevel=2;
+        $r->contextid=120;
+        $r->contextlevel=70;
+        $r->contextinstanceid=86;
+        $r->userid=$USER->id; 
+        $r->courseid=(int)$data['courseid'];
+        //$r->relateduserid=NULL;
+        $r->anonymous=0;
+        $r->other=$data[entry];	 
+        $r->timecreated=$data['utc'];
+        $r->origin='web';	 
+        $r->ip=$_SERVER['REMOTE_ADDR'];
+        //$r->realuserid=NULL;
+        
+        $transaction = $DB->start_delegated_transaction();
+        $res = $DB->insert_records("logstore_standard_log", array($r)); // $CFG->prefix .
+        $transaction->allow_commit();
+        
+        return array('response'=> json_encode('hello'));
+    } 
+    public static function logger_is_allowed_from_ajax() { return true; }
 
     
 
-   
+
+
+    /**
+     * Get milestones of a user
+     */
+    public static function getmilestones_parameters() {
+        return new external_function_parameters(                
+            array(
+                'data' => 
+                    new external_single_structure(
+                        array(
+                        'courseid' => new external_value(PARAM_INT, 'id of course', VALUE_OPTIONAL),
+                        'userid' => new external_value(PARAM_INT, 'utc time', VALUE_OPTIONAL)
+                    )
+                )
+            )
+        );
+    }
+    public static function getmilestones_returns() {
+        return new external_single_structure(
+                array( 'milestones' => new external_value(PARAM_RAW, 'Server respons to the incomming log') )
+        );
+    }
+    public static function getmilestones($data) {
+        global $CFG, $DB, $USER;
+        
+        $r = new stdClass();
+        $r->name='format_ladtopics';
+        
+        
+        //$transaction = $DB->start_delegated_transaction();
+        //$res = $DB->insert_records("logstore_standard_log", array($r)); // $CFG->prefix .
+        //$transaction->allow_commit();
+        
+        return array('milestones'=> json_encode('Meilensteine geladen'));
+    } 
+    public static function getmilestones_is_allowed_from_ajax() { return true; }
+
+
+
+    /**
+     * Set milestones of a user
+     */
+    public static function setmilestones_parameters() {
+        return new external_function_parameters(                
+            array(
+                'data' => 
+                    new external_single_structure(
+                        array(
+                        'courseid' => new external_value(PARAM_INT, 'id of course', VALUE_OPTIONAL),
+                        'userid' => new external_value(PARAM_INT, 'utc time', VALUE_OPTIONAL),
+                        'milestones' => new external_value(PARAM_RAW, 'utc time', VALUE_OPTIONAL)
+                    )
+                )
+            )
+        );
+    }
+    public static function setmilestones_returns() {
+        return new external_single_structure(
+                array( 'response' => new external_value(PARAM_RAW, 'Server respons to the incomming log') )
+        );
+    }
+    public static function setmilestones($data) {
+        global $CFG, $DB, $USER;
+        
+        $r = new stdClass();
+        $r->name='format_ladtopics';
+        
+        
+        //$transaction = $DB->start_delegated_transaction();
+        //$res = $DB->insert_records("logstore_standard_log", array($r)); // $CFG->prefix .
+        //$transaction->allow_commit();
+        
+        return array('response'=> json_encode('Meilensteine gespeichert'));
+    } 
+    public static function setmilestones_is_allowed_from_ajax() { return true; }
+
 
 }// end class
 

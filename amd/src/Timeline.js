@@ -20,30 +20,49 @@ define([
     /**
      * Plot a timeline
      */
-    var Timeline = function (Vue, d3, dc, crossfilter, moment, Sortable, utils, FilterChart, ActivityChart, InitialSurvey) {
-
+    var Timeline = function (Vue, d3, dc, crossfilter, moment, Sortable, utils, logger, FilterChart, ActivityChart, InitialSurvey) {
         var width = document.getElementById('ladtopic-container-0').offsetWidth;
         var margins = { top: 15, right: 10, bottom: 20, left: 10 };
         var course = {
             id: $('#courseid').text()
             // module: parseInt($('#moduleid').html()) 
         };
-
+        
         utils.get_ws('logstore', {
             'courseid': parseInt(course.id, 10)
         }, function (e) {
             try {
-                draw(JSON.parse(e.data));
+                draw(JSON.parse(e.data), logger);
             } catch (e) {
                 console.error(e);
             }
+        });
+
+
+        utils.get_ws('getmilestones', {
+            data: {
+            'courseid': parseInt(course.id, 10),
+            'userid': 2
+            }
+        }, function (e) {
+            console.log(e);
+        });
+
+        utils.get_ws('setmilestones', {
+            data:{
+            'courseid': parseInt(course.id, 10),
+            'userid': 2,
+            'milestones': JSON.stringify({ my:'milestone'})
+            }
+        }, function (e) {
+            console.log(e);
         });
 
         /**
          * 
          * @param {*} the_data 
          */
-        var draw = function (the_data) {
+        var draw = function (the_data, logger) {
 
             var xRange = [new Date(2019, 4, 28), new Date(2020, 231)];
 
@@ -204,6 +223,7 @@ define([
                             //$('.filter-chart-container').hide();
                         }
                     }
+
                     this.emptyMilestone.end = new Date();
                     this.updateMilestoneStatus();
                     this.initializeChart();
@@ -213,9 +233,9 @@ define([
                         }
                     });*/
                     var facts = crossfilter(the_data);
-                    this.timeFilterChart = new FilterChart(d3, dc, crossfilter, facts, xRange, this, utils);
+                    this.timeFilterChart = new FilterChart(d3, dc, crossfilter, facts, xRange, this, utils, logger);
 
-
+                    logger.add('planing_tool_open', { pageLoaded: true });
                 },
                 created: function () {
                     var _this = this;
@@ -228,6 +248,7 @@ define([
                         }
                     });
                     $('#additionalCharts').hide();
+                    $('#filter-presets').hide();
                 },
                 watch: {
                     milestones: function (newMilestone) {
@@ -252,11 +273,15 @@ define([
                     }*/
                 },
                 methods: {
-                    showAdditionalCharts: function() {
+                    showAdditionalCharts: function () {
                         $('#additionalCharts').show();
+                        $('#filter-presets').show();
+                        logger.add('milestone_view_switch', { selectedView: 'timeline' });
                     },
-                    hideAdditionalCharts: function() {
+                    hideAdditionalCharts: function () {
                         $('#additionalCharts').hide();
+                        $('#filter-presets').hide();
+                        logger.add('milestone_view_switch', { selectedView: 'list' });
                     },
                     getMoodlePath: function () {
                         return M.cfg.wwwroot;
@@ -374,11 +399,24 @@ define([
                         this.selectedMilestone = e;
                         this.reflectionsFormVisisble = this.getSelectedMilestone().status === 'reflected' ? true : false;
                         this.modalVisible = true;
+                        if (e > 0) {
+                            logger.add('milestone_edit_dialog_open', {
+                                milestoneId: this.getSelectedMilestone().id,
+                                name: this.getSelectedMilestone().name,
+                                start: this.getSelectedMilestone().start.getTime(),
+                                end: this.getSelectedMilestone().end.getTime(),
+                                status: this.getSelectedMilestone().status,
+                                objective: this.getSelectedMilestone().objective,
+                                resources: this.getSelectedMilestone().resources.map(function (resource) { return { name: resource.instance_title, section: resource.section, type: resource.instance_type, done: resource.checked !== undefined ? true : false }; }),
+                                strategies: this.getSelectedMilestone().strategies.map(function (strategy) { return { name: strategy.id, done: strategy.checked !== undefined ? true : false }; })
+                            });
+                        }
                     },
                     closeModal: function (e) {
                         this.modalVisible = false;
                         this.updateMilestoneStatus();
                         this.updateChart(this.range);
+                        logger.add('milestone_dialog_close', {dialogOpen: false});
                     },
                     getSelectedMilestone: function () {
                         if (this.selectedMilestone === -1) {
@@ -392,6 +430,7 @@ define([
                     showEmptyMilestone: function (e) {
                         this.selectedMilestone = -1;
                         this.modalVisible = true;
+                        logger.add('milestone_dialog_open_new', {dialogOpen: true});
                     },
                     updateName: function (e) {
                         this.invalidName = this.getSelectedMilestone().name === '' ? true : false;
@@ -423,11 +462,22 @@ define([
                             } else {
                                 $('#theMilestoneModal').modal('hide');
                                 this.updateMilestoneStatus();
+                                logger.add('milestone_updated', {
+                                    milestoneId: this.getSelectedMilestone().id,
+                                    name: this.getSelectedMilestone().name,
+                                    start: this.getSelectedMilestone().start.getTime(),
+                                    end: this.getSelectedMilestone().end.getTime(),
+                                    status: this.getSelectedMilestone().status,
+                                    objective: this.getSelectedMilestone().objective,
+                                    resources: this.getSelectedMilestone().resources.map(function (resource) { return { name: resource.instance_title, section: resource.section, type: resource.instance_type, done: resource.checked !== undefined ? true : false }; }),
+                                    strategies: this.getSelectedMilestone().strategies.map(function (strategy) { return { name: strategy.id, done: strategy.checked !== undefined ? true : false }; })
+                                });
+                                
                             }
                         }
                     },
                     addMilestone: function (ms) {
-                        console.log('addMS ', ms.end);
+                        console.log('deprecated.. this function should not be used anymore');
                         ms.end = new Date(ms.end);
                         ms.start = new Date(ms.start);
                         this.milestones.push(ms);
@@ -443,6 +493,16 @@ define([
                         this.emptyMilestone.start = new Date(d.getFullYear() + '/' + (d.getMonth()) + '/' + d.getDate());
 
                         this.milestones.push(this.emptyMilestone);
+                        logger.add('milestone_created', {
+                            milestoneId: this.emptyMilestone.id,
+                            name: this.emptyMilestone.name,
+                            start: this.emptyMilestone.start.getTime(),
+                            end: this.emptyMilestone.end.getTime(),
+                            status: this.emptyMilestone.status,
+                            objective: this.emptyMilestone.objective,
+                            resources: this.emptyMilestone.resources.map(function (resource) { return { name: resource.instance_title, section: resource.section, type: resource.instance_type, done: resource.checked !== undefined ? true : false }; }),
+                            strategies: this.emptyMilestone.strategies.map(function (strategy) { return { name: strategy.id, done: strategy.checked !== undefined ? true : false }; })
+                        });
                         var x = d3.scaleTime().domain(this.range).range([0, width]);
                         var y = d3.scaleLinear().domain([0, this.ymax]).range([0, this.height]);
                         this.updateMilestoneStatus();
@@ -465,6 +525,16 @@ define([
                     removeMilestone: function () {
                         this.closeModal();
                         $('div.modal-backdrop.show').remove();
+                        logger.add('milestone_removed', {
+                            milestoneId: this.getSelectedMilestone().id,
+                            name: this.getSelectedMilestone().name,
+                            start: this.getSelectedMilestone().start.getTime(),
+                            end: this.getSelectedMilestone().end.getTime(),
+                            status: this.getSelectedMilestone().status,
+                            objective: this.getSelectedMilestone().objective,
+                            resources: this.getSelectedMilestone().resources.map(function (resource) { return { name: resource.instance_title, section: resource.section, type: resource.instance_type, done: resource.checked !== undefined ? true : false }; }),
+                            strategies: this.getSelectedMilestone().strategies.map(function (strategy) { return { name: strategy.id, done: strategy.checked !== undefined ? true : false }; })
+                        });
                         for (var s = 0; s < this.milestones.length; s++) {
                             if (this.milestones[s].id === this.selectedMilestone) {
                                 this.milestones.splice(s, 1);
@@ -594,10 +664,6 @@ define([
                         var resourceProgress = 0;
                         var strategiesProgress = 0;
 
-                        //if (milestone.resources.length === 0) {
-                        //return 0;
-                        //}
-
                         resourceProgress = milestone.resources.filter(function (e) {
                             return e.checked === true ? true : false;
                         }).length / milestone.resources.length;
@@ -653,6 +719,7 @@ define([
                     },
                     toggleReflectionsForm: function () {
                         this.reflectionsFormVisisble = !this.reflectionsFormVisisble; console.log(this.reflectionsFormVisisble)
+                        logger.add('reflections_open', { formVisible: true });
                     },
                     validateReflectionForm: function () {
                         var valid = true;
@@ -666,11 +733,17 @@ define([
                     },
                     submitReflections: function () {
                         this.getSelectedMilestone().status = 'reflected';
+                        logger.add('reflections_completed', {
+                            milestoneId: this.getSelectedMilestone().id,
+                            name: this.getSelectedMilestone().name,
+                            reflections: this.getSelectedMilestone().reflections
+                        });
                     },
                     setFilterPreset: function (preset) {
                         var range = [];
                         var now = new Date();
                         this.filterPreset = preset;
+                        logger.add('time_filter_selected', {selectedFilter: preset});
                         switch (preset) {
                             case "next-week":
                                 range = [new Date(now.getTime() + 1000 * 3600 * 24 * 1), new Date(now.getTime() + 1000 * 3600 * 24 * 7)];
