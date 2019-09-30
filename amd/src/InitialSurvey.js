@@ -38,7 +38,8 @@ define(['jquery'], function ($) {
                     availableResources: [],
                     invalidAvailableTime: false,
                     invalidObjective: false,
-                    invalidResources: false
+                    invalidResources: false,
+                    invalidPlaningStyle: false
                 };
             },
             mounted: function () {

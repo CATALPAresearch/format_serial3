@@ -15,24 +15,22 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Upgrade scripts for course format "Topics"
+ * Page module capability definition
  *
- * @package    format_topics
- * @copyright  2017 Marina Glancy
+ * @package    mod_page
+ * @copyright  2009 Petr Skoda (http://skodak.org)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+defined('MOODLE_INTERNAL') || die;
 
-/**
- * Upgrade script for format_topics
- *
- * @param int $oldversion the version we are upgrading from
- * @return bool result
- */
-function xmldb_format_ladtopics_upgrade($oldversion) {
-    global $CFG, $DB;
+$capabilities = array(
+    'format/ladtopics:view' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_MODULE,
+        'archetypes' => array(
+            'user' => CAP_ALLOW,
+        )
+    )
 
-    
-    return true;
-}
+);

@@ -526,15 +526,24 @@ class format_ladtopics_external extends external_api {
     public static function getmilestones($data) {
         global $CFG, $DB, $USER;
         
-        $r = new stdClass();
-        $r->name='format_ladtopics';
-        
-        
-        //$transaction = $DB->start_delegated_transaction();
-        //$res = $DB->insert_records("logstore_standard_log", array($r)); // $CFG->prefix .
-        //$transaction->allow_commit();
-        
-        return array('milestones'=> json_encode('Meilensteine geladen'));
+        $transaction = $DB->start_delegated_transaction(); 
+        $sql='
+            SELECT t.milestones, t.settings, t.timemodified 
+            FROM '.$CFG->prefix.'ladtopics_milestones AS t
+            WHERE   
+                t.course = ' . $data['courseid'] . ' 
+                AND t.user = ' . (int)$data['userid'] . '
+            ORDER BY t.timemodified DESC
+            LIMIT 1
+            ;';
+        $res = $DB->get_record_sql($sql);
+        $transaction->allow_commit();
+
+        return array('milestones'=> json_encode(array(
+            'settings'=>$res->settings,
+            'milestones'=>$res->milestones,
+            'utc'=>$res->timemodified
+        )));
     } 
     public static function getmilestones_is_allowed_from_ajax() { return true; }
 
@@ -551,7 +560,8 @@ class format_ladtopics_external extends external_api {
                         array(
                         'courseid' => new external_value(PARAM_INT, 'id of course', VALUE_OPTIONAL),
                         'userid' => new external_value(PARAM_INT, 'utc time', VALUE_OPTIONAL),
-                        'milestones' => new external_value(PARAM_RAW, 'utc time', VALUE_OPTIONAL)
+                        'milestones' => new external_value(PARAM_RAW, 'milestone', VALUE_OPTIONAL),
+                        'settings' => new external_value(PARAM_RAW, 'settings', VALUE_OPTIONAL)
                     )
                 )
             )
@@ -564,14 +574,19 @@ class format_ladtopics_external extends external_api {
     }
     public static function setmilestones($data) {
         global $CFG, $DB, $USER;
+
+        $date = new DateTime();
         
         $r = new stdClass();
-        $r->name='format_ladtopics';
-        
-        
-        //$transaction = $DB->start_delegated_transaction();
-        //$res = $DB->insert_records("logstore_standard_log", array($r)); // $CFG->prefix .
-        //$transaction->allow_commit();
+        $r->user=$data['userid'];
+        $r->course=$data['courseid'];
+        $r->milestones=$data['milestones'];
+        $r->settings=$data['settings'];
+        $r->timemodified=$date->getTimestamp();
+
+        $transaction = $DB->start_delegated_transaction();
+        $res = $DB->insert_records("ladtopics_milestones", array($r));
+        $transaction->allow_commit();
         
         return array('response'=> json_encode('Meilensteine gespeichert'));
     } 

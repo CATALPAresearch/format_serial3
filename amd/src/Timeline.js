@@ -45,14 +45,18 @@ define([
             'userid': 2
             }
         }, function (e) {
-            console.log(e);
+            e = JSON.parse(e.milestones);
+                console.log(JSON.parse(e.milestones));
+                console.log(JSON.parse(e.settings));
+                console.log(e.utc);
         });
 
         utils.get_ws('setmilestones', {
             data:{
             'courseid': parseInt(course.id, 10),
             'userid': 2,
-            'milestones': JSON.stringify({ my:'milestone'})
+            'milestones': JSON.stringify({ my:'ein ganz neuer2'}),
+            'settings': JSON.stringify({ set: 'einstellung' })
             }
         }, function (e) {
             console.log(e);
