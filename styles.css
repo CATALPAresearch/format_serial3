@@ -24,7 +24,7 @@
 
 
 /* Bad hack: removes box above the timeline */
-body.format-ladtopics #region-main-box:nth-child(1) {   
+body#page-course-view-ladtopics #region-main-box:nth-child(1) {   
     display:none;
 }
 
