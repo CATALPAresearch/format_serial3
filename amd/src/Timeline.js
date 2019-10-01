@@ -27,7 +27,7 @@ define([
             id: $('#courseid').text()
             // module: parseInt($('#moduleid').html()) 
         };
-        
+
         utils.get_ws('logstore', {
             'courseid': parseInt(course.id, 10)
         }, function (e) {
@@ -37,31 +37,32 @@ define([
                 console.error(e);
             }
         });
-
-
+    
         utils.get_ws('getmilestones', {
             data: {
-            'courseid': parseInt(course.id, 10),
-            'userid': 2
+                'courseid': parseInt(course.id, 10),
+                'userid': 4
             }
         }, function (e) {
-            e = JSON.parse(e.milestones);
+            if (e !== null) {
+                e = JSON.parse(e.milestones);
                 console.log(JSON.parse(e.milestones));
                 console.log(JSON.parse(e.settings));
                 console.log(e.utc);
-        });
-
-        utils.get_ws('setmilestones', {
-            data:{
-            'courseid': parseInt(course.id, 10),
-            'userid': 2,
-            'milestones': JSON.stringify({ my:'ein ganz neuer2'}),
-            'settings': JSON.stringify({ set: 'einstellung' })
             }
-        }, function (e) {
-            console.log(e);
         });
 
+                utils.get_ws('setmilestones', {
+                    data: {
+                    'courseid': parseInt(course.id, 10),
+                    'userid': 4,
+                    'milestones': JSON.stringify({ my:'ein ganz neuer__4'}),
+                    'settings': JSON.stringify({ set: 'einstellung' })
+                    }
+                }, function (e) {
+                    console.log(JSON.parse(e.response));
+                });
+        
         /**
          * 
          * @param {*} the_data 
@@ -420,7 +421,7 @@ define([
                         this.modalVisible = false;
                         this.updateMilestoneStatus();
                         this.updateChart(this.range);
-                        logger.add('milestone_dialog_close', {dialogOpen: false});
+                        logger.add('milestone_dialog_close', { dialogOpen: false });
                     },
                     getSelectedMilestone: function () {
                         if (this.selectedMilestone === -1) {
@@ -434,7 +435,7 @@ define([
                     showEmptyMilestone: function (e) {
                         this.selectedMilestone = -1;
                         this.modalVisible = true;
-                        logger.add('milestone_dialog_open_new', {dialogOpen: true});
+                        logger.add('milestone_dialog_open_new', { dialogOpen: true });
                     },
                     updateName: function (e) {
                         this.invalidName = this.getSelectedMilestone().name === '' ? true : false;
@@ -476,7 +477,7 @@ define([
                                     resources: this.getSelectedMilestone().resources.map(function (resource) { return { name: resource.instance_title, section: resource.section, type: resource.instance_type, done: resource.checked !== undefined ? true : false }; }),
                                     strategies: this.getSelectedMilestone().strategies.map(function (strategy) { return { name: strategy.id, done: strategy.checked !== undefined ? true : false }; })
                                 });
-                                
+
                             }
                         }
                     },
@@ -747,7 +748,7 @@ define([
                         var range = [];
                         var now = new Date();
                         this.filterPreset = preset;
-                        logger.add('time_filter_selected', {selectedFilter: preset});
+                        logger.add('time_filter_selected', { selectedFilter: preset });
                         switch (preset) {
                             case "next-week":
                                 range = [new Date(now.getTime() + 1000 * 3600 * 24 * 1), new Date(now.getTime() + 1000 * 3600 * 24 * 7)];

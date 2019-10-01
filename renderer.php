@@ -785,7 +785,7 @@ $modalMilestone = '
                                 </div>
                             </div>
                             
-                            <textarea>{{ milestones }}</textarea>
+                            <textarea >{{ milestones }}</textarea>
                         </div>    
                         </div>
                         <!-- End planing component -->

@@ -491,7 +491,7 @@ class format_ladtopics_external extends external_api {
         //$r->realuserid=NULL;
         
         $transaction = $DB->start_delegated_transaction();
-        $res = $DB->insert_records("logstore_standard_log", array($r)); // $CFG->prefix .
+        $res = $DB->insert_records("logstore_standard_log", array($r)); 
         $transaction->allow_commit();
         
         return array('response'=> json_encode('hello'));
@@ -559,8 +559,8 @@ class format_ladtopics_external extends external_api {
                     new external_single_structure(
                         array(
                         'courseid' => new external_value(PARAM_INT, 'id of course', VALUE_OPTIONAL),
-                        'userid' => new external_value(PARAM_INT, 'utc time', VALUE_OPTIONAL),
-                        'milestones' => new external_value(PARAM_RAW, 'milestone', VALUE_OPTIONAL),
+                        'userid' => new external_value(PARAM_INT, 'user id', VALUE_OPTIONAL),
+                        'milestones' => new external_value(PARAM_RAW, 'milestones', VALUE_OPTIONAL),
                         'settings' => new external_value(PARAM_RAW, 'settings', VALUE_OPTIONAL)
                     )
                 )
@@ -576,19 +576,28 @@ class format_ladtopics_external extends external_api {
         global $CFG, $DB, $USER;
 
         $date = new DateTime();
+        if(!isset($data['userid'])){
+            $data['userid'] = 4000;
+        }
+        $data['userid'] = (int)$USER->id;
         
         $r = new stdClass();
-        $r->user=$data['userid'];
-        $r->course=$data['courseid'];
+        $r->userid=(int)$data['userid'];
+        $r->course=(int)$data['courseid'];
         $r->milestones=$data['milestones'];
         $r->settings=$data['settings'];
-        $r->timemodified=$date->getTimestamp();
+        $r->timemodified=(int)$date->getTimestamp();
 
         $transaction = $DB->start_delegated_transaction();
         $res = $DB->insert_records("ladtopics_milestones", array($r));
+        $sql = '
+            INSERT INTO '. $CFG->prefix .'ladtopics_milestones (user,course,milestones,settings,timemodified) 
+            VALUES (' . (int)$data['userid'] . ',' . (int)$data['courseid'] . ',\'' . $data['milestones'] . '\',\'' . $data['settings']. '\',' . (int)$date->getTimestamp() . ')
+            ;';
+        //$res = $DB->execute($sql);
         $transaction->allow_commit();
-        
-        return array('response'=> json_encode('Meilensteine gespeichert'));
+
+        return array('response'=> json_encode( array($res, $data) ));
     } 
     public static function setmilestones_is_allowed_from_ajax() { return true; }
 

@@ -30,7 +30,7 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-function xmldb_ladtopics_install() {
+function xmldb_format_ladtopics_install() {
     global $CFG;
 
 }

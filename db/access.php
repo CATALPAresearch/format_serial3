@@ -32,5 +32,4 @@ $capabilities = array(
             'user' => CAP_ALLOW,
         )
     )
-
 );

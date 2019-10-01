@@ -57,6 +57,7 @@ $functions = array(
                 'classpath'   => 'course/format/ladtopics/api.php',
                 'description' => 'Save mielstones to database',
                 'type'        => 'write',
+                //'capabilities'  => 'format/ladtopics:view',
                 'ajax'        => true
         )
 );
