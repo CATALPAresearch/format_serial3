@@ -35,6 +35,7 @@ define([
                 //"universe": ["https://npmcdn.com/universe@latest/universe", "universe"],
                 //"bootstrap_select": ["https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/js/bootstrap-select.min", "bootstrap-select.min"],
                 "moment224": ["moment-with-locales-gz.min"], // ["moment.min"],
+                "intro293": ["intro"],
                 "sortable110": ["sortable.min"]
                 /*
                 "crossfilter2": "crossfilter.v2",
@@ -47,6 +48,9 @@ define([
                 },
                 "moment224": {
                     exports: 'moment'
+                },
+                "intro293": {
+                    export: 'introJs'
                 },
                 "sortable110": {
                     exports: 'Sortable'
@@ -73,7 +77,8 @@ define([
             var css = [
                 M.cfg.wwwroot + "/course/format/ladtopics/css/ladtopics.css",
                 M.cfg.wwwroot + "/course/format/ladtopics/css/dc.css",
-                M.cfg.wwwroot + "/course/format/ladtopics/css/bootstrap-select.min.css"
+                M.cfg.wwwroot + "/course/format/ladtopics/css/bootstrap-select.min.css",
+                M.cfg.wwwroot + "/course/format/ladtopics/css/introjs.css"
             ];
             var link = '';
             for (var i = 0; i < css.length; i++) {
@@ -95,26 +100,23 @@ define([
                 // 'universe',
                 // 'bootstrap_select',
                 'moment224',
+                'intro293',
                 'sortable110'
-            ], function (vue, crossfilter, d3, dc, moment, sortable) {
+            ], function (vue, crossfilter, d3, dc, moment, intro, sortable) {
                 var utils = new Utils(dc, d3);
                 var logger = new Log(utils, courseid, {
                     context: 'format_ladtopics',
                     outputType: 1 // 0: console, 1: logstore_standard_log
                 });
-                var timeline = new Timeline(vue, d3, dc, crossfilter, moment, sortable, utils, logger, filterChart, activityChart, initialSurvey);
+                var timeline = new Timeline(vue, d3, dc, crossfilter, moment, sortable, utils, intro, logger, filterChart, activityChart, initialSurvey);
                 // Xvar assessment = new Assessment(vue, d3, dc, crossfilter, moment);
             });
         }
 
         return {
             init: function (courseid) {
-                try {
-                    start(2);
-                } catch (e) {
-                    console.error(e);
-                }
-
+                courseid = courseid === undefined ? parseInt($('#courseid').text(), 10) : courseid;
+                start(courseid);
             }
         };
     });

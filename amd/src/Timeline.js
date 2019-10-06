@@ -20,11 +20,11 @@ define([
     /**
      * Plot a timeline
      */
-    var Timeline = function (Vue, d3, dc, crossfilter, moment, Sortable, utils, logger, FilterChart, ActivityChart, InitialSurvey) {
+    var Timeline = function (Vue, d3, dc, crossfilter, moment, Sortable, utils, introJs, logger, FilterChart, ActivityChart, InitialSurvey) {
         var width = document.getElementById('ladtopic-container-0').offsetWidth;
         var margins = { top: 15, right: 10, bottom: 20, left: 10 };
         var course = {
-            id: $('#courseid').text()
+            id: parseInt($('#courseid').text(), 10)
             // module: parseInt($('#moduleid').html()) 
         };
 
@@ -37,7 +37,9 @@ define([
                 console.error(e);
             }
         });
-    
+
+
+        /*
         utils.get_ws('getmilestones', {
             data: {
                 'courseid': parseInt(course.id, 10),
@@ -46,23 +48,24 @@ define([
         }, function (e) {
             if (e !== null) {
                 e = JSON.parse(e.milestones);
-                console.log(JSON.parse(e.milestones));
-                console.log(JSON.parse(e.settings));
-                console.log(e.utc);
+                //console.log(JSON.parse(e.milestones));
+                //console.log(JSON.parse(e.settings));
+                console.log(e);
             }
         });
 
-                utils.get_ws('setmilestones', {
-                    data: {
-                    'courseid': parseInt(course.id, 10),
-                    'userid': 4,
-                    'milestones': JSON.stringify({ my:'ein ganz neuer__4'}),
-                    'settings': JSON.stringify({ set: 'einstellung' })
-                    }
-                }, function (e) {
-                    console.log(JSON.parse(e.response));
-                });
-        
+        utils.get_ws('setmilestones', {
+            data: {
+            'courseid': parseInt(course.id, 10),
+            'userid': 4,
+            'milestones': JSON.stringify({ my:'ein ganz neuer__4'}),
+            'settings': JSON.stringify({ set: 'einstellung' })
+            }
+        }, function (e) {
+            console.log(JSON.parse(e.response));
+        });
+        */
+
         /**
          * 
          * @param {*} the_data 
@@ -105,7 +108,7 @@ define([
                 },
                 data: function () {
                     return {
-                        surveyDone: false,
+                        surveyDone: 0,
                         chart: '',
                         timeFilterChart: '',
                         xAxis: '',
@@ -189,22 +192,32 @@ define([
                         selectedMilestone: 0,
                         modalVisible: false,
                         reflectionsFormVisisble: false,
+                        strategyCategories: [
+                            { id: 'organization', name: 'Organisation' },
+                            { id: 'elaboration', name: 'Elaborationsstrategien' },
+                            { id: 'repeatition', name: 'Wiederholungsstrategien' },
+                            { id: 'misc', name: 'Sonstige' }
+
+                        ],
                         strategies: [
                             { id: 'reading', name: 'Überblick durch Lesen/Querlesen', desc: 'Durch schnelles Querlesen verschaffen Sie sich einen Überblick über das Themengebiet. Schauen Sie sich doch auch einmal die PQ4R-Methode an.', url: "", category: 'organization' },
                             { id: 'mindmap', name: 'Mindmap', desc: 'Eine Mindmap hilft dabei, Zusammenhänge darzustellen.', url: "", category: 'organization' },
                             { id: 'exzerpte', name: 'Exzerpt', desc: 'Ein Exzerpt ist mehr als nur eine einfache Zusammenfassung der wichtigsten Inhalte.', url: "", category: 'organization' },
                             { id: 'gliederung', name: 'Gliederung', desc: 'Themenfelder lassen sich mit einer Gliederung übersichtlich strukturieren.', url: "", category: 'organization' },
                             { id: 'strukturierung', name: 'Strukturierung von Wissen', desc: 'Fachausdrücke oder Definitionen lassen sich gut in Listen oder Tabellen sammeln.', url: "", category: 'organization' },
+                            { id: 'makeflashcards', name: 'Lernkarten erstellen', desc: 'Lernkarten kann man sehr früh digital z.B. in einer App oder auf Papier erstellen. Das erleichtert die Prüfungsvorbereitung.', url: "", category: 'organization' },
 
-                            { id: 'transfer', name: 'Übertragung von neuem Wissen auf bekannte Schemata', desc: 'Neues Wissen kann durch die Verknüpfung mit dem eigenen Erleben leichter veranschaulicht und gelernt werden.', url: "", category: 'elaboration' },
-                            { id: 'examples', name: 'Beispiel aus dem Alltag/Arbeitsumfeld für neue Schemata', desc: 'Ein Beispiel aus dem eigenen Umfeld hilft dabei, neue Wissensschemata schneller zu lernen.', url: "", category: 'elaboration' },
-                            { id: 'critical', name: 'kritisches Hinterfragen', desc: 'Durch kritisches Hinterfragen kann man seine Aufmerksamkeit beim Lesen steigern.', url: "", category: 'elaboration' },
+
+                            { id: 'transfer', name: 'Neues Wissen auf Bekanntes übertr.', desc: 'Neues Wissen kann durch die Verknüpfung mit dem eigenen Erleben leichter veranschaulicht und gelernt werden.', url: "", category: 'elaboration' },
+                            { id: 'examples', name: 'Schemata auf Arbeit/Alltag übertr.', desc: 'Ein Beispiel aus dem eigenen Umfeld hilft dabei, neue Wissensschemata schneller zu lernen.', url: "", category: 'elaboration' },
+                            { id: 'critical', name: 'Kritisches Hinterfragen', desc: 'Durch kritisches Hinterfragen kann man seine Aufmerksamkeit beim Lesen steigern.', url: "", category: 'elaboration' },
                             { id: 'structuring', name: 'Bezug zu anderen Fächern herstellen', desc: 'Bekanntes Wissen und Bezüge zu anderen Kursen erleichtern das Verständnis von Zusammenhängen.', url: "", category: 'elaboration' },
                             { id: 'pq4r', name: 'PQ4R-Methode', desc: 'Hinter dem Kürzel verstecken sich sechs Schritte: (1) Preview – Übersicht gewinnen; (2) Questions – Fragen an den Text stellen;  (3) Read – Zweiter Leseschritt - Gründliches Lesen des Textes; (4) Reflect – Gedankliche Auseinandersetzung mit dem Text; (5) Recite – Wiederholen und aus dem Gedächtnis Verfassen; (6) Review – Rückblick und Überprüfung', url: "", category: 'elaboration' },
 
-                            { id: 'flashcards', name: 'Systematisches Wiederholen mit der Lernkartei', desc: 'Mit Lernkarten kann man Dinge systematisch wiederholen bis alles für die Prüfung sitzt. ', url: "", category: 'repeatition' },
+
+                            { id: 'flashcards', name: 'Auswendiglernen mit Lernkarten', desc: 'Mit Lernkarten kann man Dinge systematisch wiederholen bis alles für die Prüfung sitzt. ', url: "", category: 'repeatition' },
                             { id: 'repeatition', name: 'Repetieren', desc: 'Mit vielen Wiederholungen festigt sich das Wissen. ', url: "", category: 'repeatition' },
-                            { id: 'assoc', name: 'Eselsbrücken als Erinnerungshilfe', desc: 'Mit einem Reim oder einer Eselsbrücke kann man sich Begriffe oder Reihenfolgen leichter merken.', url: "", category: 'repeatition' },
+                            { id: 'assoc', name: 'Eselsbrücken', desc: 'Mit einem Reim oder einer Eselsbrücke kann man sich Begriffe oder Reihenfolgen leichter merken.', url: "", category: 'repeatition' },
                             { id: 'loci', name: 'Loci Methode', desc: 'Bei der Loci Methode verknüpft man Lerninhalte mit Orten oder Gegenständen. Für Abfolgen übt man eine Strecke/einen Spaziergang ein.', url: "", category: 'repeatition' }
 
                         ],
@@ -219,15 +232,8 @@ define([
                     if (localStorage.milestones) {
                         this.milestones = JSON.parse(localStorage.milestones);
                     }
-                    if (localStorage.surveyDone) {
-                        this.surveyDone = localStorage.surveyDone;
-                        if (this.surveyDone) {
-                            $('#planing-component').show();
-                        } else {
-                            //$('.activity-chart-container').hide();
-                            //$('.filter-chart-container').hide();
-                        }
-                    }
+
+                    
 
                     this.emptyMilestone.end = new Date();
                     this.updateMilestoneStatus();
@@ -249,7 +255,7 @@ define([
                         if (e.key === "Escape") { // escape key maps to keycode `27`
                             //_this.closeModal();
                             _this.updateMilestoneStatus();
-                            _this.updateChart(this.range);
+                            _this.updateChart(_this.range);
                         }
                     });
                     $('#additionalCharts').hide();
@@ -260,24 +266,90 @@ define([
                         localStorage.milestones = JSON.stringify(newMilestone);
                     },
                     surveyDone: function (surveyStatus) {
-
-                        localStorage.surveyDone = surveyStatus;
-                        if (this.surveyDone) {
+                        if (this.surveyDone > 0) {
                             $('.activity-chart-container').show();
                             $('.filter-chart-container').show();
-                        } else {
-                            //$('.activity-chart-container').hide();
-                            //$('.filter-chart-container').hide();
                         }
-                    }/*,
-                    modalVisible: function (flag) {
-                        if (flag === false) {
-                            this.closeModal();
-                        }
-
-                    }*/
+                    }
                 },
                 methods: {
+                    startIntroJs: function() {
+                        introJs()
+                            .setOptions({
+                                showProgress: true,
+                                nextLabel: 'weiter',
+                                prevLabel: 'zurück',
+                                skipLabel: 'abbrechen',
+                                hidePrev: true,
+                                hideNext: true,
+                                doneLabel: 'fertig',
+                                exitOnEsc: true,
+                                exitOnOverlayClick: true,
+                                showStepNumbers: true,
+                                keyboardNavigation: true,
+                                scrollToElement: true,
+                                steps: [
+                                    {
+                                        element: document.querySelector('#planing-component'),
+                                        intro: '<p>Im Fernstudium sind Sie besonders gefordert, sich selbst zu organisieren und das Lernpensum gut einzuteilen. Wir wissen, dass viele von Ihnen berufstätig sind oder das Fernstudium gewählt haben, da sie die damit verbundene Flexibilität schätzen und brauchen. Das stellt Sie gleichsam aber auch vor die Herausforderung, Ihr Semester eigenständig zu planen, sich selbst zu disziplinieren und die Übersicht zu behalten. Die Formulierung von Meilensteinen als Teilschritte auf dem Weg zu Ihrem persönlichen Ziel oder zur Prüfung helfen dabei, das Volumen eines Semesters übersichtlich zu machen, es zu strukturieren, zu organisieren und das Ziel im Auge zu behalten. Man darf dann auch auf jeden erreichten Meilenstein ein wenig stolz sein und sich selbst belohnen.</p>',
+                                        position: 'top',
+                                        step: 1
+                                    },
+                                    {
+                                        element: document.querySelector('#milestone-list-tab'),
+                                        intro: 'Hier können Sie die Meilensteine als Liste sehen',
+                                        position: 'top',
+                                        step: 2
+                                    },
+                                    {
+                                        element: document.querySelector('#milestone-timeline-tab'),
+                                        intro: 'Hier können Sie die Meilensteine als Zeitleiste sehen',
+                                        position: 'top',
+                                        step: 3
+                                    },
+                                     /* Milestone timeline chart */
+                                    {
+                                        element: document.querySelector('.milestone-chart-container'),
+                                        intro: 'In der oberen Zeitleiste sind die Meilensteine dargestellt.',
+                                        position: 'top',
+                                        step: 4
+                                    },
+                                    {
+                                        element: document.querySelector('.activity-chart-container'),
+                                        intro: 'Im mittleren Teil sehen Sie, in welchen Bereichen Sie im kurs aktiv waren.',
+                                        position: 'top',
+                                        step: 5
+                                    },
+                                    {
+                                        element: document.querySelector('.filter-chart-container'),
+                                        intro: 'Diese Zeitleiste umfasst das gesamte Semester und ermöglicht Ihnen den Betrachtungszeitraum der oberen Zeitliesten zu begrenzen.',
+                                        position: 'top',
+                                        step: 6
+                                    },
+                                    {
+                                        element: document.querySelector('#filter-presets'),
+                                        intro: 'Weitere Filter finde Sie hier',
+                                        position: 'top',
+                                        step: 7
+                                    }
+                                ]
+                            })
+                            .onbeforechange(function(targetElement) {
+                                    switch (targetElement.id) {
+                                        case "milestone-timeline-tab":
+                                            targetElement.click();
+                                            break;
+                                        case "milestone-list-tab":
+                                            targetElement.click();
+                                            break;
+                                        case "xxx":
+                                            document.getElementById("Examples-tab").click();
+                                            break;
+                                    }
+                                }
+                            )
+                            .start();
+                    },
                     showAdditionalCharts: function () {
                         $('#additionalCharts').show();
                         $('#filter-presets').show();
@@ -304,8 +376,8 @@ define([
                         }, function (e) {
                             try {
                                 _this.resources = JSON.parse(e.data);
-                                console.log('Ladezeit', t1 - (new Date()).getTime());
-                                console.log('course-structure-result', _this.resources.map(function (e) { return e.id; }));
+                                //console.log('Ladezeit', t1 - (new Date()).getTime());
+                                //console.log('course-structure-result', _this.resources.map(function (e) { return e.id; }));
                                 //console.log('debug', JSON.parse(e.debug));
                             } catch (e) {
                                 console.error(e);
@@ -623,13 +695,18 @@ define([
                             return parseInt(s.id, 10) === parseInt(id, 10) ? true : false;
                         })[0];
                     },
-                    strategySelected: function (event) {
-                        var el = this.strategyById(event.target.value);
+                    strategySelected: function (id) {
+                        var el = this.strategyById(id);
                         if (this.getSelectedMilestone().strategies.indexOf(el) === -1) {
                             this.getSelectedMilestone().strategies.push(el);
                         }
                         this.invalidStrategy = this.getSelectedMilestone().strategies.length > 0 ? false : true;
                         localStorage.milestones = JSON.stringify(this.milestones);
+                    },
+                    isSelectedStrategy: function (id) {
+                        return this.getSelectedMilestone().strategies.filter(function (e) {
+                            return e.id === id ? true : false;
+                        }).length > 0 ? true : false;
                     },
                     strategyRemove: function (id) {
                         for (var s = 0; s < this.getSelectedMilestone().strategies.length; s++) {
