@@ -329,9 +329,113 @@ select#select_year {
     color: #fff;
 }
 
+
+
+.modal .strategy-introduction{
+    font-size:0.9em;
+}
+
+.modal .strategy-title{
+    font-weight:bold;
+    font-size:1.1em;
+}
+
+.modal .strategy-list{
+    padding:0;
+}
+
+.modal .strategy-category {
+    margin:0;
+}
+.modal .strategy-category-title {
+    font-weight:bold;
+    font-size:0.8em;
+    color:#333536;
+}
+.modal .strategy-category-item {
+    display: inline-block;
+    font-size:0.8em;
+    margin: 0 0 0 0px;
+    width:100%;
+    line-height: 1;
+    padding: 3px 3px;
+}
+.modal .strategy-category-item:hover {
+    background-color:#ced4da;
+}
+.modal .strategy-category-item button.btn {
+    display: inline;
+    vertical-align: none;
+    margin:0;
+    padding:0 2px !important;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.strategy-header{
+    font-size:0.8em;
+    color:#83878b;
+}
+
+.modal .strategy-selected-item {
+    padding-left:10px;
+    list-style: none;
+}
+.modal .strategy-selected-item:hover {
+    background-color:#ced4da;
+}
+.modal .strategy-selected-item.ms-done {
+    background-color: #80bd9e;
+}
+.modal .strategy-selected-item.ms-done:hover {
+    background-color: #a7e7c7;
+}
+
+
+
+.modal .strategy-selected-label{
+    padding:0;
+    margin:0;
+    position:relative;
+    width:100%;
+}
+
+.modal .strategy-selected-check {
+   
+}
+.modal .strategy-selected-name {
+    font-size:0.8em;
+    margin-left: 19px;
+}
+.modal .strategy-selected-remove,
+.modal .strategy-selected-item button.btn {
+    display: inline;
+    vertical-align: none;
+    margin:0;
+    padding:0 4px !important;
+    line-height: 1;
+    cursor: pointer;
+    color: #333;
+}
+.modal .strategy-selected-remove{
+    right:0;
+    position:absolute;
+    font-size:0.9em;
+}
+
+.modal .strategy-selected-remove:hover,
+.modal .strategy-selected-item button.btn:hover{
+    color:#fff;
+}
+
+.modal .strategy-selected-remove i{ 
+    padding-top: 4px;
+}
+
+
 .ms-chart .chart .ms-btn {
     margin-left: 2px;
-    font-size: 0.8em;
+    font-size: 0.7em;
 }
 
 #planing-component.container {

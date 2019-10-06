@@ -59,5 +59,15 @@ $functions = array(
                 'type'        => 'write',
                 //'capabilities'  => 'format/ladtopics:view',
                 'ajax'        => true
+        ),
+        'format_ladtopics_userpreferences' => array(
+                'classname'   => 'format_ladtopics_external',
+                'methodname'  => 'userpreferences',
+                'classpath'   => 'course/format/ladtopics/api.php',
+                'description' => 'Set and get user pref',
+                'type'        => 'write',
+                //'capabilities'  => 'format/ladtopics:view',
+                'ajax'        => true
         )
+
 );

@@ -532,7 +532,7 @@ class format_ladtopics_external extends external_api {
             FROM '.$CFG->prefix.'ladtopics_milestones AS t
             WHERE   
                 t.course = ' . $data['courseid'] . ' 
-                AND t.user = ' . (int)$data['userid'] . '
+                AND t.userid = ' . (int)$data['userid'] . '
             ORDER BY t.timemodified DESC
             LIMIT 1
             ;';
@@ -601,6 +601,72 @@ class format_ladtopics_external extends external_api {
     } 
     public static function setmilestones_is_allowed_from_ajax() { return true; }
 
+
+
+    /**
+     * Set and get user preferences
+     */
+    public static function userpreferences_parameters() {
+        return new external_function_parameters(                
+            array(
+                'data' => 
+                    new external_single_structure(
+                        array(
+                        'fieldname' => new external_value(PARAM_TEXT, 'id of course', VALUE_OPTIONAL),
+                        'setget' => new external_value(PARAM_TEXT, 'milestones', VALUE_OPTIONAL),
+                        'value' => new external_value(PARAM_TEXT, 'settings', VALUE_OPTIONAL)
+                    )
+                )
+            )
+        );
+    }
+    public static function userpreferences_returns() {
+        return new external_single_structure(
+                array( 'response' => new external_value(PARAM_RAW, 'Server respons to the incomming log') )
+        );
+    }
+    public static function userpreferences($data) {
+        global $CFG, $DB, $USER;
+        $userid = (int)$USER->id;
+        
+            $r = new stdClass();
+            $r->userid=$userid;
+            $r->name=$data['fieldname'];
+            $exists = $DB->record_exists('user_preferences', array('name' => $data['fieldname'], 'userid'=>$userid));
+            $res='nix';
+            if($exists != true){
+                $r->value=0;
+                $transaction = $DB->start_delegated_transaction();
+                $res = $DB->insert_records("user_preferences", array($r));
+                $transaction->allow_commit();
+                
+            } elseif($exists == true && $data['setget'] == 'get'){
+                $transaction = $DB->start_delegated_transaction();
+                $res = $DB->get_record("user_preferences", array('name' => $data['fieldname'], 'userid'=>$userid));
+                $transaction->allow_commit();
+                
+            } elseif($exists == true && $data['setget'] == 'set'){
+                //$transaction = $DB->start_delegated_transaction();
+                //$res = $DB->get_record("user_preferences", array('name' => $data['fieldname'], 'userid'=>$userid));
+                //$transaction->allow_commit();
+                //$r->id=$res->id;
+                //$r->value=$data['value'];
+                $transaction = $DB->start_delegated_transaction();
+                //$res = $DB->set_record("user_preferences", array($r));
+                $res = $DB->set_field("user_preferences", 'value', $data['value'], array(
+                    'userid' => $userid,
+                    'name' => $data['fieldname']
+                ));
+                //$sql = 'UPDATE '. $CFG->prefix .'user_preferences SET value=\''. $data['value'] .'\' WHERE name=\'ladtopics_survey_done\' ;';
+                //$res = $DB->set_records_sql($sql);
+                $transaction->allow_commit();
+                
+            }     
+        
+
+        return array('response'=> json_encode( array($res, $data['setget']) ));
+    } 
+    public static function userpreferences_is_allowed_from_ajax() { return true; }
 
 }// end class
 

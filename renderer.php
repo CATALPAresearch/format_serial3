@@ -456,7 +456,6 @@ $modalMilestone = '
                                 :value="d">{{ d }}</option>
                         </select>
                     </div>
-                    {{dayInvalid}}
                     <div v-if="dayInvalid" class="col-sm-10 alert-invalid">Wählen Sie bitte ein gültiges datum aus. Den {{ selectedDay }}. gibt es im ausgwählten Monat nicht. </div>
                 </div>
                 <hr />
@@ -487,20 +486,24 @@ $modalMilestone = '
                     </div>
                     <div id="strategies" class="col-md-6">
                         <!-- Strategien -->
-                        <label for="" class=" col-form-label">Welche Lernstrategien möchten Sie dabei anwenden?</label>
-                        <ul>
-                            <li v-for="s in getSelectedMilestone().strategies" class="form-check">
-                                <label :class="s.checked ? \'form-check-label ms-done ms-wrapper-resource\' : \'form-check-label ms-wrapper-resource ms-not-done\'" for="defaultCheck1">
-                                    <input :class="s.checked ? \'form-check-input ms-done\' : \'form-check-input ms-not-done\'" 
+                        <label for="" class="strategy-title">Meine Lernstrategien für diesen Meilenstein</label>
+                        <div v-if="getSelectedMilestone().strategies.length > 0" class="strategy-header">
+                            <span class="strat-col-1">erledigt?</span>
+                            <span class="strat-col-1">Meine Lernstrategien</span>
+                        </div>
+                        <ul class="strategy-list">
+                            <li v-for="s in getSelectedMilestone().strategies" :class="s.checked ? \'strategy-selected-item ms-done\' : \'strategy-selected-item ms-not-done\'">
+                                <label class="strategy-selected-label" for="defaultCheck1">
+                                    <input class="strategy-selected-check" 
                                         type="checkbox" value=""
                                         data-toggle="tooltip"
                                         title="Setzen Sie das Häkchen, wenn Sie diese Lernstrategie bereits angewendet haben."
                                         id="strategyCheck" v-model="s.checked" v-bind:id="s.id">
-                                    <span class="list-label">{{ s.name }}</span>
+                                    <span class="strategy-selected-name">{{ s.name }}</span>
                                     <button type="button" class="btn btn-sm btn-link"
-                                        data-toggle="popover" :title="s.desc"><i
-                                            class="fa fa-info"></i></button>
-                                    <span class="remove-btn" data-toggle="tooltip" title="Lernstrategie entferenen">
+                                        data-toggle="popover" :data-content="s.desc"><i
+                                            class="fa fa-question"></i></button>
+                                    <span class="strategy-selected-remove remove-btn" data-toggle="tooltip" title="Lernstrategie entferenen">
                                         <i class="fa fa-trash" @click="strategyRemove(s.id)"></i>
                                     </span>
                                 </label>
@@ -523,9 +526,27 @@ $modalMilestone = '
                         <div class="col-sm-10 alert-invalid" v-if="invalidResources">Wählen Sie bitte Themen, Materialien und Aktivitäten aus.</div>
                     </div>
                     <div class="col-md-6">
-                        <div class="select-wrapper" :style="invalidStrategy ? \'border: solid 1px #ff420e;\' : \'none\'">
-                            <span id="before-select"><i class="fa fa-plus"></i> </span>
-                            <select @change="strategySelected" class="" id="modal_strategy-select"
+                        <span class="strategy-introduction">Welche Lernstrategien möchten Sie dabei anwenden?</span>
+                        <div class="select-wrapperXXX" :style="invalidStrategy ? \'border: solid 1px #ff420e;\' : \'none\'">
+                            <div v-for="cat in strategyCategories" class="strategy-category">
+                                <div class="strategy-category-title">{{cat.name}}</div>
+                                <div 
+                                    class="strategy-category-item" 
+                                    v-for="s in strategiesByCategory(cat.id)" 
+                                    :value="s.id"
+                                    v-if="!isSelectedStrategy(s.id)"
+                                    >
+                                    <button @click="strategySelected(s.id)" type="button" class="btn btn-sm" title="Für den Meilenstein auswählen">
+                                        <i class="fa fa-arrow-up"></i>
+                                    </button>
+                                    {{ s.name }}
+                                    <button type="button" class="btn btn-sm btn-link"
+                                        data-toggle="popover" :data-content="s.desc"><i
+                                            class="fa fa-question"></i></button>
+                                </div>
+                            </div>
+                            
+                            <select hidden @change="strategySelected" class="" id="modal_strategy-select"
                                 class="">
                                 <option :selected="true" disabled>Lernstrategie</option>
                                 <optgroup label="Organisationsstrategien">
@@ -713,21 +734,23 @@ $modalMilestone = '
                         <!-- Planing Component -->
                         <div id="planing-component" style="display:none;" v-cloak class="container dc-chart">
                             <div>
-                            <div v-if="surveyDone" class="row">
+                            <div v-if="surveyDone > 0" class="row">
                                 <div class="col-12">
                                     <!-- Milestone chart -->
                                     <div class="chart ms-chart">
                                         <div class="ms-chart-header row">
                                             <div class="ms-title col-sm-12 col-md-4 col-lg-4">
                                                 <ul class="nav nav-pills" id="viewPillsTab" role="tablist">
-                                                    <li>Meine Semesterplanung</li>
+                                                    <li>Meine Semesterplanung <span @click="startIntroJs()">Hilfe</span></li>
                                                     <li class="nav-item">
-                                                        <a class="nav-link active" @click="hideAdditionalCharts()" id="milestone-list-tab" data-toggle="pill" href="#view-list" role="tab" aria-controls="view-list" aria-selected="false">
+                                                        <a 
+                                                            class="nav-link active" @click="hideAdditionalCharts()" id="milestone-list-tab" data-toggle="pill" href="#view-list" role="tab" aria-controls="view-list" aria-selected="false">
                                                             <i hidden class="fa fa-list"></i> Liste
                                                         </a>
                                                     </li>
                                                     <li class="nav-item">
-                                                        <a class="nav-link" @click="showAdditionalCharts()" id="milestone-timeline-tab" data-toggle="pill" href="#view-timeline" role="tab" aria-controls="view-timeline" aria-selected="true">
+                                                        <a 
+                                                            class="nav-link" @click="showAdditionalCharts()" id="milestone-timeline-tab" data-toggle="pill" href="#view-timeline" role="tab" aria-controls="view-timeline" aria-selected="true">
                                                             <i class="fa fa-clock"></i>Zeitleiste
                                                         </a>
                                                     </li>
@@ -739,15 +762,15 @@ $modalMilestone = '
                                                         data-toggle="tooltip" data-placement="bottom" title="Neuen Meilenstein hinzufügen"><i
                                                             class="fa fa-plus"></i></button>
                                                 </span>
-                                                <span id="filter-presets">
-                                                <button @click="setFilterPreset(\'next-month\')" :style="filterPreset === \'next-month\' ? \'text-decoration: underline;\' : \'text-decoration:none;\'" class="btn btn-sm ms-btn btn-link right">nächster Monat</button>
-                                                <button @click="setFilterPreset(\'next-week\')" :style="filterPreset === \'next-week\' ? \'text-decoration: underline;\' : \'text-decoration:none;\'" class="btn btn-sm ms-btn btn-link right">nächste Woche</button>
-                                                <button @click="setFilterPreset(\'today\')" :style="filterPreset === \'today\' ? \'text-decoration: underline;\' : \'text-decoration:none;\'" class="btn btn-sm ms-btn btn-link right">heute</button>
-                                                <button @click="setFilterPreset(\'last-week\')" :style="filterPreset === \'last-week\' ? \'text-decoration: underline;\' : \'text-decoration:none;\'" class="btn btn-sm btn-link ms-btn right">letzte
-                                                    Woche</button>
-                                                <button @click="setFilterPreset(\'last-month\')" :style="filterPreset === \'last-month\' ? \'text-decoration: underline;\' : \'text-decoration:none;\'" class="btn btn-sm btn-link ms-btn right">letzten 4
-                                                    Wochen</button>
-                                                <button @click="setFilterPreset(\'semester\')" :style="filterPreset === \'semester\' ? \'text-decoration: underline;\' : \'text-decoration:none;\'" class="btn btn-link btn-sm right">WS 19/20</button>
+                                                <span id="filter-presets" style="display:inline-block;">
+                                                    <button @click="setFilterPreset(\'next-month\')" :style="filterPreset === \'next-month\' ? \'text-decoration: underline;\' : \'text-decoration:none;\'" class="btn btn-sm ms-btn btn-link right">nächster Monat</button>
+                                                    <button @click="setFilterPreset(\'next-week\')" :style="filterPreset === \'next-week\' ? \'text-decoration: underline;\' : \'text-decoration:none;\'" class="btn btn-sm ms-btn btn-link right">nächste Woche</button>
+                                                    <button @click="setFilterPreset(\'today\')" :style="filterPreset === \'today\' ? \'text-decoration: underline;\' : \'text-decoration:none;\'" class="btn btn-sm ms-btn btn-link right">heute</button>
+                                                    <button @click="setFilterPreset(\'last-week\')" :style="filterPreset === \'last-week\' ? \'text-decoration: underline;\' : \'text-decoration:none;\'" class="btn btn-sm btn-link ms-btn right">letzte
+                                                        Woche</button>
+                                                    <button @click="setFilterPreset(\'last-month\')" :style="filterPreset === \'last-month\' ? \'text-decoration: underline;\' : \'text-decoration:none;\'" class="btn btn-sm btn-link ms-btn right">letzten 4
+                                                        Wochen</button>
+                                                    <button @click="setFilterPreset(\'semester\')" :style="filterPreset === \'semester\' ? \'text-decoration: underline;\' : \'text-decoration:none;\'" class="btn btn-link btn-sm right">WS 19/20</button>
                                                 </span>
                                             </div>
                                         </div>
@@ -785,7 +808,7 @@ $modalMilestone = '
                                 </div>
                             </div>
                             
-                            <textarea >{{ milestones }}</textarea>
+                            <textarea style="display:none;">{{ milestones }}</textarea>
                         </div>    
                         </div>
                         <!-- End planing component -->

@@ -56,14 +56,40 @@ define(['jquery'], function ($) {
                     }
                 });
                 // load status
-                if (localStorage.surveyComplete) {
-                    this.surveyComplete = localStorage.surveyComplete;
+                utils.get_ws('userpreferences', {
+                    data: {
+                        'setget': 'get',
+                        'fieldname': 'ladtopics_survey_done'
+                    }
+                }, function (e) {
+                    try {
+                        e = JSON.parse(e.response); console.log('got data from user pref ',e[0].value);
+                        _this.surveyComplete = parseInt(e[0].value, 10) > 0 ? true : false;
+                        milestoneApp.surveyDone = parseInt(e[0].value, 10);
+                        if (milestoneApp.surveyDone > 0) {
+                            $('#planing-component').show();
+                        }
+                        /* 
+                        if (localStorage.surveyDone) {
+                            this.surveyDone = localStorage.surveyDone;
+                            if (this.surveyDone) {
+                                $('#planing-component').show();
+                            } 
+                        }
+                        */
+                    } catch (e) {
+                        console.error('Could not fetch user_preferences: ', e);
+                    }
+
+                });
+                //if (localStorage.surveyComplete) {
+                    //localStorage.surveyComplete;
                     //console.log('local ',localStorage.surveyComplete)
-                }
+                //}
             },
             watch: {
                 surveyComplete: function (newStatus) {
-                    localStorage.surveyComplete = newStatus;
+                    //localStorage.surveyComplete = newStatus;
                 }
             },
             methods: {
@@ -346,12 +372,26 @@ define(['jquery'], function ($) {
                     }
 
                     // set survey as done
-                    milestoneApp.surveyDone = true;
-                    this.surveyComplete = true;
-                    $('#theSurveyModal').modal('hide');
-                    $('#planing-component').show();
-                    //$('#activity-chart-container').show();
-                    //$('#filter-chart-container').show();
+                    utils.get_ws('userpreferences', {
+                        data: {
+                            'setget': 'set',
+                            'fieldname': 'ladtopics_survey_done',
+                            'value': 1
+                        }
+                    }, function (e) {
+                        try {
+                            e = JSON.parse(e.response);
+                            console.log('got data from user pref ', e);
+                            milestoneApp.surveyDone = 1;
+                            this.surveyComplete = true;
+                            $('#theSurveyModal').modal('hide');
+                            $('#planing-component').show();
+                        } catch (e) {
+                            console.error('Could not fetch user_preferences: ', e);
+                        }
+
+                    });
+                    
                 }
             }
         });
