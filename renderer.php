@@ -259,7 +259,14 @@ class format_ladtopics_renderer extends format_section_renderer_base {
 $milestoneList = '
 <!-- Milestone list -->
 <ul>
-    <li>
+    <li v-if="milestones.length === 0">
+        <span data-toggle="modal" data-target="#theMilestoneModal">
+            <button @click="showEmptyMilestone()" class="btn btn-sm right btn-primary ms-btn ms-coldstart-btn"
+                data-toggle="tooltip" data-placement="bottom" title="Neuen Meilenstein hinzufügen"><i
+                    class="fa fa-plus"></i> Legen Sie einen neuen Meilenstein an!</button>
+        </span>
+    </li>
+    <li v-if="milestones.length > 0">
         <div class="milestone-element-header">
             <div class="milestone-element-table-head name">Meilenstein</div>
             <div class="milestone-element-table-head due">Termin</div>
@@ -741,14 +748,21 @@ $modalMilestone = '
                                         <div class="ms-chart-header row">
                                             <div class="ms-title col-sm-12 col-md-4 col-lg-4">
                                                 <ul class="nav nav-pills" id="viewPillsTab" role="tablist">
-                                                    <li>Meine Semesterplanung <span @click="startIntroJs()">Hilfe</span></li>
-                                                    <li class="nav-item">
+                                                    <li>
+                                                        Meine Semesterplanung 
+                                                        <span v-if="milestones.length > 0" data-toggle="modal" data-target="#theMilestoneModal">
+                                                            <button @click="showEmptyMilestone()" class="btn btn-sm right btn-primary ms-btn ms-add-btn"
+                                                                data-toggle="tooltip" data-placement="bottom" title="Neuen Meilenstein hinzufügen"><i
+                                                                    class="fa fa-plus"></i></button>
+                                                        </span>
+                                                        <span @click="startIntroJs()">Hilfe</span></li>
+                                                    <li v-if="milestones.length > 0" class="nav-item">
                                                         <a 
                                                             class="nav-link active" @click="hideAdditionalCharts()" id="milestone-list-tab" data-toggle="pill" href="#view-list" role="tab" aria-controls="view-list" aria-selected="false">
                                                             <i hidden class="fa fa-list"></i> Liste
                                                         </a>
                                                     </li>
-                                                    <li class="nav-item">
+                                                    <li v-if="milestones.length > 0" class="nav-item">
                                                         <a 
                                                             class="nav-link" @click="showAdditionalCharts()" id="milestone-timeline-tab" data-toggle="pill" href="#view-timeline" role="tab" aria-controls="view-timeline" aria-selected="true">
                                                             <i class="fa fa-clock"></i>Zeitleiste
@@ -757,11 +771,6 @@ $modalMilestone = '
                                                 </ul>
                                             </div>
                                             <div class="col-sm-12 col-md-8 col-lg-8">
-                                                <span data-toggle="modal" data-target="#theMilestoneModal">
-                                                    <button @click="showEmptyMilestone()" class="btn btn-sm right btn-primary ms-btn"
-                                                        data-toggle="tooltip" data-placement="bottom" title="Neuen Meilenstein hinzufügen"><i
-                                                            class="fa fa-plus"></i></button>
-                                                </span>
                                                 <span id="filter-presets" style="display:inline-block;">
                                                     <button @click="setFilterPreset(\'next-month\')" :style="filterPreset === \'next-month\' ? \'text-decoration: underline;\' : \'text-decoration:none;\'" class="btn btn-sm ms-btn btn-link right">nächster Monat</button>
                                                     <button @click="setFilterPreset(\'next-week\')" :style="filterPreset === \'next-week\' ? \'text-decoration: underline;\' : \'text-decoration:none;\'" class="btn btn-sm ms-btn btn-link right">nächste Woche</button>

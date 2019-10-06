@@ -38,34 +38,6 @@ define([
             }
         });
 
-
-        /*
-        utils.get_ws('getmilestones', {
-            data: {
-                'courseid': parseInt(course.id, 10),
-                'userid': 4
-            }
-        }, function (e) {
-            if (e !== null) {
-                e = JSON.parse(e.milestones);
-                //console.log(JSON.parse(e.milestones));
-                //console.log(JSON.parse(e.settings));
-                console.log(e);
-            }
-        });
-
-        utils.get_ws('setmilestones', {
-            data: {
-            'courseid': parseInt(course.id, 10),
-            'userid': 4,
-            'milestones': JSON.stringify({ my:'ein ganz neuer__4'}),
-            'settings': JSON.stringify({ set: 'einstellung' })
-            }
-        }, function (e) {
-            console.log(JSON.parse(e.response));
-        });
-        */
-
         /**
          * 
          * @param {*} the_data 
@@ -131,7 +103,7 @@ define([
                         done: [],
                         range: [],
                         milestones: [
-                            {
+                          /*  {
                                 id: 3867650,
                                 name: 'Planung',
                                 objective: 'Mein Semester planen',
@@ -166,7 +138,7 @@ define([
                                 resources: [],
                                 strategies: [],
                                 reflections: [],
-                            }
+                            }*/
                         ],
                         emptyMilestone: {
                             id: 10,
@@ -228,12 +200,25 @@ define([
                     moment.locale('de');
                     var _this = this;
                     this.range = xRange;
-                    // load data from local storage
-                    if (localStorage.milestones) {
-                        this.milestones = JSON.parse(localStorage.milestones);
-                    }
-
-                    
+                    // load milestone data from database via webservice
+                    utils.get_ws('getmilestones', {
+                        data: {
+                            'courseid': parseInt(course.id, 10),
+                            'userid': 4
+                        }
+                    }, function (e) {
+                        if (e !== null) {
+                            e = JSON.parse(e.milestones);
+                            console.log('Got milestomnes from db', e);
+                            if (e.milestone === null || e.milestone === undefined) {
+                                console.log('reset')
+                                _this.milestones = [];
+                            } else if (e.milestone.length > 0) {
+                                // todo: A validation of the JSON should be feasible
+                                _this.milestones = e.milestones;
+                            }
+                        }
+                    });
 
                     this.emptyMilestone.end = new Date();
                     this.updateMilestoneStatus();
@@ -263,7 +248,8 @@ define([
                 },
                 watch: {
                     milestones: function (newMilestone) {
-                        localStorage.milestones = JSON.stringify(newMilestone);
+                        //console.log('watch ms called')
+                        //this.updateMilestones();
                     },
                     surveyDone: function (surveyStatus) {
                         if (this.surveyDone > 0) {
@@ -273,7 +259,7 @@ define([
                     }
                 },
                 methods: {
-                    startIntroJs: function() {
+                    startIntroJs: function () {
                         introJs()
                             .setOptions({
                                 showProgress: true,
@@ -307,7 +293,7 @@ define([
                                         position: 'top',
                                         step: 3
                                     },
-                                     /* Milestone timeline chart */
+                                    /* Milestone timeline chart */
                                     {
                                         element: document.querySelector('.milestone-chart-container'),
                                         intro: 'In der oberen Zeitleiste sind die Meilensteine dargestellt.',
@@ -334,19 +320,19 @@ define([
                                     }
                                 ]
                             })
-                            .onbeforechange(function(targetElement) {
-                                    switch (targetElement.id) {
-                                        case "milestone-timeline-tab":
-                                            targetElement.click();
-                                            break;
-                                        case "milestone-list-tab":
-                                            targetElement.click();
-                                            break;
-                                        case "xxx":
-                                            document.getElementById("Examples-tab").click();
-                                            break;
-                                    }
+                            .onbeforechange(function (targetElement) {
+                                switch (targetElement.id) {
+                                    case "milestone-timeline-tab":
+                                        targetElement.click();
+                                        break;
+                                    case "milestone-list-tab":
+                                        targetElement.click();
+                                        break;
+                                    case "xxx":
+                                        document.getElementById("Examples-tab").click();
+                                        break;
                                 }
+                            }
                             )
                             .start();
                     },
@@ -618,6 +604,7 @@ define([
                                 this.selectedMilestone = -1;
                             }
                         }
+                        this.updateMilestones();
                     },
                     daySelected: function (event, d) {
                         var day = event ? parseInt(event.target.value) : d;
@@ -701,7 +688,7 @@ define([
                             this.getSelectedMilestone().strategies.push(el);
                         }
                         this.invalidStrategy = this.getSelectedMilestone().strategies.length > 0 ? false : true;
-                        localStorage.milestones = JSON.stringify(this.milestones);
+                        //this.updateMilestones();
                     },
                     isSelectedStrategy: function (id) {
                         return this.getSelectedMilestone().strategies.filter(function (e) {
@@ -715,7 +702,7 @@ define([
                             }
                         }
                         this.invalidStrategy = this.getSelectedMilestone().strategies.length > 0 ? false : true;
-                        localStorage.milestones = JSON.stringify(this.milestones);
+                        //this.updateMilestones();
                     },
                     resourceSelected: function (event) {
                         var el = this.resourceById(event.target.value);
@@ -723,7 +710,7 @@ define([
                             this.getSelectedMilestone().resources.push(el);
                         }
                         this.invalidResources = this.getSelectedMilestone().resources.length > 0 ? false : true;
-                        localStorage.milestones = JSON.stringify(this.milestones);
+                        //this.updateMilestones();
                     },
                     resourceRemove: function (id) {
                         for (var s = 0; s < this.getSelectedMilestone().resources.length; s++) {
@@ -732,7 +719,7 @@ define([
                             }
                         }
                         this.invalidResources = this.getSelectedMilestone().resources.length > 0 ? false : true;
-                        localStorage.milestones = JSON.stringify(this.milestones);
+                        //this.updateMilestones();
                     },
                     limitTextLength: function (str, max) {
                         var len = str.length;
@@ -755,6 +742,19 @@ define([
                         }).length / milestone.strategies.length;
 
                         return ((resourceProgress + strategiesProgress) / 2);
+                    },
+                    updateMilestones: function () {
+                        // Update Milestones to the database using the webservice
+                        var _this = this;
+                        utils.get_ws('setmilestones', {
+                            data: {
+                                'courseid': parseInt(course.id, 10),
+                                'milestones': JSON.stringify(_this.milestones),
+                                'settings': JSON.stringify({})
+                            }
+                        }, function (e) {
+                            console.log('save',JSON.parse(e.response));
+                        });
                     },
                     updateMilestoneStatus: function () {
                         var t = new Date();
@@ -784,6 +784,7 @@ define([
                         }
                         // highlight selected activities
                         this.hightlightSelectedResources();
+                        this.updateMilestones();
                     },
                     hightlightSelectedResources: function () {
                         for (var j = 0; j < this.milestones.length; j++) {

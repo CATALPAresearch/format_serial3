@@ -559,7 +559,7 @@ class format_ladtopics_external extends external_api {
                     new external_single_structure(
                         array(
                         'courseid' => new external_value(PARAM_INT, 'id of course', VALUE_OPTIONAL),
-                        'userid' => new external_value(PARAM_INT, 'user id', VALUE_OPTIONAL),
+                        //'userid' => new external_value(PARAM_INT, 'user id', VALUE_OPTIONAL),
                         'milestones' => new external_value(PARAM_RAW, 'milestones', VALUE_OPTIONAL),
                         'settings' => new external_value(PARAM_RAW, 'settings', VALUE_OPTIONAL)
                     )
@@ -576,9 +576,6 @@ class format_ladtopics_external extends external_api {
         global $CFG, $DB, $USER;
 
         $date = new DateTime();
-        if(!isset($data['userid'])){
-            $data['userid'] = 4000;
-        }
         $data['userid'] = (int)$USER->id;
         
         $r = new stdClass();
