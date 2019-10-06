@@ -103,42 +103,42 @@ define([
                         done: [],
                         range: [],
                         milestones: [
-                          /*  {
-                                id: 3867650,
-                                name: 'Planung',
-                                objective: 'Mein Semester planen',
-                                start: '2019,9,1',
-                                end: '2019,10,1',
-                                status: 'urgent',
-                                progress: 1.00,
-                                resources: [],
-                                strategies: [],
-                                reflections: [],
-                            },
-                            {
-                                id: 0,
-                                name: 'Lesen',
-                                objective: 'Die Kurstexte lesen',
-                                start: '2019,9,1',
-                                end: '2019,9,7',
-                                status: 'urgent',
-                                progress: 1.00,
-                                resources: [],
-                                strategies: [],
-                                reflections: [],
-                            },
-                            {
-                                id: 1,
-                                name: 'Tests',
-                                objective: 'Alle Tests bestehen',
-                                start: '2020,1,15',
-                                end: '2020,2,15',
-                                status: 'progress', // progress, ready, urgent, missed, reflected
-                                progress: 0.80,
-                                resources: [],
-                                strategies: [],
-                                reflections: [],
-                            }*/
+                            /*  {
+                                  id: 3867650,
+                                  name: 'Planung',
+                                  objective: 'Mein Semester planen',
+                                  start: '2019,9,1',
+                                  end: '2019,10,1',
+                                  status: 'urgent',
+                                  progress: 1.00,
+                                  resources: [],
+                                  strategies: [],
+                                  reflections: [],
+                              },
+                              {
+                                  id: 0,
+                                  name: 'Lesen',
+                                  objective: 'Die Kurstexte lesen',
+                                  start: '2019,9,1',
+                                  end: '2019,9,7',
+                                  status: 'urgent',
+                                  progress: 1.00,
+                                  resources: [],
+                                  strategies: [],
+                                  reflections: [],
+                              },
+                              {
+                                  id: 1,
+                                  name: 'Tests',
+                                  objective: 'Alle Tests bestehen',
+                                  start: '2020,1,15',
+                                  end: '2020,2,15',
+                                  status: 'progress', // progress, ready, urgent, missed, reflected
+                                  progress: 0.80,
+                                  resources: [],
+                                  strategies: [],
+                                  reflections: [],
+                              }*/
                         ],
                         emptyMilestone: {
                             id: 10,
@@ -163,6 +163,7 @@ define([
                         filterPreset: '',
                         selectedMilestone: 0,
                         modalVisible: false,
+                        modalReflectionVisible:false,
                         reflectionsFormVisisble: false,
                         strategyCategories: [
                             { id: 'organization', name: 'Organisation' },
@@ -203,35 +204,43 @@ define([
                     // load milestone data from database via webservice
                     utils.get_ws('getmilestones', {
                         data: {
-                            'courseid': parseInt(course.id, 10),
-                            'userid': 4
+                            'courseid': parseInt(course.id, 10)//,
+                            //'userid': 4
                         }
                     }, function (e) {
                         if (e !== null) {
-                            e = JSON.parse(e.milestones);
-                            console.log('Got milestomnes from db', e);
-                            if (e.milestone === null || e.milestone === undefined) {
+                            var data = JSON.parse(e.milestones);
+
+                            if (data === null || data === undefined) {
                                 console.log('reset')
                                 _this.milestones = [];
-                            } else if (e.milestone.length > 0) {
+                            } else {
+                                console.log('hier ', JSON.parse(data.milestones));
                                 // todo: A validation of the JSON should be feasible
-                                _this.milestones = e.milestones;
+                                _this.milestones = JSON.parse(data.milestones);
+                                _this.emptyMilestone.end = new Date();
+                                _this.updateMilestoneStatus();
+                                _this.initializeChart();
+
+                                var facts = crossfilter(the_data);
+                                _this.timeFilterChart = new FilterChart(d3, dc, crossfilter, facts, xRange, _this, utils, logger);
+
+                                _this.setFilterPreset('semester');
+                                var activityChart = new ActivityChart(d3, dc, crossfilter, moment, the_data, utils);
+                                xRange = activityChart.getXRange();
+                                _this.timeFilterChart.registerChart(activityChart);
+
+                                logger.add('planing_tool_open', { pageLoaded: true });
                             }
                         }
                     });
 
-                    this.emptyMilestone.end = new Date();
-                    this.updateMilestoneStatus();
-                    this.initializeChart();
                     /* window.addEventListener('keyup', function (event) {
                         if (event.keyCode === 27 && this.modalVisible) {
                             _this.closeModal();
                         }
                     });*/
-                    var facts = crossfilter(the_data);
-                    this.timeFilterChart = new FilterChart(d3, dc, crossfilter, facts, xRange, this, utils, logger);
 
-                    logger.add('planing_tool_open', { pageLoaded: true });
                 },
                 created: function () {
                     var _this = this;
@@ -481,6 +490,27 @@ define([
                         this.updateChart(this.range);
                         logger.add('milestone_dialog_close', { dialogOpen: false });
                     },
+                    showReflectionModal: function (e) {
+                        this.selectedMilestone = e;
+                        this.reflectionsFormVisisble = this.getSelectedMilestone().status === 'reflected' ? true : false;
+                        this.modalReflectionVisible = true;
+                        logger.add('milestone_reflection_dialog_open', {
+                            milestoneId: this.getSelectedMilestone().id,
+                            name: this.getSelectedMilestone().name,
+                            start: this.getSelectedMilestone().start.getTime(),
+                            end: this.getSelectedMilestone().end.getTime(),
+                            status: this.getSelectedMilestone().status,
+                            objective: this.getSelectedMilestone().objective,
+                            resources: this.getSelectedMilestone().resources.map(function (resource) { return { name: resource.instance_title, section: resource.section, type: resource.instance_type, done: resource.checked !== undefined ? true : false }; }),
+                            strategies: this.getSelectedMilestone().strategies.map(function (strategy) { return { name: strategy.id, done: strategy.checked !== undefined ? true : false }; })
+                        });
+
+                    },
+                    closeReflectionModal: function (e) {
+                        this.modalReflectionVisible = false;
+                        this.updateMilestoneStatus();
+                        logger.add('reflection_dialog_close', { dialogOpen: false });
+                    },
                     getSelectedMilestone: function () {
                         if (this.selectedMilestone === -1) {
                             return this.emptyMilestone;
@@ -599,7 +629,7 @@ define([
                             strategies: this.getSelectedMilestone().strategies.map(function (strategy) { return { name: strategy.id, done: strategy.checked !== undefined ? true : false }; })
                         });
                         for (var s = 0; s < this.milestones.length; s++) {
-                            if (this.milestones[s].id === this.selectedMilestone) {
+                            if (this.milestones[s].id === this.getSelectedMilestone().id) {
                                 this.milestones.splice(s, 1);
                                 this.selectedMilestone = -1;
                             }
@@ -753,9 +783,10 @@ define([
                                 'settings': JSON.stringify({})
                             }
                         }, function (e) {
-                            console.log('save',JSON.parse(e.response));
+                            console.log('save', JSON.parse(e.response));
                         });
                     },
+                    nix: function () { },
                     updateMilestoneStatus: function () {
                         var t = new Date();
                         for (var i = 0; i < this.milestones.length; i++) {
@@ -784,6 +815,7 @@ define([
                         }
                         // highlight selected activities
                         this.hightlightSelectedResources();
+                        this.$forceUpdate();
                         this.updateMilestones();
                     },
                     hightlightSelectedResources: function () {
@@ -851,13 +883,9 @@ define([
                     }
                 }
             });
-            milestoneApp.setFilterPreset('semester');
 
 
             var survey = new InitialSurvey(Vue, Sortable, milestoneApp, utils, course);
-            var activityChart = new ActivityChart(d3, dc, crossfilter, moment, the_data, utils);
-            xRange = activityChart.getXRange();
-            milestoneApp.timeFilterChart.registerChart(activityChart);
 
             /**
              * Resize charte if window sizes change

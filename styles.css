@@ -335,24 +335,37 @@ select#select_year {
     font-size:0.9em;
 }
 
-.modal .strategy-title{
+.strategy-title,
+.resources-title{
     font-weight:bold;
     font-size:1.1em;
 }
 
-.modal .strategy-list{
+
+.milestone-entry-details .strategy-title,
+.milestone-entry-details .resources-title{
+    font-size:1.0em;
+    font-weight:normal;
+    margin:4px 0 0 0;
+}
+
+.strat-col-1{
+    min-width:45px;
+}
+
+.strategy-list{
     padding:0;
 }
 
-.modal .strategy-category {
+.strategy-category {
     margin:0;
 }
-.modal .strategy-category-title {
+.strategy-category-title {
     font-weight:bold;
     font-size:0.8em;
     color:#333536;
 }
-.modal .strategy-category-item {
+.strategy-category-item {
     display: inline-block;
     font-size:0.8em;
     margin: 0 0 0 0px;
@@ -360,10 +373,10 @@ select#select_year {
     line-height: 1;
     padding: 3px 3px;
 }
-.modal .strategy-category-item:hover {
+.strategy-category-item:hover {
     background-color:#ced4da;
 }
-.modal .strategy-category-item button.btn {
+.strategy-category-item button.btn {
     display: inline;
     vertical-align: none;
     margin:0;
@@ -372,43 +385,50 @@ select#select_year {
     cursor: pointer;
 }
 
-.strategy-header{
+.strategy-header,
+.resources-header{
     font-size:0.8em;
     color:#83878b;
 }
 
-.modal .strategy-selected-item {
+.strategy-selected-item,
+.resources-selected-item {
     padding-left:10px;
     list-style: none;
 }
-.modal .strategy-selected-item:hover {
+.strategy-selected-item:hover,
+.resources-selected-item:hover {
     background-color:#ced4da;
 }
-.modal .strategy-selected-item.ms-done {
+.strategy-selected-item.ms-done,
+.resources-selected-item.ms-done {
     background-color: #80bd9e;
 }
-.modal .strategy-selected-item.ms-done:hover {
+.strategy-selected-item.ms-done:hover,
+.resources-selected-item.ms-done:hover {
     background-color: #a7e7c7;
 }
-
-
-
-.modal .strategy-selected-label{
+.strategy-selected-label,
+.resources-selected-label{
     padding:0;
     margin:0;
     position:relative;
     width:100%;
 }
+.strategy-selected-check {}
 
-.modal .strategy-selected-check {
-   
-}
-.modal .strategy-selected-name {
+.strategy-selected-name,
+.resources-selected-name {
     font-size:0.8em;
     margin-left: 19px;
 }
-.modal .strategy-selected-remove,
-.modal .strategy-selected-item button.btn {
+.resources-selected-name {
+    text-decoration: underline;
+}
+.strategy-selected-remove,
+.strategy-selected-item button.btn,
+.resources-selected-remove,
+.resources-selected-item button.btn {
     display: inline;
     vertical-align: none;
     margin:0;
@@ -417,20 +437,25 @@ select#select_year {
     cursor: pointer;
     color: #333;
 }
-.modal .strategy-selected-remove{
+.strategy-selected-remove,
+.resources-selected-remove{
     right:0;
     position:absolute;
     font-size:0.9em;
 }
-
-.modal .strategy-selected-remove:hover,
-.modal .strategy-selected-item button.btn:hover{
+.strategy-selected-remove:hover,
+.strategy-selected-item button.btn:hover,
+.resources-selected-remove:hover,
+.resources-selected-item button.btn:hover{
     color:#fff;
 }
-
-.modal .strategy-selected-remove i{ 
+.strategy-selected-remove i,
+.resources-selected-remove i{ 
     padding-top: 4px;
 }
+
+/* end milestone form */
+
 
 
 .ms-chart .chart .ms-btn {
@@ -745,6 +770,7 @@ svg {
     vertical-align: middle;
     float: none;
     padding: 0px 4px;
+    font-weight: bold;
 }
 .milestone-element-name:hover {
     color:#004C97;
@@ -791,9 +817,34 @@ svg {
     display: inline-block;
 }
 
-.milestone-entry-details {
-    padding-left:10px;
+.milestone-element-reflection {
+    display: inline-block;
+    min-width:150px;
 }
+
+.milestone-element-reflection button{
+    padding:2px 3px !important;
+    margin:2px 6px;
+    right:0;
+    font-size:0.9em;
+}
+
+.milestone-entry-details {
+    padding-left:12px;
+    margin-bottom:10px;
+    width:95%;
+}
+
+
+.milestone-entry-details .strategy-selected-item.ms-done,
+.milestone-entry-details .resources-selected-item.ms-done {
+    background-color: #fff !important;
+}
+.milestone-entry-details .strategy-selected-item.ms-done:hover,
+.milestone-entry-details .resources-selected-item.ms-done:hover {
+        background-color: #fff !important;
+}
+
 
 .milestone-list {
     padding-left: 15px;

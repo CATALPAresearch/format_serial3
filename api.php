@@ -511,8 +511,8 @@ class format_ladtopics_external extends external_api {
                 'data' => 
                     new external_single_structure(
                         array(
-                        'courseid' => new external_value(PARAM_INT, 'id of course', VALUE_OPTIONAL),
-                        'userid' => new external_value(PARAM_INT, 'utc time', VALUE_OPTIONAL)
+                        'courseid' => new external_value(PARAM_INT, 'id of course', VALUE_OPTIONAL)
+                        //'userid' => new external_value(PARAM_INT, 'utc time', VALUE_OPTIONAL)
                     )
                 )
             )
@@ -525,7 +525,7 @@ class format_ladtopics_external extends external_api {
     }
     public static function getmilestones($data) {
         global $CFG, $DB, $USER;
-        
+        (int)$data['userid'] = $USER->id;
         $transaction = $DB->start_delegated_transaction(); 
         $sql='
             SELECT t.milestones, t.settings, t.timemodified 
@@ -632,7 +632,7 @@ class format_ladtopics_external extends external_api {
             $exists = $DB->record_exists('user_preferences', array('name' => $data['fieldname'], 'userid'=>$userid));
             $res='nix';
             if($exists != true){
-                $r->value=0;
+                $r->value=$data['value'];
                 $transaction = $DB->start_delegated_transaction();
                 $res = $DB->insert_records("user_preferences", array($r));
                 $transaction->allow_commit();

@@ -87,11 +87,11 @@ define(['jquery'], function ($) {
                     //console.log('local ',localStorage.surveyComplete)
                 //}
             },
-            watch: {
+            /*watchwatch: {
                 surveyComplete: function (newStatus) {
                     //localStorage.surveyComplete = newStatus;
                 }
-            },
+            },*/
             methods: {
                 showModal: function (e) {
                     this.modalSurveyVisible = true;
@@ -370,7 +370,7 @@ define(['jquery'], function ($) {
                         case 'f1d': // doesn't want anything
                             break;
                     }
-
+                    var _this = this;
                     // set survey as done
                     utils.get_ws('userpreferences', {
                         data: {
@@ -386,6 +386,24 @@ define(['jquery'], function ($) {
                             this.surveyComplete = true;
                             $('#theSurveyModal').modal('hide');
                             $('#planing-component').show();
+                            utils.get_ws('userpreferences', {
+                                data: {
+                                    'setget': 'set',
+                                    'fieldname': 'ladtopics_survey_results',
+                                    'value': JSON.stringify({
+                                        objectives: _this.objectives,
+                                        availableTime: _this.availableTime,
+                                        planingStyle: _this.planingStyle,
+                                        selectedMonth: _this.selectedMonth,
+                                        selectedYear: _this.selectedYear,
+                                        resources: _this.resources//,
+                                        //availableResources: _this.availableResources
+                                    })
+                                }
+                            }, function (e) {
+                                console.log('saved survey ', e);
+                            });
+
                         } catch (e) {
                             console.error('Could not fetch user_preferences: ', e);
                         }
