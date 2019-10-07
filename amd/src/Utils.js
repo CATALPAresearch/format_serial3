@@ -13,13 +13,6 @@ define(['jquery', 'core/ajax'], function ($, ajax) {
     const Utils = function (dc, d3) {
         this.d3 = d3;
         this.dc = dc;
-
-        /**
-         * Obtains data from a moodle webservice
-         * @param {*} ws: Name of the web service 
-         * @param {*} params: Parameter to transfer 
-         * @param {*} cb: Callback function 
-         */
         this.get_ws = function (ws, params, cb, external) {
             external = external === undefined ? false : external;
             ajax.call([{
@@ -35,7 +28,7 @@ define(['jquery', 'core/ajax'], function ($, ajax) {
                     }
                 },
                 fail: function (e) {
-                    //console.log(params, ws);
+                    // eslint-disable-next-line no-console
                     console.error(e);
                 }
             }]);
@@ -50,19 +43,40 @@ define(['jquery', 'core/ajax'], function ($, ajax) {
             "date": "%d.%m.%Y",
             "time": "%H:%M:%S",
             "periods": ["AM", "PM"],
-            "days": ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"],
+            "days": [
+                "Sonntag",
+                "Montag",
+                "Dienstag",
+                "Mittwoch",
+                "Donnerstag",
+                "Freitag",
+                "Samstag"
+            ],
             "shortDays": ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"],
-            "months": ["Jänner", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"],
+            "months": [
+                "Januar",
+                "Februar",
+                "März",
+                "April",
+                "Mai",
+                "Juni",
+                "Juli",
+                "August",
+                "September",
+                "Oktober",
+                "November",
+                "Dezember"],
             "shortMonths": ["Jän", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"]
         });
 
-        this.customTimeFormat = function (date) {//this.germanFormatters.timeFormat.multi([
-            if (date.getMinutes()) return d3.timeFormat("%I:%M")(date);
-            if (date.getMilliseconds()) return d3.timeFormat(".%L")(date);
-            if (date.getSeconds()) return d3.timeFormat(":%S")(date);
-            if (date.getHours()) return d3.timeFormat("%Hh")(date);
-            if (date.getDay()) return d3.timeFormat("%a %e.%m.")(date); // Mo 8.02.
-            if (date.getMonth()) return d3.timeFormat("%B")(date); //7.12. 
+        this.customTimeFormat = function (date) {
+            // this.germanFormatters.timeFormat.multi([
+            if (date.getMinutes()) { return d3.timeFormat("%I:%M")(date); }
+            if (date.getMilliseconds()) { return d3.timeFormat(".%L")(date); }
+            if (date.getSeconds()) { return d3.timeFormat(":%S")(date); }
+            if (date.getHours()) { return d3.timeFormat("%Hh")(date); }
+            if (date.getDay()) { return d3.timeFormat("%a %e.%m.")(date); } // Mo 8.02.
+            if (date.getMonth()) { return d3.timeFormat("%B")(date); } //7.12. 
             return d3.getDate("%Y");
 
             /*   , function (d) { return d.; }],
@@ -74,18 +88,18 @@ define(['jquery', 'core/ajax'], function ($, ajax) {
         };
 
         this.monthRange = [
-            { num: 1, name: 'Januar' },
-            { num: 2, name: 'Feburar' },
-            { num: 3, name: 'März' },
-            { num: 4, name: 'April' },
-            { num: 5, name: 'Mai' },
-            { num: 6, name: 'Juni' },
-            { num: 7, name: 'Juli' },
-            { num: 8, name: 'August' },
-            { num: 9, name: 'September' },
-            { num: 10, name: 'Oktober' },
-            { num: 11, name: 'November' },
-            { num: 12, name: 'Dezember' },
+            { num: 1, name: 'Januar'},
+            { num: 2, name: 'Feburar'},
+            { num: 3, name: 'März'},
+            { num: 4, name: 'April'},
+            { num: 5, name: 'Mai'},
+            { num: 6, name: 'Juni'},
+            { num: 7, name: 'Juli'},
+            { num: 8, name: 'August'},
+            { num: 9, name: 'September'},
+            { num: 10, name: 'Oktober'},
+            { num: 11, name: 'November'},
+            { num: 12, name: 'Dezember'}
         ];
 
         this.numberToWord = function (num, postfix) {
@@ -116,10 +130,43 @@ define(['jquery', 'core/ajax'], function ($, ajax) {
             "date": "%d.%m.%Y",
             "time": "%H:%M:%S",
             "periods": ["AM", "PM"],
-            "days": ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"],
+            "days": [
+                "Sonntag",
+                "Montag",
+                "Dienstag",
+                "Mittwoch",
+                "Donnerstag",
+                "Freitag",
+                "Samstag"],
             "shortDays": ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"],
-            "months": ["Jänner", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"],
-            "shortMonths": ["Jän", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"]
+            "months": [
+                "Januar",
+                "Februar",
+                "März",
+                "April",
+                "Mai",
+                "Juni",
+                "Juli",
+                "August",
+                "September",
+                "Oktober",
+                "November",
+                "Dezember"
+            ],
+            "shortMonths": [
+                "Jan",
+                "Feb",
+                "Mär",
+                "Apr",
+                "Mai",
+                "Jun",
+                "Jul",
+                "Aug",
+                "Sep",
+                "Okt",
+                "Nov",
+                "Dez"
+            ]
         });
 
         this.formatMillisecond = locale.format(".%L");
@@ -151,17 +198,16 @@ define(['jquery', 'core/ajax'], function ($, ajax) {
          * @param ndx 
          */
         this.addFilterChart = function (obj, ndx) {
-            const filterSingleColors = this.d3.scale.ordinal().domain([0]).range(['#e6550d']);
-            const filterChartHeight = 130;
-            var
-                dimension = ndx.dimension(function (d) { return d[obj.indepVar]; }),
-                group = dimension.group().reduceSum(function (d) { return +d[obj.depVar]; }),
-                margins = obj.margins === undefined ? { top: 0, right: 5, bottom: 20, left: 2 } : obj.margins,
-                colors = obj.colors === undefined ? filterSingleColors : obj.colors,
-                chart = undefined
-                ;
-            console.log('group', group)
-            console.log('dim', dimension.group())
+            var filterSingleColors = this.d3.scale.ordinal().domain([0]).range(['#e6550d']);
+            var filterChartHeight = 130;
+            var dimension = ndx.dimension(function (d) { return d[obj.indepVar]; });
+            var group = dimension.group().reduceSum(function (d) { return +d[obj.depVar]; });
+            var margins = obj.margins === undefined ?
+                { top: 0, right: 5, bottom: 20, left: 2 } :
+                obj.margins;
+            var colors = obj.colors === undefined ? filterSingleColors : obj.colors;
+            var chart = '';
+
             switch (obj.chartType) {
                 case 'rowChart':
                     chart = dc.rowChart(obj.selector);
@@ -172,17 +218,25 @@ define(['jquery', 'core/ajax'], function ($, ajax) {
                 case 'pieChart':
                     chart = dc.pieChart(obj.selector);
                     chart.innerRadius(20)
-                        .height(filterChartHeight - 30); // xxx, need to be abstracted
+                        .height(filterChartHeight - 30);
+                    // Xxx, need to be abstracted
                     break;
             }
             chart
                 .dimension(dimension)
                 .group(group)
                 .colors(colors)
-                .title(function (p) {
-                    return obj.indepVar.charAt(0).toUpperCase() + obj.indepVar.slice(1, obj.indepVar.length) + ': ' + p.key + '\n' + 'Value: ' + p.value;
+                .title(function(p) {
+                    return [
+                        obj.indepVar.charAt(0).toUpperCase(),
+                        obj.indepVar.slice(1, obj.indepVar.length),
+                        ': ',
+                        p.key,
+                        '\n',
+                        'Value: ',
+                        p.value].join('');
                 })
-                .label(function (d) { //if(obj.indepVar === 'g'){alert(d.key)}
+                .label(function(d) {
                     return obj.keys[d.key] || d.key;
                 })
                 ;
@@ -199,7 +253,6 @@ define(['jquery', 'core/ajax'], function ($, ajax) {
 
         this.resetCharts = function () {
             for (var i = 0; i < this.charts.length; i++) {
-                console.log(this.charts[i])
                 this.charts[i].filterAll();
             }
             dc.redrawAll();
@@ -207,8 +260,16 @@ define(['jquery', 'core/ajax'], function ($, ajax) {
 
         this.mergeObjects = function (obj1, obj2) {
             var obj3 = {};
-            for (var attrname in obj1) { obj3[attrname] = obj1[attrname]; }
-            for (var attrname in obj2) { obj3[attrname] = obj2[attrname]; }
+            for (var attrname in obj1) {
+                if (obj1.hasOwnProperty(attrname)) {
+                    obj3[attrname] = obj1[attrname];
+                }
+            }
+            for (var attrname in obj2) {
+                if (obj2.hasOwnProperty(attrname)) {
+                    obj3[attrname] = obj2[attrname];
+                }
+            }
             return obj3;
         };
 

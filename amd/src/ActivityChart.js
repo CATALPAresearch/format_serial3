@@ -1,4 +1,5 @@
 /* eslint-disable capitalized-comments */
+/* eslint-disable no-unused-vars */
 /* eslint-disable space-before-function-paren */
 /* eslint-disable valid-jsdoc */
 /**
@@ -15,8 +16,7 @@
 define(['jquery'
 ], function ($) {
     var chart = '';
-    var color_range = ['#004C97', '#004C97', '#004C97', '#004C97', '#004C97', '#004C97', '#004C97'];//['yellow', 'blue', 'purple', 'red', 'orange', 'green', 'black'];
-    //['mod_glossary', 'mod_forum', 'mod_wiki'];
+    var color_range = ['#004C97', '#004C97', '#004C97', '#004C97', '#004C97', '#004C97', '#004C97'];
     var activityTypes = { 'viewed': 'betrachtet', 'updates': 'bearbeitet', 'deleleted': 'gelöscht', 'created': 'erstellt' };
     var label = {
         'mod_forum': 'Forum',

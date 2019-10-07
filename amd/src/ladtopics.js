@@ -31,9 +31,14 @@ define([
                 "crossfilter": ["crossfilter"],
                 "d3": ["d3.v4.min"],
                 "dc": ["dc.v3"],
-                //"reductio": ["https://rawgit.com/crossfilter/reductio/master/reductio", "reductio"],
-                //"universe": ["https://npmcdn.com/universe@latest/universe", "universe"],
-                //"bootstrap_select": ["https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/js/bootstrap-select.min", "bootstrap-select.min"],
+                /*
+                 "reductio": ["https://rawgit.com/crossfilter/reductio/master/reductio", "reductio"],
+                 "universe": ["https://npmcdn.com/universe@latest/universe", "universe"],
+                 "bootstrap_select": [
+                    "https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/js/bootstrap-select.min", 
+                    "bootstrap-select.min"
+                ],
+                    */
                 "moment224": ["moment-with-locales-gz.min"], // ["moment.min"],
                 "intro293": ["intro"],
                 "sortable110": ["sortable.min"]
@@ -108,15 +113,30 @@ define([
                     context: 'format_ladtopics',
                     outputType: 1 // 0: console, 1: logstore_standard_log
                 });
-                var timeline = new Timeline(vue, d3, dc, crossfilter, moment, sortable, utils, intro, logger, filterChart, activityChart, initialSurvey);
-                // Xvar assessment = new Assessment(vue, d3, dc, crossfilter, moment);
+                new Timeline(
+                    vue,
+                    d3,
+                    dc,
+                    crossfilter,
+                    moment,
+                    sortable,
+                    utils,
+                    intro,
+                    logger,
+                    filterChart,
+                    activityChart,
+                    initialSurvey
+                );
+                // var t = new Assessment(vue, d3, dc, crossfilter, moment);
             });
         }
 
         return {
             init: function (courseid) {
                 courseid = courseid === undefined ? parseInt($('#courseid').text(), 10) : courseid;
+                //if (courseid === 3) {
                 start(courseid);
+                //}
             }
         };
     });

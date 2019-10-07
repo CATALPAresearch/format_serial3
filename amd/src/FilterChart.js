@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable capitalized-comments */
 /* eslint-disable space-before-function-paren */
 /* eslint-disable valid-jsdoc */
@@ -12,17 +13,8 @@
  * @since      3.1
  */
 
-define(['jquery'
-], function ($) {
+define(['jquery'], function ($) {
     var timeFilterChart = '';
-
-
-    /**
-     * Plot a timeline
-     * @param d3 (Object) Data Driven Documents
-     * @param dc (Object) Dimensional Javascript Charting Library
-     * @param utils (Object) Custome util class
-     */
     var filterChart = function (d3, dc, crossfilter, facts, xRange, milestoneApp, utils, log) {
 
         timeFilterChart = dc.compositeChart("#filter-chart");
@@ -42,9 +34,13 @@ define(['jquery'
         var timeFilterGroup = timeFilterDim.group().reduceCount(function (d) { return d.date; });
 
         var milestoneData = milestoneApp.getMilestones();
-        for (var i = 0; i < milestoneData.length; i++) { milestoneData[i].y = i % 3 + 1; }
+        for (var i = 0; i < milestoneData.length; i++) {
+            milestoneData[i].y = i % 3 + 1;
+        }
         var msData = crossfilter(milestoneData);
-        var msFilterDim = msData.dimension(function (d) { return [d.status, d.end, d.y]; });
+        var msFilterDim = msData.dimension(function (d) {
+            return [d.status, d.end, d.y];
+        });
         var msFilterGroup = msFilterDim.group().reduceCount(function (d) { return d.end; });
 
         timeFilterChart
@@ -70,7 +66,7 @@ define(['jquery'
                     .valueAccessor(function (p) {
                         return p.key[2];
                     })
-                    .radiusValueAccessor(function (p) {
+                    .radiusValueAccessor(function () {
                         return 0.4;
                     })
                     .colors(
@@ -113,9 +109,10 @@ define(['jquery'
             });
 
             d3.select('#filter-chart svg rect.overlay').on('mousedown', function () {
-                log.add('timefilter_changed', { range: timeFilterChart.filters()[0] === undefined ? this.xRange : timeFilterChart.filters()[0] });
+                log.add('timefilter_changed', {
+                    range: timeFilterChart.filters()[0] === undefined ? this.xRange : timeFilterChart.filters()[0]
+                });
             });
-            
         });
 
         timeFilterChart.render();

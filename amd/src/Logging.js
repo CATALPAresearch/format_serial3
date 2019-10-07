@@ -27,8 +27,8 @@ define(['jquery', 'core/ajax'], function ($, ajax) {
         /**
          * Adds a message to the log by constructing a log entry
          */
-        this.add = function (action, msg) { 
-            
+        this.add = function (action, msg) {
+
             var logEntry = {
                 utc: (new Date()).getTime(),
                 location: {
@@ -81,7 +81,9 @@ define(['jquery', 'core/ajax'], function ($, ajax) {
             return {
                 utc: date.getTime(),
                 date: y + '-' + (m <= 9 ? '0' + m : m) + '-' + (d <= 9 ? '0' + d : d),
-                time: (h <= 9 ? '0' + h : h) + ':' + (mi <= 9 ? '0' + mi : mi) + ':' + (s <= 9 ? '0' + s : s) + ':' + date.getMilliseconds()
+                time: (h <= 9 ? '0' + h : h) + ':' + (mi <= 9 ?
+                    '0' + mi : mi) + ':' + (s <= 9 ?
+                        '0' + s : s) + ':' + date.getMilliseconds()
             };
         };
 
@@ -91,6 +93,7 @@ define(['jquery', 'core/ajax'], function ($, ajax) {
         this.output = function (logEntry) {
             switch (this.options.outputType) {
                 case 0:
+                    // eslint-disable-next-line no-console
                     console.log(logEntry);
                     break;
                 case 1:
@@ -115,13 +118,13 @@ define(['jquery', 'core/ajax'], function ($, ajax) {
                         entry: JSON.stringify(entry)
                     }
                 },
-                done: function (msg) {               
-                },
-                fail: function (e) {
-                    console.error(e);
+                done: function () {},
+                fail: function () {
+                    // throw(e);
+                    // console.error(e);
                 }
             }]);
-            
+
 
         };
 
