@@ -609,9 +609,9 @@ class format_ladtopics_external extends external_api {
                 'data' => 
                     new external_single_structure(
                         array(
-                        'fieldname' => new external_value(PARAM_TEXT, 'id of course', VALUE_OPTIONAL),
-                        'setget' => new external_value(PARAM_TEXT, 'milestones', VALUE_OPTIONAL),
-                        'value' => new external_value(PARAM_TEXT, 'settings', VALUE_OPTIONAL)
+                        'fieldname' => new external_value(PARAM_TEXT, 'Name of the field'),
+                        'setget' => new external_value(PARAM_TEXT, 'Get or Set'),
+                        'value' => new external_value(PARAM_TEXT, 'Value of field', VALUE_OPTIONAL)
                     )
                 )
             )
@@ -632,7 +632,7 @@ class format_ladtopics_external extends external_api {
             $exists = $DB->record_exists('user_preferences', array('name' => $data['fieldname'], 'userid'=>$userid));
             $res='nix';
             if($exists != true){
-                $r->value=$data['value'];
+                $r->value=$data['value'] == NULL ? 0 : $data['value'];
                 $transaction = $DB->start_delegated_transaction();
                 $res = $DB->insert_records("user_preferences", array($r));
                 $transaction->allow_commit();

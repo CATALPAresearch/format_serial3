@@ -23,9 +23,17 @@
 }
 
 
-/* Bad hack: removes box above the timeline */
+/* Bad hack xxx: removes box above the timeline */
 body#page-course-view-ladtopics #region-main-box:nth-child(1) {   
-    display:none;
+    display:inline-block;
+    max-height: none;
+    min-height: 1px;
+}
+
+body#page-course-view-ladtopics #region-main-box:nth-child(1) #region-main .card {   
+    display:inline-block;
+    min-height: 1px;
+    border:none;
 }
 
 /* reset min-height to fit height to the content */
@@ -875,3 +883,18 @@ svg {
     color:#ced4da;
 }
 
+.wide-list{
+   
+}
+.introjs-btn {
+    display: inline-block;
+    margin:0;
+    right:0;
+    position: absolute;
+    
+}
+
+.introjs-tooltip {
+    min-width: 200px;
+    max-width: 66% !important; 
+}
