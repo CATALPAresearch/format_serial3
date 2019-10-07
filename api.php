@@ -120,12 +120,7 @@ class format_ladtopics_external extends external_api {
         /*
         This function should be refactored
 
-        http://127.0.0.1/adminer.php?username=root&db=moodle&select=moodlecourse_sections
-        http://127.0.0.1/adminer.php?username=root&db=moodle&select=moodlecourse_modules&order%5B0%5D=course
-        http://127.0.0.1/adminer.php?username=root&db=moodle&select=moodle_modules
-        http://127.0.0.1/adminer.php?username=root&db=moodle&select=moodlefeedback
-
-         // missing: , assign,  
+         // missing:  
             
          modules: zuordnung ID Aktivity-Type, e.g. "forum"
          course_sections: nummerierung der Sektionen mit Titel
@@ -157,6 +152,31 @@ class format_ladtopics_external extends external_api {
             }
             return $arr;
         };
+
+        $query = '
+        SELECT 
+        cm.instance AS instance_id,     
+        m.name AS instance_type, 
+        m.visible AS instance_visible,
+        f.name AS instance_title,
+        cm.id AS instance_url_id,
+        cm.course AS course_id, 
+        cm.module AS module_id, 
+        cm.section AS section_id, 
+        cs.name AS section_name
+        FROM ' . $CFG->prefix . 'course_modules AS cm
+        JOIN ' . $CFG->prefix . 'modules AS m 
+        ON m.id = cm.module
+        JOIN ' . $CFG->prefix . 'course_sections AS cs 
+        ON cs.id = cm.section
+        RIGHT OUTER JOIN ' . $CFG->prefix . 'assign AS f
+        ON cm.instance = f.id 
+        WHERE cm.course = '. (int)$courseid .' AND cs.course = '. (int)$courseid .' AND f.course = '. (int)$courseid .' AND m.name=\'assign\'
+        ';
+        $transaction = $DB->start_delegated_transaction();
+        $res = $DB->get_records_sql($query); 
+        $transaction->allow_commit();
+        $arr = array_merge($arr, $addActivities($res));
 
         $query = '
         SELECT 
