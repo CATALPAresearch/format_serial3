@@ -301,7 +301,15 @@ $milestoneList = '
                     ></i>
             </div>
             <div v-if="m.progress === 1" class="milestone-element-reflection">
-                <button data-toggle="modal" data-target="#theReflectionModal" @click="showReflectionModal(m.id)" class="btn btn-primary btn-sm">Jetzt reflektieren!</button>
+                <button 
+                    data-toggle="modal" 
+                    data-target="#theReflectionModal" 
+                    @click="showReflectionModal(m.id)" 
+                    :class="m.status==\'reflected\' ? \'btn btn-secondary btn-sm btn-reflected\' : \'btn btn-primary btn-sm\'"
+                    >
+                        <span v-if="m.status!=\'reflected\'">Jetzt reflektieren!</span>
+                        <span v-if="m.status==\'reflected\'">Reflexion ansehen</span>
+                </button>
             </div>
         </div>
         <div class="milestone-entry-details collapse" :id="\'milestone-entry-\' + m.id">
@@ -424,8 +432,8 @@ $modalReflection = '
     <div v-if="modalReflectionVisible" class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="MilestoneModalLabel">Reflektion von Meilenstein
-                    \"{{ getSelectedMilestone().name }}\"</h5>
+                <h5 class="modal-title" id="MilestoneModalLabel">Reflektion Meilensteins
+                    "{{ getSelectedMilestone().name }}"</h5>
                 <button @click="closeReflectionModal()" type="button" class="close" data-dismiss="modal"
                     aria-label="Close">
                     <span aria-hidden="true">&times;</span>
@@ -531,9 +539,13 @@ $modalReflection = '
                     </div>
                 </div>
                 <div class="form-group col-12">
-                    <button @click="submitReflections()" :disabled="validateReflectionForm() ? false : true"
-                        v-if="reflectionsFormVisisble" class="btn btn-primary btn-sm"
-                        data-dismiss="modal">Reflexion abschließen</button>
+                    <button 
+                        @click="submitReflections()" 
+                        :disabled="validateReflectionForm() ? false : true"
+                        class="btn btn-primary btn-sm"
+                        data-dismiss="modal">
+                            Reflexion abschließen
+                        </button>
                 </div>
             </div>
         </div>
@@ -825,7 +837,7 @@ $modalMilestone = '
                                                 </ul>
                                                 
                                             </div>
-                                            <div class="col-sm-12 col-md-8 col-lg-8">
+                                            <div class="col-sm-12 col-md-8 col-lg-8 time-filters">
                                                 <span id="filter-presets" style="display:inline-block;">
                                                     <button @click="setFilterPreset(\'next-month\')" :style="filterPreset === \'next-month\' ? \'text-decoration: underline;\' : \'text-decoration:none;\'" class="btn btn-sm ms-btn btn-link right">nächster Monat</button>
                                                     <button @click="setFilterPreset(\'next-week\')" :style="filterPreset === \'next-week\' ? \'text-decoration: underline;\' : \'text-decoration:none;\'" class="btn btn-sm ms-btn btn-link right">nächste Woche</button>
@@ -873,7 +885,7 @@ $modalMilestone = '
                                 </div>
                             </div>
                             
-                            <textarea style="display:block;">{{ milestones }}</textarea>
+                            <textarea style="display:none;">{{ milestones }}</textarea>
                         </div>    
                         </div>
                         <!-- End planing component -->
