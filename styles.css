@@ -126,7 +126,7 @@ div.container.dc-chart {
     fill-opacity: 0.8;
 }
 
-.ms-chart g.axis.y {
+.milestone-chart-container g.axis.y {
     stroke: none;
     display: none;
     position: absolute;
@@ -134,18 +134,18 @@ div.container.dc-chart {
     left: 100px;
 }
 
-.ms-chart g.axis.y path.domain {
+.milestone-chart-container g.axis.y path.domain {
     stroke: none;
     display: none;
 }
 
-.ms-chart g.axis.y .tick text {
+.milestone-chart-container g.axis.y .tick text {
     fill: #777;
     font-weight: bold;
     fill-opacity: 0.8;
 }
 
-.ms-chart .milestone-bar {
+.milestone-chart-container .milestone-bar {
     fill: #fff;
     fill-opacity: 0.5;
     text-anchor: middle;
@@ -154,7 +154,7 @@ div.container.dc-chart {
     cursor: pointer;
 }
 
-.ms-chart .milestone-label {
+.milestone-chart-container .milestone-label {
     fill: black;
     text-anchor: middle;
     font-size: 11px;
@@ -162,33 +162,33 @@ div.container.dc-chart {
     cursor: pointer;
 }
 
-.ms-chart .milestone-urgent {
+.milestone-chart-container .milestone-urgent {
     stroke: #ffa500;
     stroke-width: 2px;
 }
 
-.ms-chart .milestone-missed {
+.milestone-chart-container .milestone-missed {
     stroke: #ff420e;
     stroke-width: 2px;
 }
 
-.ms-chart .milestone-progress {
+.milestone-chart-container .milestone-progress {
     stroke: #80bd9e;
     stroke-opacity: 0.8;
     stroke-width: 4px;
 }
 
-.ms-chart .milestone-ready {
+.milestone-chart-container .milestone-ready {
     stroke: #89da59;
     stroke-width: 2px;
 }
 
-.ms-chart .milestone-reflected {
+.milestone-chart-container .milestone-reflected {
     stroke: #004C97;
     stroke-width: 4px;
 }
 
-.ms-chart .milestone-learning-progress {
+.milestone-chart-container .milestone-learning-progress {
     fill: #80bd9e;
     fill-opacity: 0.8;
     stroke: none;
@@ -466,7 +466,7 @@ select#select_year {
 
 
 
-.ms-chart .chart .ms-btn {
+.milestone-chart-container .chart .ms-btn {
     margin-left: 2px;
     font-size: 0.7em;
 }

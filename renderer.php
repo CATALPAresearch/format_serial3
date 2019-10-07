@@ -133,7 +133,7 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                                             <div class="form-check row">
                                                 <label for="" class="col-12 col-form-label survey-objective-label">
                                                     Wie detailliert planen Sie Ihre Lernaktivitäten?<br/>
-                                                    Mein Plan soll ...
+                                                    Ich plane
                                                 </label>
                                                 <span :style="invalidPlaningStyle ? \'display:inline-block; border: solid 1px #ff420e;\' : \'\'">
                                                     <div class="form-check">
