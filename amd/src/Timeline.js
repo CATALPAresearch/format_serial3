@@ -1,5 +1,6 @@
 /* eslint-disable valid-jsdoc */
 /* eslint-disable capitalized-comments */
+/* eslint-disable no-unused-vars */
 /**
  * Timeline
  *
@@ -163,7 +164,7 @@ define([
                         filterPreset: '',
                         selectedMilestone: 0,
                         modalVisible: false,
-                        modalReflectionVisible:false,
+                        modalReflectionVisible: false,
                         reflectionsFormVisisble: false,
                         strategyCategories: [
                             { id: 'organization', name: 'Organisation' },
@@ -211,7 +212,7 @@ define([
                         if (e !== null) {
                             var data = JSON.parse(e.milestones);
 
-                            if (data === null || data === undefined) {
+                            if (!data || !data.milestones) {
                                 console.log('reset')
                                 _this.milestones = [];
                             } else {
@@ -264,6 +265,32 @@ define([
                         if (this.surveyDone > 0) {
                             $('.activity-chart-container').show();
                             $('.filter-chart-container').show();
+                        }
+                    }
+                },
+                computed:{
+                    dayOfSelectedMilestone: {
+                        get: function () {
+                            return this.getSelectedMilestone().end.getDate();
+                        },
+                        set: function (d) {
+
+                        }
+                    },
+                    monthOfSelectedMilestone: {
+                        get: function () {
+                            return this.getSelectedMilestone().end.getMonth() + 1;
+                        },
+                        set: function (d) {
+
+                        }
+                    },
+                    yearOfSelectedMilestone: {
+                        get: function () {
+                            return this.getSelectedMilestone().end.getFullYear();
+                        },
+                        set: function (d) {
+
                         }
                     }
                 },
@@ -380,6 +407,9 @@ define([
                         });
                         this.margins = margins;
                         this.width = width;
+                        if (this.milestones === null || this.milestones === undefined) {
+                            return;
+                        }
                         this.milestones.forEach(function (d, i) {
                             d.start = new Date(d.start);
                             d.end = new Date(d.end);
@@ -788,6 +818,9 @@ define([
                     },
                     nix: function () { },
                     updateMilestoneStatus: function () {
+                        if (this.milestones === null || this.milestones === undefined) {
+                            return;
+                        }
                         var t = new Date();
                         for (var i = 0; i < this.milestones.length; i++) {
                             var diff = moment(t).diff(moment(this.milestones[i].end), 'days');
@@ -821,7 +854,7 @@ define([
                     hightlightSelectedResources: function () {
                         for (var j = 0; j < this.milestones.length; j++) {
                             for (var i = 0; i < this.milestones[j].resources.length; i++) {
-                                console.log('selected module-ids: ', this.milestones[j].resources[i].instance_url_id)
+                                console.log('selected module-ids: ', this.milestones[j].resources[i].instance_url_id);
                                 $('#module-' + this.milestones[j].resources[i].instance_url_id)
                                     .removeClass('resource-highlight')
                                     .removeClass('resource-highlight-done')
@@ -833,7 +866,8 @@ define([
                         }
                     },
                     toggleReflectionsForm: function () {
-                        this.reflectionsFormVisisble = !this.reflectionsFormVisisble; console.log(this.reflectionsFormVisisble)
+                        this.reflectionsFormVisisble = !this.reflectionsFormVisisble;
+                        console.log(this.reflectionsFormVisisble);
                         logger.add('reflections_open', { formVisible: true });
                     },
                     validateReflectionForm: function () {

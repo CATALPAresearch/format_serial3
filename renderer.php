@@ -63,7 +63,7 @@ class format_ladtopics_renderer extends format_section_renderer_base {
 
 
         $initialSurvey = '<!-- Initial survey -->
-                        <div id="planningsurvey">
+                        <div id="planningsurvey" display="visibility: hidden;">
                             <div v-if="!surveyComplete" class="row survey-btn">
                                 <div class="col-sm-2 col-centered">
                                     <div @click="showModal()" class="survey-starter" data-toggle="modal" data-target="#theSurveyModal">
@@ -132,8 +132,8 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                                             <hr>
                                             <div class="form-check row">
                                                 <label for="" class="col-12 col-form-label survey-objective-label">
-                                                    Wie detailliert planen Sie Ihre Lernaktivitäten?
-                                                    Mein Plan soll 
+                                                    Wie detailliert planen Sie Ihre Lernaktivitäten?<br/>
+                                                    Mein Plan soll ...
                                                 </label>
                                                 <span :style="invalidPlaningStyle ? \'display:inline-block; border: solid 1px #ff420e;\' : \'\'">
                                                     <div class="form-check">
@@ -594,26 +594,28 @@ $modalMilestone = '
                     <div class="col-4">
                         <select @change="daySelected" id="select_day"
                             :style="dayInvalid ? \'border: solid 1px #ff420e;\' : \'none\'"
+                            v-model="dayOfSelectedMilestone"
                             >
                             <option v-for="d in dayRange()"
-                                
                                 :value="d">{{ d }}
                             </option>
                         </select>
 
-                        <select @change="monthSelected" id="select_month">
+                        <select @change="monthSelected" id="select_month"
+                            v-model="monthOfSelectedMilestone">
                             <option v-for="d in monthRange()"
                                 
                                 :value="d.num">{{ d.name }}</option>
                         </select>
 
-                        <select @change="yearSelected" id="select_year">
+                        <select @change="yearSelected" id="select_year"
+                            v-model="yearOfSelectedMilestone">
                             <option v-for="d in yearRange()"
                                 
                                 :value="d">{{ d }}</option>
                         </select>
                     </div>
-                    <div v-if="dayInvalid" class="col-sm-10 alert-invalid">Wählen Sie bitte ein gültiges datum aus. Den {{ selectedDay }}. gibt es im ausgwählten Monat nicht. </div>
+                    <div v-if="dayInvalid" class="col-sm-10 alert-invalid">Wählen Sie bitte ein gültiges Datum aus. Den {{ selectedDay }}. gibt es im ausgwählten Monat nicht. </div>
                 </div>
                 <hr />
                 <div class="row">
@@ -795,7 +797,7 @@ $modalMilestone = '
                                     <!-- Milestone chart -->
                                     <div class="chart ms-chart">
                                         <div class="ms-chart-header row">
-                                            <div class="ms-title col-sm-12 col-md-4 col-lg-4">
+                                            <div class="ms-title col-sm-12 col-xs-12 col-md-6 col-lg-6">
                                                 <ul class="nav nav-pills" id="viewPillsTab" role="tablist">
                                                     <li>
                                                         Meine Semesterplanung 
@@ -817,8 +819,11 @@ $modalMilestone = '
                                                             <i class="fa fa-clock"></i>Zeitleiste
                                                         </a>
                                                     </li>
+                                                    <li class="wide-list">
+                                                        <button class="btn btn-secondary btn-sm introjs-btn" @click="startIntroJs()">Hilfe</button>
+                                                    </li>
                                                 </ul>
-                                                <button @click="startIntroJs()">Hilfe</button>
+                                                
                                             </div>
                                             <div class="col-sm-12 col-md-8 col-lg-8">
                                                 <span id="filter-presets" style="display:inline-block;">
@@ -868,7 +873,7 @@ $modalMilestone = '
                                 </div>
                             </div>
                             
-                            <textarea style="display:none;">{{ milestones }}</textarea>
+                            <textarea style="display:block;">{{ milestones }}</textarea>
                         </div>    
                         </div>
                         <!-- End planing component -->
