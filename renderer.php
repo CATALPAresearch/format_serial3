@@ -132,43 +132,42 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                                             <hr>
                                             <div class="form-check row">
                                                 <label for="" class="col-12 col-form-label survey-objective-label">
-                                                    Wie detailliert planen Sie Ihre Lernaktivitäten?<br/>
-                                                    Ich plane
+                                                    Wie detailliert planen Sie Ihre Lernaktivitäten?<br/>Ich plane meist 
                                                 </label>
                                                 <span :style="invalidPlaningStyle ? \'display:inline-block; border: solid 1px #ff420e;\' : \'\'">
                                                     <div class="form-check">
                                                         <input @change="updatePlaningStyle" class="form-check-input" type="radio" name="planingRadios" id="planingRadios1"
                                                             value="planing-style-a" v-model="planingStyle">
                                                         <label class="form-check-label" for="planingRadios1">
-                                                            nur für eine Woche
+                                                            nur für eine Woche.
                                                         </label>
                                                     </div>
                                                     <div class="form-check">
                                                         <input @change="updatePlaningStyle" class="form-check-input" type="radio" name="planingRadios" id="planingRadios2"
                                                             value="planing-style-b" v-model="planingStyle">
                                                         <label class="form-check-label" for="planingRadios2">
-                                                            für die nächsten Wochen
+                                                            für die nächsten 4 Wochen.
                                                         </label>
                                                     </div>
                                                     <div class="form-check">
                                                         <input @change="updatePlaningStyle" class="form-check-input" type="radio" name="planingRadios" id="planingRadios3"
                                                             value="planing-style-c" v-model="planingStyle">
                                                         <label class="form-check-label" for="planingRadios3">
-                                                            für das Ganze Semester mit Arbeitspaketen für je eine Woche
+                                                            für das ganze Semester mit Arbeitspaketen für je eine Woche.
                                                         </label>
                                                     </div>
                                                      <div class="form-check">
                                                         <input @change="updatePlaningStyle" class="form-check-input" type="radio" name="planingRadios" id="planingRadios4"
                                                             value="planing-style-d" v-model="planingStyle">
                                                         <label class="form-check-label" for="planingRadios4">
-                                                            für das Ganze Semester mit Arbeitspaketen für je 2 Wochen 
+                                                            für das ganze Semester mit Arbeitspaketen für je 2 Wochen. 
                                                         </label>
                                                     </div>
                                                      <div class="form-check">
                                                         <input @change="updatePlaningStyle" class="form-check-input" type="radio" name="planingRadios" id="planingRadios5"
                                                             value="planing-style-e" v-model="planingStyle">
                                                         <label class="form-check-label" for="planingRadios5">
-                                                            für das Ganze Semester mit Arbeitspaketen für je einen Monat erstellt werden.
+                                                            für das ganze Semester mit Arbeitspaketen für je einen Monat.
                                                         </label>
                                                     </div>
                                                     <div class="form-check">

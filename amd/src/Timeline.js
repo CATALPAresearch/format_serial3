@@ -105,44 +105,44 @@ define([
                         ymax: 3,
                         done: [],
                         range: [],
-                        milestones: [
-                            /*  {
-                                  id: 3867650,
-                                  name: 'Planung',
-                                  objective: 'Mein Semester planen',
-                                  start: '2019,9,1',
-                                  end: '2019,10,1',
-                                  status: 'urgent',
-                                  progress: 1.00,
-                                  resources: [],
-                                  strategies: [],
-                                  reflections: [],
-                              },
-                              {
-                                  id: 0,
-                                  name: 'Lesen',
-                                  objective: 'Die Kurstexte lesen',
-                                  start: '2019,9,1',
-                                  end: '2019,9,7',
-                                  status: 'urgent',
-                                  progress: 1.00,
-                                  resources: [],
-                                  strategies: [],
-                                  reflections: [],
-                              },
-                              {
-                                  id: 1,
-                                  name: 'Tests',
-                                  objective: 'Alle Tests bestehen',
-                                  start: '2020,1,15',
-                                  end: '2020,2,15',
-                                  status: 'progress', // progress, ready, urgent, missed, reflected
-                                  progress: 0.80,
-                                  resources: [],
-                                  strategies: [],
-                                  reflections: [],
-                              }*/
-                        ],
+                        milestones: [],
+                        /*  [{
+                              id: 3867650,
+                              name: 'Planung',
+                              objective: 'Mein Semester planen',
+                              start: '2019,9,1',
+                              end: '2019,10,1',
+                              status: 'urgent',
+                              progress: 1.00,
+                              resources: [],
+                              strategies: [],
+                              reflections: [],
+                          },
+                          {
+                              id: 0,
+                              name: 'Lesen',
+                              objective: 'Die Kurstexte lesen',
+                              start: '2019,9,1',
+                              end: '2019,9,7',
+                              status: 'urgent',
+                              progress: 1.00,
+                              resources: [],
+                              strategies: [],
+                              reflections: [],
+                          },
+                          {
+                              id: 1,
+                              name: 'Tests',
+                              objective: 'Alle Tests bestehen',
+                              start: '2020,1,15',
+                              end: '2020,2,15',
+                              status: 'progress', // progress, ready, urgent, missed, reflected
+                              progress: 0.80,
+                              resources: [],
+                              strategies: [],
+                              reflections: [],
+                          }]*/
+
                         emptyMilestone: {
                             id: 10,
                             name: '',
@@ -207,8 +207,7 @@ define([
                     // load milestone data from database via webservice
                     utils.get_ws('getmilestones', {
                         data: {
-                            'courseid': parseInt(course.id, 10)//,
-                            //'userid': 4
+                            'courseid': parseInt(course.id, 10)
                         }
                     }, function (e) {
                         if (e !== null) {
@@ -419,7 +418,7 @@ define([
                         var t1 = new Date().getTime();
                         utils.get_ws('coursestructure', {
                             courseid: parseInt(course.id, 10)
-                        }, function (e) {
+                        }, function(e) {
                             try {
                                 _this.resources = JSON.parse(e.data);
                                 //console.log('Ladezeit', t1 - (new Date()).getTime());
@@ -664,6 +663,18 @@ define([
                         };
                         $('#theMilestoneModal').modal('hide');
                     },
+                    addMilestones: function (milestones) {
+                        // add multiple milestones to the data
+                        for (var i = 0; i < milestones.length; i++) {
+                            milestones[i].start = new Date(milestones[i].start.split('T')[0]);
+                            milestones[i].end = new Date(milestones[i].end.split('T')[0]);
+                            this.milestones.push( milestones[i] );
+                        }
+                        var x = d3.scaleTime().domain(this.range).range([0, width]);
+                        var y = d3.scaleLinear().domain([0, this.ymax]).range([0, this.height]);
+                        this.updateMilestoneStatus();
+                        this.updateChart(this.range);
+                    },
                     removeMilestone: function () {
                         this.closeModal();
                         $('div.modal-backdrop.show').remove();
@@ -767,7 +778,6 @@ define([
                             this.getSelectedMilestone().strategies.push(el);
                         }
                         this.invalidStrategy = this.getSelectedMilestone().strategies.length > 0 ? false : true;
-                        //this.updateMilestones();
                     },
                     isSelectedStrategy: function (id) {
                         return this.getSelectedMilestone().strategies.filter(function (e) {
@@ -781,7 +791,6 @@ define([
                             }
                         }
                         this.invalidStrategy = this.getSelectedMilestone().strategies.length > 0 ? false : true;
-                        //this.updateMilestones();
                     },
                     resourceSelected: function (event) {
                         var el = this.resourceById(event.target.value);
@@ -789,7 +798,6 @@ define([
                             this.getSelectedMilestone().resources.push(el);
                         }
                         this.invalidResources = this.getSelectedMilestone().resources.length > 0 ? false : true;
-                        //this.updateMilestones();
                     },
                     resourceRemove: function (id) {
                         for (var s = 0; s < this.getSelectedMilestone().resources.length; s++) {
@@ -798,7 +806,6 @@ define([
                             }
                         }
                         this.invalidResources = this.getSelectedMilestone().resources.length > 0 ? false : true;
-                        //this.updateMilestones();
                     },
                     limitTextLength: function (str, max) {
                         var len = str.length;
@@ -831,9 +838,11 @@ define([
                                 'milestones': JSON.stringify(_this.milestones),
                                 'settings': JSON.stringify({})
                             }
-                        }/* , function(e) {
-                            console.log('save', JSON.parse(e.response));
-                        } */);
+                        }, function(e) {
+                            //
+                            // var t = _this.milestones.map(function(e){ return e.name; })
+                            // console.log('save', JSON.parse(e.response), t);
+                        });
                     },
                     updateMilestoneStatus: function () {
                         if (this.milestones === null || this.milestones === undefined) {
@@ -847,7 +856,6 @@ define([
 
                             // update progress
                             this.milestones[i].progress = this.determineMilestoneProgress(this.milestones[i]);
-
                             if (diff < 3 && this.milestones[i].progress !== 1) {
                                 this.milestones[i].status = 'urgent';
                             }
