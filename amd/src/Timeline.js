@@ -418,7 +418,7 @@ define([
                         var t1 = new Date().getTime();
                         utils.get_ws('coursestructure', {
                             courseid: parseInt(course.id, 10)
-                        }, function(e) {
+                        }, function (e) {
                             try {
                                 _this.resources = JSON.parse(e.data);
                                 //console.log('Ladezeit', t1 - (new Date()).getTime());
@@ -668,7 +668,7 @@ define([
                         for (var i = 0; i < milestones.length; i++) {
                             milestones[i].start = new Date(milestones[i].start.split('T')[0]);
                             milestones[i].end = new Date(milestones[i].end.split('T')[0]);
-                            this.milestones.push( milestones[i] );
+                            this.milestones.push(milestones[i]);
                         }
                         var x = d3.scaleTime().domain(this.range).range([0, width]);
                         var y = d3.scaleLinear().domain([0, this.ymax]).range([0, this.height]);
@@ -739,6 +739,9 @@ define([
                     },
                     fromNow: function (date) {
                         return moment(date).fromNow();
+                    },
+                    getReadableTime: function(date) {
+                        return moment(date).format("d.MM.YYYY, HH:mm");
                     },
                     strategiesByCategory: function (cat) {
                         return this.strategies.filter(function (s) {
@@ -838,7 +841,7 @@ define([
                                 'milestones': JSON.stringify(_this.milestones),
                                 'settings': JSON.stringify({})
                             }
-                        }, function(e) {
+                        }, function (e) {
                             //
                             // var t = _this.milestones.map(function(e){ return e.name; })
                             // console.log('save', JSON.parse(e.response), t);
@@ -851,12 +854,13 @@ define([
                         var t = new Date();
                         for (var i = 0; i < this.milestones.length; i++) {
                             var diff = moment(t).diff(moment(this.milestones[i].end), 'days');
-
+                            console.log(this.milestones[i].end, moment(t).diff(moment(this.milestones[i].end), 'days'))
+                            //console.log(this.milestones[i].end, moment(t).diff(moment(this.milestones[i].end), 'months'))
                             this.milestones[i].status = 'progress';
 
                             // update progress
                             this.milestones[i].progress = this.determineMilestoneProgress(this.milestones[i]);
-                            if (diff < 3 && this.milestones[i].progress !== 1) {
+                            if ((diff < 0 && diff > -3) && this.milestones[i].progress !== 1) {
                                 this.milestones[i].status = 'urgent';
                             }
 
