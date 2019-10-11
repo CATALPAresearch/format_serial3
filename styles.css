@@ -481,6 +481,10 @@ select#select_year {
     padding: 2px 4px !important;
 }
 
+#planningsurvey {
+    display: none;
+}
+
 #planing-component.container {
     max-width: 100% !important;
 }
@@ -688,7 +692,7 @@ svg {
 
 .alert-invalid {
     color: #ff420e;
-    font-size: 0.8em;
+    font-size: 1em;
     padding: 6px 0;
     display: inline-block;
 }

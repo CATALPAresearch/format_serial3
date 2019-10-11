@@ -1673,6 +1673,7 @@ define(['jquery'], function ($) {
                     resources: [],
                     availableResources: [],
                     invalidAvailableTime: false,
+                    invalidAvailableTimeNotEnough: false,
                     invalidObjective: false,
                     invalidResources: false,
                     invalidPlaningStyle: false
@@ -1701,11 +1702,18 @@ define(['jquery'], function ($) {
                 }, function (e) {
                     try {
                         e = JSON.parse(e.response);
-                        // console.log('got data from user pref ', e[0].value);
-                        _this.surveyComplete = parseInt(e[0].value, 10) > 0 ? true : false;
-                        milestoneApp.surveyDone = parseInt(e[0].value, 10);
+                        console.log('got data from user pref ', e);
+                        if (e[0]) {
+                            if (parseInt(e[0].value, 10)) {
+                                _this.surveyComplete = parseInt(e[0].value, 10) > 0 ? true : false;
+                                milestoneApp.surveyDone = parseInt(e[0].value, 10);
+                            }
+                        }
+                        
                         if (milestoneApp.surveyDone > 0) {
                             $('#planing-component').show();
+                        } else{
+                            $('#planningsurvey').show();
                         }
                         /* 
                         if (localStorage.surveyDone) {
@@ -1732,7 +1740,7 @@ define(['jquery'], function ($) {
                 }
             },*/
             created: function () {
-                $('#planningsurvey').show();
+                //$('#planningsurvey').show();
             },
             methods: {
                 showModal: function (e) {
@@ -1794,6 +1802,7 @@ define(['jquery'], function ($) {
                 },
                 updateAvailableTime: function () {
                     this.invalidAvailableTime = this.availableTime <= 0 ? true : false;
+                    this.invalidAvailableTimeNotEnough = this.availableTime <= 10 ? true : false;
                 },
                 updatePlaningStyle: function (e) {
                     this.invalidPlaningStyle = this.planingStyle === '' ? true : false;
@@ -1808,6 +1817,10 @@ define(['jquery'], function ($) {
                         this.invalidAvailableTime = true;
                         isValid = false;
                     }
+                    /*if (this.availableTime <= 0) {
+                        this.invalidAvailableTime = true;
+                        isValid = false;
+                    }*/
                     if (this.planingStyle === '') {
                         this.invalidPlaningStyle = true;
                         isValid = false;

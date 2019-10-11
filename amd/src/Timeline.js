@@ -312,13 +312,13 @@ define([
                                 steps: [
                                     {
                                         element: document.querySelector('#planing-component'),
-                                        intro: '<p>Im Fernstudium sind Sie besonders gefordert, sich selbst zu organisieren und das Lernpensum gut einzuteilen. Wir wissen, dass viele von Ihnen berufstätig sind oder das Fernstudium gewählt haben, da sie die damit verbundene Flexibilität schätzen und brauchen. Das stellt Sie gleichsam aber auch vor die Herausforderung, Ihr Semester eigenständig zu planen, sich selbst zu disziplinieren und die Übersicht zu behalten. Die Formulierung von Meilensteinen als Teilschritte auf dem Weg zu Ihrem persönlichen Ziel oder zur Prüfung helfen dabei, das Volumen eines Semesters übersichtlich zu machen, es zu strukturieren, zu organisieren und das Ziel im Auge zu behalten. Man darf dann auch auf jeden erreichten Meilenstein ein wenig stolz sein und sich selbst belohnen.</p>',
+                                        intro: '<p>Im Fernstudium sind Sie besonders gefordert, sich selbst zu organisieren und das Lernpensum gut einzuteilen. Wir wissen, dass viele von Ihnen berufstätig sind oder das Fernstudium gewählt haben, da sie die damit verbundene Flexibilität schätzen und brauchen. Dies stellt Sie gleichsam aber auch vor die Herausforderung, Ihr Semester eigenständig zu planen, sich selbst zu disziplinieren und die Übersicht zu behalten. Die Formulierung von Meilensteinen als Teilschritte auf dem Weg zu Ihrem persönlichen Ziel oder zur Prüfung helfen dabei, das Volumen eines Semesters übersichtlich zu machen, es zu strukturieren, zu organisieren und das Ziel im Auge zu behalten. Man darf dann auch auf jeden erreichten Meilenstein ein wenig stolz sein und sich selbst belohnen.</p>',
                                         position: 'bottom',
                                         step: 1
                                     },
                                     {
                                         element: document.querySelector('#milestone-list-tab'),
-                                        intro: 'Hier können Sie die Meilensteine als Liste sehen',
+                                        intro: 'Hier können Sie die Meilensteine als Liste sehen.',
                                         position: 'top',
                                         step: 2
                                     },
@@ -330,7 +330,7 @@ define([
                                     },
                                     {
                                         element: document.querySelector('.milestone-element-due'),
-                                        intro: 'Hier sehen Sie, wie viel zeit Ihnen bis zum Abschluss des Meilensteins bleibt.',
+                                        intro: 'Hier sehen Sie, wie viel Zeit Ihnen bis zum Abschluss des Meilensteins bleibt.',
                                         position: 'top',
                                         step: 4
                                     },
@@ -342,38 +342,38 @@ define([
                                     },
                                     {
                                         element: document.querySelector('.milestone-element-status .milestone-reflected'),
-                                        intro: 'Dieses Häkchen wird erst dann blau gefärbt, wenn Sie Ihren Lernprozess reflektiert haben.',
+                                        intro: 'Dieses Häkchen wird blau gefärbt, wenn Sie Ihren Lernprozess reflektiert haben.',
                                         position: 'top',
                                         step: 6
                                     },
                                     /* Milestone timeline chart */
                                     {
                                         element: document.querySelector('#milestone-timeline-tab'),
-                                        intro: 'Hier können Sie die Meilensteine als Zeitleiste sehen',
+                                        intro: 'Sie können sich die Meilensteine auch als Zeitleiste anzeigen lassen.',
                                         position: 'top',
                                         step: 7
                                     },
                                     {
                                         element: document.querySelector('.milestone-chart-container'),
-                                        intro: 'In der oberen Zeitleiste sind die Meilensteine dargestellt.',
+                                        intro: 'In der oberen Zeitleiste werden Meilensteine dargestellt.',
                                         position: 'top',
                                         step: 8
                                     },
                                     {
                                         element: document.querySelector('.activity-chart-container'),
-                                        intro: 'Im mittleren Teil sehen Sie, in welchen Bereichen Sie im Kurs bereits aktiv waren. Auf der X-Achse ist die Zeit dargestellt. Die Größe der Punkte zeigt den Umfang an Aktivität an.',
+                                        intro: 'Im mittleren Teil sehen Sie, in welchen Bereichen Sie im Kurs bereits aktiv waren. Auf der X-Achse ist die Zeit abgebildet. Die Größe der Punkte zeigt Ihnen an, wie aktiv Sie waren.',
                                         position: 'top',
                                         step: 9
                                     },
                                     {
                                         element: document.querySelector('.filter-chart-container'),
-                                        intro: 'Diese Zeitleiste umfasst das gesamte Semester und ermöglicht Ihnen den Betrachtungszeitraum der oberen Zeitliesten zu begrenzen.',
+                                        intro: 'Diese Zeitleiste umfasst das gesamte Semester und ermöglicht Ihnen, den Betrachtungszeitraum der oberen Zeitleisten durch die äußeren Schieber auf Stunden, Tage oder Wochen zu begrenzen.',
                                         position: 'top',
                                         step: 10
                                     },
                                     {
                                         element: document.querySelector('.time-filters'),
-                                        intro: 'Weitere Filter finde Sie hier',
+                                        intro: 'Hier können Sie auch noch weitere Filter nutzen.',
                                         position: 'top',
                                         step: 11
                                     }

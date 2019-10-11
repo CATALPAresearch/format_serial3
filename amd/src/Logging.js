@@ -8,9 +8,9 @@
  */
 
 
-define(['jquery', 'core/ajax'], function ($, ajax) {
+define(['jquery', 'core/ajax'], function($, ajax) {
 
-    var Log = function (utils, courseid, options) {
+    var Log = function(utils, courseid, options) {
         this.utils = utils;
         this.courseid = courseid;
         this.name = 'log_ladtopics';

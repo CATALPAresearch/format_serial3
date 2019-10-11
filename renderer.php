@@ -831,7 +831,7 @@ $modalMilestone = '
                                                         </a>
                                                     </li>
                                                     <li class="wide-list">
-                                                        <button class="btn btn-secondary btn-sm introjs-btn" @click="startIntroJs()">Hilfe</button>
+                                                        <button class="btn btn-secondary btn-sm introjs-btn" @click="startIntroJs()">Anleitung - So geht’s!</button>
                                                     </li>
                                                 </ul>
                                                 
