@@ -275,13 +275,13 @@ $milestoneList = '
     <li v-for="m in milestones" class="milestone-element">
         <div :class="m.status == \'urgent\' ? \'milestone-urgent milestone-element-header\' : \'milestone-element-header\'">
             <a :class="m.status == \'missed\' ? \'milestone-missed milestone-element-name\' : \'milestone-element-name\'" data-toggle="collapse" :href="\'#milestone-entry-\' + m.id" role="button" aria-expanded="false" :aria-controls="\'milestone-entry-\' + m.id">
-                <i class="element-collapsed fa fa-angle-right"></i> 
-                <i class="element-not-collapsed fa fa-angle-down"></i> 
+                <i class="element-collapsed fa fa-angle-right angle"></i> 
+                <i class="element-not-collapsed fa fa-angle-down angle"></i> 
                 {{ m.name }}
             </a>
             <span :class="m.status == \'missed\' ? \'milestone-missed milestone-element-due\' : \'milestone-element-due\'">{{ fromNow(m.end) }}</span>
             <a @click="showModal(m.id)" class="milestone-element-edit" data-legend="1" data-toggle="modal" data-target="#theMilestoneModal">
-                <span data-toggle="tooltip" data-placement="top" title="Meilenstein bearbeiten" class="fa fa-pencil"></span>
+                <span data-toggle="tooltip" data-placement="top" title="Sie können diesen Meilenstein bearbeiten" class="fa fa-pencil"></span> bearbeiten
             </a>
             <div class="milestone-element-progress">
                 <div class="milestone-element-progress-status" 
@@ -292,7 +292,7 @@ $milestoneList = '
             <div class="milestone-element-status">
                 <i 
                     :class="m.status==\'ready\' || m.status==\'reflected\' ? \'fa fa-check milestone-ready\' : \'fa fa-check grey\'"
-                    data-toggle="tooltip" data-placement="top" :title="m.status==\'ready\' || m.status==\'reflected\' ? \'Dieser Meilenstein ist noch nicht abgeschlossen.\' : \'Sie haben diesen Meilenstein noch nicht abgeschlossen.\'"
+                    data-toggle="tooltip" data-placement="top" :title="m.status==\'ready\' || m.status==\'reflected\' ? \'Diesen Meilenstein haben Sie bereits erreicht!.\' : \'Sie haben diesen Meilenstein noch nicht abgeschlossen.\'"
                     ></i>
                 <i 
                     :class="m.status==\'reflected\' ? \'fa fa-check milestone-reflected\' : \'fa fa-check grey\'"
@@ -317,7 +317,7 @@ $milestoneList = '
                         <label for="" class="resources-title">Meine Themen, Materialien und Aktivitäten</label>
                         <div v-if="m.resources.length > 0" class="resources-header">
                             <span class="strat-col-1">erledigt?</span>
-                            <span class="strat-col-1">Meine Materialien und Aktivitäten</span>
+                            <span class="strat-col-2">Meine Materialien und Aktivitäten</span>
                         </div>
                         <ul class="resources-list">
                             <li v-for="s in m.resources" :class="s.checked ? \'resources-selected-item ms-done\' : \'resources-selected-item ms-not-done\'">
@@ -781,12 +781,14 @@ $modalMilestone = '
 
 
         $content = '
-</div>
-</div>
-</div>
-</div>
-</section>
-</div>
+
+
+                    </div>
+                </div>
+            </div>
+        
+        </section>
+    </div>
 </div>
 
 
@@ -803,91 +805,91 @@ $modalMilestone = '
                         <!-- Planing Component -->
                         <div id="planing-component" style="display:none;" v-cloak class="container dc-chart">
                             <div>
-                            <div v-if="surveyDone > 0" class="row">
-                                <div class="col-12">
-                                    <!-- Milestone chart -->
-                                    <div class="chart ms-chart">
-                                        <div class="ms-chart-header row">
-                                            <div class="ms-title col-sm-12 col-xs-12 col-md-6 col-lg-6">
-                                                <ul class="nav nav-pills" id="viewPillsTab" role="tablist">
-                                                    <li>
-                                                        Meine Semesterplanung 
-                                                        <span v-if="milestones.length > 0" data-toggle="modal" data-target="#theMilestoneModal">
-                                                            <button @click="showEmptyMilestone()" class="btn btn-sm right btn-primary ms-btn ms-add-btn"
-                                                                data-toggle="tooltip" data-placement="bottom" title="Neuen Meilenstein hinzufügen"><i
-                                                                    class="fa fa-plus"></i></button>
-                                                        </span>
-                                                    </li>
-                                                    <li v-if="milestones.length > 0" class="nav-item">
-                                                        <a 
-                                                            class="nav-link active" @click="hideAdditionalCharts()" id="milestone-list-tab" data-toggle="pill" href="#view-list" role="tab" aria-controls="view-list" aria-selected="false">
-                                                            <i hidden class="fa fa-list"></i> Liste
-                                                        </a>
-                                                    </li>
-                                                    <li v-if="milestones.length > 0" class="nav-item">
-                                                        <a 
-                                                            class="nav-link" @click="showAdditionalCharts()" id="milestone-timeline-tab" data-toggle="pill" href="#view-timeline" role="tab" aria-controls="view-timeline" aria-selected="true">
-                                                            <i class="fa fa-clock"></i>Zeitleiste
-                                                        </a>
-                                                    </li>
-                                                    <li class="wide-list">
-                                                        <button class="btn btn-secondary btn-sm introjs-btn" @click="startIntroJs()">Anleitung - So geht’s!</button>
-                                                    </li>
-                                                </ul>
-                                                
-                                            </div>
-                                            <div class="col-sm-12 col-md-8 col-lg-8 time-filters">
-                                                <span id="filter-presets" style="display:inline-block;">
-                                                    <button @click="setFilterPreset(\'next-month\')" :style="filterPreset === \'next-month\' ? \'text-decoration: underline;\' : \'text-decoration:none;\'" class="btn btn-sm ms-btn btn-link right">nächster Monat</button>
-                                                    <button @click="setFilterPreset(\'next-week\')" :style="filterPreset === \'next-week\' ? \'text-decoration: underline;\' : \'text-decoration:none;\'" class="btn btn-sm ms-btn btn-link right">nächste Woche</button>
-                                                    <button @click="setFilterPreset(\'today\')" :style="filterPreset === \'today\' ? \'text-decoration: underline;\' : \'text-decoration:none;\'" class="btn btn-sm ms-btn btn-link right">heute</button>
-                                                    <button @click="setFilterPreset(\'last-week\')" :style="filterPreset === \'last-week\' ? \'text-decoration: underline;\' : \'text-decoration:none;\'" class="btn btn-sm btn-link ms-btn right">letzte
-                                                        Woche</button>
-                                                    <button @click="setFilterPreset(\'last-month\')" :style="filterPreset === \'last-month\' ? \'text-decoration: underline;\' : \'text-decoration:none;\'" class="btn btn-sm btn-link ms-btn right">letzten 4
-                                                        Wochen</button>
-                                                    <button @click="setFilterPreset(\'semester\')" :style="filterPreset === \'semester\' ? \'text-decoration: underline;\' : \'text-decoration:none;\'" class="btn btn-link btn-sm right">WS 19/20</button>
-                                                </span>
+                                <div v-if="surveyDone > 0" class="row">
+                                    <div class="col-12">
+                                        <!-- Milestone chart -->
+                                        <div class="chart ms-chart">
+                                            <div class="ms-chart-header row">
+                                                <div class="ms-title col-sm-12 col-xs-12 col-md-6 col-lg-6">
+                                                    <ul class="nav nav-pills" id="viewPillsTab" role="tablist">
+                                                        <li>
+                                                            Meine Semesterplanung 
+                                                            <span v-if="milestones.length > 0" data-toggle="modal" data-target="#theMilestoneModal">
+                                                                <button @click="showEmptyMilestone()" class="btn btn-sm right btn-primary ms-btn ms-add-btn"
+                                                                    data-toggle="tooltip" data-placement="bottom" title="Neuen Meilenstein hinzufügen"><i
+                                                                        class="fa fa-plus"></i></button>
+                                                            </span>
+                                                        </li>
+                                                        <li v-if="milestones.length > 0" class="nav-item">
+                                                            <a 
+                                                                class="nav-link active" @click="hideAdditionalCharts()" id="milestone-list-tab" data-toggle="pill" href="#view-list" role="tab" aria-controls="view-list" aria-selected="false">
+                                                                <i hidden class="fa fa-list"></i> Liste
+                                                            </a>
+                                                        </li>
+                                                        <li v-if="milestones.length > 0" class="nav-item">
+                                                            <a 
+                                                                class="nav-link" @click="showAdditionalCharts()" id="milestone-timeline-tab" data-toggle="pill" href="#view-timeline" role="tab" aria-controls="view-timeline" aria-selected="true">
+                                                                <i class="fa fa-clock"></i>Zeitleiste
+                                                            </a>
+                                                        </li>
+                                                        <li class="wide-list">
+                                                            <button class="btn btn-secondary btn-sm introjs-btn" @click="startIntroJs()">Anleitung - So geht’s!</button>
+                                                        </li>
+                                                    </ul>
+                                                    
+                                                </div>
+                                                <div class="col-sm-12 col-md-8 col-lg-8 time-filters">
+                                                    <span id="filter-presets" style="display:inline-block;">
+                                                        <button @click="setFilterPreset(\'next-month\')" :style="filterPreset === \'next-month\' ? \'text-decoration: underline;\' : \'text-decoration:none;\'" class="btn btn-sm ms-btn btn-link right">nächster Monat</button>
+                                                        <button @click="setFilterPreset(\'next-week\')" :style="filterPreset === \'next-week\' ? \'text-decoration: underline;\' : \'text-decoration:none;\'" class="btn btn-sm ms-btn btn-link right">nächste Woche</button>
+                                                        <button @click="setFilterPreset(\'today\')" :style="filterPreset === \'today\' ? \'text-decoration: underline;\' : \'text-decoration:none;\'" class="btn btn-sm ms-btn btn-link right">heute</button>
+                                                        <button @click="setFilterPreset(\'last-week\')" :style="filterPreset === \'last-week\' ? \'text-decoration: underline;\' : \'text-decoration:none;\'" class="btn btn-sm btn-link ms-btn right">letzte
+                                                            Woche</button>
+                                                        <button @click="setFilterPreset(\'last-month\')" :style="filterPreset === \'last-month\' ? \'text-decoration: underline;\' : \'text-decoration:none;\'" class="btn btn-sm btn-link ms-btn right">letzten 4
+                                                            Wochen</button>
+                                                        <button @click="setFilterPreset(\'semester\')" :style="filterPreset === \'semester\' ? \'text-decoration: underline;\' : \'text-decoration:none;\'" class="btn btn-link btn-sm right">WS 19/20</button>
+                                                    </span>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
 
-                                <!-- Pill content -->
-                                <div class="tab-content" id="pills-tabContent">
-                                    <div class="tab-pane col-12 fade" id="view-timeline" role="tabpanel" aria-labelledby="view-timeline">
-                                        ' . $milestoneTimeline . '
+                                    <!-- Pill content -->
+                                    <div class="tab-content" id="pills-tabContent">
+                                        <div class="tab-pane col-12 fade" id="view-timeline" role="tabpanel" aria-labelledby="view-timeline">
+                                            ' . $milestoneTimeline . '
+                                        </div>
+                                        <div class="tab-pane col-12 fade show active milestone-list" id="view-list" role="tabpanel"aria-labelledby="view-list">
+                                            ' . $milestoneList . '
+                                        </div>
                                     </div>
-                                    <div class="tab-pane fade show active milestone-list" id="view-list" role="tabpanel"aria-labelledby="view-list">
-                                        ' . $milestoneList . '
-                                    </div>
-                                </div>
-                                <!-- End pill content -->
-                            
+                                    <!-- End pill content -->
+                                
 
-                                ' . $modalMilestone . '
-                                ' . $modalReflection . '
-                            </div>
-                            <!-- end row -->
+                                    ' . $modalMilestone . '
+                                    ' . $modalReflection . '
+                                </div>
+                                <!-- end row -->
 
-                            <div id="additionalCharts" class="row">
-                                <div class="activity-chart-container">
-                                    <div class="relative">
-                                        <div class="chart-label-activities"></div>
-                                        <div id="timeline-chart"></div>
+                                <div id="additionalCharts" class="row">
+                                    <div class="activity-chart-container">
+                                        <div class="relative">
+                                            <div class="chart-label-activities"></div>
+                                            <div id="timeline-chart"></div>
+                                        </div>
+                                    </div>
+                                    <div class="filter-chart-container">
+                                        <div class="relative">
+                                            <div class="chart-label-filter"></div>
+                                        </div>
+                                        <div id="filter-chart"></div>
                                     </div>
                                 </div>
-                                <div class="filter-chart-container">
-                                    <div class="relative">
-                                        <div class="chart-label-filter"></div>
-                                    </div>
-                                    <div id="filter-chart"></div>
-                                </div>
-                            </div>
-                            
-                            <textarea style="display:none;">{{ milestones }}</textarea>
-                        </div>    
+                                
+                                <textarea style="display:none;">{{ milestones }}</textarea>
+                            </div>    
                         </div>
-                        <!-- End planing component -->
+                        <!-- End .planing-component -->
 
                         <div class="container row" style="display:none;">
                             <div class="col-md-12">
@@ -910,9 +912,11 @@ $modalMilestone = '
                             </div>
                         </div>
                     </div>
-                    <!-- End ladtopic container -->
+                    <!-- End .ladtopic-container-0 -->
                 </div>
+                <!-- End .card-body
             </div>
+            <!-- End .card -->
         </section>
     </div>
 </div>
@@ -926,7 +930,7 @@ $modalMilestone = '
 ';
         return 
             html_writer::start_tag('div', array('class' => 'container chart-container')) 
-            . $content . html_writer::end_tag('div')
+            . $content . html_writer::end_tag('div') 
             . html_writer::start_tag('ul', array('class' => 'topics'))
             ;
     }
