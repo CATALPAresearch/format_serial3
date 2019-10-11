@@ -882,8 +882,14 @@ svg {
     border:0;
 }
 
+.milestone-element-reflection button.reflection-done{
+    background-color: #bbb;
+    color:#333536;
+}
+
 .milestone-element-reflection button:hover{
     background-color: #004C97;
+    color:#fff;
 }
 
 .milestone-entry-details {

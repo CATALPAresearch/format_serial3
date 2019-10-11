@@ -267,9 +267,7 @@ $milestoneList = '
     </li>
     <li v-if="milestones.length > 0">
         <div class="milestone-element-header">
-            <div class="milestone-element-table-head name">Meilenstein</div>
-            <div class="milestone-element-table-head due">Termin</div>
-            <div class="milestone-element-table-head">Fortschritt</div>    
+            <div class="milestone-element-table-head name">Meilenstein</div><div class="milestone-element-table-head due">Termin</div><div class="milestone-element-table-head">Fortschritt</div>
         </div>
     </li>
     <li v-for="m in milestones" class="milestone-element">
@@ -279,7 +277,11 @@ $milestoneList = '
                 <i class="element-not-collapsed fa fa-angle-down angle"></i> 
                 {{ m.name }}
             </a>
-            <span :class="m.status == \'missed\' ? \'milestone-missed milestone-element-due\' : \'milestone-element-due\'">{{ fromNow(m.end) }}</span>
+            <span
+                data-toggle="tooltop" data-placement="top" :title="\'Termin: \'+getReadableTime(m.end)" 
+                :class="m.status == \'missed\' ? \'milestone-missed milestone-element-due\' : \'milestone-element-due\'">
+                {{ fromNow(m.end) }}
+            </span>
             <a @click="showModal(m.id)" class="milestone-element-edit" data-legend="1" data-toggle="modal" data-target="#theMilestoneModal">
                 <span data-toggle="tooltip" data-placement="top" title="Sie können diesen Meilenstein bearbeiten" class="fa fa-pencil"></span> bearbeiten
             </a>
@@ -304,7 +306,7 @@ $milestoneList = '
                     data-toggle="modal" 
                     data-target="#theReflectionModal" 
                     @click="showReflectionModal(m.id)" 
-                    :class="m.status==\'reflected\' ? \'btn btn-secondary btn-sm btn-reflected\' : \'btn btn-primary btn-sm\'"
+                    :class="m.status==\'reflected\' ? \'btn btn-sm reflection-done\' : \'btn btn-primary btn-sm\'"
                     >
                         <span v-if="m.status!=\'reflected\'">Jetzt reflektieren!</span>
                         <span v-if="m.status==\'reflected\'">Reflexion ansehen</span>
