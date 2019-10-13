@@ -572,7 +572,7 @@ $modalMilestone = '
                     <i @click="removeMilestone()" class="fa fa-trash ms-remove"
                         title="Meilenstein entfernen"></i>
                 </span>
-                <button @click="closeModal()" type="button" class="close" data-dismiss="modal"
+                <button id="close-modal" @click="closeModal()" type="button" class="close" data-dismiss="modal"
                     aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -594,7 +594,7 @@ $modalMilestone = '
                     <div class="col-sm-10 alert-invalid" v-if="invalidName">Geben Sie bitte einen Namen für den Meilenstein an.</div>
                 </div>
                 <div class="form-group row">
-                    <label for="inputObjectic" class="col-sm-2 col-form-label">Lernziel *</label>
+                    <label for="inputLearningObjective" class="col-sm-2 col-form-label">Lernziel *</label>
                     <div class="col-sm-10">
                         <input @change="updateObjective" :style="invalidObjective ? \'border: solid 1px #ff420e;\' : \'\'" v-model="getSelectedMilestone().objective" type="text"
                             class="form-control" id="inputLearningObjective"
@@ -603,7 +603,7 @@ $modalMilestone = '
                     <div class="col-sm-10 alert-invalid" v-if="invalidObjective">Geben Sie bitte ein Lernziel an.</div>
                 </div>
                 <div class="form-group row">
-                    <label for="inputObjectic" class="col-2 col-form-label">Termin *</label>
+                    <label for="" class="col-2 col-form-label">Termin *</label>
                     <div class="col-4">
                         <select @change="daySelected" id="select_day"
                             :style="dayInvalid ? \'border: solid 1px #ff420e;\' : \'none\'"
@@ -700,9 +700,9 @@ $modalMilestone = '
                         </div>
                         <div class="col-sm-10 alert-invalid" v-if="invalidResources">Wählen Sie bitte Themen, Materialien und Aktivitäten aus.</div>
                     </div>
-                    <div class="col-md-6">
-                        <span class="strategy-introduction">Welche Lernstrategien möchten Sie anwenden?</span>
-                        <div class="select-wrapperYYY" :style="invalidStrategy ? \'border: solid 1px #ff420e;\' : \'none\'">
+                    <div id="modal-strategies" class="col-md-6">
+                        <span id="strategy-introduction" class="strategy-introduction">Welche Lernstrategien möchten Sie anwenden?</span>
+                        <div :style="invalidStrategy ? \'border: solid 1px #ff420e;\' : \'none\'">
                             <div v-for="cat in strategyCategories" class="strategy-category">
                                 <div class="strategy-category-title">{{cat.name}}</div>
                                 <div 
@@ -817,7 +817,7 @@ $modalMilestone = '
                                                         <li>
                                                             Meine Semesterplanung 
                                                             <span v-if="milestones.length > 0" data-toggle="modal" data-target="#theMilestoneModal">
-                                                                <button @click="showEmptyMilestone()" class="btn btn-sm right btn-primary ms-btn ms-add-btn"
+                                                                <button @click="showEmptyMilestone()" id="add-milestone" class="btn btn-sm right btn-primary ms-btn ms-add-btn"
                                                                     data-toggle="tooltip" data-placement="bottom" title="Neuen Meilenstein hinzufügen"><i
                                                                         class="fa fa-plus"></i></button>
                                                             </span>
@@ -835,13 +835,13 @@ $modalMilestone = '
                                                             </a>
                                                         </li>
                                                         <li class="wide-list">
-                                                            <button class="btn btn-secondary btn-sm introjs-btn" @click="startIntroJs()">Anleitung - So geht’s!</button>
+                                                            <button class="btn btn-outline-info btn-sm introjs-btn" @click="startIntroJs()">Anleitung - So geht’s!</button>
                                                         </li>
                                                     </ul>
                                                     
                                                 </div>
                                                 <div class="col-sm-12 col-md-8 col-lg-8 time-filters">
-                                                    <span id="filter-presets" style="display:inline-block;">
+                                                    <span id="filter-presets">
                                                         <button @click="setFilterPreset(\'next-month\')" :style="filterPreset === \'next-month\' ? \'text-decoration: underline;\' : \'text-decoration:none;\'" class="btn btn-sm ms-btn btn-link right">nächster Monat</button>
                                                         <button @click="setFilterPreset(\'next-week\')" :style="filterPreset === \'next-week\' ? \'text-decoration: underline;\' : \'text-decoration:none;\'" class="btn btn-sm ms-btn btn-link right">nächste Woche</button>
                                                         <button @click="setFilterPreset(\'today\')" :style="filterPreset === \'today\' ? \'text-decoration: underline;\' : \'text-decoration:none;\'" class="btn btn-sm ms-btn btn-link right">heute</button>

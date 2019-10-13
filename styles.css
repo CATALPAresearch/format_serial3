@@ -315,7 +315,7 @@ select#select_year {
 }
 
 .modal .select-wrapper {
-    padding: 6px 12px;
+    padding: 2px 12px;
     height: 38px;
     border: 1px solid none;
     border-radius: 0.25rem;
@@ -330,6 +330,7 @@ select#select_year {
 
 .modal .select-wrapper>select {
     width: 90%;
+    height: 35px;
 }
 
 .modal .select-wrapper:hover>select,
@@ -944,10 +945,34 @@ svg {
     margin:0;
     right:0;
     position: absolute;
-    
+    padding: 0 6px !important;
 }
 
 .introjs-tooltip {
     min-width: 200px;
     max-width: 66% !important; 
+}
+
+.badge-ms {
+    margin-left: 2px;
+}
+
+.badge-ready {
+    background-color: #80bd9e !important;
+}
+
+.badge-progress {
+    background-color:  #ddd !important;
+}
+
+.badge-urgent {
+    background-color: #ffa500 !important;
+}
+
+.badge-missed {
+    background-color:  #ff420e !important;
+}
+
+.badge-reflected {
+    background-color:  #008FAC !important;
 }

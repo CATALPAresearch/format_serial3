@@ -175,20 +175,20 @@ define([
                             { id: 'misc', name: 'Sonstige' }
 
                         ],
-                        strategies: [
+                        strategies: [ // Übertrage Ansätze auf Kontexte ?? #86
                             { id: 'reading', name: 'Überblick durch Lesen/Querlesen', desc: 'Durch schnelles Querlesen verschaffen Sie sich einen Überblick über das Themengebiet. Schauen Sie sich doch auch einmal die PQ4R-Methode an.', url: "", category: 'organization' },
-                            { id: 'mindmap', name: 'Mindmap', desc: 'Eine Mindmap hilft dabei, Zusammenhänge darzustellen.', url: "", category: 'organization' },
-                            { id: 'exzerpte', name: 'Exzerpt', desc: 'Ein Exzerpt ist mehr als nur eine einfache Zusammenfassung der wichtigsten Inhalte.', url: "", category: 'organization' },
-                            { id: 'gliederung', name: 'Gliederung', desc: 'Themenfelder lassen sich mit einer Gliederung übersichtlich strukturieren.', url: "", category: 'organization' },
-                            { id: 'strukturierung', name: 'Strukturierung von Wissen', desc: 'Fachausdrücke oder Definitionen lassen sich gut in Listen oder Tabellen sammeln.', url: "", category: 'organization' },
+                            { id: 'mindmap', name: 'Erzeuge Mindmap', desc: 'Eine Mindmap hilft dabei, Zusammenhänge darzustellen.', url: "", category: 'organization' },
+                            { id: 'exzerpte', name: 'Fertige Exzerpt an', desc: 'Ein Exzerpt ist mehr als nur eine einfache Zusammenfassung der wichtigsten Inhalte.', url: "", category: 'organization' },
+                            { id: 'gliederung', name: 'Erstelle Gliederung', desc: 'Themenfelder lassen sich mit einer Gliederung übersichtlich strukturieren.', url: "", category: 'organization' },
+                            { id: 'strukturierung', name: 'Strukturiere Wissen', desc: 'Fachausdrücke oder Definitionen lassen sich gut in Listen oder Tabellen sammeln.', url: "", category: 'organization' },
                             { id: 'makeflashcards', name: 'Lernkarten erstellen', desc: 'Lernkarten kann man sehr früh digital z.B. in einer App oder auf Papier erstellen. Das erleichtert die Prüfungsvorbereitung.', url: "", category: 'organization' },
 
 
-                            { id: 'transfer', name: 'Neues Wissen auf Bekanntes übertr.', desc: 'Neues Wissen kann durch die Verknüpfung mit dem eigenen Erleben leichter veranschaulicht und gelernt werden.', url: "", category: 'elaboration' },
-                            { id: 'examples', name: 'Schemata auf Arbeit/Alltag übertr.', desc: 'Ein Beispiel aus dem eigenen Umfeld hilft dabei, neue Wissensschemata schneller zu lernen.', url: "", category: 'elaboration' },
-                            { id: 'critical', name: 'Kritisches Hinterfragen', desc: 'Durch kritisches Hinterfragen kann man seine Aufmerksamkeit beim Lesen steigern.', url: "", category: 'elaboration' },
-                            { id: 'structuring', name: 'Bezug zu anderen Fächern herstellen', desc: 'Bekanntes Wissen und Bezüge zu anderen Kursen erleichtern das Verständnis von Zusammenhängen.', url: "", category: 'elaboration' },
-                            { id: 'pq4r', name: 'PQ4R-Methode', desc: 'Hinter dem Kürzel verstecken sich sechs Schritte: (1) Preview – Übersicht gewinnen; (2) Questions – Fragen an den Text stellen;  (3) Read – Zweiter Leseschritt - Gründliches Lesen des Textes; (4) Reflect – Gedankliche Auseinandersetzung mit dem Text; (5) Recite – Wiederholen und aus dem Gedächtnis Verfassen; (6) Review – Rückblick und Überprüfung', url: "", category: 'elaboration' },
+                            { id: 'transfer', name: 'Wende neues Wissen an', desc: 'Neues Wissen kann durch die Verknüpfung mit dem eigenen Erleben leichter veranschaulicht und gelernt werden.', url: "", category: 'elaboration' },
+                            { id: 'examples', name: 'Übertrage Ansätze auf Berufliches', desc: 'Ein Beispiel aus dem eigenen Umfeld hilft dabei, neue Wissensschemata schneller zu lernen.', url: "", category: 'elaboration' },
+                            { id: 'critical', name: 'Hinterfrage Inhalte kritisch', desc: 'Durch kritisches Hinterfragen kann man seine Aufmerksamkeit beim Lesen steigern.', url: "", category: 'elaboration' },
+                            { id: 'structuring', name: 'Stelle Bezug zu anderen Fächern her', desc: 'Bekanntes Wissen und Bezüge zu anderen Kursen erleichtern das Verständnis von Zusammenhängen.', url: "", category: 'elaboration' },
+                            { id: 'pq4r', name: 'Wende PQ4R - Methode an', desc: 'Hinter dem Kürzel verstecken sich sechs Schritte: (1) Preview – Übersicht gewinnen; (2) Questions – Fragen an den Text stellen;  (3) Read – Zweiter Leseschritt - Gründliches Lesen des Textes; (4) Reflect – Gedankliche Auseinandersetzung mit dem Text; (5) Recite – Wiederholen und aus dem Gedächtnis Verfassen; (6) Review – Rückblick und Überprüfung', url: "", category: 'elaboration' },
 
 
                             { id: 'flashcards', name: 'Auswendiglernen mit Lernkarten', desc: 'Mit Lernkarten kann man Dinge systematisch wiederholen bis alles für die Prüfung sitzt. ', url: "", category: 'repeatition' },
@@ -313,38 +313,59 @@ define([
                                     {
                                         element: document.querySelector('#planing-component'),
                                         intro: '<p>Im Fernstudium sind Sie besonders gefordert, sich selbst zu organisieren und das Lernpensum gut einzuteilen. Wir wissen, dass viele von Ihnen berufstätig sind oder das Fernstudium gewählt haben, da sie die damit verbundene Flexibilität schätzen und brauchen. Dies stellt Sie gleichsam aber auch vor die Herausforderung, Ihr Semester eigenständig zu planen, sich selbst zu disziplinieren und die Übersicht zu behalten. Die Formulierung von Meilensteinen als Teilschritte auf dem Weg zu Ihrem persönlichen Ziel oder zur Prüfung helfen dabei, das Volumen eines Semesters übersichtlich zu machen, es zu strukturieren, zu organisieren und das Ziel im Auge zu behalten. Man darf dann auch auf jeden erreichten Meilenstein ein wenig stolz sein und sich selbst belohnen.</p>',
-                                        position: 'bottom',
+                                        position: 'top',
                                         step: 1
+                                    },
+                                    {
+                                        element: document.querySelector('#add-milestone'),
+                                        intro: 'Für Ihre Semesterplanung können Sie Meilensteine auch selbst hinzufügen.',
+                                        position: 'top',
+                                        step: 2
                                     },
                                     {
                                         element: document.querySelector('#milestone-list-tab'),
                                         intro: 'Hier können Sie die Meilensteine als Liste sehen.',
                                         position: 'top',
-                                        step: 2
+                                        step: 3
                                     },
                                     {
                                         element: document.querySelector('.milestone-element-name'),
                                         intro: 'In der ersten Spalte ist der Name der Meilensteine zu sehen.',
                                         position: 'top',
-                                        step: 3
+                                        step: 4
                                     },
                                     {
                                         element: document.querySelector('.milestone-element-due'),
                                         intro: 'Hier sehen Sie, wie viel Zeit Ihnen bis zum Abschluss des Meilensteins bleibt.',
                                         position: 'top',
-                                        step: 4
-                                    },
-                                    {
-                                        element: document.querySelector('.milestone-element-progress'),
-                                        intro: 'Der grüne Balken drückt aus, wie weit die Bearbeitung schon fortgeschritten ist.',
-                                        position: 'top',
                                         step: 5
                                     },
                                     {
-                                        element: document.querySelector('.milestone-element-status .milestone-reflected'),
-                                        intro: 'Dieses Häkchen wird blau gefärbt, wenn Sie Ihren Lernprozess reflektiert haben.',
+                                        element: document.querySelector('.milestone-element-edit'),
+                                        intro: 'Durch einen Klick auf "bearbeiten" in der Listenansicht kann man in den Bearbeitungsmodus wechseln.',
                                         position: 'top',
                                         step: 6
+                                    },
+                                    /* Open modal window for editing milestones
+                                    {
+                                        element: document.querySelector('#theMilestoneModal'),
+                                        intro: 'Effektiv Lernende setzen sich Teilziele in ihrem Lernprozess, wir nennen sie Meilensteine. Je nach Erfahrung und Vorlieben können Meilensteine große Aufgabenketten beschreiben oder kleine geschlossene Arbeitspakete darstellen. Eines ist jedoch allen gemein: sie verfolgen ein konkretes Ziel. Im Fernstudium ist das in der Regel ein Lernziel, wie z.B. einen bestimmten Wissensstand zu erreichen oder eine Fertigkeit, die in einer bestimmten Qualität beherrscht werden soll. <br> Um einen Meilensteinen zu gestalten, ist neben dem Lernziel der Zeitraum, die Themen, Materialien und Aktivitäten und eine passende Lernstrategie zu wählen.',
+                                        position: 'bottom',
+                                        step: 7
+                                    },
+                                    {
+                                        element: document.querySelector('#strategy-introduction'),
+                                        intro: 'Lernstrategien können den Lernprozess positiv beeinflussen. Studien haben gezeigt, dass Lernende, die ein gewisses Repertoire an Lernstrategien gut nutzen, auch bei knappen zeitlichen Ressourcen und hohem Stress in der Lage sind, bessere Leistungen zu erbringen. Lernen ist also nicht nur abhängig von der Zeit, die man zur Verfügung hat, sondern auch davon, wie diese genutzt wird. Dabei bewähren sich manche Lernstrategien durch Automation, manche jedoch auch, indem sie im Zusammenspiel mit bestimmten Herausforderungen besser funktionieren. <br> Unser Tipp: Lernen Sie sich und Ihre Lernstrategien besser kennen und probieren Sie gerne auch einmal etwas Neues aus.Beim Klick auf das „?“ wird kurz erklärt, worum es geht.',
+                                        position: 'left',
+                                        step: 8
+                                    },
+                                     */
+                                    /* Return to milestone list */
+                                    {
+                                        element: document.querySelector('.milestone-element-progress'),
+                                        intro: 'Der grüne Balken drückt aus, wie weit die Bearbeitung schon fortgeschritten ist. Sind alle Materialien abgearbeitet werden sie abgehakt, die Lernstrategien müssen durch abhaken bestätigt werden oder können gelöscht werden, wenn sie nicht genutzt wurden. Ist der Meilenstein erledigt, dann ist es Zeit für die Reflexion. Sie hilft Ihnen zu überlegen, was gut geklappt hat und was Sie ggf. besser machen könnten. Mit der Beantwortung der letzten Frage können Sie einen persönlichen Lernhinweis festhalten, damit Sie die nächste Lernsession noch besser gestalten. Das gilt ganz besonders dann, wenn es einmal mit der Zielerreichung nicht so ganz geklappt hat. Wir lernen auch durch Fehler.',
+                                        position: 'top',
+                                        step: 7
                                     },
                                     /* Milestone timeline chart */
                                     {
@@ -387,12 +408,17 @@ define([
                                     case "milestone-list-tab":
                                         targetElement.click();
                                         break;
-                                    //case "xxx":
-                                    //  document.getElementById("Examples-tab").click();
-                                    //break;
+                                    case "theMilestoneModal":
+                                        document.querySelector('.milestone-element-edit').click();
+                                        break;
                                 }
-                            }
-                            )
+                            })
+                            .onafterchange(function (targetElement) {
+                                console.log(targetElement.id)
+                                if (targetElement.id === "strategy-introduction") {
+                                    document.querySelector('#close-modal').click();
+                                }
+                            })
                             .start();
                     },
                     showAdditionalCharts: function () {
@@ -740,7 +766,7 @@ define([
                     fromNow: function (date) {
                         return moment(date).fromNow();
                     },
-                    getReadableTime: function(date) {
+                    getReadableTime: function (date) {
                         return moment(date).format("d.MM.YYYY, HH:mm");
                     },
                     strategiesByCategory: function (cat) {
@@ -749,9 +775,9 @@ define([
                         });
                     },
                     strategyById: function (id) {
-                        return this.strategies.filter(function (s) {
+                        return JSON.parse(JSON.stringify(this.strategies.filter(function (s) {
                             return s.id === id ? true : false;
-                        })[0];
+                        })[0]));
                     },
                     resourcesBySection: function (id) {
                         return this.resources.filter(function (s) {
@@ -771,9 +797,9 @@ define([
                         return sections;
                     },
                     resourceById: function (id) {
-                        return this.resources.filter(function (s) {
+                        return JSON.parse(JSON.stringify(this.resources.filter(function (s) {
                             return parseInt(s.id, 10) === parseInt(id, 10) ? true : false;
-                        })[0];
+                        })[0]));
                     },
                     strategySelected: function (id) {
                         var el = this.strategyById(id);
@@ -854,8 +880,7 @@ define([
                         var t = new Date();
                         for (var i = 0; i < this.milestones.length; i++) {
                             var diff = moment(t).diff(moment(this.milestones[i].end), 'days');
-                            console.log(this.milestones[i].end, moment(t).diff(moment(this.milestones[i].end), 'days'))
-                            //console.log(this.milestones[i].end, moment(t).diff(moment(this.milestones[i].end), 'months'))
+
                             this.milestones[i].status = 'progress';
 
                             // update progress
@@ -878,19 +903,62 @@ define([
                         }
                         // highlight selected activities
                         this.hightlightSelectedResources();
-                        this.$forceUpdate();
                         this.updateMilestones();
                     },
                     hightlightSelectedResources: function () {
+                        // add a milestone batch for every resource or activity that was selected by a milesone
+                        var badge = "";
+                        // clean up and reset first
+                        $('.badge-ms').each(function() {
+                            console.log('remove');
+                            $(this).remove();
+                        });
                         for (var j = 0; j < this.milestones.length; j++) {
                             for (var i = 0; i < this.milestones[j].resources.length; i++) {
-                                $('#module-' + this.milestones[j].resources[i].instance_url_id)
-                                    .removeClass('resource-highlight')
-                                    .removeClass('resource-highlight-done')
-                                    .addClass(this.milestones[j].resources[i].checked ? 'resource-highlight-done' : 'resource-highlight')
-                                    .attr('title', this.milestones[j].resources[i].checked ? 'Dieses Element haben Sie bereits als "erledigt" markiert.' : 'Dieses Element haben Sie zur Bearbeitung in einem Meilenstein ausgewählt.')
+                                badge = $('<span></span>')
+                                    .text(this.limitTextLength(this.milestones[j].name, 14))
+                                    .addClass('badge badge-secondary badge-ms')
                                     .attr('data-toggle', 'tooltip')
                                     ;
+                                
+                                if (!this.milestones[j].resources[i].checked && this.milestones[j].status === 'missed') {
+                                    badge
+                                        .attr('title', 'Dieses Element haben Sie im Meilenstein \"' + this.milestones[j].name + '\" noch nicht erledigt oder als "erledigt" markiert.')
+                                        .addClass('badge-missed')
+                                        ;
+                                    $('#module-' + this.milestones[j].resources[i].instance_url_id + ' div.activityinstance').append(badge);
+                                }
+
+                                if (!this.milestones[j].resources[i].checked && this.milestones[j].status === 'progress') {
+                                    badge
+                                        .attr('title', 'Dieses Element haben Sie im Meilenstein \"' + this.milestones[j].name + '\" noch nicht erledigt oder als "erledigt" markiert.')
+                                        .addClass('badge-progress')
+                                        ;
+                                    $('#module-' + this.milestones[j].resources[i].instance_url_id + ' div.activityinstance').append(badge);
+                                }
+
+                                if (!this.milestones[j].resources[i].checked && this.milestones[j].status === 'urgent') {
+                                    badge
+                                        .attr('title', 'Dieses Element haben Sie im Meilenstein \"' + this.milestones[j].name + '\" noch nicht erledigt oder als "erledigt" markiert.')
+                                        .addClass('badge-urgent')
+                                        ;
+                                    $('#module-' + this.milestones[j].resources[i].instance_url_id + ' div.activityinstance').append(badge);
+                                }
+                                
+                                if (this.milestones[j].resources[i].checked) {
+                                    badge
+                                        .attr('title', 'Dieses Element haben Sie im Meilenstein \"' + this.milestones[j].name + '\" bereits als "erledigt" markiert.')
+                                        .addClass('badge-ready')
+                                        ;
+                                    $('#module-' + this.milestones[j].resources[i].instance_url_id + ' div.activityinstance').append(badge);
+                                }
+
+                                /* 
+                                .removeClass('resource-highlight')
+                                .removeClass('resource-highlight-done')
+                                .addClass(this.milestones[j].resources[i].checked ? 'resource-highlight-done' : 'resource-highlight')
+                                
+                                ;*/
                             }
                         }
                     },
