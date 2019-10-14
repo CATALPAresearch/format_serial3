@@ -223,7 +223,7 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                                                 <div class="col-md">
                                                     <div class="select-wrapper">
                                                         <span id="before-select"><i class="fa fa-plus"></i> </span>
-                                                        <select @change="resourceSelected" class="" id="modal_strategy-select" class="">
+                                                        <select @change="resourceSelected" id="modal_strategy-select">
                                                             <option :selected="true" disabled value="default">Wählen Sie Themen, Materialien
                                                                 und Aktivitäten</option>
                                                             <optgroup v-for="section in resourceSections()" :label="section.name">
@@ -240,7 +240,7 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                                                     <div>
                                                         <button @click="validateSurveyForm()" class="btn btn-primary btn-sm">Planung anzeigen</button>
                                                         <button class="right btn btn-link right" data-dismiss="modal"
-                                                            aria-label="abbrechen">abbrechen</a>
+                                                            aria-label="abbrechen">abbrechen</button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -314,7 +314,7 @@ $milestoneList = '
             </div>
         </div>
         <div class="milestone-entry-details collapse" :id="\'milestone-entry-\' + m.id">
-            <div class="">
+            <div>
                 <!-- Resourcen -->
                         <label for="" class="resources-title">Meine Themen, Materialien und Aktivitäten</label>
                         <div v-if="m.resources.length > 0" class="resources-header">
@@ -606,7 +606,7 @@ $modalMilestone = '
                     <label for="" class="col-2 col-form-label">Termin *</label>
                     <div class="col-4">
                         <select @change="daySelected" id="select_day"
-                            :style="dayInvalid ? \'border: solid 1px #ff420e;\' : \'none\'"
+                            :style="invalidDay ? \'border: solid 1px #ff420e;\' : \'none\'"
                             v-model="dayOfSelectedMilestone"
                             >
                             <option v-for="d in dayRange()"
@@ -628,7 +628,8 @@ $modalMilestone = '
                                 :value="d">{{ d }}</option>
                         </select>
                     </div>
-                    <div v-if="dayInvalid" class="col-sm-10 alert-invalid">Wählen Sie bitte ein gültiges Datum aus. Den {{ selectedDay }}. gibt es im ausgwählten Monat nicht. </div>
+                    <div v-if="invalidDay" class="col-sm-10 alert-invalid">Wählen Sie bitte ein gültiges Datum aus. Den {{ selectedDay }}. gibt es im ausgwählten Monat nicht. </div>
+                    <div v-if="invalidEndDate" class="col-sm-10 alert-invalid">Wählen Sie bitte ein Datum nach dem Semesterbeginn und innerhalb der nächsten 12 Monate aus.</div>
                 </div>
                 <hr />
                 <div class="row">
@@ -690,8 +691,7 @@ $modalMilestone = '
                     <div class="col-md-6">
                         <div class="select-wrapper" :style="invalidResources ? \'border: solid 1px #ff420e;\' : \'none\'">
                             <span id="before-select"><i class="fa fa-plus"></i> </span>
-                            <select @change="resourceSelected" class="" id="modal_strategy-select"
-                                class="">
+                            <select @change="resourceSelected" id="modal_strategy-select">
                                 <option :selected="true" disabled value="default">Wählen Sie Themen, Materialien und Aktivitäten</option>
                                 <optgroup v-for="section in resourceSections()" :label="section.name">
                                     <option v-for="s in resourcesBySection(section.id)" :value="s.id">{{ s.instance_type }}: {{ s.name }}</option>
@@ -721,8 +721,7 @@ $modalMilestone = '
                                 </div>
                             </div>
                             
-                            <select hidden @change="strategySelected" class="" id="modal_strategy-select"
-                                class="">
+                            <select hidden @change="strategySelected" id="modal_strategy-select">
                                 <option :selected="true" disabled>Lernstrategie</option>
                                 <optgroup label="Organisationsstrategien">
                                     <option v-for="s in strategiesByCategory(\'organization\')"
@@ -784,7 +783,8 @@ $modalMilestone = '
 
         $content = '
 
-
+            </div>
+            </div>
                     </div>
                 </div>
             </div>
@@ -834,7 +834,7 @@ $modalMilestone = '
                                                                 <i class="fa fa-clock"></i>Zeitleiste
                                                             </a>
                                                         </li>
-                                                        <li class="wide-list">
+                                                        <li v-if="surveyDone > 0" class="wide-list">
                                                             <button class="btn btn-outline-info btn-sm introjs-btn" @click="startIntroJs()">Anleitung - So geht’s!</button>
                                                         </li>
                                                     </ul>
@@ -861,7 +861,7 @@ $modalMilestone = '
                                         <div class="tab-pane col-12 fade" id="view-timeline" role="tabpanel" aria-labelledby="view-timeline">
                                             ' . $milestoneTimeline . '
                                         </div>
-                                        <div class="tab-pane col-12 fade show active milestone-list" id="view-list" role="tabpanel"aria-labelledby="view-list">
+                                        <div class="tab-pane col-12 fade show active milestone-list" id="view-list" role="tabpanel" aria-labelledby="view-list">
                                             ' . $milestoneList . '
                                         </div>
                                     </div>
@@ -916,7 +916,7 @@ $modalMilestone = '
                     </div>
                     <!-- End .ladtopic-container-0 -->
                 </div>
-                <!-- End .card-body
+                <!-- End .card-body -->
             </div>
             <!-- End .card -->
         </section>
@@ -928,6 +928,9 @@ $modalMilestone = '
         <section id="region-main" class="has-blocks mb3">
             <div class="card">
                 <div class="card-body">
+                <div>
+		        <div>
+
                     <div class="course-content">
 ';
         return 
