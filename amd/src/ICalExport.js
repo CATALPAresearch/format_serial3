@@ -15,16 +15,19 @@ define([
         InvalidEventData: "Invalid Event Data",
         InvalidAlarmData: "Invalid Alarm Data"
     };
+    var EAlarmType;
+    (function (EAlarmType) {
+        EAlarmType[EAlarmType["DISPLAY"] = 0] = "DISPLAY";
+        EAlarmType[EAlarmType["EMAIL"] = 1] = "EMAIL";
+    })(EAlarmType || (EAlarmType = {}));
     return /** @class */ (function () {
         /**
          * The Constructor of the class.
          * @param ICalLib The Library for ICal exports.
-         * @param view The Vue instance.
          * @param config The config object of the Calendar.
          */
-        function class_1(ICalLib, view, config) {
-            this._view = view;
-            if (!this._valConfigData(config))
+        function class_1(ICalLib, config) {
+            if (!this.valConfigData(config))
                 throw new Error(Messages.InvalidConfigData);
             this._config = config;
             this._ICalLib = ICalLib;
@@ -41,25 +44,16 @@ define([
             this._cal.calscale = config.type.toUpperCase();
         }
         /**
-         * Generate the Caledar to export.
+         * Print the result.
          */
-        class_1.prototype.generate = function () {
-            var milestones = this._view['milestones'];
-            if (typeof milestones === "object") {
-                for (var i in milestones) {
-                    var milestone = milestones[i];
-                    console.log(milestone);
-                    console.log(typeof milestone);
-                    console.log(milestone.name);
-                }
-            }
+        class_1.prototype.print = function () {
             return this._cal.toString();
         };
         /**
          * Validate the given config object.
          * @param data The config object.
          */
-        class_1.prototype._valConfigData = function (data) {
+        class_1.prototype.valConfigData = function (data) {
             if (typeof data !== "object")
                 return false;
             if (typeof data.prodid !== "string" || data.prodid.length <= 0)
@@ -87,8 +81,8 @@ define([
          * @returns The event object.
          */
         class_1.prototype.addEvent = function (data) {
-            if (!this._valEventData(data))
-                throw new Error("Invalid event data.");
+            if (!this.valEventData(data))
+                throw new Error(Messages.InvalidEventData);
             var vevent = new this._ICalLib.Component("vevent");
             var event = new this._ICalLib.Event(vevent);
             event.uid = data.uid + "@" + this._config.domain;
@@ -110,7 +104,7 @@ define([
          * A Method to validate the given event data.
          * @param data The event data object.
          */
-        class_1.prototype._valEventData = function (data) {
+        class_1.prototype.valEventData = function (data) {
             if (typeof data !== "object")
                 return false;
             if (typeof data.uid !== "string" && typeof data.uid !== "number")
@@ -149,8 +143,8 @@ define([
          * @return The alarm object.
          */
         class_1.prototype.addAlarm = function (event, data) {
-            if (!this._valAlarmData(data))
-                throw new Error("Invalid alarm data.");
+            if (!this.valAlarmData(data))
+                throw new Error(Messages.InvalidAlarmData);
             var valarm = new this._ICalLib.Component("valarm");
             valarm.addPropertyWithValue("action", EAlarmType[data.type]);
             if (data.type === EAlarmType.EMAIL && typeof data.attendee !== "undefined") {
@@ -175,10 +169,10 @@ define([
          * A Method to validate the given alarm data.
          * @param data The alarm data object.
          */
-        class_1.prototype._valAlarmData = function (data) {
+        class_1.prototype.valAlarmData = function (data) {
             if (typeof data !== "object")
                 return false;
-            if (typeof data.type !== "number" || !(data.type in EAlarmType))
+            if (typeof data.type !== "number")
                 return false;
             if (data.type === EAlarmType.EMAIL) {
                 if (typeof data.attendee !== "string" && typeof data.attendee !== "object")
@@ -194,9 +188,4 @@ define([
         };
         return class_1;
     }());
-    var EAlarmType;
-    (function (EAlarmType) {
-        EAlarmType[EAlarmType["DISPLAY"] = 0] = "DISPLAY";
-        EAlarmType[EAlarmType["EMAIL"] = 1] = "EMAIL";
-    })(EAlarmType || (EAlarmType = {}));
 });

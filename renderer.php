@@ -834,9 +834,15 @@ $modalMilestone = '
                                                                 <i class="fa fa-clock"></i>Zeitleiste
                                                             </a>
                                                         </li>
+                                                        <li v-if="milestones.length > 0" class="nav-item">
+                                                            <a 
+                                                                class="nav-link" @click="toICal()" data-toggle="pill" href="#export" role="tab">
+                                                                <i class="fa fa-clock"></i>Exportieren
+                                                            </a>
+                                                        </li>
                                                         <li v-if="surveyDone > 0" class="wide-list">
                                                             <button class="btn btn-outline-info btn-sm introjs-btn" @click="startIntroJs()">Anleitung - So geht’s!</button>
-                                                        </li>
+                                                        </li>                                                        
                                                     </ul>
                                                     
                                                 </div>

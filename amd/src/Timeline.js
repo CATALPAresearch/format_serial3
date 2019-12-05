@@ -1023,18 +1023,64 @@ define([
                     },
                     toICal: function(){
                         try{
+                            // Initialize the calendar
                             let config =  {
                                 prodid: "APLE",
                                 domain: "APLE",
                                 tzid: "Europe/Berlin",
                                 type: "Gregorian",
                                 version: "2.0"
-                            }
-                            let exp = new ICalExport(ICalLib, this, config);
-                            console.log(exp.generate());
-                            //window.open("data:text/calendar;charset=utf-8,"+exp.generate());
+                            }                           
+                            let cal = new ICalExport(ICalLib, config);
+                            // Register all Milestones
+                            /*
+                             id: 3867650,
+                              name: 'Planung',
+                              objective: 'Mein Semester planen',
+                              start: '2019,9,1',
+                              end: '2019,10,1',
+                              status: 'urgent',
+                              progress: 1.00,
+                              resources: [],
+                              strategies: [],
+                              reflections: [],
+                              */
+                            if(this.milestones){
+                                this.milestones.forEach(
+                                    (milestone) => {
+                                        try{
+                                            let data = {
+                                                uid: milestone.id,
+                                                title: milestone.name,
+                                                start: milestone.end                                                
+                                            }
+                                            let event = cal.addEvent(data);
+                                            // Set an alarm three days before end.
+                                            let date = new Date(milestone.start.toISOString());
+                                            date.setDate(date.getDate() - 3);                                            
+                                            cal.addAlarm(event, {
+                                                type: 0, 
+                                                title: data.title,
+                                                date: date
+                                            });
+                                            // Set an alarm one week before end.
+                                            date.setDate(date.getDate() - 4);
+                                            cal.addAlarm(event, {
+                                                type: 0, 
+                                                title: data.title,
+                                                date: date
+                                            });
+                                        } catch(error){
+                                            console.log("ICalExport: Konnte Event nicht registrieren! \r\n"+error.toString());
+                                        }
+                                    }
+                                )
+                            }                            
+                            
+                            console.log(cal.print());
+                            //window.open("data:text/calendar;charset=utf-8,"+exp.print());
                         } catch(error){
-                            console.log("ICAL Export Error: "+error.toString());
+                            console.log("ICalExport: Konnte den Export nicht erfolgreich abschließen! \r\n "+error.toString());
                         }
                     }
                 }

@@ -16,25 +16,27 @@ define([
         InvalidConfigData: "Falsche Konfiguration",
         InvalidEventData: "Invalid Event Data",
         InvalidAlarmData: "Invalid Alarm Data"
+    }  
+
+    enum EAlarmType{
+        DISPLAY,
+        EMAIL
     }
 
     return class {
         
-        private _view;
         private _cal;
         private _config;
         private _ICalLib;
         
         /**
          * The Constructor of the class.
-         * @param ICalLib The Library for ICal exports.
-         * @param view The Vue instance.
+         * @param ICalLib The Library for ICal exports.         
          * @param config The config object of the Calendar.
          */
 
-        constructor(ICalLib, view, config:IConfig){
-            this._view = view;
-            if(!this._valConfigData(config)) throw new Error(Messages.InvalidConfigData);
+        constructor(ICalLib, config:IConfig){            
+            if(!this.valConfigData(config)) throw new Error(Messages.InvalidConfigData);
             this._config = config;
             this._ICalLib = ICalLib;
             this._cal = new ICalLib.Component(['vcalendar', [], []]); 
@@ -49,28 +51,21 @@ define([
             this._cal.updatePropertyWithValue("version", config.version);
             this._cal.calscale = config.type.toUpperCase();
         }
-
+        
         /**
-         * Generate the Caledar to export.
+         * Print the result.
          */
 
-        public generate(){
-            let milestones = this._view['milestones'];
-            if(typeof milestones === "object"){
-                for(let i in milestones){
-                    let milestone = milestones[i];
-                    
-                }
-            }
+        public print():string{
             return this._cal.toString();
         }
-
+       
         /**
          * Validate the given config object.
          * @param data The config object.
          */
 
-        private _valConfigData(data:IConfig):boolean{
+        public valConfigData(data:IConfig):boolean{
             if(typeof data !== "object") return false;
             if(typeof data.prodid !== "string" || data.prodid.length <= 0) return false;
             if(typeof data.version !== "string" || data.version.length <= 0) return false;
@@ -94,7 +89,7 @@ define([
          */
 
         public addEvent(data:IEvent):any{
-            if(!this._valEventData(data)) throw new Error("Invalid event data.");
+            if(!this.valEventData(data)) throw new Error(Messages.InvalidEventData);
             let vevent = new this._ICalLib.Component("vevent");
             let event = new this._ICalLib.Event(vevent);
             event.uid = `${data.uid}@${this._config.domain}`;
@@ -115,7 +110,7 @@ define([
          * @param data The event data object.
          */
 
-        private _valEventData(data:IEvent):boolean{
+        public valEventData(data:IEvent):boolean{
             if(typeof data !== "object") return false;
             if(typeof data.uid !== "string" && typeof data.uid !== "number") return false;
             if(typeof data.start !== "object" || !(data.start instanceof Date)) return false;
@@ -149,8 +144,8 @@ define([
          * @return The alarm object.
          */
 
-        public addAlarm(event:any, data:IAlarm):any{
-            if(!this._valAlarmData(data)) throw new Error("Invalid alarm data.");
+        public addAlarm(event:any, data:IAlarm):any{            
+            if(!this.valAlarmData(data)) throw new Error(Messages.InvalidAlarmData);
             let valarm = new this._ICalLib.Component("valarm"); 
             valarm.addPropertyWithValue("action", EAlarmType[data.type]);
             if(data.type === EAlarmType.EMAIL && typeof data.attendee !== "undefined"){
@@ -176,21 +171,17 @@ define([
          * @param data The alarm data object.
          */
         
-        private _valAlarmData(data:IAlarm):boolean{
-            if(typeof data !== "object") return false;
-            if(typeof data.type !== "number" || !(data.type in EAlarmType)) return false;
-            if(data.type === EAlarmType.EMAIL){
+        public valAlarmData(data:IAlarm):boolean{            
+            if(typeof data !== "object") return false;                        
+            if(typeof data.type !== "number") return false;                    
+            if(data.type === EAlarmType.EMAIL){                
                 if(typeof data.attendee !== "string" && typeof data.attendee !== "object") return false;
-            }
-            if(!(data.date instanceof Date)) return false;  
+            }         
+            if(!(data.date instanceof Date)) return false;             
             if(typeof data.description !== "string" && typeof data.description !== "undefined") return false;
             if(typeof data.title !== "string" && typeof data.title !== "undefined") return false;
             return true;
-        }
-
-        private _valMilestoneData(data:object):boolean{
-            return false;
-        }
+        }    
     } 
 
     interface IConfig{
@@ -216,10 +207,5 @@ define([
         title?: string;
         description?: string;
         date: Date
-    }
-
-    enum EAlarmType{
-        DISPLAY,
-        EMAIL
-    }
+    }      
 });
