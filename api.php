@@ -486,8 +486,8 @@ class format_ladtopics_external extends external_api {
     }
     public static function coursestructure_is_allowed_from_ajax() { return true; }
 
-/**
-     * Takes video player log data form the client
+    /**
+     * Collects log data from the client
      */
     public static function logger_parameters() {
         return new external_function_parameters(                
@@ -529,7 +529,7 @@ class format_ladtopics_external extends external_api {
         $r->courseid=(int)$data['courseid'];
         //$r->relateduserid=NULL;
         $r->anonymous=0;
-        $r->other=$data[entry];	 
+        $r->other=$data['entry'];	 
         $r->timecreated=$data['utc'];
         $r->origin='web';	 
         $r->ip=$_SERVER['REMOTE_ADDR'];
@@ -544,6 +544,61 @@ class format_ladtopics_external extends external_api {
     public static function logger_is_allowed_from_ajax() { return true; }
 
     
+
+    /**
+     * Dump log data from the client
+     */
+    public static function dumplog_parameters() {
+        return new external_function_parameters(                
+            array(
+                'data' => 
+                    new external_single_structure(
+                        array(
+                        'courseid' => new external_value(PARAM_INT, 'id of course', VALUE_OPTIONAL),
+                        'userid' => new external_value(PARAM_INT, 'id of course', VALUE_OPTIONAL)
+                    )
+                )
+            )
+        );
+    }
+    public static function dumplog_returns() {
+        return new external_single_structure(
+                array( 'response' => new external_value(PARAM_RAW, 'Server respons to the incomming log') )
+        );
+    }
+    public static function dumplog($data) {
+        global $CFG, $DB, $USER;
+        
+        $transaction = $DB->start_delegated_transaction(); 
+        $query ='SELECT * FROM ' . $CFG->prefix . 'logstore_standard_log 
+            WHERE userid=' . $USER->id . ' AND 
+            ( 
+                component=\'mod_glossary\' OR 
+                component=\'mod_forum\' OR
+                component=\'mod_wiki\' OR
+                component=\'mod_studentquiz\' OR
+                component=\'mod_assignment\' OR
+                component=\'mod_quiz\'
+            );';
+        $data = $DB->get_records_sql($query);
+        $transaction->allow_commit();
+        $arr=array();
+        foreach($data as $bu){
+            $entry = array(
+                'utc' => $bu->timecreated,
+                'action_type' => $bu->component,
+                'action'=> $bu->action//,
+                //'data' => json_encode($bu),
+            );
+            array_push($arr, $entry);
+        }
+        // log cleaning
+
+        
+        return array('response'=>json_encode($arr));
+    } 
+    public static function dumplog_is_allowed_from_ajax() { return true; }
+
 
 
 
@@ -654,6 +709,7 @@ class format_ladtopics_external extends external_api {
                 'data' => 
                     new external_single_structure(
                         array(
+                        'courseid' => new external_value(PARAM_INT, 'id of course', VALUE_OPTIONAL),
                         'fieldname' => new external_value(PARAM_TEXT, 'Name of the field'),
                         'setget' => new external_value(PARAM_TEXT, 'Get or Set'),
                         'value' => new external_value(PARAM_TEXT, 'Value of field', VALUE_OPTIONAL)
@@ -672,9 +728,12 @@ class format_ladtopics_external extends external_api {
         $userid = (int)$USER->id;
         
             $r = new stdClass();
-            $r->userid=$userid;
-            $r->name=$data['fieldname'];
-            $exists = $DB->record_exists('user_preferences', array('name' => $data['fieldname'], 'userid'=>$userid));
+            $r->userid = $userid;
+            $r->name = $data['fieldname'] . '-course-' . $data['courseid'];
+            $exists = $DB->record_exists('user_preferences', array(
+                'name' => $data['fieldname'], 
+                'userid'=>$userid
+            ));
             $res='nix';
             if($exists != true){
                 $r->value=$data['value'] == NULL ? 0 : $data['value'];
@@ -684,12 +743,17 @@ class format_ladtopics_external extends external_api {
                 
             } elseif($exists == true && $data['setget'] == 'get'){
                 $transaction = $DB->start_delegated_transaction();
-                $res = $DB->get_record("user_preferences", array('name' => $data['fieldname'], 'userid'=>$userid));
+                $res = $DB->get_record("user_preferences", array(
+                    'name' => $data['fieldname'] . '-course-' . $data['courseid'], 
+                    'userid'=>$userid
+                ));
                 $transaction->allow_commit();
                 
             } elseif($exists == true && $data['setget'] == 'set'){
                 //$transaction = $DB->start_delegated_transaction();
-                //$res = $DB->get_record("user_preferences", array('name' => $data['fieldname'], 'userid'=>$userid));
+                //$res = $DB->get_record("user_preferences", array(
+                //    'name' => $data['fieldname'] . '-course-' . $data['courseid'], 
+                //      'userid'=>$userid));
                 //$transaction->allow_commit();
                 //$r->id=$res->id;
                 //$r->value=$data['value'];
@@ -697,7 +761,7 @@ class format_ladtopics_external extends external_api {
                 //$res = $DB->set_record("user_preferences", array($r));
                 $res = $DB->set_field("user_preferences", 'value', $data['value'], array(
                     'userid' => $userid,
-                    'name' => $data['fieldname']
+                    'name' => $data['fieldname'] . '-course-' . $data['courseid']
                 ));
                 //$sql = 'UPDATE '. $CFG->prefix .'user_preferences SET value=\''. $data['value'] .'\' WHERE name=\'ladtopics_survey_done\' ;';
                 //$res = $DB->set_records_sql($sql);

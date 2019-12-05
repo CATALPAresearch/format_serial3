@@ -1697,7 +1697,8 @@ define(['jquery'], function ($) {
                 utils.get_ws('userpreferences', {
                     data: {
                         'setget': 'get',
-                        'fieldname': 'ladtopics_survey_done'
+                        'fieldname': 'ladtopics_survey_done',
+                        'courseid': parseInt(course.id, 10)
                     }
                 }, function (e) {
                     try {
@@ -1709,10 +1710,10 @@ define(['jquery'], function ($) {
                                 milestoneApp.surveyDone = parseInt(e[0].value, 10);
                             }
                         }
-                        
+
                         if (milestoneApp.surveyDone > 0) {
                             $('#planing-component').show();
-                        } else{
+                        } else {
                             $('#planningsurvey').show();
                         }
                         /* 
@@ -1784,7 +1785,15 @@ define(['jquery'], function ($) {
                     })[0];
                 },
                 resourceSelected: function (event) {
-                    this.resources.push(this.resourceById(event.target.value));
+                    //console.log('selected ress ', this.resourceById(event.target.value), event.target.value);
+                    var id = -1;
+                    if (event.target.value.match(/complete-section-\d/i)) {
+                        id = -99;
+                        //  "id": 13, "course_id": "3", "module_id": "9", "section_id": "6", "section_name": " ", "instance_id": "2", "instance_url_id": "2", "instance_type": "forum", "instance_title": "Nachrichtenforum", "section": "6", "name": "Nachrichtenforum" 
+                    } else {
+                        id = this.resourceById(event.target.value);
+                    }
+                    this.resources.push(id);
                     var el = document.getElementById('selected_resources');
                     var sor = Sortable.create(el, {});
                     this.invalidResources = this.resources.length > 0 ? false : true;
@@ -1863,6 +1872,7 @@ define(['jquery'], function ($) {
                     utils.get_ws('userpreferences', {
                         data: {
                             'setget': 'set',
+                            'courseid': parseInt(course.id, 10),
                             'fieldname': 'ladtopics_survey_done',
                             'value': 1
                         }
@@ -1878,6 +1888,7 @@ define(['jquery'], function ($) {
                             utils.get_ws('userpreferences', {
                                 data: {
                                     'setget': 'set',
+                                    'courseid': parseInt(course.id, 10),
                                     'fieldname': 'ladtopics_survey_results',
                                     'value': JSON.stringify({
                                         objectives: _this.objectives,
