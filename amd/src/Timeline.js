@@ -23,7 +23,7 @@ define([
     /**
      * Plot a timeline
      */
-    var Timeline = function (Vue, d3, dc, crossfilter, moment, Sortable, utils, introJs, logger, FilterChart, ActivityChart, InitialSurvey) {
+    var Timeline = function (Vue, d3, dc, crossfilter, moment, Sortable, utils, introJs, logger, FilterChart, ActivityChart, InitialSurvey, ICalExport, ICalLib) {
         var width = document.getElementById('ladtopic-container-0').offsetWidth;
         var margins = { top: 15, right: 10, bottom: 20, left: 10 };
         var course = {
@@ -1020,6 +1020,22 @@ define([
                         }
                         this.timeFilterChart.replaceFilter(dc.filters.RangedFilter(range[0], range[1]));
                         this.timeFilterChart.filterTime();
+                    },
+                    toICal: function(){
+                        try{
+                            let config =  {
+                                prodid: "APLE",
+                                domain: "APLE",
+                                tzid: "Europe/Berlin",
+                                type: "Gregorian",
+                                version: "2.0"
+                            }
+                            let exp = new ICalExport(ICalLib, this, config);
+                            console.log(exp.generate());
+                            //window.open("data:text/calendar;charset=utf-8,"+exp.generate());
+                        } catch(error){
+                            console.log("ICAL Export Error: "+error.toString());
+                        }
                     }
                 }
             });
