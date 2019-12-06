@@ -82,7 +82,7 @@ define([
          *                  title: string;
          *                  start: Date;
          *                  end?: Date;
-         *                  description?: any;
+         *                  description: any;
          *                  location?: string;
          *              }
          * @returns The event object.
@@ -94,13 +94,11 @@ define([
             let event = new this._ICalLib.Event(vevent);
             event.uid = `${data.uid}@${this._config.domain}`;
             event.startDate = this._ICalLib.Time.fromJSDate(data.start);
+            event.dtstamp = this._ICalLib.Time.now();
             if(data.end) event.endDate = this._ICalLib.Time.fromJSDate(data.end);
-            if(data.description){
-                if(typeof data.description === "object") data.description = data.description.toString();
-                event.description = data.description;
-            }
-            event.summary = data.title;
-            if(data.location) event.location = data.location;
+            event.description = this._encode_utf8(data.description);  
+            event.summary = this._encode_utf8(data.title);
+            if(data.location) event.location = this._encode_utf8(data.location);
             this._cal.addSubcomponent(vevent);
             return vevent;
         }
@@ -118,6 +116,7 @@ define([
             if(typeof data.end === "object"){
                 if(!(data.end instanceof Date)) return false;
             }
+            if(typeof data.description !== "string") return false;
             if(typeof data.location !== "string" && typeof data.location !== "undefined") return false;
             return true;
         }
@@ -126,20 +125,11 @@ define([
          * Add an alarm to an event.
          * @param event The event object where the alarm should be added.
          * @param data {
-         *                  uid: number|string;
-         *                  title: string;
          *                  type: EAlarmType;
+         *                  attendee?: string|string[];
          *                  title?: string;
-         *                  description?: string;
-         *                  attendee?: string;
-         *                  duration: [{
-         *                      weeks?: number;
-         *                      days?: number;
-         *                      hours?: number;
-         *                      minutes?: number;
-         *                      seconds?: number;
-         *                      isNegative: boolean;
-         *                  }]
+         *                  description: string;
+         *                  date: Date
          *              }
          * @return The alarm object.
          */
@@ -159,9 +149,10 @@ define([
                     );
                 }
             }
+            valarm.addPropertyWithValue("dtstamp", this._ICalLib.Time.now());
             valarm.addPropertyWithValue("trigger", this._ICalLib.Time.fromJSDate(data.date));
-            if(data.title) valarm.addPropertyWithValue("summary", data.title);
-            if(data.description) valarm.addPropertyWithValue("description", data.description);      
+            if(data.title) valarm.addPropertyWithValue("summary", this._encode_utf8(data.title));
+            valarm.addPropertyWithValue("description", this._encode_utf8(data.description));    
             event.addSubcomponent(valarm);
             return valarm;
         }
@@ -169,6 +160,7 @@ define([
         /**
          * A Method to validate the given alarm data.
          * @param data The alarm data object.
+         * @return true/false
          */
         
         public valAlarmData(data:IAlarm):boolean{            
@@ -178,10 +170,20 @@ define([
                 if(typeof data.attendee !== "string" && typeof data.attendee !== "object") return false;
             }         
             if(!(data.date instanceof Date)) return false;             
-            if(typeof data.description !== "string" && typeof data.description !== "undefined") return false;
+            if(typeof data.description !== "string") return false;
             if(typeof data.title !== "string" && typeof data.title !== "undefined") return false;
             return true;
-        }    
+        }  
+
+        /**
+         * Encode to utf-8.
+         * @param data The string to encode.
+         * @return The encoded string.
+         */
+        
+        private _encode_utf8(data:string):string{
+            return unescape(encodeURIComponent(data.replace(/  +/g,'')));
+        }
     } 
 
     interface IConfig{
@@ -197,7 +199,7 @@ define([
         title: string;
         start: Date;
         end?: Date;
-        description?: any;
+        description: string;
         location?: string;
     }
 
@@ -205,7 +207,7 @@ define([
         type: EAlarmType;
         attendee?: string|string[];
         title?: string;
-        description?: string;
+        description: string;
         date: Date
     }      
 });

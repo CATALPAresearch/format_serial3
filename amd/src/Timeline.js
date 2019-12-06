@@ -1021,7 +1021,7 @@ define([
                         this.timeFilterChart.replaceFilter(dc.filters.RangedFilter(range[0], range[1]));
                         this.timeFilterChart.filterTime();
                     },
-                    toICal: function(){
+                    toICal: function(link){
                         try{
                             // Initialize the calendar
                             let config =  {
@@ -1045,7 +1045,7 @@ define([
                               strategies: [],
                               reflections: [],
                               */
-                            if(this.milestones){
+                            if(this.milestones && this.milestones.length > 0){
                                 this.milestones.forEach(
                                     (milestone) => {
                                         try{
@@ -1054,6 +1054,27 @@ define([
                                                 title: milestone.name,
                                                 start: milestone.end                                                
                                             }
+                                            // Generate description
+                                            let description = milestone.objective ? "Lernziel: "+milestone.objective : "";                                            
+                                            if(milestone.resources && milestone.resources.length > 0){
+                                                description += "\n\nZu diesem Meilenstein gehören folgende Lernressourcen:";
+                                                milestone.resources.forEach(
+                                                    (resource) => {      
+                                                        let done = resources.checked ? "[erledigt] " : "";        
+                                                        if(resources.instance_title) description += "\n- "+done+resources.instance_title;                                                        
+                                                    }
+                                                )
+                                            }
+                                            if(milestone.strategies && milestone.strategies.length > 0){                                                
+                                                description += "\n\nZu diesem Meilenstein gehören folgende Lernstrategien:";
+                                                milestone.strategies.forEach(
+                                                    (strategie) => {      
+                                                        let done = strategie.checked ? "[erledigt] " : "";        
+                                                        if(strategie.name) description += "\n- "+done+strategie.name;                                                        
+                                                    }
+                                                )
+                                            }
+                                            data.description = description;
                                             let event = cal.addEvent(data);
                                             // Set an alarm three days before end.
                                             let date = new Date(milestone.start.toISOString());
@@ -1061,24 +1082,26 @@ define([
                                             cal.addAlarm(event, {
                                                 type: 0, 
                                                 title: data.title,
-                                                date: date
+                                                date: date,
+                                                description: "Der Meilenstein "+data.title+" ist fast erreicht!"
                                             });
                                             // Set an alarm one week before end.
                                             date.setDate(date.getDate() - 4);
                                             cal.addAlarm(event, {
                                                 type: 0, 
                                                 title: data.title,
-                                                date: date
+                                                date: date,
+                                                description: "Der Meilenstein "+data.title+" rückt näher!"
                                             });
                                         } catch(error){
                                             console.log("ICalExport: Konnte Event nicht registrieren! \r\n"+error.toString());
                                         }
                                     }
-                                )
-                            }                            
-                            
-                            console.log(cal.print());
-                            //window.open("data:text/calendar;charset=utf-8,"+exp.print());
+                                );
+                            }   
+                            //this.toICalLink = "data:text/calendar;charset=utf-8,"+escape(cal.print()); 
+                            console.log(link);
+                           
                         } catch(error){
                             console.log("ICalExport: Konnte den Export nicht erfolgreich abschließen! \r\n "+error.toString());
                         }
