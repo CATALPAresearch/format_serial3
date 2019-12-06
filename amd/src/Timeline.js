@@ -1165,8 +1165,6 @@ define([
                                     }
                                 )
                             }      
-                            var link = document.createElement("a");
-                            link.href = "data:text/calendar;charset=utf-8,"+cal.print();
                             let now = new Date();
                             let year = now.getFullYear().toString().padStart(4, "0");
                             let month = now.getMonth() + 1;      
@@ -1174,7 +1172,9 @@ define([
                             let day = now.getDate().toString().padStart(2, "0");
                             let hour = now.getHours().toString().padStart(2, "0");
                             let minutes = now.getMinutes().toString().padStart(2, "0");
-                            let title = document.title.replace(/[^A-Za-z0-9]/g, "");                                       
+                            let title = document.title.replace(/[^A-Za-z0-9]/g, "");      
+                            var link = document.createElement("a");
+                            link.href = "data:text/calendar;charset=utf-8,"+escape(cal.print());                                 
                             link.download = "Semesterplanung_"+title+"_"+year+month+day+hour+minutes+".ics";
                             link.click();                                                                                        
                         } catch(error){
