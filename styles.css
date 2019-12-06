@@ -432,7 +432,10 @@ select#select_year {
     position:relative;
     width:100%;
 }
-.strategy-selected-check {}
+.strategy-selected-check,
+.recourses-selected-check {
+    vertical-align: middle;
+}
 
 .strategy-selected-name,
 .resources-selected-name {
@@ -562,30 +565,80 @@ svg {
     margin-bottom: 10px;
 }
 
-.survey-starter {
-    text-align: center;
-    width: 100px;
-    height: 100px;
-    background-color: #004C97;
-    border: solid transparent 1px;
-    border-radius: 50%;
-    display: inline-block;
-    color: #fff;
-    margin-left: auto;
-    margin-right: auto;
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-    cursor: pointer;
+.wrapper{   padding: 20px;     } 
+@keyframes shadow-pulse{  0% {    box-shadow: 0 0 0 0px rgba(0, 0, 0, 0.2);  }  100% {    box-shadow: 0 0 0 35px rgba(0, 0, 0, 0);  }}
+@keyframes shadow-pulse-big{  0% {    box-shadow: 0 0 0 0px rgba(0, 0, 0, 0.1);  }  100% {    box-shadow: 0 0 0 70px rgba(0, 0, 0, 0);  }}
+.survey-animate{  
+    float: left;  
+    margin: 40px;  
+    width: 130px;  
+    height: 130px;  
+    font: 13px/130px 'Barlow Semi Condensed', sans-serif;  
+    text-transform: uppercase;  
+    letter-spacing: 1px;  
+    color: #fff;  
+    text-align: center;  
+    background: rgba(30, 144, 255, 0.6);  
+    border-radius: 50%;  
+    animation: shadow-pulse 4s infinite;
 }
+.survey-starter {      
+    background-color: #008FAC;          
+    -webkit-box-shadow: 0 2px 4px -1px rgba(0,0,0,.2),0 4px 5px 0 rgba(0,0,0,.14),0 1px 10px 0 rgba(0,0,0,.12);
+    box-shadow: 0 2px 4px -1px rgba(0,0,0,.2),0 4px 5px 0 rgba(0,0,0,.14),0 1px 10px 0 rgba(0,0,0,.12);        
+    -webkit-transition: -webkit-box-shadow .28s cubic-bezier(.4,0,.2,1);
+    transition: -webkit-box-shadow .28s cubic-bezier(.4,0,.2,1);
+    -o-transition: box-shadow .28s cubic-bezier(.4,0,.2,1);
+    transition: box-shadow .28s cubic-bezier(.4,0,.2,1);
+    transition: box-shadow .28s cubic-bezier(.4,0,.2,1),
+    -webkit-box-shadow .28s cubic-bezier(.4,0,.2,1);        
+    cursor: pointer;    
+    font-family: Roboto,sans-serif;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-font-smoothing: antialiased;
+    font-size: .875rem;
+    line-height: 2.25rem;
+    font-weight: 500;
+    letter-spacing: .0892857143em;
+    text-decoration: none;
+    text-transform: uppercase;
+    padding: 0 8px;
+    display: -ms-inline-flexbox;
+    display: inline-flex;
+    position: relative;
+    -ms-flex-align: center;
+    align-items: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    min-width: 64px;
+    height: 36px;
+    border: none;
+    outline: none;
+    line-height: inherit;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-appearance: none;
+    overflow: hidden;
+    vertical-align: middle;
+    border-radius: 4px;
+    width: 200px;color: #fff;}
+
 
 .survey-starter:hover {
-    background-color: #008FAC;
+    background-color: #004C97;
+    animation: none;
 }
 
 .survey-starter .fa {
-    font-size: 2.5em;
+    font-size: 1.2em;
     box-shadow: none;
     border: none;
     border-radius: none;
+    margin-left:10px;
 }
 
 .survey-starter span {
@@ -945,7 +998,30 @@ svg {
     margin:0;
     right:0;
     position: absolute;
-    padding: 0 6px !important;
+    padding: 1px 15px 0 15px !important;
+    text-transform: uppercase;
+    color: #008FAC !important;
+    border: solid 1px #008FAC !important;
+    background-color: #fff;
+    font-family: Roboto, sans-serif;
+    font-size: .875rem;
+    font-weight: 500;
+    text-decoration: none;
+    text-transform: uppercase;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    outline: none;
+    user-select: none;
+    -webkit-appearance: none;
+    overflow: visible;
+    vertical-align: middle;
+    cursor: pointer;
+}
+
+.introjs-btn:hover{
+    background-color: rgb(245, 245, 245) !important;
 }
 
 .introjs-tooltip {
@@ -955,24 +1031,124 @@ svg {
 
 .badge-ms {
     margin-left: 2px;
+    border-width: 0;
+    font-weight:normal !important;
+    font-size: 0.8em !important;
+    border-radius: .5rem;
+}
+
+.badge-ms .fa {
+    margin-right: 6px;
 }
 
 .badge-ready {
     background-color: #80bd9e !important;
+    color:#fff !important;
 }
 
 .badge-progress {
-    background-color:  #ddd !important;
+    border-color: #80bd9e !important;
+    border-width: 1px;
+    border-style: solid;
+    background-color:  #fff !important;
+    color:#5b5b5b !important;
 }
 
 .badge-urgent {
-    background-color: #ffa500 !important;
+    background-color: #ffbe47 !important;
+    color:#5b5b5b !important;
 }
 
 .badge-missed {
-    background-color:  #ff420e !important;
+    background-color:  #ff7e5a !important;
+    color:#5b5b5b !important;
+    padding-left:8px !important;
 }
 
 .badge-reflected {
     background-color:  #008FAC !important;
+}
+
+
+.btn-cust-outlined {
+    color: #008FAC;
+    background-color: transparent;
+    padding: 0 15px 0 15px;
+    font-family: Roboto, sans-serif;
+    font-size: .875rem;
+    font-weight: 500;
+    letter-spacing: .08em;
+    text-decoration: none;
+    text-transform: uppercase;
+    display: inline-flex;
+    position: relative;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    min-width: 64px;
+    outline: none;
+    user-select: none;
+    -webkit-appearance: none;
+    overflow: visible;
+    vertical-align: middle;
+    cursor: pointer;
+    border-width: 1px;
+    border-style: solid;
+    border-radius: 4px;
+    border-color: #008FAC;
+}
+
+.btn-cust-outlined:hover{
+    background-color: #e6ecf077;
+}
+
+
+.btn-cust-contained {
+    cursor: pointer;
+    height: 36px;
+    background-color: #008FAC;
+    color:#fff;
+    box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2),0px 2px 2px 0px rgba(0, 0, 0, 0.14),0px 1px 5px 0px rgba(0,0,0,.12);
+    transition: box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1);
+    padding: 0 16px 0 16px;
+    font-family: Roboto, sans-serif;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-font-smoothing: antialiased;
+    font-size: .875rem;
+    line-height: 2.25rem;
+    font-weight: 500;
+    letter-spacing: .0892857143em;
+    text-decoration: none;
+    text-transform: uppercase;
+    display: inline-flex;
+    position: relative;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    min-width: 64px;
+    border: none;
+    outline: none;
+    line-height: inherit;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-appearance: none;
+    overflow: visible;
+    vertical-align: middle;
+    border-radius: 4px;
+}
+
+
+/* Remove checkboxes of the progress lists */
+span.autocompletion, .tooglecompletion {
+    display:none !important;
+}
+
+#completionprogressid {
+    display: none;
+}
+
+.togglecompletion {
+    display: none !important;
 }
