@@ -107,7 +107,7 @@ define([
                         done: [],
                         range: [],
                         milestones: [],
-                        calendar: [],
+                        calendar: {},
                         /*  [{
                               id: 3867650,
                               name: 'Planung',
@@ -248,12 +248,12 @@ define([
                     utils.get_ws('getcalendar', {
                         'courseid': parseInt(course.id, 10)
                     }, function (e) {
-                        try{
+                        try{                            
                             if(typeof e.data === "string" && e.data.length > 0){
                                 this.calendar = JSON.parse(e.data);                   
-                            }  
+                            }
                         } catch(error){
-                            console.log("Der Kalender konnte nicht exportiert werden.");
+                            console.log("Der Kalender konnte nicht exportiert werden. \r\n"+error.toString());
                         }                                             
                     });
 
