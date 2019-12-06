@@ -27,7 +27,7 @@ define([
         var width = document.getElementById('ladtopic-container-0').offsetWidth;
         var margins = { top: 15, right: 10, bottom: 20, left: 10 };
         var course = {
-            id: parseInt($('#courseid').text(), 10)
+            id: parseInt($('#courseid').text(), 10)           
             // module: parseInt($('#moduleid').html()) 
         };
 
@@ -1164,8 +1164,19 @@ define([
                                         }                                        
                                     }
                                 )
-                            }                            
-                            window.open("data:text/calendar;charset=utf-8,"+escape(cal.print()));                           
+                            }      
+                            var link = document.createElement("a");
+                            link.href = "data:text/calendar;charset=utf-8,"+cal.print();
+                            let now = new Date();
+                            let year = now.getFullYear().toString().padStart(4, "0");
+                            let month = now.getMonth() + 1;      
+                            month = month.toString().padStart(2, "0");
+                            let day = now.getDate().toString().padStart(2, "0");
+                            let hour = now.getHours().toString().padStart(2, "0");
+                            let minutes = now.getMinutes().toString().padStart(2, "0");
+                            let title = document.title.replace(/[^A-Za-z0-9]/g, "");                                       
+                            link.download = "Semesterplanung_"+title+"_"+year+month+day+hour+minutes+".ics";
+                            link.click();                                                                                        
                         } catch(error){
                             console.log("ICalExport: Konnte den Export nicht erfolgreich abschließen! \r\n "+error.toString());
                         }

@@ -836,7 +836,7 @@ $modalMilestone = '
                                                         </li>
                                                         <li v-if="milestones.length > 0" class="nav-item">
                                                             <a 
-                                                                class="nav-link" @click="toICal" data-toggle="pill" href="#" role="tab">
+                                                                class="nav-link" @click="toICal($event)" data-toggle="pill" href="#" role="tab">
                                                                 <i class="fa fa-clock"></i>Exportieren
                                                             </a>
                                                         </li>
