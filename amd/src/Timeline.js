@@ -1049,10 +1049,14 @@ define([
                                 this.milestones.forEach(
                                     (milestone) => {
                                         try{
+                                            let initDate = new Date(milestone.end.toISOString());
+                                            initDate.setHours(12);
+                                            initDate.setMinutes(0);
+                                            initDate.setSeconds(0);
                                             let data = {
                                                 uid: milestone.id,
                                                 title: milestone.name,
-                                                start: milestone.end                                                
+                                                start: initDate                                              
                                             }
                                             // Generate description
                                             let description = milestone.objective ? "Lernziel: "+milestone.objective : "";                                            
@@ -1098,10 +1102,8 @@ define([
                                         }
                                     }
                                 );
-                            }   
-                            //this.toICalLink = "data:text/calendar;charset=utf-8,"+escape(cal.print()); 
-                            console.log(link);
-                           
+                            }                               
+                            window.open("data:text/calendar;charset=utf-8,"+escape(cal.print()));                           
                         } catch(error){
                             console.log("ICalExport: Konnte den Export nicht erfolgreich abschließen! \r\n "+error.toString());
                         }
