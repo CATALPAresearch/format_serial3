@@ -250,7 +250,7 @@ define([
                     }, function (e) {
                         try{                            
                             if(typeof e.data === "string" && e.data.length > 0){
-                                this.calendar = JSON.parse(e.data);                   
+                                _this.calendar = JSON.parse(e.data);                   
                             }
                         } catch(error){
                             console.log("Der Kalender konnte nicht exportiert werden. \r\n"+error.toString());
@@ -1069,7 +1069,7 @@ define([
                                             initDate.setSeconds(0);
                                             let data = {
                                                 uid: milestone.id,
-                                                title: milestone.name,
+                                                title: "[Meilenstein] "+milestone.name,
                                                 start: initDate                                              
                                             }
                                             // Generate description
@@ -1116,7 +1116,55 @@ define([
                                         }
                                     }
                                 );
-                            }                               
+                            }       
+                            // Register all calendar events                   
+                            if(typeof this.calendar === "object" && Object.keys(this.calendar).length > 0){
+                                Object.keys(this.calendar).forEach(
+                                    (id) => {
+                                        try{
+                                            let entry = this.calendar[id];
+                                            let type = "[Nutzertermin]";
+                                            switch(entry.eventtype){
+                                                case "course":      type = "[Kurstermin]"
+                                                                    break;
+                                                case "category":    type = "[Kursbereich]"
+                                                                    break;
+                                                case "site":        type = "[Seitentermin]"
+                                                                    break;
+                                                case "group":       type = "[Gruppentermin]"
+                                                                    break;
+                                            }
+                                            let data = {
+                                                uid: id+entry.timemodified,
+                                                title: type+" "+entry.name,
+                                                start: new Date(entry.timestart*1000)                                              
+                                            } 
+                                            if(entry.timeduration) data.stop = new Date(entry.timestart*1000 + entry.timeduration*1000);
+                                            data.description = entry.description;
+                                            let event = cal.addEvent(data);
+                                            // Set an alarm three days before end.
+                                            let date = new Date(data.start.toISOString());
+                                            date.setDate(date.getDate() - 3);                                            
+                                            cal.addAlarm(event, {
+                                                type: 0, 
+                                                title: data.title,
+                                                date: date,
+                                                description: "Der Termin "+data.title+" ist fast erreicht!"
+                                             });
+                                             // Set an alarm one week before end.
+                                             date.setDate(date.getDate() - 4);
+                                             cal.addAlarm(event, {
+                                                type: 0, 
+                                                title: data.title,
+                                                date: date,
+                                                description: "Der Termin "+data.title+" rückt näher!"
+                                             });
+                                        } catch(error){
+                                            console.log("ICalExport: Konnte Event nicht registrieren! \r\n"+error.toString());
+                                        }                                        
+                                    }
+                                )
+                            }                            
                             window.open("data:text/calendar;charset=utf-8,"+escape(cal.print()));                           
                         } catch(error){
                             console.log("ICalExport: Konnte den Export nicht erfolgreich abschließen! \r\n "+error.toString());
