@@ -1047,7 +1047,7 @@ define([
                             }
                         )                                  
                     },
-                    toICal: function(link){
+                    toICal: function(){
                         try{
                             // Initialize the calendar
                             let config =  {

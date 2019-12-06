@@ -833,16 +833,16 @@ $modalMilestone = '
                                                                 class="nav-link" @click="showAdditionalCharts()" id="milestone-timeline-tab" data-toggle="pill" href="#view-timeline" role="tab" aria-controls="view-timeline" aria-selected="true">
                                                                 <i class="fa fa-clock"></i>Zeitleiste
                                                             </a>
-                                                        </li>
-                                                        <li v-if="milestones.length > 0" class="nav-item">
+                                                        </li>                                                       
+                                                        <li class="nav-item">                                                          
                                                             <a 
-                                                                class="nav-link" @click="toICal($event)" data-toggle="pill" href="#" role="tab">
+                                                                class="nav-link" @click="toICal()" id="milestone-timeline-tab" data-toggle="pill" href="#" role="tab" aria-controls="view-timeline" aria-selected="true">
                                                                 <i class="fa fa-clock"></i>Exportieren
                                                             </a>
-                                                        </li>
+                                                        </li>                                                        
                                                         <li v-if="surveyDone > 0" class="wide-list">
                                                             <button class="btn btn-outline-info btn-sm introjs-btn" @click="startIntroJs()">Anleitung - So geht’s!</button>
-                                                        </li>                                                        
+                                                        </li>                                                
                                                     </ul>
                                                     
                                                 </div>
