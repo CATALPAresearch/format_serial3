@@ -1,7 +1,7 @@
 /**
 * @author Marc Burchart
 * @email marc.burchart@fernuni-hagen.de
-* @description A collection of classes to handle the ICAL calendar export.
+* @description Export all important calendar events using the ical format. 
 * @version 1.0.0
 */
 
@@ -13,9 +13,9 @@ define([
 ], function ($, ajax) {
     
     const Messages = {
-        InvalidConfigData: "Falsche Konfiguration",
-        InvalidEventData: "Invalid Event Data",
-        InvalidAlarmData: "Invalid Alarm Data"
+        InvalidConfigData: "ICalExport: Falsche Konfiguration des Kalenders",
+        InvalidEventData: "ICalExport: Falsche Konfiguration des Ereignisses",
+        InvalidAlarmData: "ICalExport: Falsche Konfiguration des Alarms"
     }  
 
     enum EAlarmType{
