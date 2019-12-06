@@ -34,7 +34,6 @@ class format_ladtopics_external extends external_api {
 
     /**
      * Get calendar data
-     * @author Marc
      */
 
     public static function getcalendar_parameters() {        
