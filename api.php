@@ -34,10 +34,10 @@ class format_ladtopics_external extends external_api {
 
     /**
      * Get calendar data
+     * @author Marc
      */
 
-    public static function getcalendar_parameters() {
-        //  VALUE_REQUIRED, VALUE_OPTIONAL, or VALUE_DEFAULT. If not mentioned, a value is VALUE_REQUIRED 
+    public static function getcalendar_parameters() {        
         return new external_function_parameters(
             array(
                 'courseid' => new external_value(PARAM_INT, 'course id')
@@ -47,27 +47,38 @@ class format_ladtopics_external extends external_api {
     public static function getcalendar_returns() {
         return new external_single_structure(
                 array(
-                    'data' => new external_value(PARAM_RAW, 'data'),
-                    'user' => new external_value(PARAM_RAW, 'data')
+                    'data' => new external_value(PARAM_RAW, 'data')
                 )
         );
-    }
+    }    
     public static function getcalendar($data) {
         global $CFG, $DB, $USER;
-
         $transaction = $DB->start_delegated_transaction(); 
-        $query ='SELECT * FROM ' . $CFG->prefix . 'event WHERE courseid = '+(int)$data->courseid;
-        $data = $DB->get_records_sql($query);
-        $transaction->allow_commit();
-        
-        $user_data = array(
-            'username' => $USER->username,
-            'firstname' =>  $USER->firstname,
-            'lastname' =>  $USER->lastname,
-            'userid' =>  $USER->id
-        );
-        
-        return array('data'=>json_encode($arr), 'user'=>json_encode($user_data));
+        $sql = '
+            SELECT * FROM '.$CFG->prefix.'event
+            WHERE '.$CFG->prefix.'event.eventtype = "site" 
+            OR ('.$CFG->prefix.'event.eventtype = "user" AND '.$CFG->prefix.'event.userid = '.$USER->id.')
+            OR ('.$CFG->prefix.'event.eventtype = "group" 
+                AND '.$CFG->prefix.'event.courseid = '.$USER->id.'
+                AND '.$CFG->prefix.'event.groupid in 
+                (SELECT '.$CFG->prefix.'groups.id 
+                    FROM '.$CFG->prefix.'groups
+                    INNER JOIN '.$CFG->prefix.'groups_members
+                    ON '.$CFG->prefix.'groups.id = '.$CFG->prefix.'groups_members.groupid
+                WHERE '.$CFG->prefix.'groups_members.userid = '.$USER->id.')
+            )
+            OR ('.$CFG->prefix.'event.eventtype = "course" AND '.$CFG->prefix.'event.courseid = '.(int)$data->courseid.')
+            OR ('.$CFG->prefix.'event.eventtype = "category" AND '.$CFG->prefix.'event.categoryid in
+   		        (SELECT '.$CFG->prefix.'course_categories.id
+                    FROM '.$CFG->prefix.'course_categories
+                    INNER JOIN '.$CFG->prefix.'course
+                    ON '.$CFG->prefix.'course_categories.id = '.$CFG->prefix.'course.category
+                WHERE '.$CFG->prefix.'course.id = '.(int)$data->courseid.')
+            )
+            ORDER BY '.$CFG->prefix.'event.timestart ASC';                
+        $data = $DB->get_records_sql($sql);
+        $transaction->allow_commit();           
+        return array('data'=>json_encode($data));
     }
     public static function getcalendar_is_allowed_from_ajax() { return true; }
 
@@ -580,15 +591,12 @@ class format_ladtopics_external extends external_api {
         
         return array('response'=> json_encode('hello'));
     } 
-    public static function logger_is_allowed_from_ajax() { return true; }
-
-    
-
-
+    public static function logger_is_allowed_from_ajax() { return true; } 
 
     /**
      * Get milestones of a user
      */
+
     public static function getmilestones_parameters() {
         return new external_function_parameters(                
             array(

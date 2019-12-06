@@ -107,6 +107,7 @@ define([
                         done: [],
                         range: [],
                         milestones: [],
+                        calendar: [],
                         /*  [{
                               id: 3867650,
                               name: 'Planung',
@@ -242,18 +243,18 @@ define([
                             _this.closeModal();
                         }
                     });*/
-                    // Load Events from the calendar
-                    console.log("precal");
+
+                    // Load Events from the calendar                   
                     utils.get_ws('getcalendar', {
-                        'courseid': 10
+                        'courseid': parseInt(course.id, 10)
                     }, function (e) {
-                        try {
-                            console.log(e);
-                            console.log("ES HAT GEKLAPPT!");
-                        } catch (e) {
-                            // eslint-disable-next-line no-console
-                            console.error(e);
-                        }
+                        try{
+                            if(typeof e.data === "string" && e.data.length > 0){
+                                this.calendar = JSON.parse(e.data);                   
+                            }  
+                        } catch(error){
+                            console.log("Der Kalender konnte nicht exportiert werden.");
+                        }                                             
                     });
 
                 },
