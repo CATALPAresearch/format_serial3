@@ -219,8 +219,7 @@ define([
                                 _this.milestones = [];
                             } else {
                                 // todo: A validation of the JSON should be feasible
-                                _this.milestones = JSON.parse(data.milestones);
-                                _this.sortMilestones();
+                                _this.milestones = JSON.parse(data.milestones);                                
                                 _this.emptyMilestone.end = new Date();
                                 _this.updateMilestoneStatus();
                                 _this.initializeChart();
