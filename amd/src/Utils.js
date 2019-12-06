@@ -28,7 +28,8 @@ define(['jquery', 'core/ajax'], function ($, ajax) {
                     }
                 },
                 fail: function (e) {
-                    // eslint-disable-next-line no-console
+                    // eslint-disable-next-line no-console                    
+                    console.log("=== format_ladtopics_"+ ws+" ===");
                     console.error(e);
                 }
             }]);

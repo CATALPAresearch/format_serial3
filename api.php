@@ -32,6 +32,45 @@ class format_ladtopics_external extends external_api {
         );
     }
 
+    /**
+     * Get calendar data
+     */
+
+    public static function getcalendar_parameters() {
+        //  VALUE_REQUIRED, VALUE_OPTIONAL, or VALUE_DEFAULT. If not mentioned, a value is VALUE_REQUIRED 
+        return new external_function_parameters(
+            array(
+                'courseid' => new external_value(PARAM_INT, 'course id')
+            )
+        );
+    }
+    public static function getcalendar_returns() {
+        return new external_single_structure(
+                array(
+                    'data' => new external_value(PARAM_RAW, 'data'),
+                    'user' => new external_value(PARAM_RAW, 'data')
+                )
+        );
+    }
+    public static function getcalendar($data) {
+        global $CFG, $DB, $USER;
+
+        $transaction = $DB->start_delegated_transaction(); 
+        $query ='SELECT * FROM ' . $CFG->prefix . 'event WHERE courseid = '+(int)$data->courseid;
+        $data = $DB->get_records_sql($query);
+        $transaction->allow_commit();
+        
+        $user_data = array(
+            'username' => $USER->username,
+            'firstname' =>  $USER->firstname,
+            'lastname' =>  $USER->lastname,
+            'userid' =>  $USER->id
+        );
+        
+        return array('data'=>json_encode($arr), 'user'=>json_encode($user_data));
+    }
+    public static function getcalendar_is_allowed_from_ajax() { return true; }
+
 
     /*
      * Get logstore data

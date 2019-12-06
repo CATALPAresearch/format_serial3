@@ -34,7 +34,7 @@ define([
         utils.get_ws('logstore', {
             'courseid': parseInt(course.id, 10)
         }, function (e) {
-            try {
+            try {                
                 draw(JSON.parse(e.data), logger);
             } catch (e) {
                 // eslint-disable-next-line no-console
@@ -242,6 +242,19 @@ define([
                             _this.closeModal();
                         }
                     });*/
+                    // Load Events from the calendar
+                    console.log("precal");
+                    utils.get_ws('getcalendar', {
+                        'courseid': 10
+                    }, function (e) {
+                        try {
+                            console.log(e);
+                            console.log("ES HAT GEKLAPPT!");
+                        } catch (e) {
+                            // eslint-disable-next-line no-console
+                            console.error(e);
+                        }
+                    });
 
                 },
                 created: function () {
