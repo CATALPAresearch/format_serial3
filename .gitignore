@@ -1,2 +1,5 @@
 *.code-workspace
 _trash
+x.html
+test.html
+node_modules
