@@ -731,7 +731,7 @@ class format_ladtopics_external extends external_api {
             $r->userid = $userid;
             $r->name = $data['fieldname'] . '-course-' . $data['courseid'];
             $exists = $DB->record_exists('user_preferences', array(
-                'name' => $data['fieldname'], 
+                'name' => $data['fieldname'] . '-course-' . $data['courseid'], 
                 'userid'=>$userid
             ));
             $res='nix';
