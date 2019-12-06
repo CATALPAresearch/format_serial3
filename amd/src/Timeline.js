@@ -1033,18 +1033,6 @@ define([
                             }                           
                             let cal = new ICalExport(ICalLib, config);
                             // Register all Milestones
-                            /*
-                             id: 3867650,
-                              name: 'Planung',
-                              objective: 'Mein Semester planen',
-                              start: '2019,9,1',
-                              end: '2019,10,1',
-                              status: 'urgent',
-                              progress: 1.00,
-                              resources: [],
-                              strategies: [],
-                              reflections: [],
-                              */
                             if(this.milestones && this.milestones.length > 0){
                                 this.milestones.forEach(
                                     (milestone) => {
