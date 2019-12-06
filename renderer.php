@@ -66,9 +66,10 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                         <div id="planningsurvey" display="visibility: hidden;">
                             <div v-if="!surveyComplete" class="row survey-btn">
                                 <div class="col-sm-2 col-centered">
-                                    <div @click="showModal()" class="survey-starter" data-toggle="modal" data-target="#theSurveyModal">
-                                        <i class="fa fa-question"></i><br />
-                                        <span>Lernen mit Plan</span>
+                                    <div class="wrapper">
+                                        <div @click="showModal()" class="survey-starter survey-animate" data-toggle="modal" data-target="#theSurveyModal">
+                                            <span>Lernen mit Plan</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -227,12 +228,13 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                                                             <option :selected="true" disabled value="default">Wählen Sie Themen, Materialien
                                                                 und Aktivitäten</option>
                                                             <optgroup v-for="section in resourceSections()" :label="section.name">
-                                                                <option :value="\'complete-section-\'+section.id">Alles im Abschnitt: {{section.name}}</option>
+                                                                <!--<option :value="\'complete-section-\'+section.id">Alles im Abschnitt: {{section.name}}</option>-->
                                                                 <option v-for="s in resourcesBySection(section.id)" :value="s.id">{{ s.instance_type }}: {{ s.name }}</option>
                                                             </optgroup>
                                                         </select>
                                                     </div>
                                                 </div>
+                                                {{ resources }}
                                             </div>
                                             <br />
                                             <div class="row row-smooth">
