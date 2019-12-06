@@ -19,9 +19,10 @@ define([
     M.cfg.wwwroot + '/course/format/ladtopics/amd/src/ActivityChart.js',
     M.cfg.wwwroot + '/course/format/ladtopics/amd/src/InitialSurvey.js',
     M.cfg.wwwroot + '/course/format/ladtopics/amd/src/Assessment.js',
-    M.cfg.wwwroot + '/course/format/ladtopics/amd/src/Logging.js'
+    M.cfg.wwwroot + '/course/format/ladtopics/amd/src/Logging.js',
+    M.cfg.wwwroot + '/course/format/ladtopics/amd/src/ICalExport.js'
 ],
-    function ($, jqueryui, Timeline, Utils, filterChart, activityChart, initialSurvey, Assessment, Log) {
+    function ($, jqueryui, Timeline, Utils, filterChart, activityChart, initialSurvey, Assessment, Log, ICalExport) {
 
         require.config({
             enforceDefine: false,
@@ -41,7 +42,8 @@ define([
                     */
                 "moment224": ["moment-with-locales-gz.min"], // ["moment.min"],
                 "intro293": ["intro"],
-                "sortable110": ["sortable.min"]
+                "sortable110": ["sortable.min"],
+                "ICAL": ["ical.min"]
                 /*
                 "crossfilter2": "crossfilter.v2",
                 "crossfilter": "https://cdnjs.cloudflare.com/ajax/libs/crossfilter/1.3.5/crossfilter",
@@ -62,6 +64,9 @@ define([
                 },
                 'crossfilter': {
                     exports: 'crossfilter'
+                },
+                'ICAL': {
+                    exports: 'ICAL'
                 }
                 /*,
                 'reductio': {
@@ -106,8 +111,9 @@ define([
                 // 'bootstrap_select',
                 'moment224',
                 'intro293',
-                'sortable110'
-            ], function (vue, crossfilter, d3, dc, moment, intro, sortable) {
+                'sortable110',
+                'ICAL'
+            ], function (vue, crossfilter, d3, dc, moment, intro, sortable, ICalLib) {
                 var utils = new Utils(dc, d3);
                 var logger = new Log(utils, courseid, {
                     context: 'format_ladtopics',
@@ -125,7 +131,9 @@ define([
                     logger,
                     filterChart,
                     activityChart,
-                    initialSurvey
+                    initialSurvey,
+                    ICalExport,
+                    ICalLib
                 );
                 // var t = new Assessment(vue, d3, dc, crossfilter, moment);
             });

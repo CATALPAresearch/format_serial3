@@ -23,7 +23,7 @@ define([
     /**
      * Plot a timeline
      */
-    var Timeline = function (Vue, d3, dc, crossfilter, moment, Sortable, utils, introJs, logger, FilterChart, ActivityChart, InitialSurvey) {
+    var Timeline = function (Vue, d3, dc, crossfilter, moment, Sortable, utils, introJs, logger, FilterChart, ActivityChart, InitialSurvey, ICalExport, ICalLib) {
         var width = document.getElementById('ladtopic-container-0').offsetWidth;
         var margins = { top: 15, right: 10, bottom: 20, left: 10 };
         var course = {
@@ -219,7 +219,7 @@ define([
                                 _this.milestones = [];
                             } else {
                                 // todo: A validation of the JSON should be feasible
-                                _this.milestones = JSON.parse(data.milestones);
+                                _this.milestones = JSON.parse(data.milestones);                                
                                 _this.emptyMilestone.end = new Date();
                                 _this.updateMilestoneStatus();
                                 _this.initializeChart();
@@ -1023,6 +1023,93 @@ define([
                         }
                         this.timeFilterChart.replaceFilter(dc.filters.RangedFilter(range[0], range[1]));
                         this.timeFilterChart.filterTime();
+                    },
+                    sortMilestones: function(){                        
+                        this.milestones.sort(
+                            function(a,b) {
+                                let x = new Date(a.end);
+                                let y = new Date(b.end);
+                                let now = new Date();                           
+                                if(a.status === 'progress' && b.status !== "progress") return -1;  
+                                if(x-now >= 0 && y-now < 0) return -1;                           
+                                return y - x;
+                            }
+                        )                                  
+                    },
+                    toICal: function(link){
+                        try{
+                            // Initialize the calendar
+                            let config =  {
+                                prodid: "APLE",
+                                domain: "APLE",
+                                tzid: "Europe/Berlin",
+                                type: "Gregorian",
+                                version: "2.0"
+                            }                           
+                            let cal = new ICalExport(ICalLib, config);
+                            // Register all Milestones
+                            if(this.milestones && this.milestones.length > 0){
+                                this.milestones.forEach(
+                                    (milestone) => {
+                                        try{
+                                            let initDate = new Date(milestone.end.toISOString());
+                                            initDate.setHours(12);
+                                            initDate.setMinutes(0);
+                                            initDate.setSeconds(0);
+                                            let data = {
+                                                uid: milestone.id,
+                                                title: milestone.name,
+                                                start: initDate                                              
+                                            }
+                                            // Generate description
+                                            let description = milestone.objective ? "Lernziel: "+milestone.objective : "";                                            
+                                            if(milestone.resources && milestone.resources.length > 0){
+                                                description += "\n\nZu diesem Meilenstein gehören folgende Lernressourcen:";
+                                                milestone.resources.forEach(
+                                                    (resource) => {      
+                                                        let done = resources.checked ? "[erledigt] " : "";        
+                                                        if(resources.instance_title) description += "\n- "+done+resources.instance_title;                                                        
+                                                    }
+                                                )
+                                            }
+                                            if(milestone.strategies && milestone.strategies.length > 0){                                                
+                                                description += "\n\nZu diesem Meilenstein gehören folgende Lernstrategien:";
+                                                milestone.strategies.forEach(
+                                                    (strategie) => {      
+                                                        let done = strategie.checked ? "[erledigt] " : "";        
+                                                        if(strategie.name) description += "\n- "+done+strategie.name;                                                        
+                                                    }
+                                                )
+                                            }
+                                            data.description = description;
+                                            let event = cal.addEvent(data);
+                                            // Set an alarm three days before end.
+                                            let date = new Date(milestone.start.toISOString());
+                                            date.setDate(date.getDate() - 3);                                            
+                                            cal.addAlarm(event, {
+                                                type: 0, 
+                                                title: data.title,
+                                                date: date,
+                                                description: "Der Meilenstein "+data.title+" ist fast erreicht!"
+                                            });
+                                            // Set an alarm one week before end.
+                                            date.setDate(date.getDate() - 4);
+                                            cal.addAlarm(event, {
+                                                type: 0, 
+                                                title: data.title,
+                                                date: date,
+                                                description: "Der Meilenstein "+data.title+" rückt näher!"
+                                            });
+                                        } catch(error){
+                                            console.log("ICalExport: Konnte Event nicht registrieren! \r\n"+error.toString());
+                                        }
+                                    }
+                                );
+                            }                               
+                            window.open("data:text/calendar;charset=utf-8,"+escape(cal.print()));                           
+                        } catch(error){
+                            console.log("ICalExport: Konnte den Export nicht erfolgreich abschließen! \r\n "+error.toString());
+                        }
                     }
                 }
             });
