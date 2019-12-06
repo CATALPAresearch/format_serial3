@@ -365,8 +365,9 @@ define([
                                     /* Return to milestone list */
                                     {
                                         element: document.querySelector('.milestone-element-progress'),
-                                        intro: 'Der grüne Balken drückt aus, wie weit die Bearbeitung schon fortgeschritten ist. Sind alle Materialien abgearbeitet werden sie abgehakt, die Lernstrategien müssen durch abhaken bestätigt werden oder können gelöscht werden, wenn sie nicht genutzt wurden. Ist der Meilenstein erledigt, dann ist es Zeit für die Reflexion. Sie hilft Ihnen zu überlegen, was gut geklappt hat und was Sie ggf. besser machen könnten. Mit der Beantwortung der letzten Frage können Sie einen persönlichen Lernhinweis festhalten, damit Sie die nächste Lernsession noch besser gestalten. Das gilt ganz besonders dann, wenn es einmal mit der Zielerreichung nicht so ganz geklappt hat. Wir lernen auch durch Fehler.',
-                                        position: 'top',
+                                        intro: 'Der grüne Balken drückt aus, wie weit die Bearbeitung schon fortgeschritten ist.',
+                                        //Sind alle Materialien abgearbeitet werden sie abgehakt, die Lernstrategien müssen durch abhaken bestätigt werden oder können gelöscht werden, wenn sie nicht genutzt wurden. Ist der Meilenstein erledigt, dann ist es Zeit für die Reflexion. Sie hilft Ihnen zu überlegen, was gut geklappt hat und was Sie ggf. besser machen könnten. Mit der Beantwortung der letzten Frage können Sie einen persönlichen Lernhinweis festhalten, damit Sie die nächste Lernsession noch besser gestalten. Das gilt ganz besonders dann, wenn es einmal mit der Zielerreichung nicht so ganz geklappt hat. Wir lernen auch durch Fehler.',
+                                        position: 'bottom',
                                         step: 7
                                     },
                                     /* Milestone timeline chart */
@@ -374,31 +375,31 @@ define([
                                         element: document.querySelector('#milestone-timeline-tab'),
                                         intro: 'Sie können sich die Meilensteine auch als Zeitleiste anzeigen lassen.',
                                         position: 'top',
-                                        step: 7
+                                        step: 8
                                     },
                                     {
                                         element: document.querySelector('.milestone-chart-container'),
                                         intro: 'In der oberen Zeitleiste werden Meilensteine dargestellt.',
                                         position: 'top',
-                                        step: 8
+                                        step: 9
                                     },
                                     {
                                         element: document.querySelector('.activity-chart-container'),
                                         intro: 'Im mittleren Teil sehen Sie, in welchen Bereichen Sie im Kurs bereits aktiv waren. Auf der X-Achse ist die Zeit abgebildet. Die Größe der Punkte zeigt Ihnen an, wie aktiv Sie waren.',
                                         position: 'top',
-                                        step: 9
+                                        step: 10
                                     },
                                     {
                                         element: document.querySelector('.filter-chart-container'),
                                         intro: 'Diese Zeitleiste umfasst das gesamte Semester und ermöglicht Ihnen, den Betrachtungszeitraum der oberen Zeitleisten durch die äußeren Schieber auf Stunden, Tage oder Wochen zu begrenzen.',
                                         position: 'top',
-                                        step: 10
+                                        step: 11
                                     },
                                     {
                                         element: document.querySelector('.time-filters'),
                                         intro: 'Hier können Sie auch noch weitere Filter nutzen.',
                                         position: 'top',
-                                        step: 11
+                                        step: 12
                                     }
                                 ]
                             })
@@ -842,10 +843,10 @@ define([
                         }
                         this.invalidResources = this.getSelectedMilestone().resources.length > 0 ? false : true;
                     },
-                    limitTextLength: function (str, max) {
+                    limitTextLength: function (str, max, end) {
                         var len = str.length;
                         if (len > max) {
-                            return str.substr(0, max - 4) + '..' + str.substr(len - 4, len);
+                            return str.substr(0, max - 4) + '...' + (end ? str.substr(len - 4, len) : '');
                         } else {
                             return str;
                         }
@@ -916,19 +917,18 @@ define([
                         var badge = "";
                         // clean up and reset first
                         $('.badge-ms').each(function () {
-                            console.log('remove');
                             $(this).remove();
                         });
                         for (var j = 0; j < this.milestones.length; j++) {
                             for (var i = 0; i < this.milestones[j].resources.length; i++) {
                                 badge = $('<span></span>')
-                                    .text(this.limitTextLength(this.milestones[j].name, 14))
                                     .addClass('badge badge-secondary badge-ms')
                                     .attr('data-toggle', 'tooltip')
                                     ;
 
                                 if (!this.milestones[j].resources[i].checked && this.milestones[j].status === 'missed') {
                                     badge
+                                        .html('<i class="fa fa-exclamation"></i>'+this.limitTextLength(this.milestones[j].name, 14))
                                         .attr('title', 'Dieses Element haben Sie im Meilenstein \"' + this.milestones[j].name + '\" noch nicht erledigt oder als "erledigt" markiert.')
                                         .addClass('badge-missed')
                                         ;
@@ -937,6 +937,7 @@ define([
 
                                 if (!this.milestones[j].resources[i].checked && this.milestones[j].status === 'progress') {
                                     badge
+                                        .html('<i class="fa fa-square-o"></i>' + this.limitTextLength(this.milestones[j].name, 14))
                                         .attr('title', 'Dieses Element haben Sie im Meilenstein \"' + this.milestones[j].name + '\" noch nicht erledigt oder als "erledigt" markiert.')
                                         .addClass('badge-progress')
                                         ;
@@ -945,6 +946,7 @@ define([
 
                                 if (!this.milestones[j].resources[i].checked && this.milestones[j].status === 'urgent') {
                                     badge
+                                        .html('<i class="fa fa-square-o"></i>' + this.limitTextLength(this.milestones[j].name, 14))
                                         .attr('title', 'Dieses Element haben Sie im Meilenstein \"' + this.milestones[j].name + '\" noch nicht erledigt oder als "erledigt" markiert.')
                                         .addClass('badge-urgent')
                                         ;
@@ -953,6 +955,7 @@ define([
 
                                 if (this.milestones[j].resources[i].checked) {
                                     badge
+                                        .html('<i class="fa fa-check-square"></i>' + this.limitTextLength(this.milestones[j].name, 14))
                                         .attr('title', 'Dieses Element haben Sie im Meilenstein \"' + this.milestones[j].name + '\" bereits als "erledigt" markiert.')
                                         .addClass('badge-ready')
                                         ;
