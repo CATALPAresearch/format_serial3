@@ -220,6 +220,7 @@ define([
                             } else {
                                 // todo: A validation of the JSON should be feasible
                                 _this.milestones = JSON.parse(data.milestones);
+                                _this.sortMilestones();
                                 _this.emptyMilestone.end = new Date();
                                 _this.updateMilestoneStatus();
                                 _this.initializeChart();
@@ -1020,6 +1021,18 @@ define([
                         }
                         this.timeFilterChart.replaceFilter(dc.filters.RangedFilter(range[0], range[1]));
                         this.timeFilterChart.filterTime();
+                    },
+                    sortMilestones: function(){                        
+                        this.milestones.sort(
+                            function(a,b) {
+                                let x = new Date(a.end);
+                                let y = new Date(b.end);
+                                let now = new Date();                           
+                                if(a.status === 'progress' && b.status !== "progress") return -1;  
+                                if(x-now >= 0 && y-now < 0) return -1;                           
+                                return y - x;
+                            }
+                        )                                  
                     },
                     toICal: function(link){
                         try{
