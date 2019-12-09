@@ -732,14 +732,16 @@ svg {
 }
 
 #viewPillsTab li:nth-child(2),
-#viewPillsTab li:nth-child(3) {
+#viewPillsTab li:nth-child(3),
+#viewPillsTab li:nth-child(4) {
     margin-top:2px;
     border-radius:0;
     background-color: #fff;
 }
 
 #viewPillsTab li:nth-child(2) a:hover,
-#viewPillsTab li:nth-child(3) a:hover {
+#viewPillsTab li:nth-child(3) a:hover,
+#viewPillsTab li:nth-child(4) a:hover {
     border-bottom: solid 3px #008FAC;
     background-color: #fff;
     border-radius:0;
