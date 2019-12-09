@@ -270,7 +270,7 @@ $milestoneList = '
             <div class="milestone-element-table-head name">Meilenstein</div><div class="milestone-element-table-head due">Termin</div><div class="milestone-element-table-head">Fortschritt</div>
         </div>
     </li>
-    <li v-for="m in milestones" class="milestone-element">
+    <li v-for="m in milestones" class="milestone-element" v-bind:class="\'milestone-entry-\'+m.id">
         <div :class="m.status == \'urgent\' ? \'milestone-urgent milestone-element-header\' : \'milestone-element-header\'">
             <a :class="m.status == \'missed\' ? \'milestone-missed milestone-element-name\' : \'milestone-element-name\'" data-toggle="collapse" :href="\'#milestone-entry-\' + m.id" role="button" aria-expanded="false" :aria-controls="\'milestone-entry-\' + m.id">
                 <i class="element-collapsed fa fa-angle-right angle"></i> 

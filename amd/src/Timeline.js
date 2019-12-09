@@ -934,13 +934,28 @@ define([
                             $(this).remove();
                         });
                         for (var j = 0; j < this.milestones.length; j++) {
-                            for (var i = 0; i < this.milestones[j].resources.length; i++) {
+                            let pos = this.milestones[j].id;
+                            for (var i = 0; i < this.milestones[j].resources.length; i++) {                               
                                 badge = $('<span></span>')
                                     .text(this.limitTextLength(this.milestones[j].name, 14))
                                     .addClass('badge badge-secondary badge-ms')
                                     .attr('data-toggle', 'tooltip')
+                                    .click(function(){
+                                        let nav = $("nav");
+                                        $(".milestone-entry-"+pos+" .milestone-entry-details").collapse("show");
+                                        let offset = $(".milestone-entry-"+pos).offset().top;
+                                        if(nav.length > 0) {
+                                            offset = offset - nav.outerHeight();
+                                        }
+                                        $('html, body').animate({
+                                            scrollTop: offset
+                                        }, 1000);
+                                    })
+                                    .css({
+                                        "user-select": "none",
+                                        "cursor": "pointer"
+                                    })
                                     ;
-
                                 if (!this.milestones[j].resources[i].checked && this.milestones[j].status === 'missed') {
                                     badge
                                         .attr('title', 'Dieses Element haben Sie im Meilenstein \"' + this.milestones[j].name + '\" noch nicht erledigt oder als "erledigt" markiert.')
