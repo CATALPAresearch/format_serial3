@@ -215,12 +215,11 @@ define([
                     }, function (e) {
                         if (e !== null) {
                             var data = JSON.parse(e.milestones);
-
                             if (!data || !data.milestones) {
                                 _this.milestones = [];
                             } else {
                                 // todo: A validation of the JSON should be feasible
-                                _this.milestones = JSON.parse(data.milestones);                                
+                                _this.milestones = JSON.parse(data.milestones);                                                   
                                 _this.emptyMilestone.end = new Date();
                                 _this.updateMilestoneStatus();
                                 _this.initializeChart();
@@ -243,7 +242,7 @@ define([
                             _this.closeModal();
                         }
                     });*/
-
+                    
                     // Load Events from the calendar                   
                     utils.get_ws('getcalendar', {
                         'courseid': parseInt(course.id, 10)
@@ -272,7 +271,7 @@ define([
                     $('#filter-presets').hide();
                 },
                 watch: {
-                    milestones: function (newMilestone) {
+                    milestones: function (newMilestone) {                                 
                         //console.log('watch ms called')
                         //this.updateMilestones();
                     },
@@ -666,7 +665,7 @@ define([
                         var d = new Date();
                         this.emptyMilestone.start = new Date();
 
-                        this.milestones.push(this.emptyMilestone);
+                        this.milestones.push(this.emptyMilestone);  
                         logger.add('milestone_created', {
                             milestoneId: this.emptyMilestone.id,
                             name: this.emptyMilestone.name,
@@ -879,6 +878,7 @@ define([
                         return ((resourceProgress + strategiesProgress) / 2);
                     },
                     updateMilestones: function () {
+                        this.sortMilestones();
                         // Update Milestones to the database using the webservice
                         var _this = this;
                         utils.get_ws('setmilestones', {
@@ -1050,21 +1050,30 @@ define([
                         this.timeFilterChart.replaceFilter(dc.filters.RangedFilter(range[0], range[1]));
                         this.timeFilterChart.filterTime();
                     },
-                    sortMilestones: function(){                        
-                        this.milestones.sort(
-                            function(a,b) {
-                                let x = new Date(a.end);
-                                let y = new Date(b.end);
-                                let now = new Date();                           
-                                if(a.status === 'progress' && b.status !== "progress") return -1;  
-                                if(x-now >= 0 && y-now < 0) return -1;                           
-                                return y - x;
-                            }
-                        )                                  
+                    sortMilestones: function(){   
+                       this.milestones.sort(
+                           function(a, b){
+                               let x = new Date(a.end);
+                               let y = new Date(b.end);
+                               let now = new Date();
+                               if(a.status === "urgent" && b.status !== "urgent") return -1;
+                               if(b.status === "urgent" && a.status !== "urgent") return 1;
+                               if(a.status === "progress" && b.status !== "progress") return -1;
+                               if(b.status === "progress" && a.status !== "progress") return 1;
+                               if(a.status === "ready" && b.status !== "ready") return -1;
+                               if(b.status === "ready" && a.status !== "ready") return 1;
+                               if(a.status === "reflected" && b.status !== "reflected") return -1;
+                               if(b.status === "reflected" && a.status !== "reflected") return 1;
+                               if(a.end >= now && b.end < now) return -1;
+                               if(b.end >= now && a.end < now) return 1;
+                               if(x < now && y < now) return y - x;
+                               return x - y;
+                           }
+                       )
                     },
                     toICal: function(){
                         try{
-                            // Initialize the calendar
+                            // Initialize the calendar  
                             let config =  {
                                 prodid: "APLE",
                                 domain: "APLE",
