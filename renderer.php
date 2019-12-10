@@ -129,6 +129,7 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                                                         v-model="availableTime">
                                                 </div>
                                                 <div class="col-12 alert-invalid" role="alert" v-if="invalidAvailableTime">Geben Sie bitte eine Anzahl an Stunden, die größer Null ist.</div>
+                                                <div class="col-12 alert-warning" role="warning">{{ isAvailableTimeSufficient() }}</div>
                                             </div>
                                             <hr>
                                             <div class="form-check row">
@@ -603,6 +604,35 @@ $modalMilestone = '
                             placeholder="Welches Lernziel verfolgen Sie?">
                     </div>
                     <div class="col-sm-10 alert-invalid" v-if="invalidObjective">Geben Sie bitte ein Lernziel an.</div>
+                </div>
+                <div class="form-group row">
+                    <label for="" class="col-2 col-form-label">Begin *</label>
+                    <div class="col-4">
+                        <select @change="startDaySelected" id="select_day"
+                            :style="invalidStartDay ? \'border: solid 1px #ff420e;\' : \'none\'"
+                            v-model="startDayOfSelectedMilestone"
+                            >
+                            <option v-for="d in dayRange()"
+                                :value="d">{{ d }}
+                            </option>
+                        </select>
+
+                        <select @change="startMonthSelected" id="select_month"
+                            v-model="startMonthOfSelectedMilestone">
+                            <option v-for="d in monthRange()"
+                                
+                                :value="d.num">{{ d.name }}</option>
+                        </select>
+
+                        <select @change="startYearSelected" id="select_year"
+                            v-model="startYearOfSelectedMilestone">
+                            <option v-for="d in yearRange()"
+                                
+                                :value="d">{{ d }}</option>
+                        </select>
+                    </div>
+                    <div v-if="invalidDay" class="col-sm-10 alert-invalid">Wählen Sie bitte ein gültiges Datum aus. Den {{ selectedDay }}. gibt es im ausgwählten Monat nicht. </div>
+                    <div v-if="invalidStartDate" class="col-sm-10 alert-invalid">Wählen Sie bitte ein Datum nach dem Semesterbeginn und innerhalb der nächsten 12 Monate aus.</div>
                 </div>
                 <div class="form-group row">
                     <label for="" class="col-2 col-form-label">Termin *</label>
