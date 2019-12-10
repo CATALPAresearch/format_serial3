@@ -1845,13 +1845,13 @@ define(['jquery'], function ($) {
                     if (this.availableTime <= 0) {
                         return "";
                     } else if (this.objective === "f1a" && this.availableTime === 1) {
-                        return "Eine Stunde pro Woche ist zu wenig Zeit, um sich auf die Prüfung vorzubereiten. Die Workload für ein Modul beträgt 19h pro Woche.";
+                        return "Eine Stunde pro Woche ist zu wenig Zeit, um sich auf die Prüfung vorzubereiten. Der Arbeitsaufwand für ein Modul beträgt 19h pro Woche.";
                     } else if (this.objective === "f1a" && this.availableTime > 1 && this.availableTime <= 10) {
-                        return this.availableTime + " Stunden pro Woche sind zu wenig Zeit, um sich auf die Prüfung vorzubereiten. Die Workload für ein Modul beträgt 19h pro Woche.";
+                        return this.availableTime + " Stunden pro Woche sind zu wenig Zeit, um sich auf die Prüfung vorzubereiten. Der Arbeitsaufwand für ein Modul beträgt 19h pro Woche.";
                     } else if (this.objective !== "f1a" && this.availableTime === 1) {
-                        return "Eine Stunde pro Woche ist zu wenig Zeit, um das Modul in einem Semester durchzuarbeiten. Die Workload für ein Modul beträgt 19h pro Woche.";
+                        return "Eine Stunde pro Woche ist zu wenig Zeit, um das Modul in einem Semester durchzuarbeiten. Der Arbeitsaufwand für ein Modul beträgt 19h pro Woche.";
                     } else if (this.objective !== "f1a" && this.availableTime > 1 && this.availableTime <= 10) {
-                        return this.availableTime + " Stunden pro Woche sind zu wenig Zeit, um das Modul in einem Semester durchzuarbeiten. Die Workload für ein Modul beträgt 19h pro Woche.";
+                        return this.availableTime + " Stunden pro Woche sind zu wenig Zeit, um das Modul in einem Semester durchzuarbeiten. Der Arbeitsaufwand für ein Modul beträgt 19h pro Woche.";
                     } else if (this.availableTime >= 30) {
                         return "Wollen Sie wirklich " + this.availableTime + " Stunden pro Woche aufwenden? Normalerweise benötigt man ca. 20 h/Woche für eine gute Vorbereitung.";
                     }
