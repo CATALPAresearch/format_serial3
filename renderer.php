@@ -281,7 +281,7 @@ $milestoneList = '
                 {{ m.name }}
             </a>
             <span
-                data-toggle="tooltop" data-placement="top" :title="\'Termin: \'+getReadableTime(m.end)" 
+                data-toggle="tooltop" data-placement="top" :title="\'Beginn: \' + getReadableTime(m.start) + \'Ende: \' + getReadableTime(m.start)" 
                 :class="m.status == \'missed\' ? \'milestone-missed milestone-element-due\' : \'milestone-element-due\'">
                 {{ fromNow(m.end) }}
             </span>
@@ -388,16 +388,16 @@ $milestoneTimeline = '
     <svg style="border: none;" :width="width" :height="height+margins.top">
         <g :transform="\'translate(\'+( margins.left  ) +\',\'+ margins.top +\')\'">
             <rect v-for="m in milestones" @click="showModal(m.id)" class="milestone-learning-progress"
-                :x="xx(m.end)" :y="getYLane(m.id) * (barheight + bardist)" :height="barheight"
-                :width="barwidth * m.progress" data-toggle="modal" data-target="#theMilestoneModal">
+                :x="xx(m.start)" :y="getYLane(m.id) * (barheight + bardist)" :height="barheight"
+                :width="duration(m.start, m.end) * m.progress" data-toggle="modal" data-target="#theMilestoneModal">
             </rect>
             <rect v-for="m in milestones" @click="showModal(m.id)"
                 :class="\'milestone-bar milestone-\'+ m.status" :id="\'milestoneBar_\'+m.id"
-                :x="xx(m.end)" :y="getYLane(m.id) * (barheight + bardist)" :height="barheight"
-                :width="barwidth" :data-legend="m.id" data-toggle="modal" data-target="#theMilestoneModal">
+                :x="xx(m.start)" :y="getYLane(m.id) * (barheight + bardist)" :height="barheight"
+                :width="duration(m.start, m.end)" :data-legend="m.id" data-toggle="modal" data-target="#theMilestoneModal">
             </rect>
             <text v-for="m in milestones" @click="showModal(m.id)" class="milestone-label"
-                :x="xx(m.end) + barwidth / 2" :y="getYLane(m.id) * (barheight + bardist) + (barheight)/2 + 2"
+                :x="xx(m.start) + duration(m.start, m.end) / 2" :y="getYLane(m.id) * (barheight + bardist) + (barheight)/2 + 2"
                 data-toggle="modal"
                 data-target="#theMilestoneModal">{{ limitTextLength( m.name, 14 ) }}</text>
         </g>

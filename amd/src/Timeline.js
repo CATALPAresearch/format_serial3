@@ -161,10 +161,16 @@ define([
                         invalidResources: false,
                         invalidStrategy: false,
                         invalidEndDate: false,
+                        invalidStartDate: false,
                         selectedDay: 1,
                         selectedMonth: 1,
                         selectedYear: 2019,
                         invalidDay: false,
+                        selectedStartDay: 1,
+                        selectedStartMonth: 1,
+                        selectedStartYear: 2019,
+                        invalidEndDay: false,
+                        invalidStartDay: false,
                         filterPreset: '',
                         selectedMilestone: 0,
                         modalVisible: false,
@@ -219,8 +225,9 @@ define([
                                 _this.milestones = [];
                             } else {
                                 // todo: A validation of the JSON should be feasible
-                                _this.milestones = JSON.parse(data.milestones);                                
+                                _this.milestones = JSON.parse(data.milestones);
                                 _this.emptyMilestone.end = new Date();
+                                _this.emptyMilestone.start = new Date();
                                 _this.updateMilestoneStatus();
                                 _this.initializeChart();
 
@@ -289,6 +296,30 @@ define([
                     yearOfSelectedMilestone: {
                         get: function () {
                             return this.getSelectedMilestone().end.getFullYear();
+                        },
+                        set: function (d) {
+
+                        }
+                    },
+                    startDayOfSelectedMilestone: {
+                        get: function () {
+                            return this.getSelectedMilestone().start.getDate();
+                        },
+                        set: function (d) {
+
+                        }
+                    },
+                    startMonthOfSelectedMilestone: {
+                        get: function () {
+                            return this.getSelectedMilestone().start.getMonth() + 1;
+                        },
+                        set: function (d) {
+
+                        }
+                    },
+                    startYearOfSelectedMilestone: {
+                        get: function () {
+                            return this.getSelectedMilestone().start.getFullYear();
                         },
                         set: function (d) {
 
@@ -513,7 +544,15 @@ define([
                         var x_ = d3.scaleTime()
                             .domain(this.range)
                             .range([0, this.width - this.padding])(x);
+                            console.log(x,x_)
                         return x_;
+                    },
+                    duration: function (start, end) {
+                        //console.log('range', this.range, start, end);
+                        //console.log(moment(end).diff(moment(start)));
+                        var x_start = d3.scaleTime().domain(this.range).range([0, this.width - this.padding])(start);
+                        var x_end = d3.scaleTime().domain(this.range).range([0, this.width - this.padding])(end);
+                        return x_end - x_start;
                     },
                     /*y_: function() {
                         return d3.scaleLinear()
@@ -651,7 +690,7 @@ define([
                         this.emptyMilestone.id = Math.ceil(Math.random() * 1000);
                         this.emptyMilestone.end = new Date(this.selectedYear, this.selectedMonth - 1, this.selectedDay, 12);
                         var d = new Date();
-                        this.emptyMilestone.start = new Date();
+                        this.emptyMilestone.start = new Date(this.selectedStartYear, this.selectedStartMonth - 1, this.selectedStartDay, 12);
 
                         this.milestones.push(this.emptyMilestone);
                         logger.add('milestone_created', {
@@ -754,11 +793,56 @@ define([
                         if (
                             moment(endDate).diff(moment(new Date(2019, 8, 30, 23, 59)), 'minutes') > 0 &&
                             moment(endDate).diff(moment(new Date()), 'years') < 1
-                            ) {
+                        ) {
                             this.invalidEndDate = false;
                             this.getSelectedMilestone().end = endDate;
                         } else {
                             this.invalidEndDate = true;
+                        }
+                    },
+                    startDaySelected: function (event, d) {
+                        var day = event ? parseInt(event.target.value) : d;
+
+                        if ([4, 6, 9, 11].indexOf(parseInt(this.selectedStartMonth, 10)) !== -1 && parseInt(day, 10) === 31) {
+                            this.invalidStartDay = true;
+                            this.selectedStartMonth++;
+                            return;
+                        } else if (parseInt(this.selectedStartMonth, 10) === 2 && day > 29) {
+                            this.invalidDay = true;
+                            return;
+                        } else if (parseInt(this.selectedStartMonth, 10) === 2 && day === 29 && !(parseInt(this.selectedYear, 10) % 4 === 0 && parseInt(this.selectedYear, 10) % 100 !== 0 || parseInt(this.selectedYear, 10) % 400 === 0)) {
+                            this.invalidDay = true;
+                            return;
+                        } else {
+                            this.invalidDay = false;
+                        }
+                        this.selectedStartDay = day;
+
+                        if (this.invalidStartDay === false) {
+                            this.setStartDateFromSelectedValues();
+                            return true;
+                        }
+                        return false;
+                    },
+                    startMonthSelected: function (event) {
+                        this.selectedStartMonth = event.target.value;
+                        this.startDaySelected(undefined, this.selectedStartDay); // check if the combination of day and month is valid
+                    },
+                    startYearSelected: function (event) {
+                        this.selectedStartYear = event.target.value;
+                        this.setStartDateFromSelectedValues();
+                    },
+                    setStartDateFromSelectedValues: function () {
+                        var startDate = new Date(this.selectedStartYear, this.selectedStartMonth - 1, this.selectedStartDay);
+                        // Prohobit start dates before the semester start
+                        if (
+                            moment(startDate).diff(moment(new Date(2019, 8, 30, 23, 59)), 'minutes') > 0 &&
+                            moment(startDate).diff(moment(new Date()), 'years') < 1
+                        ) {
+                            this.invalidStartDate = false;
+                            this.getSelectedMilestone().start = startDate;
+                        } else {
+                            this.invalidStartDate = true;
                         }
                     },
                     dayRange: function () {
@@ -928,7 +1012,7 @@ define([
 
                                 if (!this.milestones[j].resources[i].checked && this.milestones[j].status === 'missed') {
                                     badge
-                                        .html('<i class="fa fa-exclamation"></i>'+this.limitTextLength(this.milestones[j].name, 14))
+                                        .html('<i class="fa fa-exclamation"></i>' + this.limitTextLength(this.milestones[j].name, 14))
                                         .attr('title', 'Dieses Element haben Sie im Meilenstein \"' + this.milestones[j].name + '\" noch nicht erledigt oder als "erledigt" markiert.')
                                         .addClass('badge-missed')
                                         ;
@@ -1024,34 +1108,34 @@ define([
                         this.timeFilterChart.replaceFilter(dc.filters.RangedFilter(range[0], range[1]));
                         this.timeFilterChart.filterTime();
                     },
-                    sortMilestones: function(){                        
+                    sortMilestones: function () {
                         this.milestones.sort(
-                            function(a,b) {
+                            function (a, b) {
                                 let x = new Date(a.end);
                                 let y = new Date(b.end);
-                                let now = new Date();                           
-                                if(a.status === 'progress' && b.status !== "progress") return -1;  
-                                if(x-now >= 0 && y-now < 0) return -1;                           
+                                let now = new Date();
+                                if (a.status === 'progress' && b.status !== "progress") return -1;
+                                if (x - now >= 0 && y - now < 0) return -1;
                                 return y - x;
                             }
-                        )                                  
+                        )
                     },
-                    toICal: function(link){
-                        try{
+                    toICal: function (link) {
+                        try {
                             // Initialize the calendar
-                            let config =  {
+                            let config = {
                                 prodid: "APLE",
                                 domain: "APLE",
                                 tzid: "Europe/Berlin",
                                 type: "Gregorian",
                                 version: "2.0"
-                            }                           
+                            }
                             let cal = new ICalExport(ICalLib, config);
                             // Register all Milestones
-                            if(this.milestones && this.milestones.length > 0){
+                            if (this.milestones && this.milestones.length > 0) {
                                 this.milestones.forEach(
                                     (milestone) => {
-                                        try{
+                                        try {
                                             let initDate = new Date(milestone.end.toISOString());
                                             initDate.setHours(12);
                                             initDate.setMinutes(0);
@@ -1059,25 +1143,25 @@ define([
                                             let data = {
                                                 uid: milestone.id,
                                                 title: milestone.name,
-                                                start: initDate                                              
+                                                start: initDate
                                             }
                                             // Generate description
-                                            let description = milestone.objective ? "Lernziel: "+milestone.objective : "";                                            
-                                            if(milestone.resources && milestone.resources.length > 0){
+                                            let description = milestone.objective ? "Lernziel: " + milestone.objective : "";
+                                            if (milestone.resources && milestone.resources.length > 0) {
                                                 description += "\n\nZu diesem Meilenstein gehören folgende Lernressourcen:";
                                                 milestone.resources.forEach(
-                                                    (resource) => {      
-                                                        let done = resources.checked ? "[erledigt] " : "";        
-                                                        if(resources.instance_title) description += "\n- "+done+resources.instance_title;                                                        
+                                                    (resource) => {
+                                                        let done = resources.checked ? "[erledigt] " : "";
+                                                        if (resources.instance_title) description += "\n- " + done + resources.instance_title;
                                                     }
                                                 )
                                             }
-                                            if(milestone.strategies && milestone.strategies.length > 0){                                                
+                                            if (milestone.strategies && milestone.strategies.length > 0) {
                                                 description += "\n\nZu diesem Meilenstein gehören folgende Lernstrategien:";
                                                 milestone.strategies.forEach(
-                                                    (strategie) => {      
-                                                        let done = strategie.checked ? "[erledigt] " : "";        
-                                                        if(strategie.name) description += "\n- "+done+strategie.name;                                                        
+                                                    (strategie) => {
+                                                        let done = strategie.checked ? "[erledigt] " : "";
+                                                        if (strategie.name) description += "\n- " + done + strategie.name;
                                                     }
                                                 )
                                             }
@@ -1085,30 +1169,30 @@ define([
                                             let event = cal.addEvent(data);
                                             // Set an alarm three days before end.
                                             let date = new Date(milestone.start.toISOString());
-                                            date.setDate(date.getDate() - 3);                                            
+                                            date.setDate(date.getDate() - 3);
                                             cal.addAlarm(event, {
-                                                type: 0, 
+                                                type: 0,
                                                 title: data.title,
                                                 date: date,
-                                                description: "Der Meilenstein "+data.title+" ist fast erreicht!"
+                                                description: "Der Meilenstein " + data.title + " ist fast erreicht!"
                                             });
                                             // Set an alarm one week before end.
                                             date.setDate(date.getDate() - 4);
                                             cal.addAlarm(event, {
-                                                type: 0, 
+                                                type: 0,
                                                 title: data.title,
                                                 date: date,
-                                                description: "Der Meilenstein "+data.title+" rückt näher!"
+                                                description: "Der Meilenstein " + data.title + " rückt näher!"
                                             });
-                                        } catch(error){
-                                            console.log("ICalExport: Konnte Event nicht registrieren! \r\n"+error.toString());
+                                        } catch (error) {
+                                            console.log("ICalExport: Konnte Event nicht registrieren! \r\n" + error.toString());
                                         }
                                     }
                                 );
-                            }                               
-                            window.open("data:text/calendar;charset=utf-8,"+escape(cal.print()));                           
-                        } catch(error){
-                            console.log("ICalExport: Konnte den Export nicht erfolgreich abschließen! \r\n "+error.toString());
+                            }
+                            window.open("data:text/calendar;charset=utf-8," + escape(cal.print()));
+                        } catch (error) {
+                            console.log("ICalExport: Konnte den Export nicht erfolgreich abschließen! \r\n " + error.toString());
                         }
                     }
                 }
