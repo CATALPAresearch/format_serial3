@@ -1683,7 +1683,24 @@ define(['jquery'], function ($) {
                 // Obtain course structure form DB
                 var _this = this;
                 utils.get_ws('coursestructure', {
-                    courseid: parseInt(course.id, 10)
+                    courseid: parseInt(course.id, 10),    
+                    select: {    
+                        modules: JSON.stringify([
+                            "assign", 
+                            "data", 
+                            "hvp", 
+                            "checklist", 
+                            "url", 
+                            "studentquiz", 
+                            "page", 
+                            "feedback",
+                            "forum",
+                            "resource",
+                            "glossary",
+                            "quiz",
+                            "wiki"
+                        ])                            
+                    }                 
                     // eslint-disable-next-line space-before-function-paren
                 }, function (e) {
                     try {

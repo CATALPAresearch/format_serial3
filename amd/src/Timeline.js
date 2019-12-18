@@ -256,6 +256,8 @@ define([
                         }                                             
                     });
 
+                    this.createMilestonePicker();
+
                 },
                 created: function () {
                     var _this = this;
@@ -456,11 +458,29 @@ define([
                         this.selectedMonth = 1; // (new Date()).getMonth() + 1;
                         this.selectedYear = 2019; // (new Date()).getFullYear();
                         // obtain course structure form DB
-                        var t1 = new Date().getTime();
+                        var t1 = new Date().getTime();                        
                         utils.get_ws('coursestructure', {
-                            courseid: parseInt(course.id, 10)
+                            courseid: parseInt(course.id, 10),
+                            select: {    
+                                modules: JSON.stringify([
+                                    "assign", 
+                                    "data", 
+                                    "hvp", 
+                                    "checklist", 
+                                    "url", 
+                                    "studentquiz", 
+                                    "page", 
+                                    "feedback",
+                                    "forum",
+                                    "resource",
+                                    "glossary",
+                                    "quiz",
+                                    "wiki"
+                                ])                            
+                            }                               
                         }, function (e) {
                             try {
+                               console.log(e);
                                 _this.resources = JSON.parse(e.data);
                                 //console.log('Ladezeit', t1 - (new Date()).getTime());
                                 //console.log('course-structure-result', _this.resources.map(function(e) { return e.id; }));
@@ -1204,6 +1224,11 @@ define([
                         } catch(error){
                             console.log("ICalExport: Konnte den Export nicht erfolgreich abschließen! \r\n "+error.toString());
                         }
+                    },
+                    createMilestonePicker: function(){
+                        console.log("=== RESSOURCES ===");
+                        console.log(this.ressources);
+                        console.log("=== RESSOURCES ===");
                     }
                 }
             });
