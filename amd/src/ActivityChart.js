@@ -28,7 +28,7 @@ define(['jquery'
     };
     var actionTypes = Object.keys(label);
     var width = document.getElementById('ladtopic-container-0').offsetWidth;
-    var margins = { top: 15, right: 10, bottom: 20, left: 10 };
+    var margins = { top: 15, right: 0, bottom: 20, left: 10 };
 
     /**
      * Plot a timeline
@@ -37,10 +37,21 @@ define(['jquery'
      * @param utils (Object) Custome util class
      */
     var activityChart = function (d3, dc, crossfilter, moment, data, utils) {
+        
+        const courseSettings = {
+            start: 1569880800, // 1.08.19
+            end: 1585691999
+        }; 
+        data = data.filter(function (d) {
+            return d.utc >= courseSettings.start && d.utc < courseSettings.end ? true : false;
+        });
+        
         // charts
         chart = dc.bubbleChart("#timeline-chart");
 
-        this.chart = function () { return chart; };
+        this.chart = function () {
+            return chart;
+        };
 
         data.forEach(function (d, i) {
             d.date = new Date(d.utc * 1000);
@@ -100,7 +111,8 @@ define(['jquery'
         var countActionTypes = tmp.filter(function (value, index, self) {
             return self.indexOf(value) === index;
         }).length;
-        countActionTypes = countActionTypes < 2 ? 5 : countActionTypes;
+
+        countActionTypes = 6;//countActionTypes < 2 ? 5 : countActionTypes;
         chart
             .width(width)
             .height(20 * countActionTypes)
@@ -138,21 +150,22 @@ define(['jquery'
             ;
 
         this.update = function (range) {
-            chart.x(d3.scaleTime().domain(range));
+            chart
+                .x(d3.scaleTime().domain(range))
+                .selectAll('line.grid-line')
+                .attr('y2', chart.effectiveHeight())
+                .attr('opacity', 0.5)
+                ;
+            //chart.selectAll('line.grid-line').attr('y2', chart.effectiveHeight());
             chart.render();
         };
-
-        chart.render();
 
         // correct axis positioning
         chart.selectAll('.axis.y .tick')
             .attr('transform', "translate(50,0)")
             .style('transition-duration', '0');
 
-        chart.on('pretransition', function () {
-            chart.selectAll('line.grid-line').attr('y2', chart.effectiveHeight());
-        });
-
+        // add y-axis labels
         chart
             .elasticY(true)
             .yAxisPadding(0) // for values greater 0 the second tick label disappears
@@ -163,6 +176,14 @@ define(['jquery'
                     return label[actionTypes[d]];
                 }
             });
+        chart.render();
+
+        // redraw lines
+        chart.on('pretransition', function () {
+            chart.selectAll('line.grid-line')
+                .attr('y2', chart.effectiveHeight())
+                .attr('opacity', 0.5);
+        });
 
         chart.on('renderlet', function (chart) {
             var y = d3.select('#timeline-chart svg');
@@ -173,19 +194,21 @@ define(['jquery'
             y.selectAll('g.y g.tick text')
                 .attr('text-anchor', 'start')
                 .attr('class', 'timeline-y-label');
+
         });
     };
 
-    if (localStorage.surveyDone) {
+    // bug! local storage is not used anymore
+    /*if (localStorage.surveyDone) {
         $('.activity-chart-container').show();
         $('.filter-chart-container').show();
     } else {
         $('.activity-chart-container').hide();
         $('.filter-chart-container').hide();
-    }
+    }*/
 
     /**
-     * Resize charte if window sizes change
+     * Resize chart if window sizes change
      */
     window.onresize = function (event) {
         // not working
