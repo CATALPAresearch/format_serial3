@@ -479,9 +479,9 @@ define([
                                 ])                            
                             }                               
                         }, function (e) {
-                            try {
-                               console.log(e);
+                            try {                              
                                 _this.resources = JSON.parse(e.data);
+                                console.log(_this.resources);
                                 //console.log('Ladezeit', t1 - (new Date()).getTime());
                                 //console.log('course-structure-result', _this.resources.map(function(e) { return e.id; }));
                                 //console.log('debug', JSON.parse(e.debug));

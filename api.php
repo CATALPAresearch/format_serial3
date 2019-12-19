@@ -229,7 +229,9 @@ class format_ladtopics_external extends external_api {
                         cm.course AS course_id, 
                         cm.module AS module_id, 
                         cm.section AS section_id, 
-                        cs.name AS section_name
+                        cs.name AS section_name,
+                        cs.sequence AS section_sequence,
+                        cs.section AS section_pos
                         FROM {$CFG->prefix}course_modules AS cm
                         JOIN {$CFG->prefix}modules AS m 
                         ON m.id = cm.module
@@ -251,6 +253,11 @@ class format_ladtopics_external extends external_api {
                     $res = $DB->get_records_sql($query, $params); 
                     $transaction->allow_commit();
                     foreach($res as $entry){   
+                        $pos = -1;
+                        if(gettype($entry->section_sequence) === "string" && $entry->section_sequence.length > 0){
+                            $sequence = explode(",", preg_replace("/[^0-9,]/", "", $entry->section_sequence));                            
+                            $pos = array_search(strval($entry->instance_url_id), $sequence);                                              
+                        }                  
                         $out = array(
                             'id' => $activityId++,
                             'course_id' => $entry->course_id,
@@ -262,8 +269,10 @@ class format_ladtopics_external extends external_api {
                             'instance_type' => $entry->instance_type, 
                             'instance_title' => $entry->instance_title,
                             'section' => $entry->section_id, 
-                            'name' => $entry->instance_title 
-                        );                        
+                            'name' => $entry->instance_title,
+                            'pos_module' => $pos,
+                            'pos_section' => $entry->section_pos
+                        );                                                                        
                         array_push($out_data, $out);               
                     }                           
                 }
