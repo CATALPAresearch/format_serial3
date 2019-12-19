@@ -534,6 +534,11 @@ svg {
     color: #555;
 }
 
+.ms-reflection label.question-label {
+    font-weight: bold;
+    padding-left: 0;
+}
+
 .ms-reflection h5 {
     color: #777;
     font-size: 1.2em;
@@ -710,7 +715,7 @@ svg {
     top: 0;
     left: 0;
     display: inline-block;
-    height: 80px;
+    height: 129px;
     width: 20px;
     background-image: url('https://aple.fernuni-hagen.de/course/format/ladtopics/img/label-activities.png');
     background-repeat: no-repeat;
@@ -747,11 +752,12 @@ svg {
 }
 
 .milestone-chart-container {
-    max-height: 86px;
+    min-height: inherit;
 }
 
 .activity-chart-container {
-    max-height: 71px;
+    max-height: 120px;
+    /* 71px*/
 }
 
 .filter-chart-container {
@@ -885,6 +891,7 @@ svg {
     color: #008FAC !important;
     vertical-align: top;
     padding: 2px 0px;
+    cursor: pointer;
 }
 
 .milestone-element-edit:hover {
@@ -988,13 +995,25 @@ svg {
     color: #ced4da;
 }
 
-.wide-list {}
+.ladtopics-pills {
+    display: inline-flex !important;
+}
+
+.settingsMenu {
+    display: inline-flex;
+    text-align: right;
+    align-items: flex-end;
+}
+
+.time-filters .btn-sm {
+    font-size: 0.8em !important;
+}
 
 .introjs-btn {
-    display: inline-block;
+    display: inline-flex;
     margin: 0;
-    right: 0;
-    position: absolute;
+    /*right: 0;
+    position: absolute;*/
     padding: 1px 15px 0 15px !important;
     text-transform: uppercase;
     color: #008FAC !important;
@@ -1041,6 +1060,15 @@ svg {
 .badge-ready {
     background-color: #80bd9e !important;
     color: #fff !important;
+    cursor: pointer;
+}
+
+.badge-ready span {
+    display: none;
+}
+
+.badge-ready:hover span {
+    display: inline;
 }
 
 .badge-progress {
