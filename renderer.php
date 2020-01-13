@@ -368,9 +368,6 @@ $milestoneArchiveList = '
         </div>
     </li>
 </ul>
-<ul>
-        <li>test</li>
-</ul>
 <!-- End Milestone list -->
 ';
 
