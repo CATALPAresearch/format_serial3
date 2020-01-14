@@ -32,14 +32,14 @@ define([
         var width = document.getElementById('ladtopic-container-0').offsetWidth;
         var margins = { top: 15, right: 10, bottom: 20, left: 10 };
         var course = {
-            id: parseInt($('#courseid').text(), 10)           
+            id: parseInt($('#courseid').text(), 10)
             // module: parseInt($('#moduleid').html()) 
         };
 
         utils.get_ws('logstore', {
             'courseid': parseInt(course.id, 10)
         }, function (e) {
-            try {                
+            try {
                 draw(JSON.parse(e.data), logger);
             } catch (e) {
                 // eslint-disable-next-line no-console
@@ -258,18 +258,18 @@ define([
                             _this.closeModal();
                         }
                     });*/
-                    
+
                     // Load Events from the calendar                   
                     utils.get_ws('getcalendar', {
                         'courseid': parseInt(course.id, 10)
                     }, function (e) {
-                        try{                            
-                            if(typeof e.data === "string" && e.data.length > 0){
-                                _this.calendar = JSON.parse(e.data);                   
+                        try {
+                            if (typeof e.data === "string" && e.data.length > 0) {
+                                _this.calendar = JSON.parse(e.data);
                             }
-                        } catch(error){
-                            console.log("Der Kalender konnte nicht exportiert werden. \r\n"+error.toString());
-                        }                                             
+                        } catch (error) {
+                            console.log("Der Kalender konnte nicht exportiert werden. \r\n" + error.toString());
+                        }
                     });
                 },
                 created: function () {
@@ -286,7 +286,7 @@ define([
                     $('#filter-presets').hide();
                 },
                 watch: {
-                    milestones: function (newMilestone) {                                 
+                    milestones: function (newMilestone) {
                         //console.log('watch ms called')
                         //this.updateMilestones();
                     },
@@ -496,30 +496,30 @@ define([
                         this.selectedMonth = 1; // (new Date()).getMonth() + 1;
                         this.selectedYear = 2019; // (new Date()).getFullYear();
                         // obtain course structure form DB
-                        var t1 = new Date().getTime();                        
+                        var t1 = new Date().getTime();
                         utils.get_ws('coursestructure', {
                             courseid: parseInt(course.id, 10),
-                            select: {    
+                            select: {
                                 modules: JSON.stringify([
-                                    "assign", 
-                                    "data", 
-                                    "hvp", 
-                                    "checklist", 
-                                    "url", 
-                                    "studentquiz", 
-                                    "page", 
+                                    "assign",
+                                    "data",
+                                    "hvp",
+                                    "checklist",
+                                    "url",
+                                    "studentquiz",
+                                    "page",
                                     "feedback",
                                     "forum",
                                     "resource",
                                     "glossary",
                                     "quiz",
                                     "wiki"
-                                ])                            
-                            }                               
+                                ])
+                            }
                         }, function (e) {
-                            try {                              
-                                _this.resources = JSON.parse(e.data);    
-                                _this.createMilestonePicker();                            
+                            try {
+                                _this.resources = JSON.parse(e.data);
+                                _this.createMilestonePicker();
                                 //console.log('Ladezeit', t1 - (new Date()).getTime());
                                 //console.log('course-structure-result', _this.resources.map(function(e) { return e.id; }));
                                 //console.log('debug', JSON.parse(e.debug));
@@ -741,6 +741,15 @@ define([
                         if (isValid) {
                             if (this.selectedMilestone === -1) {
                                 this.createMilestone();
+                                Vue.nextTick().then(
+                                    (resolve) => {
+                                        if ($("#milestone-list-tab").hasClass("active")) {
+                                            this.moveToMilestoneListEntry(id, true);
+                                        } else if ($("#milestone-timeline-tab").hasClass("active")) {
+                                            this.moveToMilestoneTimelineEntry(id, 3);
+                                        }
+                                    }
+                                );
                             } else {
                                 $('#theMilestoneModal').modal('hide');
                                 this.updateMilestoneStatus();
@@ -754,7 +763,11 @@ define([
                                     resources: this.getSelectedMilestone().resources.map(function (resource) { return { name: resource.instance_title, section: resource.section, type: resource.instance_type, done: resource.checked !== undefined ? true : false }; }),
                                     strategies: this.getSelectedMilestone().strategies.map(function (strategy) { return { name: strategy.id, done: strategy.checked !== undefined ? true : false }; })
                                 });
-
+                                if ($("#milestone-list-tab").hasClass("active")) {
+                                    this.moveToMilestoneListEntry(this.getSelectedMilestone().id, true);
+                                } else if ($("#milestone-timeline-tab").hasClass("active")) {
+                                    this.moveToMilestoneTimelineEntry(this.getSelectedMilestone().id, 3);
+                                }
                             }
                         }
                     },
@@ -764,7 +777,7 @@ define([
                         var d = new Date();
                         this.emptyMilestone.start = new Date(this.selectedStartYear, this.selectedStartMonth - 1, this.selectedStartDay, 12);
 
-                        this.milestones.push(this.emptyMilestone);  
+                        this.milestones.push(this.emptyMilestone);
                         logger.add('milestone_created', {
                             milestoneId: this.emptyMilestone.id,
                             name: this.emptyMilestone.name,
@@ -1080,15 +1093,15 @@ define([
                         });
                         for (var j = 0; j < this.milestones.length; j++) {
                             let pos = this.milestones[j].id;
-                            for (var i = 0; i < this.milestones[j].resources.length; i++) {                               
+                            for (var i = 0; i < this.milestones[j].resources.length; i++) {
                                 badge = $('<span></span>')
                                     .addClass('badge badge-secondary badge-ms')
                                     .attr('data-toggle', 'tooltip')
-                                    .click(function(){
+                                    .click(function () {
                                         let nav = $("nav");
-                                        $(".milestone-entry-"+pos+" .milestone-entry-details").collapse("show");
-                                        let offset = $(".milestone-entry-"+pos).offset().top;
-                                        if(nav.length > 0) {
+                                        $(".milestone-entry-" + pos + " .milestone-entry-details").collapse("show");
+                                        let offset = $(".milestone-entry-" + pos).offset().top;
+                                        if (nav.length > 0) {
                                             offset = offset - nav.outerHeight();
                                         }
                                         $('html, body').animate({
@@ -1213,13 +1226,18 @@ define([
                                 let x = new Date(a.end);
                                 let y = new Date(b.end);
                                 let now = new Date();
-                                if (a.status === 'progress' && b.status !== "progress") {
-                                    return -1;
-                                }
-                                if (x - now >= 0 && y - now < 0) {
-                                    return -1;
-                                }
-                                return y - x;
+                                if (a.status === "urgent" && b.status !== "urgent") return -1;
+                                if (b.status === "urgent" && a.status !== "urgent") return 1;
+                                if (a.status === "progress" && b.status !== "progress") return -1;
+                                if (b.status === "progress" && a.status !== "progress") return 1;
+                                if (a.status === "ready" && b.status !== "ready") return -1;
+                                if (b.status === "ready" && a.status !== "ready") return 1;
+                                if (a.status === "reflected" && b.status !== "reflected") return -1;
+                                if (b.status === "reflected" && a.status !== "reflected") return 1;
+                                if (a.end >= now && b.end < now) return -1;
+                                if (b.end >= now && a.end < now) return 1;
+                                if (x < now && y < now) return y - x;
+                                return x - y;
                             }
                         );
                     },
@@ -1245,8 +1263,8 @@ define([
                                             initDate.setSeconds(0);
                                             let data = {
                                                 uid: milestone.id,
-                                                title: "[Meilenstein] "+milestone.name,
-                                                start: initDate                                              
+                                                title: "[Meilenstein] " + milestone.name,
+                                                start: initDate
                                             }
                                             // Generate description
                                             let description = milestone.objective ? "Lernziel: " + milestone.objective : "";
@@ -1292,109 +1310,109 @@ define([
                                         }
                                     }
                                 );
-                            }       
+                            }
                             // Register all calendar events                   
-                            if(typeof this.calendar === "object" && Object.keys(this.calendar).length > 0){
+                            if (typeof this.calendar === "object" && Object.keys(this.calendar).length > 0) {
                                 Object.keys(this.calendar).forEach(
                                     (id) => {
-                                        try{
+                                        try {
                                             let entry = this.calendar[id];
                                             let type = "[Nutzertermin]";
-                                            switch(entry.eventtype){
-                                                case "course":      type = "[Kurstermin]"
-                                                                    break;
-                                                case "category":    type = "[Kursbereich]"
-                                                                    break;
-                                                case "site":        type = "[Seitentermin]"
-                                                                    break;
-                                                case "group":       type = "[Gruppentermin]"
-                                                                    break;
+                                            switch (entry.eventtype) {
+                                                case "course": type = "[Kurstermin]"
+                                                    break;
+                                                case "category": type = "[Kursbereich]"
+                                                    break;
+                                                case "site": type = "[Seitentermin]"
+                                                    break;
+                                                case "group": type = "[Gruppentermin]"
+                                                    break;
                                             }
                                             let data = {
-                                                uid: id+entry.timemodified,
-                                                title: type+" "+entry.name,
-                                                start: new Date(entry.timestart*1000)                                              
-                                            } 
-                                            if(entry.timeduration) data.stop = new Date(entry.timestart*1000 + entry.timeduration*1000);
+                                                uid: id + entry.timemodified,
+                                                title: type + " " + entry.name,
+                                                start: new Date(entry.timestart * 1000)
+                                            }
+                                            if (entry.timeduration) data.stop = new Date(entry.timestart * 1000 + entry.timeduration * 1000);
                                             data.description = entry.description;
                                             let event = cal.addEvent(data);
                                             // Set an alarm three days before end.
                                             let date = new Date(data.start.toISOString());
-                                            date.setDate(date.getDate() - 3);                                            
+                                            date.setDate(date.getDate() - 3);
                                             cal.addAlarm(event, {
-                                                type: 0, 
+                                                type: 0,
                                                 title: data.title,
                                                 date: date,
-                                                description: "Der Termin "+data.title+" ist fast erreicht!"
-                                             });
-                                             // Set an alarm one week before end.
-                                             date.setDate(date.getDate() - 4);
-                                             cal.addAlarm(event, {
-                                                type: 0, 
+                                                description: "Der Termin " + data.title + " ist fast erreicht!"
+                                            });
+                                            // Set an alarm one week before end.
+                                            date.setDate(date.getDate() - 4);
+                                            cal.addAlarm(event, {
+                                                type: 0,
                                                 title: data.title,
                                                 date: date,
-                                                description: "Der Termin "+data.title+" rückt näher!"
-                                             });
-                                        } catch(error){
-                                            console.log("ICalExport: Konnte Event nicht registrieren! \r\n"+error.toString());
-                                        }                                        
+                                                description: "Der Termin " + data.title + " rückt näher!"
+                                            });
+                                        } catch (error) {
+                                            console.log("ICalExport: Konnte Event nicht registrieren! \r\n" + error.toString());
+                                        }
                                     }
                                 )
-                            }      
+                            }
                             let now = new Date();
                             let year = now.getFullYear().toString().padStart(4, "0");
-                            let month = now.getMonth() + 1;      
+                            let month = now.getMonth() + 1;
                             month = month.toString().padStart(2, "0");
                             let day = now.getDate().toString().padStart(2, "0");
                             let hour = now.getHours().toString().padStart(2, "0");
                             let minutes = now.getMinutes().toString().padStart(2, "0");
-                            let title = document.title.replace(/[^A-Za-z0-9]/g, "");      
+                            let title = document.title.replace(/[^A-Za-z0-9]/g, "");
                             var link = document.createElement("a");
-                            link.href = "data:text/calendar;charset=utf-8,"+escape(cal.print());                                 
-                            link.download = "Semesterplanung_"+title+"_"+year+month+day+hour+minutes+".ics";
-                            link.click();                                                                                        
-                        } catch(error){
-                            console.log("ICalExport: Konnte den Export nicht erfolgreich abschließen! \r\n "+error.toString());
+                            link.href = "data:text/calendar;charset=utf-8," + escape(cal.print());
+                            link.download = "Semesterplanung_" + title + "_" + year + month + day + hour + minutes + ".ics";
+                            link.click();
+                        } catch (error) {
+                            console.log("ICalExport: Konnte den Export nicht erfolgreich abschließen! \r\n " + error.toString());
                         }
                     },
-                    createMilestonePicker: function(){
-                        let _this = this;  
-                        let updateMilestoneList = function(id){
-                            try{
+                    createMilestonePicker: function () {
+                        let _this = this;
+                        let updateMilestoneList = function (id) {
+                            try {
                                 let list = "";
                                 _this.milestones.forEach(
                                     (element) => {
                                         let icon = "fa-square";
-                                        if(typeof element.resources === "object"){
+                                        if (typeof element.resources === "object") {
                                             element.resources.forEach(
-                                                (res) => {                                                    
-                                                    if(+res.instance_url_id === id) icon = "fa-check-square";                                                 
+                                                (res) => {
+                                                    if (+res.instance_url_id === id) icon = "fa-check-square";
                                                 }
                                             )
-                                        }                                       
-                                        list += "<a class=\"dropdown-item\" href=\"#\" id=\""+element.id+"\"><i class=\"icon fa "+icon+"\"></i>"+element.name+"</a>";
+                                        }
+                                        list += "<a class=\"dropdown-item\" href=\"#\" id=\"" + element.id + "\"><i class=\"icon fa " + icon + "\"></i>" + element.name + "</a>";
                                     }
                                 );
                                 return list;
-                            } catch(error){                                
+                            } catch (error) {
                                 return "<div class=\"dropdown-item\">Meilensteine konnten nicht geladen werden.</div>";
                             }
-                        }                      
-                        $(document).ready(function(){                            
+                        }
+                        $(document).ready(function () {
                             let instances = $(".activityinstance");
                             instances.each(
-                                function(index){
-                                    try{
+                                function (index) {
+                                    try {
                                         // get all important data
                                         let element = $(this);
                                         let link = element.find("a").eq(0);
-                                        if(link.length !== 1) return;
+                                        if (link.length !== 1) return;
                                         let href = link.attr("href");
-                                        if(typeof href === "undefined" || href.length <= 0) return;
-                                        let posID = href.indexOf("id="); 
-                                        if(posID === -1) return;
+                                        if (typeof href === "undefined" || href.length <= 0) return;
+                                        let posID = href.indexOf("id=");
+                                        if (posID === -1) return;
                                         let id = +href.slice(posID + 3);
-                                        if(typeof id !== "number" || id < 0) return;
+                                        if (typeof id !== "number" || id < 0) return;
                                         // add the dom elements
                                         let dom = " \
                                             <div class=\"dropdown milestone_picker\"> \
@@ -1407,7 +1425,7 @@ define([
                                                 <div class=\"dropdown-menu\" aria-labelledby=\"dropdownMenuLink\"> \
                                                 </div> \
                                             </div> \
-                                        ";                                       
+                                        ";
                                         let picker = $(dom).insertAfter(link);
                                         let dropdown = picker.find(".dropdown-menu");
                                         dropdown.css({
@@ -1418,45 +1436,45 @@ define([
                                             "background-color": "transparent",
                                             "color": "black",
                                             "font-weight": "normal"
-                                        }); 
-                                        $(document).click(function(e){
+                                        });
+                                        $(document).click(function (e) {
                                             // blur does not work on <div>
-                                            if($(e.target).is('.milestone_picker .dropdown-menu, .milestone_picker .dropdown-menu *'))return;
+                                            if ($(e.target).is('.milestone_picker .dropdown-menu, .milestone_picker .dropdown-menu *')) return;
                                             $(".milestone_picker .dropdown-menu").css({
                                                 "display": "none"
-                                            }); 
-                                        });                                                       
-                                        pickerLink.click(function(e){
-                                            e.preventDefault();                                                                                            
-                                            if(dropdown.css("display") !== "block"){                                               
+                                            });
+                                        });
+                                        pickerLink.click(function (e) {
+                                            e.preventDefault();
+                                            if (dropdown.css("display") !== "block") {
                                                 dropdown.empty();
                                                 let data = updateMilestoneList(id);
                                                 $(data).prependTo(dropdown);
                                                 $(".milestone_picker .dropdown-menu").css({
                                                     "display": "none"
-                                                });    
+                                                });
                                                 let entries = dropdown.find("a.dropdown-item");
-                                                entries.each(function(){
+                                                entries.each(function () {
                                                     let entry = $(this);
                                                     let entryID = +entry.attr("id");
                                                     let icon = $(this).find("i.icon");
-                                                    if(typeof entryID === "number"){
-                                                        entry.click(function(e){
-                                                            e.preventDefault();                                                            
-                                                            if(typeof _this.milestones === "object" && typeof _this.resources === "object"){
-                                                                for(let i in _this.milestones){
-                                                                    if(_this.milestones[i]["id"] === entryID){                                                                                                                                               
-                                                                        for(let u in _this.resources){
-                                                                            if(+_this.resources[u]["instance_url_id"] === id){                                                                                                                                                                                                                                      
-                                                                                if(typeof _this.milestones[i]["resources"] === "object"){ 
-                                                                                    if(Object.keys(_this.milestones[i]["resources"]).length > 0){
+                                                    if (typeof entryID === "number") {
+                                                        entry.click(function (e) {
+                                                            e.preventDefault();
+                                                            if (typeof _this.milestones === "object" && typeof _this.resources === "object") {
+                                                                for (let i in _this.milestones) {
+                                                                    if (_this.milestones[i]["id"] === entryID) {
+                                                                        for (let u in _this.resources) {
+                                                                            if (+_this.resources[u]["instance_url_id"] === id) {
+                                                                                if (typeof _this.milestones[i]["resources"] === "object") {
+                                                                                    if (Object.keys(_this.milestones[i]["resources"]).length > 0) {
                                                                                         let found = null;
-                                                                                        for(let t in _this.milestones[i]["resources"]){                                                                                                                                                                                
-                                                                                            if(+_this.milestones[i]["resources"][t]["instance_url_id"] === id){
+                                                                                        for (let t in _this.milestones[i]["resources"]) {
+                                                                                            if (+_this.milestones[i]["resources"][t]["instance_url_id"] === id) {
                                                                                                 found = t;
                                                                                             }
                                                                                         }
-                                                                                        if(found !== null){
+                                                                                        if (found !== null) {
                                                                                             _this.milestones[i]["resources"].splice(found, 1);
                                                                                             icon.removeClass("fa-check-square");
                                                                                             icon.addClass("fa-square");
@@ -1466,25 +1484,25 @@ define([
                                                                                             icon.removeClass("fa-square");
                                                                                         }
                                                                                     } else {
-                                                                                        _this.milestones[i]["resources"].push(_this.resources[u]);                                                                                        
+                                                                                        _this.milestones[i]["resources"].push(_this.resources[u]);
                                                                                         icon.addClass("fa-check-square");
                                                                                         icon.removeClass("fa-square");
-                                                                                    }                                                                                
-                                                                                    
-                                                                                } else {                                                                                    
-                                                                                    _this.milestones[i]["resources"] = array(_this.resources[u]);                                                                                    
+                                                                                    }
+
+                                                                                } else {
+                                                                                    _this.milestones[i]["resources"] = array(_this.resources[u]);
                                                                                     icon.addClass("fa-check-square");
                                                                                     icon.removeClass("fa-square");
                                                                                 }
                                                                                 _this.updateMilestoneStatus();
-                                                                            }                                                                            
+                                                                            }
                                                                         }
                                                                     }
-                                                                }  
-                                                            }                                                                                                                                                                                                                                           
+                                                                }
+                                                            }
                                                         });
                                                     }
-                                                });                                               
+                                                });
                                                 dropdown.css({
                                                     "display": "block"
                                                 });
@@ -1492,13 +1510,104 @@ define([
                                                 $(".milestone_picker .dropdown-menu").css({
                                                     "display": "none"
                                                 });
-                                            }                                      
-                                        });                                       
-                                    } catch(error){}                                          
+                                            }
+                                        });
+                                    } catch (error) { }
                                 }
                             )
-                        });                       
+                        });
+                    },
+                    moveToMilestoneTimelineEntry: function (mID, rangeOfDays) {
+                        try {
+                            this.showAdditionalCharts();
+                            $('a[href="#view-timeline"]').tab("show");
+                            let element = undefined;
+                            this.milestones.forEach(
+                                (ms) => {
+                                    if (ms.id === mID) element = ms;
+                                }
+                            );
+                            if (typeof element === "object") {
+                                let start = new Date(element.start.toISOString());
+                                start.setDate(start.getDate() - rangeOfDays);
+                                start.setHours(0);
+                                start.setMinutes(0);
+                                start.setSeconds(0);
+                                if (element.stop instanceof Date) {
+                                    var stop = new Date(element.stop.toISOString());
+                                } else {
+                                    var stop = new Date(element.start.toISOString());
+                                }
+                                stop.setDate(stop.getDate() + rangeOfDays);
+                                stop.setHours(23);
+                                stop.setMinutes(59);
+                                stop.setSeconds(59);
+                                this.timeFilterChart.replaceFilter(dc.filters.RangedFilter(start, stop));
+                                this.timeFilterChart.filterTime();
+                                $('html, body').animate({
+                                    scrollTop: $("div.ladtopics").offset().top - $("nav.navbar").outerHeight()
+                                }, 1000);
+                                $("#filter-presets").find("button").css("text-decoration", "none");
+
+                            }
+                        } catch (error) { }
+                    },
+                    moveToMilestoneListEntry: function (mID, collapseOther) {
+                        try {
+                            this.hideAdditionalCharts();
+                            $('a[href="#view-list"]').tab("show");
+                            let promises = [];
+                            $("div.milestone-entry-details").each(
+                                function () {
+                                    let detail = $(this);
+                                    let dID = detail.attr("id");
+                                    if (dID === "milestone-entry-" + mID) {
+                                        let show = function () {
+                                            detail.off("show.bs.collapse", show);
+                                            promises.push(new Promise(
+                                                (resolve, reject) => {
+                                                    let shown = function () {
+                                                        detail.off("shown.bs.collapse", shown);
+                                                        return resolve();
+                                                    }
+                                                    detail.on("shown.bs.collapse", shown);
+                                                }
+                                            ));
+                                        }
+                                        detail.on("show.bs.collapse", show);
+                                        detail.collapse("show");
+                                        detail.off("show.bs.collapse", show);
+                                    } else {
+                                        if (collapseOther) {
+                                            let hide = function () {
+                                                detail.off("hide.bs.collapse", hide);
+                                                promises.push(new Promise(
+                                                    (resolve, reject) => {
+                                                        let hidden = function () {
+                                                            detail.off("hidden.bs.collapse", hidden);
+                                                            return resolve();
+                                                        }
+                                                        detail.on("hidden.bs.collapse", hidden);
+                                                    }
+                                                ));
+                                            }
+                                            detail.on("hide.bs.collapse", hide);
+                                            detail.collapse("hide");
+                                            detail.off("hide.bs.collapse", hide);
+                                        }
+                                    }
+                                }
+                            );
+                            Promise.all(promises).then(
+                                (resove) => {
+                                    $('html, body').animate({
+                                        scrollTop: $("#milestone-entry-" + mID).parent().offset().top - $("nav.navbar").outerHeight()
+                                    }, 1000);
+                                }
+                            )
+                        } catch (error) { }
                     }
+
                 }
             });
 
