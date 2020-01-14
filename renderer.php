@@ -255,24 +255,137 @@ class format_ladtopics_renderer extends format_section_renderer_base {
 
 
 
+$milestoneArchiveList = '
+<!-- Milestone list -->
+<ul>    
+    <li v-if="archivedMilestones.length > 0">
+        <div class="milestone-element-header">
+            <div class="milestone-element-table-head name">Meilenstein</div><div class="milestone-element-table-head due">Termin</div><div class="milestone-element-table-head">Fortschritt</div>
+        </div>
+    </li>
+    <li v-for="m in archivedMilestones" class="milestone-element">
+        <div :class="m.status == \'urgent\' ? \'milestone-urgent milestone-element-header\' : \'milestone-element-header\'">
+            <a :class="m.status == \'missed\' ? \'milestone-missed milestone-element-name\' : \'milestone-element-name\'" data-toggle="collapse" :href="\'#milestone-entry-archive-\' + m.id" role="button" aria-expanded="false" :aria-controls="\'milestone-entry-\' + m.id">
+                <i class="element-collapsed fa fa-angle-right angle"></i> 
+                <i class="element-not-collapsed fa fa-angle-down angle"></i> 
+                {{ m.name }}
+            </a>
+            <span
+                data-toggle="tooltop" data-placement="top" :title="\'Beginn: \' + getReadableTime(m.start) + \'Ende: \' + getReadableTime(m.start)" 
+                :class="m.status == \'missed\' ? \'milestone-missed milestone-element-due\' : \'milestone-element-due\'">
+                {{ fromNow(m.end) }}
+            </span>
+            <a @click="showModal(m.id)" class="milestone-element-edit" data-legend="1" data-toggle="modal" data-target="#theMilestoneModal">
+                <span data-toggle="tooltip" data-placement="top" title="Sie können diesen Meilenstein bearbeiten" class="fa fa-pencil"></span> bearbeiten
+            </a>
+            <div class="milestone-element-progress">
+                <div class="milestone-element-progress-status" 
+                    :style="\'width:\'+ m.progress * 100 + \'%;\'"
+                    data-toggle="tooltip" data-placement="top" :title="\'Dieser Meilenstein ist zu \'+ (m.progress*100).toFixed(0) +\'% fertig.\'"
+                ></div>
+            </div>
+            <div class="milestone-element-status">
+                <i 
+                    :class="m.status==\'ready\' || m.status==\'reflected\' ? \'fa fa-check milestone-ready\' : \'fa fa-check grey\'"
+                    data-toggle="tooltip" data-placement="top" :title="m.status==\'ready\' || m.status==\'reflected\' ? \'Diesen Meilenstein haben Sie bereits erreicht!.\' : \'Sie haben diesen Meilenstein noch nicht abgeschlossen.\'"
+                    ></i>
+                <i 
+                    :class="m.status==\'reflected\' ? \'fa fa-check milestone-reflected\' : \'fa fa-check grey\'"
+                    data-toggle="tooltip" data-placement="top" :title="m.status==\'reflected\' ? \'Großartig! Sie haben diesen Meilenstein bereits reflektiert.\' : \'Sie haben diesen Meilenstein noch nicht reflektiert.\'"
+                    ></i>
+            </div>
+            <div v-if="m.progress === 1" class="milestone-element-reflection">
+                <button 
+                    data-toggle="modal" 
+                    data-target="#theReflectionModal" 
+                    @click="showReflectionModal(m.id)" 
+                    :class="m.status==\'reflected\' ? \'btn btn-sm reflection-done\' : \'btn btn-primary btn-sm\'"
+                    >
+                        <span v-if="m.status!=\'reflected\'">Jetzt reflektieren!</span>
+                        <span v-if="m.status==\'reflected\'">Reflexion ansehen</span>
+                </button>
+            </div>
+        </div>
+        <div class="milestone-entry-details collapse" :id="\'milestone-entry-archive-\' + m.id">
+            <div>
+                <!-- Resourcen -->
+                        <label for="" class="resources-title">Meine Themen, Materialien und Aktivitäten</label>
+                        <div v-if="m.resources.length > 0" class="resources-header">
+                            <span class="strat-col-1">erledigt?</span>
+                            <span class="strat-col-2">Meine Materialien und Aktivitäten</span>
+                        </div>
+                        <ul class="resources-list">
+                            <li v-for="s in m.resources" :class="s.checked ? \'resources-selected-item ms-done\' : \'resources-selected-item ms-not-done\'">
+                                <label class="resources-selected-label" for="defaultCheck1">
+                                    <input class="resources-selected-check checkbox" 
+                                        type="checkbox" value=""
+                                        data-toggle="tooltip"
+                                        title="Setzen Sie das Häkchen, wenn Sie dieses Lernangebot bereits bearbeitet haben."
+                                        v-model="s.checked" 
+                                        :id="s.id"
+                                        @change="updateMilestoneStatus()"
+                                        >
+                                    <a 
+                                        :href="getMoodlePath() + \'/mod/\' + s.instance_type + \'/view.php?id=\'+ s.instance_url_id" 
+                                        class="resources-selected-name">{{ s.name }}</a>
+                                    <span hidden class="resources-selected-remove remove-btn" data-toggle="tooltip" title="Thema, Material oder Aktivität entfernen">
+                                        <i class="fa fa-trash" @click="resourceRemove(s.id)"></i>
+                                    </span>
+                                </label>
+                                
+                            </li>
+                        </ul>
 
+                <!-- Strategien -->
+                        <label for="" class="strategy-title">Meine Lernstrategien für diesen Meilenstein</label>
+                        <div v-if="m.strategies.length > 0" class="strategy-header">
+                            <span class="strat-col-1">erledigt?</span>
+                            <span class="strat-col-1">Meine Lernstrategien</span>
+                        </div>
+                        <ul class="strategy-list">
+                            <li v-for="s in m.strategies" :class="s.checked ? \'strategy-selected-item ms-done\' : \'strategy-selected-item ms-not-done\'">
+                                <label class="strategy-selected-label" for="defaultCheck1">
+                                    <input class="strategy-selected-check" 
+                                        type="checkbox" value=""
+                                        data-toggle="tooltip"
+                                        title="Setzen Sie das Häkchen, wenn Sie diese Lernstrategie bereits angewendet haben."
+                                        v-model="s.checked"
+                                        :id="s.id"
+                                        @change="updateMilestoneStatus()"
+                                        >
+                                    <span class="strategy-selected-name">{{ s.name }}</span>
+                                    <button type="button" class="btn btn-sm btn-link"
+                                        data-toggle="popover" :data-content="s.desc"><i
+                                            class="fa fa-question"></i></button>
+                                    <span hidden class="strategy-selected-remove remove-btn" data-toggle="tooltip" title="Lernstrategie entferenen">
+                                        <i class="fa fa-trash" @click="strategyRemove(s.id)"></i>
+                                    </span>
+                                </label>
+                            </li>
+                        </ul>
+            </div>
+        </div>
+    </li>
+</ul>
+<!-- End Milestone list -->
+';
 
 $milestoneList = '
 <!-- Milestone list -->
 <ul>
-    <li v-if="milestones.length === 0">
+    <li v-if="remainingMilestones.length === 0">
         <span data-toggle="modal" data-target="#theMilestoneModal">
             <button @click="showEmptyMilestone()" class="btn btn-sm right btn-primary ms-btn ms-coldstart-btn"
                 data-toggle="tooltip" data-placement="bottom" title="Neuen Meilenstein hinzufügen"><i
                     class="fa fa-plus"></i> Legen Sie einen neuen Meilenstein an!</button>
         </span>
     </li>
-    <li v-if="milestones.length > 0">
+    <li v-if="remainingMilestones.length > 0">
         <div class="milestone-element-header">
             <div class="milestone-element-table-head name">Meilenstein</div><div class="milestone-element-table-head due">Termin</div><div class="milestone-element-table-head">Fortschritt</div>
         </div>
     </li>
-    <li v-for="m in milestones" class="milestone-element" v-bind:class="\'milestone-entry-\'+m.id">
+    <li v-for="m in remainingMilestones" class="milestone-element">
         <div :class="m.status == \'urgent\' ? \'milestone-urgent milestone-element-header\' : \'milestone-element-header\'">
             <a :class="m.status == \'missed\' ? \'milestone-missed milestone-element-name\' : \'milestone-element-name\'" data-toggle="collapse" :href="\'#milestone-entry-\' + m.id" role="button" aria-expanded="false" :aria-controls="\'milestone-entry-\' + m.id">
                 <i class="element-collapsed fa fa-angle-right angle"></i> 
@@ -864,6 +977,12 @@ $modalMilestone = '
                                                         </li>
                                                         <li v-if="milestones.length > 0" class="nav-item">
                                                             <a 
+                                                                class="nav-link" @click="hideAdditionalCharts()" id="milestone-list-tab" data-toggle="pill" href="#view-archive-list" role="tab" aria-controls="view-archive-list" aria-selected="false">
+                                                                <i hidden class="fa fa-list"></i> Archiv
+                                                            </a>
+                                                        </li>
+                                                        <li v-if="milestones.length > 0" class="nav-item">
+                                                            <a 
                                                                 class="nav-link" @click="showAdditionalCharts()" id="milestone-timeline-tab" data-toggle="pill" href="#view-timeline" role="tab" aria-controls="view-timeline" aria-selected="true">
                                                                 <i class="fa fa-clock"></i>Zeitleiste
                                                             </a>
@@ -906,6 +1025,9 @@ $modalMilestone = '
                                         </div>
                                         <div class="tab-pane col-12 fade show active milestone-list" id="view-list" role="tabpanel" aria-labelledby="view-list">
                                             ' . $milestoneList . '
+                                        </div>
+                                        <div class="tab-pane col-12 fade milestone-list" id="view-archive-list" role="tabpanel" aria-labelledby="view-archive-list">
+                                            ' . $milestoneArchiveList . '
                                         </div>
                                     </div>
                                     <!-- End pill content -->
