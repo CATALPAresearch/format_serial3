@@ -988,7 +988,7 @@ svg {
 }
 
 .milestone-list .milestone-reflected {
-    color: #004C97;
+    color: rgba(0, 75, 151, 0.7);
 }
 
 .milestone-list .grey {

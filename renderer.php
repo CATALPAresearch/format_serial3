@@ -235,7 +235,6 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                                                         </select>
                                                     </div>
                                                 </div>
-                                                {{ resources }}
                                             </div>
                                             <br />
                                             <div class="row row-smooth">
