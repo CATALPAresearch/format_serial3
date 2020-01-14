@@ -1,9 +1,9 @@
 
-a {
+#page a {
   color: black !important;
 }
 
-li.section {
+#page li.section {
   list-style: none;
   margin-top:20px;
   border-top: solid 1px #ccc;

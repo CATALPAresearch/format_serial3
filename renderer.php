@@ -66,9 +66,10 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                         <div id="planningsurvey" display="visibility: hidden;">
                             <div v-if="!surveyComplete" class="row survey-btn">
                                 <div class="col-sm-2 col-centered">
-                                    <div @click="showModal()" class="survey-starter" data-toggle="modal" data-target="#theSurveyModal">
-                                        <i class="fa fa-question"></i><br />
-                                        <span>Lernen mit Plan</span>
+                                    <div class="wrapper">
+                                        <div @click="showModal()" class="survey-starter survey-animate" data-toggle="modal" data-target="#theSurveyModal">
+                                            <span>Lernen mit Plan</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -128,6 +129,7 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                                                         v-model="availableTime">
                                                 </div>
                                                 <div class="col-12 alert-invalid" role="alert" v-if="invalidAvailableTime">Geben Sie bitte eine Anzahl an Stunden, die größer Null ist.</div>
+                                                <div class="col-12 alert-warning" role="warning">{{ isAvailableTimeSufficient() }}</div>
                                             </div>
                                             <hr>
                                             <div class="form-check row">
@@ -227,7 +229,7 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                                                             <option :selected="true" disabled value="default">Wählen Sie Themen, Materialien
                                                                 und Aktivitäten</option>
                                                             <optgroup v-for="section in resourceSections()" :label="section.name">
-                                                                <option :value="\'complete-section-\'+section.id">Alles im Abschnitt: {{section.name}}</option>
+                                                                <!--<option :value="\'complete-section-\'+section.id">Alles im Abschnitt: {{section.name}}</option>-->
                                                                 <option v-for="s in resourcesBySection(section.id)" :value="s.id">{{ s.instance_type }}: {{ s.name }}</option>
                                                             </optgroup>
                                                         </select>
@@ -278,7 +280,7 @@ $milestoneList = '
                 {{ m.name }}
             </a>
             <span
-                data-toggle="tooltop" data-placement="top" :title="\'Termin: \'+getReadableTime(m.end)" 
+                data-toggle="tooltop" data-placement="top" :title="\'Beginn: \' + getReadableTime(m.start) + \'Ende: \' + getReadableTime(m.start)" 
                 :class="m.status == \'missed\' ? \'milestone-missed milestone-element-due\' : \'milestone-element-due\'">
                 {{ fromNow(m.end) }}
             </span>
@@ -288,7 +290,7 @@ $milestoneList = '
             <div class="milestone-element-progress">
                 <div class="milestone-element-progress-status" 
                     :style="\'width:\'+ m.progress * 100 + \'%;\'"
-                    data-toggle="tooltip" data-placement="top" :title="\'Dieser Meilenstein ist zu \'+ m.progress*100 +\'% fertig.\'"
+                    data-toggle="tooltip" data-placement="top" :title="\'Dieser Meilenstein ist zu \'+ (m.progress*100).toFixed(0) +\'% fertig.\'"
                 ></div>
             </div>
             <div class="milestone-element-status">
@@ -324,7 +326,7 @@ $milestoneList = '
                         <ul class="resources-list">
                             <li v-for="s in m.resources" :class="s.checked ? \'resources-selected-item ms-done\' : \'resources-selected-item ms-not-done\'">
                                 <label class="resources-selected-label" for="defaultCheck1">
-                                    <input class="resources-selected-check" 
+                                    <input class="resources-selected-check checkbox" 
                                         type="checkbox" value=""
                                         data-toggle="tooltip"
                                         title="Setzen Sie das Häkchen, wenn Sie dieses Lernangebot bereits bearbeitet haben."
@@ -381,20 +383,20 @@ $milestoneList = '
 $milestoneTimeline = '
 <!-- Timeline charts -->
 <div class="relative milestone-chart-container">
-    <div class="chart-label-milestone"></div>
+    <div class="chart-label-milestone" :style="\'height:\'+(height+margins.top)+\'px;\'"></div>
     <svg style="border: none;" :width="width" :height="height+margins.top">
         <g :transform="\'translate(\'+( margins.left  ) +\',\'+ margins.top +\')\'">
             <rect v-for="m in milestones" @click="showModal(m.id)" class="milestone-learning-progress"
-                :x="xx(m.end)" :y="getYLane(m.id) * (barheight + bardist)" :height="barheight"
-                :width="barwidth * m.progress" data-toggle="modal" data-target="#theMilestoneModal">
+                :x="xx(m.start)" :y="getYLane(m.id) * (barheight + bardist)" :height="barheight"
+                :width="duration(m.start, m.end) * m.progress" data-toggle="modal" data-target="#theMilestoneModal">
             </rect>
             <rect v-for="m in milestones" @click="showModal(m.id)"
                 :class="\'milestone-bar milestone-\'+ m.status" :id="\'milestoneBar_\'+m.id"
-                :x="xx(m.end)" :y="getYLane(m.id) * (barheight + bardist)" :height="barheight"
-                :width="barwidth" :data-legend="m.id" data-toggle="modal" data-target="#theMilestoneModal">
+                :x="xx(m.start)" :y="getYLane(m.id) * (barheight + bardist)" :height="barheight"
+                :width="duration(m.start, m.end)" :data-legend="m.id" data-toggle="modal" data-target="#theMilestoneModal">
             </rect>
             <text v-for="m in milestones" @click="showModal(m.id)" class="milestone-label"
-                :x="xx(m.end) + barwidth / 2" :y="getYLane(m.id) * (barheight + bardist) + (barheight)/2 + 2"
+                :x="xx(m.start) + duration(m.start, m.end) / 2" :y="getYLane(m.id) * (barheight + bardist) + (barheight)/2 + 2"
                 data-toggle="modal"
                 data-target="#theMilestoneModal">{{ limitTextLength( m.name, 14 ) }}</text>
         </g>
@@ -443,8 +445,8 @@ $modalReflection = '
             <div class="modal-body row">
                 <div class="ms-reflection col-12">
                     <div class="form-group col-12">
-                        <label class="col-sm-12 col-form-label" for="ref0">
-                            Wie gut hat mir die Planung dieses Meilensteins bei der Erarbeitung meines Lernziels geholfen?
+                        <label class="col-sm-12 col-form-label question-label" for="ref0">
+                            Frage 1: Wie gut hat mir die Planung dieses Meilensteins bei der Erarbeitung meines Lernziels geholfen?
                         </label>
                         <div class="col-sm-12">
                             <div class="row">
@@ -472,8 +474,8 @@ $modalReflection = '
                         </div>
                     </div>
                     <div class="form-group col-12">
-                        <label class="col-sm-12 col-form-label" for="ref2">
-                            Wie gut passten die ausgewählten Lernstrategien zu den Arbeitsmaterialien, um mein Lernziel zu erreichen?
+                        <label class="col-sm-12 col-form-label question-label" for="ref2">
+                            Frage 2: Wie gut passten die ausgewählten Lernstrategien zu den Arbeitsmaterialien, um mein Lernziel zu erreichen?
                         </label>
                         <div class="col-sm-12">
                             <div class="row">
@@ -501,8 +503,8 @@ $modalReflection = '
                         </div>
                     </div>
                     <div class="form-group col-12">
-                        <label class="col-sm-12 col-form-label" for="ref2">
-                            Wie gut konnte ich meinen Zeitplan einhalten?
+                        <label class="col-sm-12 col-form-label question-label" for="ref2">
+                            Frage 3: Wie gut konnte ich meinen Zeitplan einhalten?
                         </label>
                         <div class="col-sm-12">
                             <div class="row">
@@ -530,8 +532,8 @@ $modalReflection = '
                         </div>
                     </div>
                     <div class="form-group col-12">
-                        <label class="col-sm-12 col-form-label" for="ref4">
-                            Wie möchte ich meine Arbeitsweise verbessern? Das sind meine Lernhinweise für die Zukunft:
+                        <label class="col-sm-12 col-form-label question-label" for="ref4">
+                            Frage 4: Wie möchte ich meine Arbeitsweise verbessern? Das sind meine Lernhinweise für die Zukunft:
                         </label>
                         <div class="col-sm-12">
                             <textarea v-model="getSelectedMilestone().reflections[3]"
@@ -539,12 +541,15 @@ $modalReflection = '
                         </div>
                     </div>
                 </div>
+                <div v-if="invalidReflections.length === 1" class="col-12 alert-invalid">Bitte beantworten Sie auch die Frage {{ invalidReflections[0] }}.</div>
+                <div v-if="invalidReflections.length === 2" class="col-12 alert-invalid">Bitte beantworten Sie auch die Fragen {{ invalidReflections[0] }} und {{ invalidReflections[1] }}.</div>
+                <div v-if="invalidReflections.length > 2" class="col-12 alert-invalid">Bitte beantworten Sie auch die Fragen {{ invalidReflections.join(", ") }}.</div>
+                
                 <div class="form-group col-12">
                     <button 
-                        @click="submitReflections()" 
-                        :disabled="validateReflectionForm() ? false : true"
+                        @click="validateReflectionForm()" 
                         class="btn btn-primary btn-sm"
-                        data-dismiss="modal">
+                        >
                             Reflexion abschließen
                         </button>
                 </div>
@@ -601,6 +606,35 @@ $modalMilestone = '
                             placeholder="Welches Lernziel verfolgen Sie?">
                     </div>
                     <div class="col-sm-10 alert-invalid" v-if="invalidObjective">Geben Sie bitte ein Lernziel an.</div>
+                </div>
+                <div class="form-group row">
+                    <label for="" class="col-2 col-form-label">Beginn *</label>
+                    <div class="col-4">
+                        <select @change="startDaySelected" id="select_day"
+                            :style="invalidStartDay ? \'border: solid 1px #ff420e;\' : \'none\'"
+                            v-model="startDayOfSelectedMilestone"
+                            >
+                            <option v-for="d in dayRange()"
+                                :value="d">{{ d }}
+                            </option>
+                        </select>
+
+                        <select @change="startMonthSelected" id="select_month"
+                            v-model="startMonthOfSelectedMilestone">
+                            <option v-for="d in monthRange()"
+                                
+                                :value="d.num">{{ d.name }}</option>
+                        </select>
+
+                        <select @change="startYearSelected" id="select_year"
+                            v-model="startYearOfSelectedMilestone">
+                            <option v-for="d in yearRange()"
+                                
+                                :value="d">{{ d }}</option>
+                        </select>
+                    </div>
+                    <div v-if="invalidDay" class="col-sm-10 alert-invalid">Wählen Sie bitte ein gültiges Datum aus. Den {{ selectedDay }}. gibt es im ausgwählten Monat nicht. </div>
+                    <div v-if="invalidStartDate" class="col-sm-10 alert-invalid">Wählen Sie bitte ein Datum nach dem Semesterbeginn und innerhalb der nächsten 12 Monate aus.</div>
                 </div>
                 <div class="form-group row">
                     <label for="" class="col-2 col-form-label">Termin *</label>
@@ -812,8 +846,8 @@ $modalMilestone = '
                                         <!-- Milestone chart -->
                                         <div class="chart ms-chart">
                                             <div class="ms-chart-header row">
-                                                <div class="ms-title col-sm-12 col-xs-12 col-md-6 col-lg-6">
-                                                    <ul class="nav nav-pills" id="viewPillsTab" role="tablist">
+                                                <div class="ms-title col-sm-12 col-xs-12 col-md-12 col-lg-12">
+                                                    <ul class="nav nav-pills ladtopics-pills" id="viewPillsTab" role="tablist">
                                                         <li>
                                                             Meine Semesterplanung 
                                                             <span v-if="milestones.length > 0" data-toggle="modal" data-target="#theMilestoneModal">
@@ -833,30 +867,33 @@ $modalMilestone = '
                                                                 class="nav-link" @click="showAdditionalCharts()" id="milestone-timeline-tab" data-toggle="pill" href="#view-timeline" role="tab" aria-controls="view-timeline" aria-selected="true">
                                                                 <i class="fa fa-clock"></i>Zeitleiste
                                                             </a>
-                                                        </li>                                                       
-                                                        <li class="nav-item">                                                          
-                                                            <a 
-                                                                class="nav-link" @click="toICal()" id="milestone-timeline-tab" data-toggle="pill" href="#" role="tab" aria-controls="view-timeline" aria-selected="true">
-                                                                <i class="fa fa-clock"></i>Exportieren
-                                                            </a>
-                                                        </li>                                                        
-                                                        <li v-if="surveyDone > 0" class="wide-list">
-                                                            <button class="btn btn-outline-info btn-sm introjs-btn" @click="startIntroJs()">Anleitung - So geht’s!</button>
-                                                        </li>                                                
+                                                        </li>
+                                                                                                              
                                                     </ul>
                                                     
+                                                    <button v-if="surveyDone > 0" class="btn btn-outline-info btn-sm introjs-btn" @click="startIntroJs()">Anleitung - So geht’s!</button>
+                                                    
+                                                    <div class="dropdown settingsMenu">
+                                                        <button class="btn btn-link dropdown-toggle" type="button" id="settingsMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expand="false">
+                                                        <i class="fa fa-cog"></i>
+                                                        </button>
+                                                        <div class="dropdown-menu" aria-labeledby="settingsMenuButton">
+                                                            <a class="dropdown-item" @click="exportToICal" href="#">
+                                                                <i class="fa fa-clock"></i>Exportieren
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                    
                                                 </div>
-                                                <div class="col-sm-12 col-md-8 col-lg-8 time-filters">
-                                                    <span id="filter-presets">
-                                                        <button @click="setFilterPreset(\'next-month\')" :style="filterPreset === \'next-month\' ? \'text-decoration: underline;\' : \'text-decoration:none;\'" class="btn btn-sm ms-btn btn-link right">nächster Monat</button>
-                                                        <button @click="setFilterPreset(\'next-week\')" :style="filterPreset === \'next-week\' ? \'text-decoration: underline;\' : \'text-decoration:none;\'" class="btn btn-sm ms-btn btn-link right">nächste Woche</button>
-                                                        <button @click="setFilterPreset(\'today\')" :style="filterPreset === \'today\' ? \'text-decoration: underline;\' : \'text-decoration:none;\'" class="btn btn-sm ms-btn btn-link right">heute</button>
-                                                        <button @click="setFilterPreset(\'last-week\')" :style="filterPreset === \'last-week\' ? \'text-decoration: underline;\' : \'text-decoration:none;\'" class="btn btn-sm btn-link ms-btn right">letzte
-                                                            Woche</button>
-                                                        <button @click="setFilterPreset(\'last-month\')" :style="filterPreset === \'last-month\' ? \'text-decoration: underline;\' : \'text-decoration:none;\'" class="btn btn-sm btn-link ms-btn right">letzten 4
-                                                            Wochen</button>
-                                                        <button @click="setFilterPreset(\'semester\')" :style="filterPreset === \'semester\' ? \'text-decoration: underline;\' : \'text-decoration:none;\'" class="btn btn-link btn-sm right">WS 19/20</button>
-                                                    </span>
+                                                <div id="filter-presets" class="col-sm-12 col-md-12 col-lg-12 time-filters">
+                                                    <button @click="setFilterPreset(\'next-month\')" :style="filterPreset === \'next-month\' ? \'text-decoration: underline;\' : \'text-decoration:none;\'" class="btn btn-sm ms-btn btn-link right">nächster Monat</button>
+                                                    <button @click="setFilterPreset(\'next-week\')" :style="filterPreset === \'next-week\' ? \'text-decoration: underline;\' : \'text-decoration:none;\'" class="btn btn-sm ms-btn btn-link right">nächste Woche</button>
+                                                    <button @click="setFilterPreset(\'today\')" :style="filterPreset === \'today\' ? \'text-decoration: underline;\' : \'text-decoration:none;\'" class="btn btn-sm ms-btn btn-link right">heute</button>
+                                                    <button @click="setFilterPreset(\'last-week\')" :style="filterPreset === \'last-week\' ? \'text-decoration: underline;\' : \'text-decoration:none;\'" class="btn btn-sm btn-link ms-btn right">letzte
+                                                        Woche</button>
+                                                    <button @click="setFilterPreset(\'last-month\')" :style="filterPreset === \'last-month\' ? \'text-decoration: underline;\' : \'text-decoration:none;\'" class="btn btn-sm btn-link ms-btn right">letzten 4
+                                                        Wochen</button>
+                                                    <button @click="setFilterPreset(\'semester\')" :style="filterPreset === \'semester\' ? \'text-decoration: underline;\' : \'text-decoration:none;\'" class="btn btn-link btn-sm right">WS 19/20</button>
                                                 </div>
                                             </div>
                                         </div>

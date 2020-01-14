@@ -1,3 +1,8 @@
+/* eslint-disable no-labels */
+/* eslint-disable camelcase */
+/* eslint-disable no-unused-labels */
+/* eslint-disable no-loop-func */
+/* eslint-disable max-depth */
 /* eslint-disable space-before-function-paren */
 /* eslint-disable valid-jsdoc */
 /* eslint-disable capitalized-comments */
@@ -44,9 +49,10 @@ define([
 
         /**
          * 
-         * @param {*} the_data 
+         * @param {*} activityData (Object)
+         * @param {*} logger (Object)
          */
-        var draw = function (the_data, logger) {
+        var draw = function (activityData, logger) {
 
             var xRange = [new Date(2019, 4, 28), new Date(2020, 231)];
 
@@ -96,6 +102,7 @@ define([
                         barwidth: 80,
                         barheight: 21,
                         bardist: 3,
+                        maxLanes: 3,
                         width: 730,
                         height: 70,
                         margins: {},
@@ -155,17 +162,25 @@ define([
                             progress: 0.0,
                             resources: [],
                             strategies: [],
-                            reflections: []
+                            reflections: [],
+                            yLane: 0
                         },
                         invalidName: false,
                         invalidObjective: false,
                         invalidResources: false,
                         invalidStrategy: false,
                         invalidEndDate: false,
+                        invalidStartDate: false,
+                        invalidReflections: [],
                         selectedDay: 1,
                         selectedMonth: 1,
                         selectedYear: 2019,
                         invalidDay: false,
+                        selectedStartDay: 1,
+                        selectedStartMonth: 1,
+                        selectedStartYear: 2019,
+                        invalidEndDay: false,
+                        invalidStartDay: false,
                         filterPreset: '',
                         selectedMilestone: 0,
                         modalVisible: false,
@@ -219,16 +234,17 @@ define([
                                 _this.milestones = [];
                             } else {
                                 // todo: A validation of the JSON should be feasible
-                                _this.milestones = JSON.parse(data.milestones);                                                   
+                                _this.milestones = JSON.parse(data.milestones);
                                 _this.emptyMilestone.end = new Date();
+                                _this.emptyMilestone.start = new Date();
                                 _this.updateMilestoneStatus();
                                 _this.initializeChart();
 
-                                var facts = crossfilter(the_data);
+                                var facts = crossfilter(activityData);
                                 _this.timeFilterChart = new FilterChart(d3, dc, crossfilter, facts, xRange, _this, utils, logger);
 
-                                _this.setFilterPreset('semester');
-                                var activityChart = new ActivityChart(d3, dc, crossfilter, moment, the_data, utils);
+                                _this.setFilterPreset('last-month');
+                                var activityChart = new ActivityChart(d3, dc, crossfilter, moment, activityData, utils);
                                 xRange = activityChart.getXRange();
                                 _this.timeFilterChart.registerChart(activityChart);
 
@@ -305,6 +321,30 @@ define([
                         set: function (d) {
 
                         }
+                    },
+                    startDayOfSelectedMilestone: {
+                        get: function () {
+                            return this.getSelectedMilestone().start.getDate();
+                        },
+                        set: function (d) {
+
+                        }
+                    },
+                    startMonthOfSelectedMilestone: {
+                        get: function () {
+                            return this.getSelectedMilestone().start.getMonth() + 1;
+                        },
+                        set: function (d) {
+
+                        }
+                    },
+                    startYearOfSelectedMilestone: {
+                        get: function () {
+                            return this.getSelectedMilestone().start.getFullYear();
+                        },
+                        set: function (d) {
+
+                        }
                     }
                 },
                 methods: {
@@ -377,8 +417,9 @@ define([
                                     /* Return to milestone list */
                                     {
                                         element: document.querySelector('.milestone-element-progress'),
-                                        intro: 'Der grüne Balken drückt aus, wie weit die Bearbeitung schon fortgeschritten ist. Sind alle Materialien abgearbeitet werden sie abgehakt, die Lernstrategien müssen durch abhaken bestätigt werden oder können gelöscht werden, wenn sie nicht genutzt wurden. Ist der Meilenstein erledigt, dann ist es Zeit für die Reflexion. Sie hilft Ihnen zu überlegen, was gut geklappt hat und was Sie ggf. besser machen könnten. Mit der Beantwortung der letzten Frage können Sie einen persönlichen Lernhinweis festhalten, damit Sie die nächste Lernsession noch besser gestalten. Das gilt ganz besonders dann, wenn es einmal mit der Zielerreichung nicht so ganz geklappt hat. Wir lernen auch durch Fehler.',
-                                        position: 'top',
+                                        intro: 'Der grüne Balken drückt aus, wie weit die Bearbeitung schon fortgeschritten ist.',
+                                        //Sind alle Materialien abgearbeitet werden sie abgehakt, die Lernstrategien müssen durch abhaken bestätigt werden oder können gelöscht werden, wenn sie nicht genutzt wurden. Ist der Meilenstein erledigt, dann ist es Zeit für die Reflexion. Sie hilft Ihnen zu überlegen, was gut geklappt hat und was Sie ggf. besser machen könnten. Mit der Beantwortung der letzten Frage können Sie einen persönlichen Lernhinweis festhalten, damit Sie die nächste Lernsession noch besser gestalten. Das gilt ganz besonders dann, wenn es einmal mit der Zielerreichung nicht so ganz geklappt hat. Wir lernen auch durch Fehler.',
+                                        position: 'bottom',
                                         step: 7
                                     },
                                     /* Milestone timeline chart */
@@ -386,31 +427,31 @@ define([
                                         element: document.querySelector('#milestone-timeline-tab'),
                                         intro: 'Sie können sich die Meilensteine auch als Zeitleiste anzeigen lassen.',
                                         position: 'top',
-                                        step: 7
+                                        step: 8
                                     },
                                     {
                                         element: document.querySelector('.milestone-chart-container'),
                                         intro: 'In der oberen Zeitleiste werden Meilensteine dargestellt.',
                                         position: 'top',
-                                        step: 8
+                                        step: 9
                                     },
                                     {
                                         element: document.querySelector('.activity-chart-container'),
                                         intro: 'Im mittleren Teil sehen Sie, in welchen Bereichen Sie im Kurs bereits aktiv waren. Auf der X-Achse ist die Zeit abgebildet. Die Größe der Punkte zeigt Ihnen an, wie aktiv Sie waren.',
                                         position: 'top',
-                                        step: 9
+                                        step: 10
                                     },
                                     {
                                         element: document.querySelector('.filter-chart-container'),
                                         intro: 'Diese Zeitleiste umfasst das gesamte Semester und ermöglicht Ihnen, den Betrachtungszeitraum der oberen Zeitleisten durch die äußeren Schieber auf Stunden, Tage oder Wochen zu begrenzen.',
                                         position: 'top',
-                                        step: 10
+                                        step: 11
                                     },
                                     {
                                         element: document.querySelector('.time-filters'),
                                         intro: 'Hier können Sie auch noch weitere Filter nutzen.',
                                         position: 'top',
-                                        step: 11
+                                        step: 12
                                     }
                                 ]
                             })
@@ -497,7 +538,7 @@ define([
                             d.end = new Date(d.end);
                             d.g = 1;
                         });
-
+                        this.updateLanes();
                         this.xmin = d3.min(this.milestones, function (d) {
                             return d.start;
                         });
@@ -532,31 +573,35 @@ define([
                     getMilestones: function () {
                         return this.milestones;
                     },
-                    /*x_: function() {
+                    getMilestonesById: function (id) {
+                        return this.milestone.filter(function (m) {
+                            return m.id === id ? true : false;
+                        });
+                    },
+                    xx: function (x) {
                         return d3.scaleTime()
                             .domain(this.range)
-                            .range([0, this.width - this.padding]); // 
-                    },*/
-                    xx: function (x) {
-                        //console.log('range', this.range)
-                        var x_ = d3.scaleTime()
-                            .domain(this.range)
                             .range([0, this.width - this.padding])(x);
-                        return x_;
+
                     },
-                    /*y_: function() {
-                        return d3.scaleLinear()
-                            .domain([0, this.ymax])
-                            .range([0, this.height]);
-                    },*/
+                    duration: function (start, end) {
+                        var x_start = d3.scaleTime().domain(this.range).range([0, this.width - this.padding])(start);
+                        var x_end = d3.scaleTime().domain(this.range).range([0, this.width - this.padding])(end);
+                        return x_end - x_start;
+                    },
                     z: function () {
                         return d3.scaleOrdinal()
                             .range(this.colors);
                     },
                     getYLane: function (id) {
-                        return id % 3;
+
+                        return this.milestones.filter(function (m) {
+                            return m.id === id ? true : false;
+                        })[0].yLane;
                     },
                     updateChart: function (range) {
+                        this.updateLanes();
+
                         this.range = range;
                         //var z = d3.scaleOrdinal().range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
 
@@ -569,6 +614,43 @@ define([
                             .range([0, this.height])));
 
                         this.$forceUpdate();
+                    },
+                    updateLanes: function () {
+                        // Recognize interval overlaps for the milestone start/end time
+                        var lanes = [[], [], [], [], []];
+
+                        for (var i = 0; i < this.milestones.length; i++) {
+                            lanesLoop:
+                            for (var lane = 0; lane < lanes.length; lane++) {
+                                if (lanes[lane].length === 0) {
+                                    lanes[lane].push(this.milestones[i]);
+                                    this.milestones[i].yLane = lane;
+                                    break lanesLoop;
+                                }
+                                var geht = true;
+                                for (var j = 0; j < lanes[lane].length; j++) {
+                                    if (moment(this.milestones[i].end).diff(moment(lanes[lane][j].start)) < 0) {
+                                        // ms liegt davor
+                                    } else if (moment(this.milestones[i].start).diff(moment(lanes[lane][j].end)) > 0) {
+                                        // ms liegt dahinter
+                                    } else {
+                                        geht = false;
+                                        //break lanesLoop;
+                                    }
+                                }
+                                if (geht) {
+                                    lanes[lane].push(this.milestones[i]);
+                                    this.milestones[i].yLane = lane;
+                                    break lanesLoop;
+                                }
+                            }
+                        }
+                        // number of rows
+                        this.maxLanes = lanes.filter(function (l) {
+                            return l.length > 0 ? true : false;
+                        }).length;
+
+                        this.height = this.maxLanes * 24;
                     },
                     showModal: function (e) {
                         this.selectedMilestone = e;
@@ -680,7 +762,7 @@ define([
                         this.emptyMilestone.id = Math.ceil(Math.random() * 1000);
                         this.emptyMilestone.end = new Date(this.selectedYear, this.selectedMonth - 1, this.selectedDay, 12);
                         var d = new Date();
-                        this.emptyMilestone.start = new Date();
+                        this.emptyMilestone.start = new Date(this.selectedStartYear, this.selectedStartMonth - 1, this.selectedStartDay, 12);
 
                         this.milestones.push(this.emptyMilestone);  
                         logger.add('milestone_created', {
@@ -693,6 +775,7 @@ define([
                             resources: this.emptyMilestone.resources.map(function (resource) { return { name: resource.instance_title, section: resource.section, type: resource.instance_type, done: resource.checked !== undefined ? true : false }; }),
                             strategies: this.emptyMilestone.strategies.map(function (strategy) { return { name: strategy.id, done: strategy.checked !== undefined ? true : false }; })
                         });
+
                         var x = d3.scaleTime().domain(this.range).range([0, width]);
                         var y = d3.scaleLinear().domain([0, this.ymax]).range([0, this.height]);
                         this.updateMilestoneStatus();
@@ -708,7 +791,8 @@ define([
                             progress: 0.0,
                             resources: [],
                             strategies: [],
-                            reflections: []
+                            reflections: [],
+                            yLane: 0
                         };
                         $('#theMilestoneModal').modal('hide');
                     },
@@ -783,11 +867,56 @@ define([
                         if (
                             moment(endDate).diff(moment(new Date(2019, 8, 30, 23, 59)), 'minutes') > 0 &&
                             moment(endDate).diff(moment(new Date()), 'years') < 1
-                            ) {
+                        ) {
                             this.invalidEndDate = false;
                             this.getSelectedMilestone().end = endDate;
                         } else {
                             this.invalidEndDate = true;
+                        }
+                    },
+                    startDaySelected: function (event, d) {
+                        var day = event ? parseInt(event.target.value) : d;
+
+                        if ([4, 6, 9, 11].indexOf(parseInt(this.selectedStartMonth, 10)) !== -1 && parseInt(day, 10) === 31) {
+                            this.invalidStartDay = true;
+                            this.selectedStartMonth++;
+                            return;
+                        } else if (parseInt(this.selectedStartMonth, 10) === 2 && day > 29) {
+                            this.invalidDay = true;
+                            return;
+                        } else if (parseInt(this.selectedStartMonth, 10) === 2 && day === 29 && !(parseInt(this.selectedYear, 10) % 4 === 0 && parseInt(this.selectedYear, 10) % 100 !== 0 || parseInt(this.selectedYear, 10) % 400 === 0)) {
+                            this.invalidDay = true;
+                            return;
+                        } else {
+                            this.invalidDay = false;
+                        }
+                        this.selectedStartDay = day;
+
+                        if (this.invalidStartDay === false) {
+                            this.setStartDateFromSelectedValues();
+                            return true;
+                        }
+                        return false;
+                    },
+                    startMonthSelected: function (event) {
+                        this.selectedStartMonth = event.target.value;
+                        this.startDaySelected(undefined, this.selectedStartDay); // check if the combination of day and month is valid
+                    },
+                    startYearSelected: function (event) {
+                        this.selectedStartYear = event.target.value;
+                        this.setStartDateFromSelectedValues();
+                    },
+                    setStartDateFromSelectedValues: function () {
+                        var startDate = new Date(this.selectedStartYear, this.selectedStartMonth - 1, this.selectedStartDay);
+                        // Prohobit start dates before the semester start
+                        if (
+                            moment(startDate).diff(moment(new Date(2019, 8, 30, 23, 59)), 'minutes') > 0 &&
+                            moment(startDate).diff(moment(new Date()), 'years') < 1
+                        ) {
+                            this.invalidStartDate = false;
+                            this.getSelectedMilestone().start = startDate;
+                        } else {
+                            this.invalidStartDate = true;
                         }
                     },
                     dayRange: function () {
@@ -872,10 +1001,10 @@ define([
                         }
                         this.invalidResources = this.getSelectedMilestone().resources.length > 0 ? false : true;
                     },
-                    limitTextLength: function (str, max) {
+                    limitTextLength: function (str, max, end) {
                         var len = str.length;
                         if (len > max) {
-                            return str.substr(0, max - 4) + '..' + str.substr(len - 4, len);
+                            return str.substr(0, max - 4) + '...' + (end ? str.substr(len - 4, len) : '');
                         } else {
                             return str;
                         }
@@ -947,14 +1076,12 @@ define([
                         var badge = "";
                         // clean up and reset first
                         $('.badge-ms').each(function () {
-                            console.log('remove');
                             $(this).remove();
                         });
                         for (var j = 0; j < this.milestones.length; j++) {
                             let pos = this.milestones[j].id;
                             for (var i = 0; i < this.milestones[j].resources.length; i++) {                               
                                 badge = $('<span></span>')
-                                    .text(this.limitTextLength(this.milestones[j].name, 14))
                                     .addClass('badge badge-secondary badge-ms')
                                     .attr('data-toggle', 'tooltip')
                                     .click(function(){
@@ -975,6 +1102,7 @@ define([
                                     ;
                                 if (!this.milestones[j].resources[i].checked && this.milestones[j].status === 'missed') {
                                     badge
+                                        .html('<i class="fa fa-exclamation"></i>' + this.limitTextLength(this.milestones[j].name, 14))
                                         .attr('title', 'Dieses Element haben Sie im Meilenstein \"' + this.milestones[j].name + '\" noch nicht erledigt oder als "erledigt" markiert.')
                                         .addClass('badge-missed')
                                         ;
@@ -983,6 +1111,7 @@ define([
 
                                 if (!this.milestones[j].resources[i].checked && this.milestones[j].status === 'progress') {
                                     badge
+                                        .html('<i class="fa fa-square-o"></i>' + this.limitTextLength(this.milestones[j].name, 14))
                                         .attr('title', 'Dieses Element haben Sie im Meilenstein \"' + this.milestones[j].name + '\" noch nicht erledigt oder als "erledigt" markiert.')
                                         .addClass('badge-progress')
                                         ;
@@ -991,6 +1120,7 @@ define([
 
                                 if (!this.milestones[j].resources[i].checked && this.milestones[j].status === 'urgent') {
                                     badge
+                                        .html('<i class="fa fa-square-o"></i>' + this.limitTextLength(this.milestones[j].name, 14))
                                         .attr('title', 'Dieses Element haben Sie im Meilenstein \"' + this.milestones[j].name + '\" noch nicht erledigt oder als "erledigt" markiert.')
                                         .addClass('badge-urgent')
                                         ;
@@ -998,7 +1128,9 @@ define([
                                 }
 
                                 if (this.milestones[j].resources[i].checked) {
+                                    var _this = this;
                                     badge
+                                        .html('<i class="fa fa-check-square"></i><span>' + _this.limitTextLength(_this.milestones[j].name, 14) + '</span>')
                                         .attr('title', 'Dieses Element haben Sie im Meilenstein \"' + this.milestones[j].name + '\" bereits als "erledigt" markiert.')
                                         .addClass('badge-ready')
                                         ;
@@ -1019,14 +1151,21 @@ define([
                         logger.add('reflections_open', { formVisible: true });
                     },
                     validateReflectionForm: function () {
-                        var valid = true;
-                        var r = this.getSelectedMilestone().reflections;
-                        for (var i = 0; i < r.length; i++) {
-                            if (r[i].length === 0) {
-                                valid = false;
+                        this.invalidReflections = [];
+                        let r = this.getSelectedMilestone().reflections;
+
+                        for (let i = 0; i < r.length; i++) {
+                            if (r[i] === undefined || r[i] === null) {
+                                this.invalidReflections.push(i + 1);
+                            } else if (r[i].length === 0) {
+                                this.invalidReflections.push(i + 1);
+                            } else {
+                                // console.log(r[i]);
                             }
                         }
-                        return r.length === 4 ? valid : false;
+                        if (r.length === 4 && this.invalidReflections.length === 0) {
+                            this.submitReflections();
+                        }
                     },
                     submitReflections: function () {
                         this.getSelectedMilestone().status = 'reflected';
@@ -1039,6 +1178,7 @@ define([
                             return e.reflections;
                         });
                         this.updateMilestones();
+                        $('#theReflectionModal').modal('hide');
                     },
                     setFilterPreset: function (preset) {
                         var range = [];
@@ -1067,43 +1207,38 @@ define([
                         this.timeFilterChart.replaceFilter(dc.filters.RangedFilter(range[0], range[1]));
                         this.timeFilterChart.filterTime();
                     },
-                    sortMilestones: function(){   
-                       this.milestones.sort(
-                           function(a, b){
-                               let x = new Date(a.end);
-                               let y = new Date(b.end);
-                               let now = new Date();
-                               if(a.status === "urgent" && b.status !== "urgent") return -1;
-                               if(b.status === "urgent" && a.status !== "urgent") return 1;
-                               if(a.status === "progress" && b.status !== "progress") return -1;
-                               if(b.status === "progress" && a.status !== "progress") return 1;
-                               if(a.status === "ready" && b.status !== "ready") return -1;
-                               if(b.status === "ready" && a.status !== "ready") return 1;
-                               if(a.status === "reflected" && b.status !== "reflected") return -1;
-                               if(b.status === "reflected" && a.status !== "reflected") return 1;
-                               if(a.end >= now && b.end < now) return -1;
-                               if(b.end >= now && a.end < now) return 1;
-                               if(x < now && y < now) return y - x;
-                               return x - y;
-                           }
-                       )
+                    sortMilestones: function () {
+                        this.milestones.sort(
+                            function (a, b) {
+                                let x = new Date(a.end);
+                                let y = new Date(b.end);
+                                let now = new Date();
+                                if (a.status === 'progress' && b.status !== "progress") {
+                                    return -1;
+                                }
+                                if (x - now >= 0 && y - now < 0) {
+                                    return -1;
+                                }
+                                return y - x;
+                            }
+                        );
                     },
-                    toICal: function(){
-                        try{
-                            // Initialize the calendar  
-                            let config =  {
+                    exportToICal: function (link) {
+                        try {
+                            // Initialize the calendar
+                            let config = {
                                 prodid: "APLE",
                                 domain: "APLE",
                                 tzid: "Europe/Berlin",
                                 type: "Gregorian",
                                 version: "2.0"
-                            }                           
+                            }
                             let cal = new ICalExport(ICalLib, config);
                             // Register all Milestones
-                            if(this.milestones && this.milestones.length > 0){
+                            if (this.milestones && this.milestones.length > 0) {
                                 this.milestones.forEach(
                                     (milestone) => {
-                                        try{
+                                        try {
                                             let initDate = new Date(milestone.end.toISOString());
                                             initDate.setHours(12);
                                             initDate.setMinutes(0);
@@ -1114,22 +1249,22 @@ define([
                                                 start: initDate                                              
                                             }
                                             // Generate description
-                                            let description = milestone.objective ? "Lernziel: "+milestone.objective : "";                                            
-                                            if(milestone.resources && milestone.resources.length > 0){
+                                            let description = milestone.objective ? "Lernziel: " + milestone.objective : "";
+                                            if (milestone.resources && milestone.resources.length > 0) {
                                                 description += "\n\nZu diesem Meilenstein gehören folgende Lernressourcen:";
                                                 milestone.resources.forEach(
-                                                    (resource) => {      
-                                                        let done = resources.checked ? "[erledigt] " : "";        
-                                                        if(resources.instance_title) description += "\n- "+done+resources.instance_title;                                                        
+                                                    (resource) => {
+                                                        let done = resources.checked ? "[erledigt] " : "";
+                                                        if (resources.instance_title) description += "\n- " + done + resources.instance_title;
                                                     }
                                                 )
                                             }
-                                            if(milestone.strategies && milestone.strategies.length > 0){                                                
+                                            if (milestone.strategies && milestone.strategies.length > 0) {
                                                 description += "\n\nZu diesem Meilenstein gehören folgende Lernstrategien:";
                                                 milestone.strategies.forEach(
-                                                    (strategie) => {      
-                                                        let done = strategie.checked ? "[erledigt] " : "";        
-                                                        if(strategie.name) description += "\n- "+done+strategie.name;                                                        
+                                                    (strategie) => {
+                                                        let done = strategie.checked ? "[erledigt] " : "";
+                                                        if (strategie.name) description += "\n- " + done + strategie.name;
                                                     }
                                                 )
                                             }
@@ -1137,23 +1272,23 @@ define([
                                             let event = cal.addEvent(data);
                                             // Set an alarm three days before end.
                                             let date = new Date(milestone.start.toISOString());
-                                            date.setDate(date.getDate() - 3);                                            
+                                            date.setDate(date.getDate() - 3);
                                             cal.addAlarm(event, {
-                                                type: 0, 
+                                                type: 0,
                                                 title: data.title,
                                                 date: date,
-                                                description: "Der Meilenstein "+data.title+" ist fast erreicht!"
+                                                description: "Der Meilenstein " + data.title + " ist fast erreicht!"
                                             });
                                             // Set an alarm one week before end.
                                             date.setDate(date.getDate() - 4);
                                             cal.addAlarm(event, {
-                                                type: 0, 
+                                                type: 0,
                                                 title: data.title,
                                                 date: date,
-                                                description: "Der Meilenstein "+data.title+" rückt näher!"
+                                                description: "Der Meilenstein " + data.title + " rückt näher!"
                                             });
-                                        } catch(error){
-                                            console.log("ICalExport: Konnte Event nicht registrieren! \r\n"+error.toString());
+                                        } catch (error) {
+                                            console.log("ICalExport: Konnte Event nicht registrieren! \r\n" + error.toString());
                                         }
                                     }
                                 );

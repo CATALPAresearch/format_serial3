@@ -16,7 +16,10 @@
 define(['jquery'], function ($) {
     var timeFilterChart = '';
     var filterChart = function (d3, dc, crossfilter, facts, xRange, milestoneApp, utils, log) {
-
+        const courseSettings = {
+            start: 1569880800, // 1.08.19
+            end: 1585691999
+        }; 
         timeFilterChart = dc.compositeChart("#filter-chart");
         this.xRange = xRange;
         this.milestoneApp = milestoneApp;
@@ -161,9 +164,12 @@ define(['jquery'], function ($) {
          */
         this.filterTime = function (the_chart) {
             var range = timeFilterChart.filters()[0] === undefined ? this.xRange : timeFilterChart.filters()[0];
+            // limit range to semester
+            range[0] = range[0].getTime() <= courseSettings.start * 1000 || range[0].getTime() > courseSettings.end * 1000 ? new Date(courseSettings.start * 1000) : range[0]; 
+            range[1] = range[1].getTime() > courseSettings.end * 1000 ? new Date(courseSettings.end * 1000) : range[1]; 
             // apply filter to main chart and milestone chart
             _this.milestoneApp.updateChart(range);
-            //console.log(registeredCharts);
+            
             for (var i = 0; i < registeredCharts.length; i++) {
                 registeredCharts[i].update(range);
             }

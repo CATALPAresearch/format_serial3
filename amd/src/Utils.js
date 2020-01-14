@@ -4,7 +4,7 @@
  * @module     mod_videodatabase/videodatabase
  * @package    mod_videodatabase
  * @class      Utils
- * @copyright  2018 Niels Seidel, info@social-machinables.com
+ * @copyright  2019 Niels Seidel, niels.seidel@fernuni-hagen.de
  * @license    MIT
  * @since      3.1
  */
