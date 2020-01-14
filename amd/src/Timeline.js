@@ -32,14 +32,14 @@ define([
         var width = document.getElementById('ladtopic-container-0').offsetWidth;
         var margins = { top: 15, right: 10, bottom: 20, left: 10 };
         var course = {
-            id: parseInt($('#courseid').text(), 10)
+            id: parseInt($('#courseid').text(), 10)           
             // module: parseInt($('#moduleid').html()) 
         };
 
         utils.get_ws('logstore', {
             'courseid': parseInt(course.id, 10)
         }, function (e) {
-            try {
+            try {                
                 draw(JSON.parse(e.data), logger);
             } catch (e) {
                 // eslint-disable-next-line no-console
@@ -114,6 +114,7 @@ define([
                         done: [],
                         range: [],
                         milestones: [],
+                        calendar: {},
                         /*  [{
                               id: 3867650,
                               name: 'Planung',
@@ -229,7 +230,6 @@ define([
                     }, function (e) {
                         if (e !== null) {
                             var data = JSON.parse(e.milestones);
-
                             if (!data || !data.milestones) {
                                 _this.milestones = [];
                             } else {
@@ -258,7 +258,19 @@ define([
                             _this.closeModal();
                         }
                     });*/
-
+                    
+                    // Load Events from the calendar                   
+                    utils.get_ws('getcalendar', {
+                        'courseid': parseInt(course.id, 10)
+                    }, function (e) {
+                        try{                            
+                            if(typeof e.data === "string" && e.data.length > 0){
+                                _this.calendar = JSON.parse(e.data);                   
+                            }
+                        } catch(error){
+                            console.log("Der Kalender konnte nicht exportiert werden. \r\n"+error.toString());
+                        }                                             
+                    });
                 },
                 created: function () {
                     var _this = this;
@@ -274,7 +286,7 @@ define([
                     $('#filter-presets').hide();
                 },
                 watch: {
-                    milestones: function (newMilestone) {
+                    milestones: function (newMilestone) {                                 
                         //console.log('watch ms called')
                         //this.updateMilestones();
                     },
@@ -484,12 +496,30 @@ define([
                         this.selectedMonth = 1; // (new Date()).getMonth() + 1;
                         this.selectedYear = 2019; // (new Date()).getFullYear();
                         // obtain course structure form DB
-                        var t1 = new Date().getTime();
+                        var t1 = new Date().getTime();                        
                         utils.get_ws('coursestructure', {
-                            courseid: parseInt(course.id, 10)
+                            courseid: parseInt(course.id, 10),
+                            select: {    
+                                modules: JSON.stringify([
+                                    "assign", 
+                                    "data", 
+                                    "hvp", 
+                                    "checklist", 
+                                    "url", 
+                                    "studentquiz", 
+                                    "page", 
+                                    "feedback",
+                                    "forum",
+                                    "resource",
+                                    "glossary",
+                                    "quiz",
+                                    "wiki"
+                                ])                            
+                            }                               
                         }, function (e) {
-                            try {
-                                _this.resources = JSON.parse(e.data);
+                            try {                              
+                                _this.resources = JSON.parse(e.data);    
+                                _this.createMilestonePicker();                            
                                 //console.log('Ladezeit', t1 - (new Date()).getTime());
                                 //console.log('course-structure-result', _this.resources.map(function(e) { return e.id; }));
                                 //console.log('debug', JSON.parse(e.debug));
@@ -734,7 +764,7 @@ define([
                         var d = new Date();
                         this.emptyMilestone.start = new Date(this.selectedStartYear, this.selectedStartMonth - 1, this.selectedStartDay, 12);
 
-                        this.milestones.push(this.emptyMilestone);
+                        this.milestones.push(this.emptyMilestone);  
                         logger.add('milestone_created', {
                             milestoneId: this.emptyMilestone.id,
                             name: this.emptyMilestone.name,
@@ -994,6 +1024,7 @@ define([
                         return ((resourceProgress + strategiesProgress) / 2);
                     },
                     updateMilestones: function () {
+                        this.sortMilestones();
                         // Update Milestones to the database using the webservice
                         var _this = this;
                         utils.get_ws('setmilestones', {
@@ -1048,12 +1079,27 @@ define([
                             $(this).remove();
                         });
                         for (var j = 0; j < this.milestones.length; j++) {
-                            for (var i = 0; i < this.milestones[j].resources.length; i++) {
+                            let pos = this.milestones[j].id;
+                            for (var i = 0; i < this.milestones[j].resources.length; i++) {                               
                                 badge = $('<span></span>')
                                     .addClass('badge badge-secondary badge-ms')
                                     .attr('data-toggle', 'tooltip')
+                                    .click(function(){
+                                        let nav = $("nav");
+                                        $(".milestone-entry-"+pos+" .milestone-entry-details").collapse("show");
+                                        let offset = $(".milestone-entry-"+pos).offset().top;
+                                        if(nav.length > 0) {
+                                            offset = offset - nav.outerHeight();
+                                        }
+                                        $('html, body').animate({
+                                            scrollTop: offset
+                                        }, 1000);
+                                    })
+                                    .css({
+                                        "user-select": "none",
+                                        "cursor": "pointer"
+                                    })
                                     ;
-
                                 if (!this.milestones[j].resources[i].checked && this.milestones[j].status === 'missed') {
                                     badge
                                         .html('<i class="fa fa-exclamation"></i>' + this.limitTextLength(this.milestones[j].name, 14))
@@ -1199,8 +1245,8 @@ define([
                                             initDate.setSeconds(0);
                                             let data = {
                                                 uid: milestone.id,
-                                                title: milestone.name,
-                                                start: initDate
+                                                title: "[Meilenstein] "+milestone.name,
+                                                start: initDate                                              
                                             }
                                             // Generate description
                                             let description = milestone.objective ? "Lernziel: " + milestone.objective : "";
@@ -1246,11 +1292,212 @@ define([
                                         }
                                     }
                                 );
-                            }
-                            window.open("data:text/calendar;charset=utf-8," + escape(cal.print()));
-                        } catch (error) {
-                            console.log("ICalExport: Konnte den Export nicht erfolgreich abschließen! \r\n " + error.toString());
+                            }       
+                            // Register all calendar events                   
+                            if(typeof this.calendar === "object" && Object.keys(this.calendar).length > 0){
+                                Object.keys(this.calendar).forEach(
+                                    (id) => {
+                                        try{
+                                            let entry = this.calendar[id];
+                                            let type = "[Nutzertermin]";
+                                            switch(entry.eventtype){
+                                                case "course":      type = "[Kurstermin]"
+                                                                    break;
+                                                case "category":    type = "[Kursbereich]"
+                                                                    break;
+                                                case "site":        type = "[Seitentermin]"
+                                                                    break;
+                                                case "group":       type = "[Gruppentermin]"
+                                                                    break;
+                                            }
+                                            let data = {
+                                                uid: id+entry.timemodified,
+                                                title: type+" "+entry.name,
+                                                start: new Date(entry.timestart*1000)                                              
+                                            } 
+                                            if(entry.timeduration) data.stop = new Date(entry.timestart*1000 + entry.timeduration*1000);
+                                            data.description = entry.description;
+                                            let event = cal.addEvent(data);
+                                            // Set an alarm three days before end.
+                                            let date = new Date(data.start.toISOString());
+                                            date.setDate(date.getDate() - 3);                                            
+                                            cal.addAlarm(event, {
+                                                type: 0, 
+                                                title: data.title,
+                                                date: date,
+                                                description: "Der Termin "+data.title+" ist fast erreicht!"
+                                             });
+                                             // Set an alarm one week before end.
+                                             date.setDate(date.getDate() - 4);
+                                             cal.addAlarm(event, {
+                                                type: 0, 
+                                                title: data.title,
+                                                date: date,
+                                                description: "Der Termin "+data.title+" rückt näher!"
+                                             });
+                                        } catch(error){
+                                            console.log("ICalExport: Konnte Event nicht registrieren! \r\n"+error.toString());
+                                        }                                        
+                                    }
+                                )
+                            }      
+                            let now = new Date();
+                            let year = now.getFullYear().toString().padStart(4, "0");
+                            let month = now.getMonth() + 1;      
+                            month = month.toString().padStart(2, "0");
+                            let day = now.getDate().toString().padStart(2, "0");
+                            let hour = now.getHours().toString().padStart(2, "0");
+                            let minutes = now.getMinutes().toString().padStart(2, "0");
+                            let title = document.title.replace(/[^A-Za-z0-9]/g, "");      
+                            var link = document.createElement("a");
+                            link.href = "data:text/calendar;charset=utf-8,"+escape(cal.print());                                 
+                            link.download = "Semesterplanung_"+title+"_"+year+month+day+hour+minutes+".ics";
+                            link.click();                                                                                        
+                        } catch(error){
+                            console.log("ICalExport: Konnte den Export nicht erfolgreich abschließen! \r\n "+error.toString());
                         }
+                    },
+                    createMilestonePicker: function(){
+                        let _this = this;  
+                        let updateMilestoneList = function(id){
+                            try{
+                                let list = "";
+                                _this.milestones.forEach(
+                                    (element) => {
+                                        let icon = "fa-square";
+                                        if(typeof element.resources === "object"){
+                                            element.resources.forEach(
+                                                (res) => {                                                    
+                                                    if(+res.instance_url_id === id) icon = "fa-check-square";                                                 
+                                                }
+                                            )
+                                        }                                       
+                                        list += "<a class=\"dropdown-item\" href=\"#\" id=\""+element.id+"\"><i class=\"icon fa "+icon+"\"></i>"+element.name+"</a>";
+                                    }
+                                );
+                                return list;
+                            } catch(error){                                
+                                return "<div class=\"dropdown-item\">Meilensteine konnten nicht geladen werden.</div>";
+                            }
+                        }                      
+                        $(document).ready(function(){                            
+                            let instances = $(".activityinstance");
+                            instances.each(
+                                function(index){
+                                    try{
+                                        // get all important data
+                                        let element = $(this);
+                                        let link = element.find("a").eq(0);
+                                        if(link.length !== 1) return;
+                                        let href = link.attr("href");
+                                        if(typeof href === "undefined" || href.length <= 0) return;
+                                        let posID = href.indexOf("id="); 
+                                        if(posID === -1) return;
+                                        let id = +href.slice(posID + 3);
+                                        if(typeof id !== "number" || id < 0) return;
+                                        // add the dom elements
+                                        let dom = " \
+                                            <div class=\"dropdown milestone_picker\"> \
+                                                <a href=\"#\" class=\"badge dropdown-toggle\" \
+                                                    href=\"#\" role=\"button\" \
+                                                    data-toggle=\"dropdown\" aria-haspopup=\"true\" \
+                                                    aria-expanded=\"false\"> \
+                                                    Meilensteine \
+                                                </a> \
+                                                <div class=\"dropdown-menu\" aria-labelledby=\"dropdownMenuLink\"> \
+                                                </div> \
+                                            </div> \
+                                        ";                                       
+                                        let picker = $(dom).insertAfter(link);
+                                        let dropdown = picker.find(".dropdown-menu");
+                                        dropdown.css({
+                                            "display": "none"
+                                        });
+                                        let pickerLink = picker.find("a");
+                                        pickerLink.css({
+                                            "background-color": "transparent",
+                                            "color": "black",
+                                            "font-weight": "normal"
+                                        }); 
+                                        $(document).click(function(e){
+                                            // blur does not work on <div>
+                                            if($(e.target).is('.milestone_picker .dropdown-menu, .milestone_picker .dropdown-menu *'))return;
+                                            $(".milestone_picker .dropdown-menu").css({
+                                                "display": "none"
+                                            }); 
+                                        });                                                       
+                                        pickerLink.click(function(e){
+                                            e.preventDefault();                                                                                            
+                                            if(dropdown.css("display") !== "block"){                                               
+                                                dropdown.empty();
+                                                let data = updateMilestoneList(id);
+                                                $(data).prependTo(dropdown);
+                                                $(".milestone_picker .dropdown-menu").css({
+                                                    "display": "none"
+                                                });    
+                                                let entries = dropdown.find("a.dropdown-item");
+                                                entries.each(function(){
+                                                    let entry = $(this);
+                                                    let entryID = +entry.attr("id");
+                                                    let icon = $(this).find("i.icon");
+                                                    if(typeof entryID === "number"){
+                                                        entry.click(function(e){
+                                                            e.preventDefault();                                                            
+                                                            if(typeof _this.milestones === "object" && typeof _this.resources === "object"){
+                                                                for(let i in _this.milestones){
+                                                                    if(_this.milestones[i]["id"] === entryID){                                                                                                                                               
+                                                                        for(let u in _this.resources){
+                                                                            if(+_this.resources[u]["instance_url_id"] === id){                                                                                                                                                                                                                                      
+                                                                                if(typeof _this.milestones[i]["resources"] === "object"){ 
+                                                                                    if(Object.keys(_this.milestones[i]["resources"]).length > 0){
+                                                                                        let found = null;
+                                                                                        for(let t in _this.milestones[i]["resources"]){                                                                                                                                                                                
+                                                                                            if(+_this.milestones[i]["resources"][t]["instance_url_id"] === id){
+                                                                                                found = t;
+                                                                                            }
+                                                                                        }
+                                                                                        if(found !== null){
+                                                                                            _this.milestones[i]["resources"].splice(found, 1);
+                                                                                            icon.removeClass("fa-check-square");
+                                                                                            icon.addClass("fa-square");
+                                                                                        } else {
+                                                                                            _this.milestones[i]["resources"].push(_this.resources[u]);
+                                                                                            icon.addClass("fa-check-square");
+                                                                                            icon.removeClass("fa-square");
+                                                                                        }
+                                                                                    } else {
+                                                                                        _this.milestones[i]["resources"].push(_this.resources[u]);                                                                                        
+                                                                                        icon.addClass("fa-check-square");
+                                                                                        icon.removeClass("fa-square");
+                                                                                    }                                                                                
+                                                                                    
+                                                                                } else {                                                                                    
+                                                                                    _this.milestones[i]["resources"] = array(_this.resources[u]);                                                                                    
+                                                                                    icon.addClass("fa-check-square");
+                                                                                    icon.removeClass("fa-square");
+                                                                                }
+                                                                                _this.updateMilestoneStatus();
+                                                                            }                                                                            
+                                                                        }
+                                                                    }
+                                                                }  
+                                                            }                                                                                                                                                                                                                                           
+                                                        });
+                                                    }
+                                                });                                               
+                                                dropdown.css({
+                                                    "display": "block"
+                                                });
+                                            } else {
+                                                $(".milestone_picker .dropdown-menu").css({
+                                                    "display": "none"
+                                                });
+                                            }                                      
+                                        });                                       
+                                    } catch(error){}                                          
+                                }
+                            )
+                        });                       
                     }
                 }
             });
