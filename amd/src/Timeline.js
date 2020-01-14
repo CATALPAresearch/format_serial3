@@ -298,16 +298,16 @@ define([
                     }
                 },
                 computed: {
-                    archivedMilestones: function(){
+                    archivedMilestones: function () {
                         return this.milestones.filter(
-                            function(f){
+                            function (f) {
                                 return f.status === "missed" || f.status === "reflected";
                             }
                         );
                     },
-                    remainingMilestones: function(){
+                    remainingMilestones: function () {
                         return this.milestones.filter(
-                            function(f){
+                            function (f) {
                                 return f.status !== "missed" && f.status !== "reflected"
                             }
                         );
@@ -1580,7 +1580,7 @@ define([
                                             detail.off("show.bs.collapse", show);
                                             promises.push(new Promise(
                                                 (resolve, reject) => {
-                                                    let shown = function () {
+                                                    let shown = function() {
                                                         detail.off("shown.bs.collapse", shown);
                                                         return resolve();
                                                     }
