@@ -298,6 +298,20 @@ define([
                     }
                 },
                 computed: {
+                    archivedMilestones: function(){
+                        return this.milestones.filter(
+                            function(f){
+                                return f.status === "missed" || f.status === "reflected";
+                            }
+                        );
+                    },
+                    remainingMilestones: function(){
+                        return this.milestones.filter(
+                            function(f){
+                                return f.status !== "missed" && f.status !== "reflected"
+                            }
+                        );
+                    },
                     dayOfSelectedMilestone: {
                         get: function () {
                             return this.getSelectedMilestone().end.getDate();
