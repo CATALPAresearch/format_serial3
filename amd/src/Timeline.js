@@ -1306,8 +1306,8 @@ define([
                                                 description += "\n\nZu diesem Meilenstein gehören folgende Lernressourcen:";
                                                 milestone.resources.forEach(
                                                     (resource) => {
-                                                        let done = resources.checked ? "[erledigt] " : "";
-                                                        if (resources.instance_title) description += "\n- " + done + resources.instance_title;
+                                                        let done = resource.checked ? "[erledigt] " : "";
+                                                        if (resource.instance_title) description += "\n- " + done + resource.instance_title;
                                                     }
                                                 )
                                             }
@@ -1337,7 +1337,7 @@ define([
                                                 type: 0,
                                                 title: data.title,
                                                 date: date,
-                                                description: "Der Meilenstein " + data.title + " rückt näher!"
+                                                description: "Der Meilenstein " + data.title + " ist bald erreicht!"
                                             });
                                         } catch (error) {
                                             console.log("ICalExport: Konnte Event nicht registrieren! \r\n" + error.toString());
@@ -1385,7 +1385,7 @@ define([
                                                 type: 0,
                                                 title: data.title,
                                                 date: date,
-                                                description: "Der Termin " + data.title + " rückt näher!"
+                                                description: "Der Termin " + data.title + " ist bald erreicht!"
                                             });
                                         } catch (error) {
                                             console.log("ICalExport: Konnte Event nicht registrieren! \r\n" + error.toString());
@@ -1401,7 +1401,7 @@ define([
                             let hour = now.getHours().toString().padStart(2, "0");
                             let minutes = now.getMinutes().toString().padStart(2, "0");
                             let title = document.title.replace(/[^A-Za-z0-9]/g, "");
-                            var link = document.createElement("a");
+                            var link = document.createElement("a");                           
                             link.href = "data:text/calendar;charset=utf-8," + escape(cal.print());
                             link.download = "Semesterplanung_" + title + "_" + year + month + day + hour + minutes + ".ics";
                             link.click();
