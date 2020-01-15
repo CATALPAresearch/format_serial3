@@ -1125,7 +1125,8 @@ define([
                         // clean up and reset first
                         $('.badge-ms').each(function () {
                             $(this).remove();
-                        });                       
+                        });  
+                        let c = this;                     
                         for (var j = 0; j < this.milestones.length; j++) {
                             let pos = this.milestones[j].id;
                             let obj = this.milestones[j];                    
@@ -1136,9 +1137,9 @@ define([
                                     .click(
                                         function(){
                                             if(obj.status === "missed" || obj.status === "reflected"){
-                                                _this.moveToMilestoneArchiveListEntry(pos, true);
+                                                c.moveToMilestoneArchiveListEntry(pos, true);
                                             } else {
-                                                _this.moveToMilestoneListEntry(pos, true);
+                                                c.moveToMilestoneListEntry(pos, true);
                                             }                                             
                                         }
                                     )
