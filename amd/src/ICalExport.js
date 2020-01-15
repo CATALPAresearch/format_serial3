@@ -38,6 +38,40 @@ define([
                 tzid: config.tzid
             });
             vtimezone.updatePropertyWithValue("tzid", timezone.toString());
+            // daylight
+            var daylight = new ICalLib.Component("daylight");
+            daylight.addPropertyWithValue("dtstart", new ICalLib.Time({
+                year: 1996,
+                month: 3,
+                day: 31,
+                hour: 2
+            }));
+            daylight.addPropertyWithValue('tzoffsetfrom', '+01:00');
+            daylight.addPropertyWithValue('tzoffsetto', '+02:00');
+            daylight.addPropertyWithValue('tzname', 'cest');
+            daylight.addPropertyWithValue('rrule', new ICalLib.Recur({
+                freq: 'YEARLY',
+                bymonth: 3,
+                byday: '-1SU'
+            }));
+            vtimezone.addSubcomponent(daylight);
+            // standard
+            var standard = new ICalLib.Component('standard');
+            standard.addPropertyWithValue('dtstart', new ICalLib.Time({
+                year: 1996,
+                month: 10,
+                day: 27,
+                hour: 3
+            }));
+            standard.addPropertyWithValue('tzname', 'cet');
+            standard.addPropertyWithValue('tzoffsetfrom', '+02:00');
+            standard.addPropertyWithValue('tzoffsetto', '+01:00');
+            standard.addPropertyWithValue('rrule', new ICalLib.Recur({
+                freq: 'YEARLY',
+                bymonth: 10,
+                byday: '-1SU'
+            }));
+            vtimezone.addSubcomponent(standard);
             this._cal.addSubcomponent(vtimezone);
             this._cal.updatePropertyWithValue("prodid", config.prodid);
             this._cal.updatePropertyWithValue("version", config.version);
@@ -85,9 +119,9 @@ define([
                 throw new Error(Messages.InvalidEventData);
             var vevent = new this._ICalLib.Component("vevent");
             var event = new this._ICalLib.Event(vevent);
+            vevent.addPropertyWithValue("dtstamp", this._ICalLib.Time.now());
             event.uid = data.uid + "@" + this._config.domain;
             event.startDate = this._ICalLib.Time.fromJSDate(data.start);
-            event.dtstamp = this._ICalLib.Time.now();
             if (data.end)
                 event.endDate = this._ICalLib.Time.fromJSDate(data.end);
             event.description = this._encode_utf8(data.description);

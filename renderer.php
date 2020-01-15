@@ -977,7 +977,7 @@ $modalMilestone = '
                                                         </li>
                                                         <li v-if="milestones.length > 0" class="nav-item">
                                                             <a 
-                                                                class="nav-link" @click="hideAdditionalCharts()" id="milestone-list-tab" data-toggle="pill" href="#view-archive-list" role="tab" aria-controls="view-archive-list" aria-selected="false">
+                                                                class="nav-link" @click="hideAdditionalCharts()" id="milestone-archive-list-tab" data-toggle="pill" href="#view-archive-list" role="tab" aria-controls="view-archive-list" aria-selected="false">
                                                                 <i hidden class="fa fa-list"></i> Archiv
                                                             </a>
                                                         </li>

@@ -754,11 +754,24 @@ define([
                         }
                         if (isValid) {
                             if (this.selectedMilestone === -1) {
-                                this.createMilestone();
+                                let id = this.createMilestone();
                                 Vue.nextTick().then(
                                     (resolve) => {
-                                        if ($("#milestone-list-tab").hasClass("active")) {
-                                            this.moveToMilestoneListEntry(id, true);
+                                        if ($("#milestone-list-tab").hasClass("active") || $("#milestone-archive-list-tab").hasClass("active")) {
+                                            let milestone;
+                                            this.milestones.forEach(
+                                                function(element){
+                                                    if(element.id === id) milestone = element;
+                                                    return;
+                                                }
+                                            );
+                                            if(typeof milestone === "object"){
+                                                if(milestone.status === "missed" || milestone.status === "reflected"){
+                                                    this.moveToMilestoneArchiveListEntry(id, true);
+                                                } else {
+                                                    this.moveToMilestoneListEntry(id, true);
+                                                } 
+                                            }                                                                                                                               
                                         } else if ($("#milestone-timeline-tab").hasClass("active")) {
                                             this.moveToMilestoneTimelineEntry(id, 3);
                                         }
@@ -777,8 +790,14 @@ define([
                                     resources: this.getSelectedMilestone().resources.map(function (resource) { return { name: resource.instance_title, section: resource.section, type: resource.instance_type, done: resource.checked !== undefined ? true : false }; }),
                                     strategies: this.getSelectedMilestone().strategies.map(function (strategy) { return { name: strategy.id, done: strategy.checked !== undefined ? true : false }; })
                                 });
-                                if ($("#milestone-list-tab").hasClass("active")) {
-                                    this.moveToMilestoneListEntry(this.getSelectedMilestone().id, true);
+                                if ($("#milestone-list-tab").hasClass("active") || $("#milestone-archive-list-tab").hasClass("active")) {
+                                    if(this.getSelectedMilestone().status === "missed" || this.getSelectedMilestone().status === "reflected"){
+                                        console.log("Archiv");
+                                        this.moveToMilestoneArchiveListEntry(this.getSelectedMilestone().id, true);
+                                    } else {
+                                        console.log("Other");
+                                        this.moveToMilestoneListEntry(this.getSelectedMilestone().id, true);
+                                    }   
                                 } else if ($("#milestone-timeline-tab").hasClass("active")) {
                                     this.moveToMilestoneTimelineEntry(this.getSelectedMilestone().id, 3);
                                 }
@@ -787,6 +806,7 @@ define([
                     },
                     createMilestone: function (e) {
                         this.emptyMilestone.id = Math.ceil(Math.random() * 1000);
+                        let id = this.emptyMilestone.id;
                         this.emptyMilestone.end = new Date(this.selectedYear, this.selectedMonth - 1, this.selectedDay, 12);
                         var d = new Date();
                         this.emptyMilestone.start = new Date(this.selectedStartYear, this.selectedStartMonth - 1, this.selectedStartDay, 12);
@@ -822,6 +842,7 @@ define([
                             yLane: 0
                         };
                         $('#theMilestoneModal').modal('hide');
+                        return id;
                     },
                     addMilestones: function (milestones) {
                         // add multiple milestones to the data
@@ -1104,24 +1125,24 @@ define([
                         // clean up and reset first
                         $('.badge-ms').each(function () {
                             $(this).remove();
-                        });
+                        });  
+                        let c = this;                     
                         for (var j = 0; j < this.milestones.length; j++) {
                             let pos = this.milestones[j].id;
+                            let obj = this.milestones[j];                    
                             for (var i = 0; i < this.milestones[j].resources.length; i++) {
                                 badge = $('<span></span>')
                                     .addClass('badge badge-secondary badge-ms')
                                     .attr('data-toggle', 'tooltip')
-                                    .click(function () {
-                                        let nav = $("nav");
-                                        $(".milestone-entry-" + pos + " .milestone-entry-details").collapse("show");
-                                        let offset = $(".milestone-entry-" + pos).offset().top;
-                                        if (nav.length > 0) {
-                                            offset = offset - nav.outerHeight();
+                                    .click(
+                                        function(){
+                                            if(obj.status === "missed" || obj.status === "reflected"){
+                                                c.moveToMilestoneArchiveListEntry(pos, true);
+                                            } else {
+                                                c.moveToMilestoneListEntry(pos, true);
+                                            }                                             
                                         }
-                                        $('html, body').animate({
-                                            scrollTop: offset
-                                        }, 1000);
-                                    })
+                                    )
                                     .css({
                                         "user-select": "none",
                                         "cursor": "pointer"
@@ -1286,8 +1307,8 @@ define([
                                                 description += "\n\nZu diesem Meilenstein gehören folgende Lernressourcen:";
                                                 milestone.resources.forEach(
                                                     (resource) => {
-                                                        let done = resources.checked ? "[erledigt] " : "";
-                                                        if (resources.instance_title) description += "\n- " + done + resources.instance_title;
+                                                        let done = resource.checked ? "[erledigt] " : "";
+                                                        if (resource.instance_title) description += "\n- " + done + resource.instance_title;
                                                     }
                                                 )
                                             }
@@ -1317,7 +1338,7 @@ define([
                                                 type: 0,
                                                 title: data.title,
                                                 date: date,
-                                                description: "Der Meilenstein " + data.title + " rückt näher!"
+                                                description: "Der Meilenstein " + data.title + " ist bald erreicht!"
                                             });
                                         } catch (error) {
                                             console.log("ICalExport: Konnte Event nicht registrieren! \r\n" + error.toString());
@@ -1365,7 +1386,7 @@ define([
                                                 type: 0,
                                                 title: data.title,
                                                 date: date,
-                                                description: "Der Termin " + data.title + " rückt näher!"
+                                                description: "Der Termin " + data.title + " ist bald erreicht!"
                                             });
                                         } catch (error) {
                                             console.log("ICalExport: Konnte Event nicht registrieren! \r\n" + error.toString());
@@ -1381,7 +1402,7 @@ define([
                             let hour = now.getHours().toString().padStart(2, "0");
                             let minutes = now.getMinutes().toString().padStart(2, "0");
                             let title = document.title.replace(/[^A-Za-z0-9]/g, "");
-                            var link = document.createElement("a");
+                            var link = document.createElement("a");                           
                             link.href = "data:text/calendar;charset=utf-8," + escape(cal.print());
                             link.download = "Semesterplanung_" + title + "_" + year + month + day + hour + minutes + ".ics";
                             link.click();
@@ -1566,6 +1587,61 @@ define([
                             }
                         } catch (error) { }
                     },
+                    moveToMilestoneArchiveListEntry: function(mID, collapseOther){
+                        try {
+                            this.hideAdditionalCharts();
+                            $('a[href="#view-archive-list"]').tab("show");
+                            let promises = [];
+                            $("div.milestone-entry-details").each(
+                                function () {
+                                    let detail = $(this);
+                                    let dID = detail.attr("id");
+                                    if (dID === "milestone-entry-archive-" + mID) {
+                                        let show = function () {
+                                            detail.off("show.bs.collapse", show);
+                                            promises.push(new Promise(
+                                                (resolve, reject) => {
+                                                    let shown = function() {
+                                                        detail.off("shown.bs.collapse", shown);
+                                                        return resolve();
+                                                    }
+                                                    detail.on("shown.bs.collapse", shown);
+                                                }
+                                            ));
+                                        }
+                                        detail.on("show.bs.collapse", show);
+                                        detail.collapse("show");
+                                        detail.off("show.bs.collapse", show);
+                                    } else {
+                                        if (collapseOther) {
+                                            let hide = function () {
+                                                detail.off("hide.bs.collapse", hide);
+                                                promises.push(new Promise(
+                                                    (resolve, reject) => {
+                                                        let hidden = function () {
+                                                            detail.off("hidden.bs.collapse", hidden);
+                                                            return resolve();
+                                                        }
+                                                        detail.on("hidden.bs.collapse", hidden);
+                                                    }
+                                                ));
+                                            }
+                                            detail.on("hide.bs.collapse", hide);
+                                            detail.collapse("hide");
+                                            detail.off("hide.bs.collapse", hide);
+                                        }
+                                    }
+                                }
+                            );
+                            Promise.all(promises).then(
+                                (resove) => {
+                                    $('html, body').animate({
+                                        scrollTop: $("#milestone-entry-archive-" + mID).parent().offset().top - $("nav.navbar").outerHeight()
+                                    }, 1000);
+                                }
+                            )
+                        } catch (error) { }
+                    },
                     moveToMilestoneListEntry: function (mID, collapseOther) {
                         try {
                             this.hideAdditionalCharts();
@@ -1621,7 +1697,6 @@ define([
                             )
                         } catch (error) { }
                     }
-
                 }
             });
 
