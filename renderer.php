@@ -966,19 +966,13 @@ $modalMilestone = '
                                                             <span v-if="milestones.length > 0" data-toggle="modal" data-target="#theMilestoneModal">
                                                                 <button @click="showEmptyMilestone()" id="add-milestone" class="btn btn-sm right btn-primary ms-btn ms-add-btn"
                                                                     data-toggle="tooltip" data-placement="bottom" title="Neuen Meilenstein hinzufügen"><i
-                                                                        class="fa fa-plus"></i></button>
+                                                                        class="fa fa-plus"></i> Neuer Meilenstein</button>
                                                             </span>
                                                         </li>
                                                         <li v-if="milestones.length > 0" class="nav-item">
                                                             <a 
                                                                 class="nav-link active" @click="hideAdditionalCharts()" id="milestone-list-tab" data-toggle="pill" href="#view-list" role="tab" aria-controls="view-list" aria-selected="false">
-                                                                <i hidden class="fa fa-list"></i> Liste
-                                                            </a>
-                                                        </li>
-                                                        <li v-if="milestones.length > 0" class="nav-item">
-                                                            <a 
-                                                                class="nav-link" @click="hideAdditionalCharts()" id="milestone-archive-list-tab" data-toggle="pill" href="#view-archive-list" role="tab" aria-controls="view-archive-list" aria-selected="false">
-                                                                <i hidden class="fa fa-list"></i> Archiv
+                                                                <i hidden class="fa fa-list"></i> Aktuelle Meilensteine
                                                             </a>
                                                         </li>
                                                         <li v-if="milestones.length > 0" class="nav-item">
@@ -987,7 +981,12 @@ $modalMilestone = '
                                                                 <i class="fa fa-clock"></i>Zeitleiste
                                                             </a>
                                                         </li>
-                                                                                                              
+                                                        <li v-if="milestones.length > 0" class="nav-item">
+                                                            <a 
+                                                                class="nav-link" @click="hideAdditionalCharts()" id="milestone-archive-list-tab" data-toggle="pill" href="#view-archive-list" role="tab" aria-controls="view-archive-list" aria-selected="false">
+                                                                <i hidden class="fa fa-list"></i> Archiv
+                                                            </a>
+                                                        </li>                                                                                                        
                                                     </ul>                                           
                                                     
                                     
