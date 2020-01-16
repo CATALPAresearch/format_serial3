@@ -988,11 +988,13 @@ $modalMilestone = '
                                                             </a>
                                                         </li>
                                                                                                               
-                                                    </ul>
+                                                    </ul>                                           
                                                     
-                                                    <button v-if="surveyDone > 0" class="btn btn-outline-info btn-sm introjs-btn" @click="startIntroJs()">Anleitung - So geht’s!</button>
-                                                    
-                                                    <div class="dropdown settingsMenu">
+                                    
+                                                    <div class="dropdown settingsMenu" style="float: right;">
+                                                        <button v-if="surveyDone > 0" class="btn btn-link" @click="startIntroJs()" style="padding: 0px 0px 5.5px 5px; margin: 0px -5px 0px 0px;">
+                                                            <i class="fa fa-question-circle"></i>
+                                                        </button>
                                                         <button class="btn btn-link dropdown-toggle" type="button" id="settingsMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expand="false">
                                                         <i class="fa fa-cog"></i>
                                                         </button>
