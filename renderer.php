@@ -959,7 +959,7 @@ $modalMilestone = '
                                         <!-- Milestone chart -->
                                         <div class="chart ms-chart">
                                             <div class="ms-chart-header row">
-                                                <div class="ms-headline">Meine Semesterplanung</div>
+                                                <h3 class="ms-headline">Meine Semesterplanung</h3>
                                                 <div class="ms-title col-sm-12 col-xs-12 col-md-12 col-lg-12">
                                                     <ul class="nav nav-pills ladtopics-pills" id="viewPillsTab" role="tablist">
                                                         <li>                                                             
