@@ -760,18 +760,18 @@ define([
                                         if ($("#milestone-list-tab").hasClass("active") || $("#milestone-archive-list-tab").hasClass("active")) {
                                             let milestone;
                                             this.milestones.forEach(
-                                                function(element){
-                                                    if(element.id === id) milestone = element;
+                                                function (element) {
+                                                    if (element.id === id) milestone = element;
                                                     return;
                                                 }
                                             );
-                                            if(typeof milestone === "object"){
-                                                if(milestone.status === "missed" || milestone.status === "reflected"){
+                                            if (typeof milestone === "object") {
+                                                if (milestone.status === "missed" || milestone.status === "reflected") {
                                                     this.moveToMilestoneArchiveListEntry(id, true);
                                                 } else {
                                                     this.moveToMilestoneListEntry(id, true);
-                                                } 
-                                            }                                                                                                                               
+                                                }
+                                            }
                                         } else if ($("#milestone-timeline-tab").hasClass("active")) {
                                             this.moveToMilestoneTimelineEntry(id, 3);
                                         }
@@ -791,13 +791,13 @@ define([
                                     strategies: this.getSelectedMilestone().strategies.map(function (strategy) { return { name: strategy.id, done: strategy.checked !== undefined ? true : false }; })
                                 });
                                 if ($("#milestone-list-tab").hasClass("active") || $("#milestone-archive-list-tab").hasClass("active")) {
-                                    if(this.getSelectedMilestone().status === "missed" || this.getSelectedMilestone().status === "reflected"){
+                                    if (this.getSelectedMilestone().status === "missed" || this.getSelectedMilestone().status === "reflected") {
                                         console.log("Archiv");
                                         this.moveToMilestoneArchiveListEntry(this.getSelectedMilestone().id, true);
                                     } else {
                                         console.log("Other");
                                         this.moveToMilestoneListEntry(this.getSelectedMilestone().id, true);
-                                    }   
+                                    }
                                 } else if ($("#milestone-timeline-tab").hasClass("active")) {
                                     this.moveToMilestoneTimelineEntry(this.getSelectedMilestone().id, 3);
                                 }
@@ -1125,22 +1125,22 @@ define([
                         // clean up and reset first
                         $('.badge-ms').each(function () {
                             $(this).remove();
-                        });  
-                        let c = this;                     
+                        });
+                        let c = this;
                         for (var j = 0; j < this.milestones.length; j++) {
                             let pos = this.milestones[j].id;
-                            let obj = this.milestones[j];                    
+                            let obj = this.milestones[j];
                             for (var i = 0; i < this.milestones[j].resources.length; i++) {
                                 badge = $('<span></span>')
                                     .addClass('badge badge-secondary badge-ms')
                                     .attr('data-toggle', 'tooltip')
                                     .click(
-                                        function(){
-                                            if(obj.status === "missed" || obj.status === "reflected"){
+                                        function () {
+                                            if (obj.status === "missed" || obj.status === "reflected") {
                                                 c.moveToMilestoneArchiveListEntry(pos, true);
                                             } else {
                                                 c.moveToMilestoneListEntry(pos, true);
-                                            }                                             
+                                            }
                                         }
                                     )
                                     .css({
@@ -1402,7 +1402,7 @@ define([
                             let hour = now.getHours().toString().padStart(2, "0");
                             let minutes = now.getMinutes().toString().padStart(2, "0");
                             let title = document.title.replace(/[^A-Za-z0-9]/g, "");
-                            var link = document.createElement("a");                           
+                            var link = document.createElement("a");
                             link.href = "data:text/calendar;charset=utf-8," + escape(cal.print());
                             link.download = "Semesterplanung_" + title + "_" + year + month + day + hour + minutes + ".ics";
                             link.click();
@@ -1587,7 +1587,7 @@ define([
                             }
                         } catch (error) { }
                     },
-                    moveToMilestoneArchiveListEntry: function(mID, collapseOther){
+                    moveToMilestoneArchiveListEntry: function (mID, collapseOther) {
                         try {
                             this.hideAdditionalCharts();
                             $('a[href="#view-archive-list"]').tab("show");
@@ -1601,7 +1601,7 @@ define([
                                             detail.off("show.bs.collapse", show);
                                             promises.push(new Promise(
                                                 (resolve, reject) => {
-                                                    let shown = function() {
+                                                    let shown = function () {
                                                         detail.off("shown.bs.collapse", shown);
                                                         return resolve();
                                                     }
@@ -1656,7 +1656,7 @@ define([
                                             detail.off("show.bs.collapse", show);
                                             promises.push(new Promise(
                                                 (resolve, reject) => {
-                                                    let shown = function() {
+                                                    let shown = function () {
                                                         detail.off("shown.bs.collapse", shown);
                                                         return resolve();
                                                     }
@@ -1673,7 +1673,7 @@ define([
                                                 detail.off("hide.bs.collapse", hide);
                                                 promises.push(new Promise(
                                                     (resolve, reject) => {
-                                                        let hidden = function() {
+                                                        let hidden = function () {
                                                             detail.off("hidden.bs.collapse", hidden);
                                                             return resolve();
                                                         }
