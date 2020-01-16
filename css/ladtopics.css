@@ -8,3 +8,15 @@
   margin-top:20px;
   border-top: solid 1px #ccc;
 }
+
+div.ms-headline{
+  padding: 0px 15px 12px 15px;
+  font-size: 1.2em;
+}
+
+button.ms-add{
+  padding: 1px 5px !important;
+  background-color: #008fac !important;
+  border-style: none;
+}
+

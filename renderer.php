@@ -959,12 +959,12 @@ $modalMilestone = '
                                         <!-- Milestone chart -->
                                         <div class="chart ms-chart">
                                             <div class="ms-chart-header row">
+                                                <div class="ms-headline">Meine Semesterplanung</div>
                                                 <div class="ms-title col-sm-12 col-xs-12 col-md-12 col-lg-12">
                                                     <ul class="nav nav-pills ladtopics-pills" id="viewPillsTab" role="tablist">
-                                                        <li>
-                                                            Meine Semesterplanung 
+                                                        <li>                                                             
                                                             <span v-if="milestones.length > 0" data-toggle="modal" data-target="#theMilestoneModal">
-                                                                <button @click="showEmptyMilestone()" id="add-milestone" class="btn btn-sm right btn-primary ms-btn ms-add-btn"
+                                                                <button @click="showEmptyMilestone()" id="add-milestone" class="btn btn-sm right btn-primary ms-btn ms-add"
                                                                     data-toggle="tooltip" data-placement="bottom" title="Neuen Meilenstein hinzufügen"><i
                                                                         class="fa fa-plus"></i> Neuer Meilenstein</button>
                                                             </span>
