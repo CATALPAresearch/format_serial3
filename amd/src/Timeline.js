@@ -1597,7 +1597,7 @@ define([
                                                 detail.off("hide.bs.collapse", hide);
                                                 promises.push(new Promise(
                                                     (resolve, reject) => {
-                                                        let hidden = function () {
+                                                        let hidden = function() {
                                                             detail.off("hidden.bs.collapse", hidden);
                                                             return resolve();
                                                         }
