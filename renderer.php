@@ -723,6 +723,7 @@ $modalMilestone = '
                 <div class="form-group row">
                     <label for="" class="col-2 col-form-label">Beginn *</label>
                     <div class="col-4">
+                        <vuejs-datepicker format="dd MMMM yyyy" :language="DPde"></vuejs-datepicker>
                         <select @change="startDaySelected" id="select_day"
                             :style="invalidStartDay ? \'border: solid 1px #ff420e;\' : \'none\'"
                             v-model="startDayOfSelectedMilestone"
@@ -752,6 +753,7 @@ $modalMilestone = '
                 <div class="form-group row">
                     <label for="" class="col-2 col-form-label">Termin *</label>
                     <div class="col-4">
+                        <vuejs-datepicker format="dd MMMM yyyy" :language="DPde"></vuejs-datepicker>
                         <select @change="daySelected" id="select_day"
                             :style="invalidDay ? \'border: solid 1px #ff420e;\' : \'none\'"
                             v-model="dayOfSelectedMilestone"

@@ -28,13 +28,15 @@ define([
     /**
      * Plot a timeline
      */
-    var Timeline = function (Vue, d3, dc, crossfilter, moment, Sortable, utils, introJs, logger, FilterChart, ActivityChart, InitialSurvey, ICalExport, ICalLib) {
+    var Timeline = function (Vue, d3, dc, crossfilter, moment, Sortable, utils, introJs, logger, FilterChart, ActivityChart, InitialSurvey, ICalExport, ICalLib, vDP, vDPde) {
         var width = document.getElementById('ladtopic-container-0').offsetWidth;
         var margins = { top: 15, right: 10, bottom: 20, left: 10 };
         var course = {
             id: parseInt($('#courseid').text(), 10)
             // module: parseInt($('#moduleid').html()) 
         };
+
+        console.log("TYPE: "+typeof vDPde);
 
         utils.get_ws('logstore', {
             'courseid': parseInt(course.id, 10)
@@ -86,10 +88,12 @@ define([
             var milestoneApp = new Vue({
                 el: '#planing-component',
                 components: {
+                    "vuejs-datepicker": vDP
                     // 'survey': surveyForm
                 },
                 data: function () {
                     return {
+                        DPde: vDPde,
                         surveyDone: 0,
                         chart: '',
                         timeFilterChart: '',
