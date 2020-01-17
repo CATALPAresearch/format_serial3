@@ -297,8 +297,9 @@ define([
                     this.semesterRange = this.getSemesterRange();
                     let start = new Date(this.semesterRange.from);
                     let end = new Date(this.semesterRange.to);
+                    console.log(start);
                     this.dpRange = {
-                        to: new Date(start.setDate(start.getDate() - 1)),  // had to create new date otherwise it will throw a parse error 
+                        to: start, 
                         from: new Date(end.setDate(end.getDate() + 1 + this.daysOffset)) // had to create new date otherwise it will throw a parse error 
                     }                         
                 },
@@ -903,21 +904,21 @@ define([
                         if(month > 8 || month < 3){
                             if(month < 3){
                                 return {
-                                    from: new Date(year - 1, 9, 0), // 01.10.(Y - 1)
-                                    to: new Date(year, 2, 30),      // 31.03.Y
+                                    from: new Date(year - 1, 9, 1), // 01.10.(Y - 1)
+                                    to: new Date(year, 2, 31),      // 31.03.Y
                                     sem: 0
                                 }
                             } else {
                                 return {
-                                    from: new Date(year, 9, 0),     // 01.10.Y
-                                    to: new Date(year + 1, 2, 30),  // 31.03.(Y + 1)
+                                    from: new Date(year, 9, 1),     // 01.10.Y
+                                    to: new Date(year + 1, 2, 31),  // 31.03.(Y + 1)
                                     sem: 0                              
                                 }
                             }
                         } else {
                             return {
-                                from: new Date(year, 3, 0),         // 01.04.Y
-                                to: new Date(year, 8, 29),          // 30.09.Y
+                                from: new Date(year, 3, 1),         // 01.04.Y
+                                to: new Date(year, 8, 30),          // 30.09.Y
                                 sem: 1
                             }
                         }
