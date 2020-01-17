@@ -723,7 +723,7 @@ $modalMilestone = '
                 <div class="form-group row">
                     <label for="" class="col-2 col-form-label">Beginn *</label>
                     <div class="col-4">
-                        <datepicker id="startDP" format="dd MMMM yyyy" :language="DPde" :disabled-dates="dpRange" @input="validateStartDate"></datepicker>                       
+                        <datepicker id="startDP" :value="startDate" format="dd MMMM yyyy" :language="DPde" :disabled-dates="dpRange" @input="validateStartDate"></datepicker>                       
                     </div>
                     <div v-if="invalidDay" class="col-sm-10 alert-invalid">Wählen Sie bitte ein gültiges Datum aus. Den {{ selectedDay }}. gibt es im ausgwählten Monat nicht. </div>
                     <div v-if="invalidStartDate" class="col-sm-10 alert-invalid">Wählen Sie bitte ein Datum nach dem Semesterbeginn und innerhalb der nächsten 12 Monate aus.</div>
@@ -731,7 +731,7 @@ $modalMilestone = '
                 <div class="form-group row">
                     <label for="" class="col-2 col-form-label">Termin *</label>
                     <div class="col-4">
-                        <datepicker id="endDP" format="dd MMMM yyyy" :language="DPde" :disabled-dates="dpRange"></datepicker>                       
+                        <datepicker id="endDP" :value="endDate" format="dd MMMM yyyy" :language="DPde" :disabled-dates="dpRange" @input="validateEndDate"></datepicker>                       
                     </div>
                     <div v-if="invalidDay" class="col-sm-10 alert-invalid">Wählen Sie bitte ein gültiges Datum aus. Den {{ selectedDay }}. gibt es im ausgwählten Monat nicht. </div>
                     <div v-if="invalidEndDate" class="col-sm-10 alert-invalid">Wählen Sie bitte ein Datum nach dem Semesterbeginn und innerhalb der nächsten 12 Monate aus.</div>

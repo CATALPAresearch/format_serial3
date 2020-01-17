@@ -92,10 +92,11 @@ define([
                 data: function () {
                     return {
                         // <s> datepicker
-                        start: null,
-                        end: null,
+                        startDate: new Date(2019, 5, 10),
+                        endDate: new Date(2019, 5, 10),
                         semesterRange: null,
                         dpRange: null,
+                        daysOffset: 30,
                         DPde: vDPde,
                         // <e> datepicker
                         surveyDone: 0,
@@ -294,11 +295,11 @@ define([
                     $('#filter-presets').hide();
                     // initialize the semester range and the datepicker range
                     this.semesterRange = this.getSemesterRange();
-                    let now = new Date();
+                    let start = new Date(this.semesterRange.from);
                     let end = new Date(this.semesterRange.to);
                     this.dpRange = {
-                        to: new Date(now.setDate(now.getDate() - 1)),  // had to create new date otherwise it will throw a parse error 
-                        from: new Date(end.setDate(end.getDate() + 1)) // had to create new date otherwise it will throw a parse error 
+                        to: new Date(start.setDate(start.getDate() - 1)),  // had to create new date otherwise it will throw a parse error 
+                        from: new Date(end.setDate(end.getDate() + 1 + this.daysOffset)) // had to create new date otherwise it will throw a parse error 
                     }                         
                 },
                 watch: {
@@ -684,6 +685,8 @@ define([
                     },
                     showModal: function (e) {
                         this.selectedMilestone = e;
+                        this.startDate = this.getSelectedMilestone().start;
+                        this.endDate = this.getSelectedMilestone().end;                      
                         this.reflectionsFormVisisble = this.getSelectedMilestone().status === 'reflected' ? true : false;
                         this.modalVisible = true;
                         if (e > 0) {
@@ -738,10 +741,9 @@ define([
                     showEmptyMilestone: function (e) {
                         this.selectedMilestone = -1;
                         var t = new Date();
-                        this.selectedDay = t.getDate();
-                        this.selectedMonth = t.getMonth() + 1;
-                        this.selectedYear = t.getFullYear();
-                        this.modalVisible = true;
+                        this.startDate = t;
+                        this.endDate = t;
+                        this.modalVisible = true;                        
                         logger.add('milestone_dialog_open_new', { dialogOpen: true });
                     },
                     updateName: function (e) {
@@ -823,9 +825,9 @@ define([
                     createMilestone: function (e) {
                         this.emptyMilestone.id = Math.ceil(Math.random() * 1000);
                         let id = this.emptyMilestone.id;
-                        this.emptyMilestone.end = this.start;                        
+                        this.emptyMilestone.end = this.startDate;                        
                         var d = new Date();
-                        this.emptyMilestone.start = this.end;                        
+                        this.emptyMilestone.start = this.endDate;                        
 
                         this.milestones.push(this.emptyMilestone);
                         logger.add('milestone_created', {
@@ -921,18 +923,25 @@ define([
                         }
                     },
                     validateStartDate: function(date){
-                        if(date <= this.dpRange.to || date >= this.dpRange.from){
+                        if(date <= this.dpRange.to || date >= this.dpRange.from){                            
                             this.invalidStartDate = true;
                             return;
-                        }          
-                        this.startDate = date;             
+                        }   
+                        if(date > this.endDate){
+                            this.invalidEndDate = true; 
+                        }      
+                        this.invalidStartDate = false;                        
+                        this.getSelectedMilestone().start = date;    
+                        return;       
                     },
                     validateEndDate: function(date){
-                        if(date <= this.dpRange.to || (this.start !== null && date < this.start) || date >= this.dpRange.from){
-                            this.invalidEndDate = true;
+                        if(date <= this.dpRange.to || date < this.startDate || date >= this.dpRange.from){                            
+                            this.invalidEndDate = true;                              
                             return;
-                        }          
-                        this.endDate = date; 
+                        }                         
+                        this.invalidEndDate = false;
+                        this.getSelectedMilestone().end = date;         
+                        return;
                     },
                     // <e> datepicker
                     daySelected: function (event, d) {
