@@ -36,8 +36,6 @@ define([
             // module: parseInt($('#moduleid').html()) 
         };
 
-        console.log("TYPE: "+typeof vDPde);
-
         utils.get_ws('logstore', {
             'courseid': parseInt(course.id, 10)
         }, function (e) {
@@ -88,12 +86,18 @@ define([
             var milestoneApp = new Vue({
                 el: '#planing-component',
                 components: {
-                    "vuejs-datepicker": vDP
+                    "datepicker": vDP
                     // 'survey': surveyForm
                 },
                 data: function () {
                     return {
+                        // <s> datepicker
+                        start: null,
+                        end: null,
+                        semesterRange: null,
+                        dpRange: null,
                         DPde: vDPde,
+                        // <e> datepicker
                         surveyDone: 0,
                         chart: '',
                         timeFilterChart: '',
@@ -288,6 +292,14 @@ define([
                     });
                     $('#additionalCharts').hide();
                     $('#filter-presets').hide();
+                    // initialize the semester range and the datepicker range
+                    this.semesterRange = this.getSemesterRange();
+                    let now = new Date();
+                    let end = new Date(this.semesterRange.to);
+                    this.dpRange = {
+                        to: new Date(now.setDate(now.getDate() - 1)),  // had to create new date otherwise it will throw a parse error 
+                        from: new Date(end.setDate(end.getDate() + 1)) // had to create new date otherwise it will throw a parse error 
+                    }                         
                 },
                 watch: {
                     milestones: function (newMilestone) {
@@ -811,9 +823,9 @@ define([
                     createMilestone: function (e) {
                         this.emptyMilestone.id = Math.ceil(Math.random() * 1000);
                         let id = this.emptyMilestone.id;
-                        this.emptyMilestone.end = new Date(this.selectedYear, this.selectedMonth - 1, this.selectedDay, 12);
+                        this.emptyMilestone.end = this.start;                        
                         var d = new Date();
-                        this.emptyMilestone.start = new Date(this.selectedStartYear, this.selectedStartMonth - 1, this.selectedStartDay, 12);
+                        this.emptyMilestone.start = this.end;                        
 
                         this.milestones.push(this.emptyMilestone);
                         logger.add('milestone_created', {
@@ -881,6 +893,48 @@ define([
                         }
                         this.updateMilestones();
                     },
+                    // <s> datepicker                   
+                    getSemesterRange: function(){
+                        let now = new Date();
+                        let month = now.getMonth();
+                        let year = now.getFullYear();
+                        if(month > 8 || month < 3){
+                            if(month < 3){
+                                return {
+                                    from: new Date(year - 1, 9, 0), // 01.10.(Y - 1)
+                                    to: new Date(year, 2, 30),      // 31.03.Y
+                                    sem: 0
+                                }
+                            } else {
+                                return {
+                                    from: new Date(year, 9, 0),     // 01.10.Y
+                                    to: new Date(year + 1, 2, 30),  // 31.03.(Y + 1)
+                                    sem: 0                              
+                                }
+                            }
+                        } else {
+                            return {
+                                from: new Date(year, 3, 0),         // 01.04.Y
+                                to: new Date(year, 8, 29),          // 30.09.Y
+                                sem: 1
+                            }
+                        }
+                    },
+                    validateStartDate: function(date){
+                        if(date <= this.dpRange.to || date >= this.dpRange.from){
+                            this.invalidStartDate = true;
+                            return;
+                        }          
+                        this.startDate = date;             
+                    },
+                    validateEndDate: function(date){
+                        if(date <= this.dpRange.to || (this.start !== null && date < this.start) || date >= this.dpRange.from){
+                            this.invalidEndDate = true;
+                            return;
+                        }          
+                        this.endDate = date; 
+                    },
+                    // <e> datepicker
                     daySelected: function (event, d) {
                         var day = event ? parseInt(event.target.value) : d;
 
