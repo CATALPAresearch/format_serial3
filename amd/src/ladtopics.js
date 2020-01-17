@@ -90,6 +90,15 @@ define([
             }
         });
 
+        // hide unused div
+        let box = $("#region-main-box");
+        let h = box.outerHeight();
+        box.change(function(){
+            if(box.outerHeight() > h) box.show();
+        });
+        box.hide();
+        
+     
 
         function start(courseid) {
             // Add style sheets        

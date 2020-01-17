@@ -96,7 +96,7 @@ define([
                         endDate: new Date(2019, 5, 10),
                         semesterRange: null,
                         dpRange: null,
-                        daysOffset: 30,
+                        daysOffset: 20,
                         DPde: vDPde,
                         // <e> datepicker
                         surveyDone: 0,
@@ -296,8 +296,7 @@ define([
                     // initialize the semester range and the datepicker range
                     this.semesterRange = this.getSemesterRange();
                     let start = new Date(this.semesterRange.from);
-                    let end = new Date(this.semesterRange.to);
-                    console.log(start);
+                    let end = new Date(this.semesterRange.to);                    
                     this.dpRange = {
                         to: start, 
                         from: new Date(end.setDate(end.getDate() + 1 + this.daysOffset)) // had to create new date otherwise it will throw a parse error 
