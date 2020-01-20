@@ -549,7 +549,28 @@ define([
                             }
                         }, function (e) {
                             try {
-                                _this.resources = JSON.parse(e.data);
+                                let data = JSON.parse(e.data);
+                                // Sort Ressources
+                                let obj = new Array(data.length);
+                                for(let i in data){  
+                                    let pos = 0;                                  
+                                    for(let x in data){
+                                        if(data[i] === data[x]) continue;
+                                        if(+data[x].pos_section < +data[i].pos_section){
+                                            pos++;
+                                            continue;
+                                        }
+                                        if(+data[x].pos_module < +data[i].pos_module){
+                                            pos++;
+                                            continue;
+                                        }
+                                    }
+                                    while(typeof obj[pos] === "object"){
+                                        pos++;
+                                    }
+                                    obj[pos] = data[i];
+                                }                     
+                                _this.resources = obj;
                                 _this.createMilestonePicker();
                                 //console.log('Ladezeit', t1 - (new Date()).getTime());
                                 //console.log('course-structure-result', _this.resources.map(function(e) { return e.id; }));
