@@ -723,60 +723,16 @@ $modalMilestone = '
                 <div class="form-group row">
                     <label for="" class="col-2 col-form-label">Beginn *</label>
                     <div class="col-4">
-                        <select @change="startDaySelected" id="select_day"
-                            :style="invalidStartDay ? \'border: solid 1px #ff420e;\' : \'none\'"
-                            v-model="startDayOfSelectedMilestone"
-                            >
-                            <option v-for="d in dayRange()"
-                                :value="d">{{ d }}
-                            </option>
-                        </select>
-
-                        <select @change="startMonthSelected" id="select_month"
-                            v-model="startMonthOfSelectedMilestone">
-                            <option v-for="d in monthRange()"
-                                
-                                :value="d.num">{{ d.name }}</option>
-                        </select>
-
-                        <select @change="startYearSelected" id="select_year"
-                            v-model="startYearOfSelectedMilestone">
-                            <option v-for="d in yearRange()"
-                                
-                                :value="d">{{ d }}</option>
-                        </select>
+                        <datepicker id="startDP" :value="startDate" format="dd MMMM yyyy" :language="DPde" :disabled-dates="dpRange" @input="validateStartDate"></datepicker>                       
                     </div>
-                    <div v-if="invalidDay" class="col-sm-10 alert-invalid">Wählen Sie bitte ein gültiges Datum aus. Den {{ selectedDay }}. gibt es im ausgwählten Monat nicht. </div>
-                    <div v-if="invalidStartDate" class="col-sm-10 alert-invalid">Wählen Sie bitte ein Datum nach dem Semesterbeginn und innerhalb der nächsten 12 Monate aus.</div>
+                    <div v-if="invalidStartDate" class="col-sm-10 alert-invalid">Wählen Sie bitte ein passendes Datum aus.</div>
                 </div>
                 <div class="form-group row">
                     <label for="" class="col-2 col-form-label">Termin *</label>
                     <div class="col-4">
-                        <select @change="daySelected" id="select_day"
-                            :style="invalidDay ? \'border: solid 1px #ff420e;\' : \'none\'"
-                            v-model="dayOfSelectedMilestone"
-                            >
-                            <option v-for="d in dayRange()"
-                                :value="d">{{ d }}
-                            </option>
-                        </select>
-
-                        <select @change="monthSelected" id="select_month"
-                            v-model="monthOfSelectedMilestone">
-                            <option v-for="d in monthRange()"
-                                
-                                :value="d.num">{{ d.name }}</option>
-                        </select>
-
-                        <select @change="yearSelected" id="select_year"
-                            v-model="yearOfSelectedMilestone">
-                            <option v-for="d in yearRange()"
-                                
-                                :value="d">{{ d }}</option>
-                        </select>
-                    </div>
-                    <div v-if="invalidDay" class="col-sm-10 alert-invalid">Wählen Sie bitte ein gültiges Datum aus. Den {{ selectedDay }}. gibt es im ausgwählten Monat nicht. </div>
-                    <div v-if="invalidEndDate" class="col-sm-10 alert-invalid">Wählen Sie bitte ein Datum nach dem Semesterbeginn und innerhalb der nächsten 12 Monate aus.</div>
+                        <datepicker id="endDP" :value="endDate" format="dd MMMM yyyy" :language="DPde" :disabled-dates="dpRange" @input="validateEndDate"></datepicker>                       
+                    </div>                   
+                    <div v-if="invalidEndDate" class="col-sm-10 alert-invalid">Wählen Sie bitte ein passendes Datum aus. Der Termin muss nach dem Beginn liegen! </div>
                 </div>
                 <hr />
                 <div class="row">

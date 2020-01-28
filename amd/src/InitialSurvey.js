@@ -87,7 +87,28 @@ define(['jquery'], function ($) {
                     // eslint-disable-next-line space-before-function-paren
                 }, function (e) {
                     try {
-                        _this.availableResources = JSON.parse(e.data);
+                        let data = JSON.parse(e.data);
+                        // Sort Ressources
+                        let obj = new Array(data.length);
+                        for(let i in data){  
+                            let pos = 0;                                  
+                            for(let x in data){
+                                if(data[i] === data[x]) continue;
+                                if(+data[x].pos_section < +data[i].pos_section){
+                                    pos++;
+                                    continue;
+                                }
+                                if(+data[x].pos_module < +data[i].pos_module){
+                                    pos++;
+                                    continue;
+                                }
+                            }
+                            while(typeof obj[pos] === "object"){
+                                pos++;
+                            }
+                            obj[pos] = data[i];
+                        }                 
+                        _this.availableResources = obj;
                     } catch (e) {
                         // eslint-disable-next-line no-console
                         console.error(e);

@@ -43,7 +43,10 @@ define([
                 "moment224": ["moment-with-locales-gz.min"], // ["moment.min"],
                 "intro293": ["intro"],
                 "sortable110": ["sortable.min"],
-                "ICAL": ["ical.min"]
+                "ICAL": ["ical.min"],
+                "vDP": ["vDP"],
+                "vDPde": ["vDPde"]
+
                 /*
                 "crossfilter2": "crossfilter.v2",
                 "crossfilter": "https://cdnjs.cloudflare.com/ajax/libs/crossfilter/1.3.5/crossfilter",
@@ -67,6 +70,12 @@ define([
                 },
                 'ICAL': {
                     exports: 'ICAL'
+                },
+                "vDP": {
+                    exports: "vDP"
+                },
+                "vDPde": {
+                    exports: "vDPde"
                 }
                 /*,
                 'reductio': {
@@ -81,6 +90,15 @@ define([
             }
         });
 
+        // hide unused div
+        let box = $("#region-main-box");
+        let h = box.outerHeight();
+        box.change(function(){
+            if(box.outerHeight() > h) box.show();
+        });
+        box.hide();
+        
+     
 
         function start(courseid) {
             // Add style sheets        
@@ -112,8 +130,10 @@ define([
                 'moment224',
                 'intro293',
                 'sortable110',
-                'ICAL'
-            ], function (vue, crossfilter, d3, dc, moment, intro, sortable, ICalLib) {
+                'ICAL',
+                "vDP",
+                "vDPde"
+            ], function (vue, crossfilter, d3, dc, moment, intro, sortable, ICalLib, vDP, vDPde) {
                 var utils = new Utils(dc, d3);
                 var logger = new Log(utils, courseid, {
                     context: 'format_ladtopics',
@@ -133,7 +153,9 @@ define([
                     activityChart,
                     initialSurvey,
                     ICalExport,
-                    ICalLib
+                    ICalLib,
+                    vDP,
+                    vDPde
                 );
                 // var t = new Assessment(vue, d3, dc, crossfilter, moment);
             });

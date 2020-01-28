@@ -28,7 +28,7 @@ define([
     /**
      * Plot a timeline
      */
-    var Timeline = function (Vue, d3, dc, crossfilter, moment, Sortable, utils, introJs, logger, FilterChart, ActivityChart, InitialSurvey, ICalExport, ICalLib) {
+    var Timeline = function (Vue, d3, dc, crossfilter, moment, Sortable, utils, introJs, logger, FilterChart, ActivityChart, InitialSurvey, ICalExport, ICalLib, vDP, vDPde) {
         var width = document.getElementById('ladtopic-container-0').offsetWidth;
         var margins = { top: 15, right: 10, bottom: 20, left: 10 };
         var course = {
@@ -86,10 +86,19 @@ define([
             var milestoneApp = new Vue({
                 el: '#planing-component',
                 components: {
+                    "datepicker": vDP
                     // 'survey': surveyForm
                 },
                 data: function () {
                     return {
+                        // <s> datepicker
+                        startDate: new Date(2019, 5, 10),
+                        endDate: new Date(2019, 5, 10),
+                        semesterRange: null,
+                        dpRange: null,
+                        daysOffset: 20,
+                        DPde: vDPde,
+                        // <e> datepicker
                         surveyDone: 0,
                         chart: '',
                         timeFilterChart: '',
@@ -284,6 +293,14 @@ define([
                     });
                     $('#additionalCharts').hide();
                     $('#filter-presets').hide();
+                    // initialize the semester range and the datepicker range
+                    this.semesterRange = this.getSemesterRange();
+                    let start = new Date(this.semesterRange.from);
+                    let end = new Date(this.semesterRange.to);                    
+                    this.dpRange = {
+                        to: start, 
+                        from: new Date(end.setDate(end.getDate() + 1 + this.daysOffset)) // had to create new date otherwise it will throw a parse error 
+                    }                         
                 },
                 watch: {
                     milestones: function (newMilestone) {
@@ -532,7 +549,28 @@ define([
                             }
                         }, function (e) {
                             try {
-                                _this.resources = JSON.parse(e.data);
+                                let data = JSON.parse(e.data);
+                                // Sort Ressources
+                                let obj = new Array(data.length);
+                                for(let i in data){  
+                                    let pos = 0;                                  
+                                    for(let x in data){
+                                        if(data[i] === data[x]) continue;
+                                        if(+data[x].pos_section < +data[i].pos_section){
+                                            pos++;
+                                            continue;
+                                        }
+                                        if(+data[x].pos_module < +data[i].pos_module){
+                                            pos++;
+                                            continue;
+                                        }
+                                    }
+                                    while(typeof obj[pos] === "object"){
+                                        pos++;
+                                    }
+                                    obj[pos] = data[i];
+                                }                     
+                                _this.resources = obj;
                                 _this.createMilestonePicker();
                                 //console.log('Ladezeit', t1 - (new Date()).getTime());
                                 //console.log('course-structure-result', _this.resources.map(function(e) { return e.id; }));
@@ -668,6 +706,8 @@ define([
                     },
                     showModal: function (e) {
                         this.selectedMilestone = e;
+                        this.startDate = this.getSelectedMilestone().start;
+                        this.endDate = this.getSelectedMilestone().end;                      
                         this.reflectionsFormVisisble = this.getSelectedMilestone().status === 'reflected' ? true : false;
                         this.modalVisible = true;
                         if (e > 0) {
@@ -722,10 +762,9 @@ define([
                     showEmptyMilestone: function (e) {
                         this.selectedMilestone = -1;
                         var t = new Date();
-                        this.selectedDay = t.getDate();
-                        this.selectedMonth = t.getMonth() + 1;
-                        this.selectedYear = t.getFullYear();
-                        this.modalVisible = true;
+                        this.startDate = t;
+                        this.endDate = t;
+                        this.modalVisible = true;                        
                         logger.add('milestone_dialog_open_new', { dialogOpen: true });
                     },
                     updateName: function (e) {
@@ -807,9 +846,9 @@ define([
                     createMilestone: function (e) {
                         this.emptyMilestone.id = Math.ceil(Math.random() * 1000);
                         let id = this.emptyMilestone.id;
-                        this.emptyMilestone.end = new Date(this.selectedYear, this.selectedMonth - 1, this.selectedDay, 12);
+                        this.emptyMilestone.end = this.startDate;                        
                         var d = new Date();
-                        this.emptyMilestone.start = new Date(this.selectedStartYear, this.selectedStartMonth - 1, this.selectedStartDay, 12);
+                        this.emptyMilestone.start = this.endDate;                        
 
                         this.milestones.push(this.emptyMilestone);
                         logger.add('milestone_created', {
@@ -877,6 +916,55 @@ define([
                         }
                         this.updateMilestones();
                     },
+                    // <s> datepicker                   
+                    getSemesterRange: function(){
+                        let now = new Date();
+                        let month = now.getMonth();
+                        let year = now.getFullYear();
+                        if(month > 8 || month < 3){
+                            if(month < 3){
+                                return {
+                                    from: new Date(year - 1, 9, 1), // 01.10.(Y - 1)
+                                    to: new Date(year, 2, 31),      // 31.03.Y
+                                    sem: 0
+                                }
+                            } else {
+                                return {
+                                    from: new Date(year, 9, 1),     // 01.10.Y
+                                    to: new Date(year + 1, 2, 31),  // 31.03.(Y + 1)
+                                    sem: 0                              
+                                }
+                            }
+                        } else {
+                            return {
+                                from: new Date(year, 3, 1),         // 01.04.Y
+                                to: new Date(year, 8, 30),          // 30.09.Y
+                                sem: 1
+                            }
+                        }
+                    },
+                    validateStartDate: function(date){
+                        if(date <= this.dpRange.to || date >= this.dpRange.from){                            
+                            this.invalidStartDate = true;
+                            return;
+                        }   
+                        if(date > this.endDate){
+                            this.invalidEndDate = true; 
+                        }      
+                        this.invalidStartDate = false;                        
+                        this.getSelectedMilestone().start = date;    
+                        return;       
+                    },
+                    validateEndDate: function(date){
+                        if(date <= this.dpRange.to || date < this.startDate || date >= this.dpRange.from){                            
+                            this.invalidEndDate = true;                              
+                            return;
+                        }                         
+                        this.invalidEndDate = false;
+                        this.getSelectedMilestone().end = date;         
+                        return;
+                    },
+                    // <e> datepicker
                     daySelected: function (event, d) {
                         var day = event ? parseInt(event.target.value) : d;
 
