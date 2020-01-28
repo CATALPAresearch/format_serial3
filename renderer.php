@@ -959,26 +959,20 @@ $modalMilestone = '
                                         <!-- Milestone chart -->
                                         <div class="chart ms-chart">
                                             <div class="ms-chart-header row">
+                                                <h3 class="ms-headline">Meine Semesterplanung</h3>
                                                 <div class="ms-title col-sm-12 col-xs-12 col-md-12 col-lg-12">
                                                     <ul class="nav nav-pills ladtopics-pills" id="viewPillsTab" role="tablist">
-                                                        <li>
-                                                            Meine Semesterplanung 
+                                                        <li>                                                             
                                                             <span v-if="milestones.length > 0" data-toggle="modal" data-target="#theMilestoneModal">
-                                                                <button @click="showEmptyMilestone()" id="add-milestone" class="btn btn-sm right btn-primary ms-btn ms-add-btn"
+                                                                <button @click="showEmptyMilestone()" id="add-milestone" class="btn btn-sm right btn-primary ms-btn ms-add"
                                                                     data-toggle="tooltip" data-placement="bottom" title="Neuen Meilenstein hinzufügen"><i
-                                                                        class="fa fa-plus"></i></button>
+                                                                        class="fa fa-plus"></i> Neuer Meilenstein</button>
                                                             </span>
                                                         </li>
                                                         <li v-if="milestones.length > 0" class="nav-item">
                                                             <a 
                                                                 class="nav-link active" @click="hideAdditionalCharts()" id="milestone-list-tab" data-toggle="pill" href="#view-list" role="tab" aria-controls="view-list" aria-selected="false">
-                                                                <i hidden class="fa fa-list"></i> Liste
-                                                            </a>
-                                                        </li>
-                                                        <li v-if="milestones.length > 0" class="nav-item">
-                                                            <a 
-                                                                class="nav-link" @click="hideAdditionalCharts()" id="milestone-archive-list-tab" data-toggle="pill" href="#view-archive-list" role="tab" aria-controls="view-archive-list" aria-selected="false">
-                                                                <i hidden class="fa fa-list"></i> Archiv
+                                                                <i hidden class="fa fa-list"></i> Aktuelle Meilensteine
                                                             </a>
                                                         </li>
                                                         <li v-if="milestones.length > 0" class="nav-item">
@@ -987,12 +981,19 @@ $modalMilestone = '
                                                                 <i class="fa fa-clock"></i>Zeitleiste
                                                             </a>
                                                         </li>
-                                                                                                              
-                                                    </ul>
+                                                        <li v-if="milestones.length > 0" class="nav-item">
+                                                            <a 
+                                                                class="nav-link" @click="hideAdditionalCharts()" id="milestone-archive-list-tab" data-toggle="pill" href="#view-archive-list" role="tab" aria-controls="view-archive-list" aria-selected="false">
+                                                                <i hidden class="fa fa-list"></i> Archiv
+                                                            </a>
+                                                        </li>                                                                                                        
+                                                    </ul>                                           
                                                     
-                                                    <button v-if="surveyDone > 0" class="btn btn-outline-info btn-sm introjs-btn" @click="startIntroJs()">Anleitung - So geht’s!</button>
-                                                    
-                                                    <div class="dropdown settingsMenu">
+                                    
+                                                    <div class="dropdown settingsMenu" style="float: right;">
+                                                        <button v-if="surveyDone > 0" class="btn btn-link" @click="startIntroJs()" style="padding: 0px 0px 5.5px 5px; margin: 0px -5px 0px 0px;">
+                                                            <i class="fa fa-question-circle"></i>
+                                                        </button>
                                                         <button class="btn btn-link dropdown-toggle" type="button" id="settingsMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expand="false">
                                                         <i class="fa fa-cog"></i>
                                                         </button>

@@ -8,3 +8,14 @@
   margin-top:20px;
   border-top: solid 1px #ccc;
 }
+
+h3.ms-headline{
+  padding: 0px 15px 3px 15px;  
+}
+
+button.ms-add{
+  padding: 1px 5px !important;
+  background-color: #008fac !important;
+  border-style: none;
+}
+
