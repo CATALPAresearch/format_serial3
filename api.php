@@ -253,7 +253,7 @@ class format_ladtopics_external extends external_api {
                     $transaction->allow_commit();
                     foreach($res as $entry){   
                         $pos = -1;
-                        if(gettype($entry->section_sequence) === "string" && $entry->section_sequence.length > 0){
+                        if(gettype($entry->section_sequence) === "string" && sizeof($entry->section_sequence) > 0){
                             $sequence = explode(",", preg_replace("/[^0-9,]/", "", $entry->section_sequence));                            
                             $pos = array_search(strval($entry->instance_url_id), $sequence);                                              
                         }                  

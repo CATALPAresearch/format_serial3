@@ -1108,8 +1108,12 @@ define([
                     resourceSections: function () {
                         var sections = {};
                         for (var i = 0; i < this.resources.length; i++) {
-                            //if (this.resources[i].section_name === ' ')
-                            // console.log(this.resources[i].section_id + '__' + this.resources[i].section_name + '__' + this.resources[i].name)
+                            /*if (this.resources[i].section_name === ' '){
+                             console.log(this.resources[i].section_id + '__' + this.resources[i].section_name + '__' + this.resources[i].name)
+                            }*/
+                            if (this.resources[i] === undefined){
+                                return 0;
+                            }
                             sections[this.resources[i].section_id] = {
                                 name: this.resources[i].section_name === ' ' ? '(Einführung)' : this.resources[i].section_name,
                                 id: this.resources[i].section_id
