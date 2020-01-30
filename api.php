@@ -52,27 +52,29 @@ class format_ladtopics_external extends external_api {
     }    
     public static function getcalendar($data) {
         global $CFG, $DB, $USER;
-        $transaction = $DB->start_delegated_transaction(); 
+        $transaction = $DB->start_delegated_transaction();        
+        $cid = (int)$data;
+        $uid = (int)$USER->id;
         $sql = '
             SELECT * FROM '.$CFG->prefix.'event
-            WHERE '.$CFG->prefix.'event.eventtype = "site" 
-            OR ('.$CFG->prefix.'event.eventtype = "user" AND '.$CFG->prefix.'event.userid = '.$USER->id.')
+            WHERE ('.$CFG->prefix.'event.eventtype = "site") 
+            OR ('.$CFG->prefix.'event.eventtype = "user" AND '.$CFG->prefix.'event.userid = '.$uid.')
             OR ('.$CFG->prefix.'event.eventtype = "group" 
-                AND '.$CFG->prefix.'event.courseid = '.$USER->id.'
+                AND '.$CFG->prefix.'event.courseid = '.$cid.'
                 AND '.$CFG->prefix.'event.groupid in 
                 (SELECT '.$CFG->prefix.'groups.id 
                     FROM '.$CFG->prefix.'groups
                     INNER JOIN '.$CFG->prefix.'groups_members
                     ON '.$CFG->prefix.'groups.id = '.$CFG->prefix.'groups_members.groupid
-                WHERE '.$CFG->prefix.'groups_members.userid = '.$USER->id.')
+                WHERE '.$CFG->prefix.'groups_members.userid = '.$uid.')
             )
-            OR ('.$CFG->prefix.'event.eventtype = "course" AND '.$CFG->prefix.'event.courseid = '.(int)$data->courseid.')
+            OR ('.$CFG->prefix.'event.eventtype = "course" AND '.$CFG->prefix.'event.courseid = '.$cid.')
             OR ('.$CFG->prefix.'event.eventtype = "category" AND '.$CFG->prefix.'event.categoryid in
    		        (SELECT '.$CFG->prefix.'course_categories.id
                     FROM '.$CFG->prefix.'course_categories
                     INNER JOIN '.$CFG->prefix.'course
                     ON '.$CFG->prefix.'course_categories.id = '.$CFG->prefix.'course.category
-                WHERE '.$CFG->prefix.'course.id = '.(int)$data->courseid.')
+                WHERE '.$CFG->prefix.'course.id = '.$cid.')
             )
             ORDER BY '.$CFG->prefix.'event.timestart ASC';                
         $data = $DB->get_records_sql($sql);
@@ -209,7 +211,6 @@ class format_ladtopics_external extends external_api {
             $addToQuery = "";
             $sectionID = $select["sectionid"];
             $moduleID = $select["moduleid"];
-            $mods = gettype($section);
             $modules = json_decode($select["modules"]);
             foreach($modules as $value){
                 if(in_array($value, $allowed_modules)){
