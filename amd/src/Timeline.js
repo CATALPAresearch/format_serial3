@@ -545,11 +545,11 @@ define([
                                     "glossary",
                                     "quiz",
                                     "wiki"
-                                ])
+                                ])                               
                             }
                         }, function (e) {
                             try {
-                                let data = JSON.parse(e.data);
+                                let data = JSON.parse(e.data);                             
                                 // Sort Ressources
                                 let obj = new Array(data.length);
                                 for(let i in data){  
@@ -572,8 +572,7 @@ define([
                                 }                     
                                 _this.resources = obj;                                                                                     
                                 for(let i in _this.calendar){
-                                    let element = _this.calendar[i];
-                                    console.log(element.eventtype);
+                                    let element = _this.calendar[i];                                    
                                     if(element.eventtype !== "course" && element.eventtype !== "group") continue;
                                     let out = {
                                         course_id: course.id,
