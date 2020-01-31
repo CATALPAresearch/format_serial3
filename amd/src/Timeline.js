@@ -268,13 +268,13 @@ define([
                         }
                     });*/
 
-                    // Load Events from the calendar                   
+                    // Load Events from the calendar                                                    
                     utils.get_ws('getcalendar', {
                         'courseid': parseInt(course.id, 10)
                     }, function (e) {
                         try {
-                            if (typeof e.data === "string" && e.data.length > 0) {
-                                _this.calendar = JSON.parse(e.data);
+                            if (typeof e.data === "string" && e.data.length > 0) {                                  
+                                _this.calendar = JSON.parse(e.data);                                            
                             }
                         } catch (error) {
                             console.log("Der Kalender konnte nicht exportiert werden. \r\n" + error.toString());
@@ -300,7 +300,7 @@ define([
                     this.dpRange = {
                         to: start, 
                         from: new Date(end.setDate(end.getDate() + 1 + this.daysOffset)) // had to create new date otherwise it will throw a parse error 
-                    }                         
+                    }                                            
                 },
                 watch: {
                     milestones: function (newMilestone) {
@@ -545,11 +545,11 @@ define([
                                     "glossary",
                                     "quiz",
                                     "wiki"
-                                ])
+                                ])                               
                             }
                         }, function (e) {
                             try {
-                                let data = JSON.parse(e.data);
+                                let data = JSON.parse(e.data);                             
                                 // Sort Ressources
                                 let obj = new Array(data.length);
                                 for(let i in data){  
@@ -568,9 +568,29 @@ define([
                                     while(typeof obj[pos] === "object"){
                                         pos++;
                                     }
-                                    obj[pos] = data[i];
+                                    obj[pos] = data[i];                                   
                                 }                     
-                                _this.resources = obj;
+                                _this.resources = obj;                                                                                     
+                                for(let i in _this.calendar){
+                                    let element = _this.calendar[i];                                    
+                                    if(element.eventtype !== "course" && element.eventtype !== "group") continue;
+                                    let out = {
+                                        course_id: course.id,
+                                        id: element.id,
+                                        instance_id: null,
+                                        instance_title: null,
+                                        instance_type: element.eventtype === "course" ? "kurstermin" : "gruppentermin",
+                                        instance_url_id: null,
+                                        module_id: null,
+                                        name: element.name,
+                                        pos_module: null,
+                                        pos_section: null,
+                                        section: null,
+                                        section_id: 999,
+                                        section_name: null
+                                    }                            
+                                    _this.resources.push(out);
+                                }                       
                                 _this.createMilestonePicker();
                                 //console.log('Ladezeit', t1 - (new Date()).getTime());
                                 //console.log('course-structure-result', _this.resources.map(function(e) { return e.id; }));

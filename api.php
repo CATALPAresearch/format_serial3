@@ -52,27 +52,29 @@ class format_ladtopics_external extends external_api {
     }    
     public static function getcalendar($data) {
         global $CFG, $DB, $USER;
-        $transaction = $DB->start_delegated_transaction(); 
+        $transaction = $DB->start_delegated_transaction();        
+        $cid = (int)$data;
+        $uid = (int)$USER->id;
         $sql = '
             SELECT * FROM '.$CFG->prefix.'event
-            WHERE '.$CFG->prefix.'event.eventtype = "site" 
-            OR ('.$CFG->prefix.'event.eventtype = "user" AND '.$CFG->prefix.'event.userid = '.$USER->id.')
+            WHERE ('.$CFG->prefix.'event.eventtype = "site") 
+            OR ('.$CFG->prefix.'event.eventtype = "user" AND '.$CFG->prefix.'event.userid = '.$uid.')
             OR ('.$CFG->prefix.'event.eventtype = "group" 
-                AND '.$CFG->prefix.'event.courseid = '.$USER->id.'
+                AND '.$CFG->prefix.'event.courseid = '.$cid.'
                 AND '.$CFG->prefix.'event.groupid in 
                 (SELECT '.$CFG->prefix.'groups.id 
                     FROM '.$CFG->prefix.'groups
                     INNER JOIN '.$CFG->prefix.'groups_members
                     ON '.$CFG->prefix.'groups.id = '.$CFG->prefix.'groups_members.groupid
-                WHERE '.$CFG->prefix.'groups_members.userid = '.$USER->id.')
+                WHERE '.$CFG->prefix.'groups_members.userid = '.$uid.')
             )
-            OR ('.$CFG->prefix.'event.eventtype = "course" AND '.$CFG->prefix.'event.courseid = '.(int)$data->courseid.')
+            OR ('.$CFG->prefix.'event.eventtype = "course" AND '.$CFG->prefix.'event.courseid = '.$cid.')
             OR ('.$CFG->prefix.'event.eventtype = "category" AND '.$CFG->prefix.'event.categoryid in
    		        (SELECT '.$CFG->prefix.'course_categories.id
                     FROM '.$CFG->prefix.'course_categories
                     INNER JOIN '.$CFG->prefix.'course
                     ON '.$CFG->prefix.'course_categories.id = '.$CFG->prefix.'course.category
-                WHERE '.$CFG->prefix.'course.id = '.(int)$data->courseid.')
+                WHERE '.$CFG->prefix.'course.id = '.$cid.')
             )
             ORDER BY '.$CFG->prefix.'event.timestart ASC';                
         $data = $DB->get_records_sql($sql);
@@ -198,7 +200,7 @@ class format_ladtopics_external extends external_api {
         global $CFG, $DB, $USER;
         
         $out_data = array();        
-        $out_debug = array();         
+        $out_debug = array();          
 
         // all allowed modules
         $allowed_modules = array("assign", "data", "hvp", "checklist", 
@@ -206,10 +208,7 @@ class format_ladtopics_external extends external_api {
         "glossary", "quiz");
 
         if(is_array($select)){
-            $addToQuery = "";
-            $sectionID = $select["sectionid"];
-            $moduleID = $select["moduleid"]; // errornous
-            $mods = gettype($sectionID); 
+            $addToQuery = "";                               
             $modules = json_decode($select["modules"]);
             foreach($modules as $value){
                 if(in_array($value, $allowed_modules)){
@@ -241,13 +240,13 @@ class format_ladtopics_external extends external_api {
                         ON cm.instance = f.id 
                         WHERE cm.course = ? AND cs.course = ? AND f.course = ? AND m.name = ?
                     ";
-                    if(!is_null($sectionID)){
+                    if(isset($select["sectionid"]) && !is_null($select["sectionid"])){
                         $query .= " AND cs.id = ?";
-                        $params[] = (int)$sectionID;
+                        $params[] = (int)$select["sectionid"];
                     }
-                    if(!is_null($moduleID)){
+                    if(isset($select["moduleid"]) && !is_null($select["moduleid"])){
                         $query .= " AND cm.id = ?";
-                        $params[] = (int)$moduleID;
+                        $params[] = (int)$select["moduleid"];
                     }
                     $transaction = $DB->start_delegated_transaction();
                     $res = $DB->get_records_sql($query, $params); 
