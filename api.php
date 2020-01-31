@@ -33,7 +33,7 @@ class format_ladtopics_external extends external_api {
     }
 
     /**
-     * Check Moderator
+     * Check If the User is a moderator
      */
 
     public static function checkmod_parameters(){
@@ -44,9 +44,38 @@ class format_ladtopics_external extends external_api {
         );
     }
 
-    public static function checkmod_returns(){}
+    public static function checkmod_returns(){
+        return new external_single_structure(
+            array(
+                'data' => new external_value(PARAM_RAW, 'data'),
+                'debug' => new external_value(PARAM_RAW, 'debug')              
+            )
+        );
+    }
 
-    public static function checkmod($data){}
+    public static function checkmod($data){
+        global $CFG, $DB, $USER;
+
+        $data = array();
+        $debug = array();
+        $params = array();
+        $uid = (int)$USER->id;
+        $params[] = $uid;
+
+        $transaction = $DB->start_delegated_transaction(); 
+
+        $sql = "SELECT {$CFG->prefix}role.shortname FROM {$CFG->prefix}role INNER JOIN {$CFG->prefix}role_assignments ON {$CFG->prefix}role_assignments.roleid = {$CFG->prefix}role.id WHERE userid = ?";         
+        $res = $DB->get_records_sql($sql, $params);
+        $transaction->allow_commit();     
+
+        foreach($res as $key => $value){
+            $data[] = $value->shortname;
+        }
+        
+        return array('data'=>json_encode($data), 'debug'=>json_encode($debug));
+    }
+
+    public static function checkmod_is_allowed_from_ajax() { return true; }
 
     /**
      * Get calendar data

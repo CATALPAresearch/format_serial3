@@ -124,6 +124,7 @@ define([
                         range: [],
                         milestones: [],
                         calendar: {},
+                        roles: [],
                         /*  [{
                               id: 3867650,
                               name: 'Planung',
@@ -278,6 +279,18 @@ define([
                             }
                         } catch (error) {
                             console.log("Der Kalender konnte nicht exportiert werden. \r\n" + error.toString());
+                        }
+                    });
+                    // Check Moderator
+                    utils.get_ws('checkmod', {
+                        'courseid': parseInt(course.id, 10)
+                    }, function (e) {
+                        try {
+                            if (typeof e.data === "string" && e.data.length > 0) {                               
+                                this.roles = e.data;                                                                       
+                            }
+                        } catch (error) {
+                            console.log("Konnte die Rollen nicht laden. \r\n" + error.toString());
                         }
                     });
                 },
