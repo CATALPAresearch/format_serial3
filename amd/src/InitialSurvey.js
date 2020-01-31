@@ -34,7 +34,7 @@ define(['jquery'], function ($) {
 
         var milestonePresets = {};
         milestonePresets.biwi = {};
-        
+
         milestonePresets.biwi.exame = [];
         milestonePresets.biwi.orientation = [];
         milestonePresets.cs = {};
@@ -66,48 +66,48 @@ define(['jquery'], function ($) {
                 // Obtain course structure form DB
                 var _this = this;
                 utils.get_ws('coursestructure', {
-                    courseid: parseInt(course.id, 10),    
-                    select: {    
+                    courseid: parseInt(course.id, 10),
+                    select: {
                         modules: JSON.stringify([
-                            "assign", 
-                            "data", 
-                            "hvp", 
-                            "checklist", 
-                            "url", 
-                            "studentquiz", 
-                            "page", 
+                            "assign",
+                            "data",
+                            "hvp",
+                            "checklist",
+                            "url",
+                            "studentquiz",
+                            "page",
                             "feedback",
                             "forum",
                             "resource",
                             "glossary",
                             "quiz",
                             "wiki"
-                        ])                            
-                    }                 
+                        ])
+                    }
                     // eslint-disable-next-line space-before-function-paren
                 }, function (e) {
                     try {
                         let data = JSON.parse(e.data);
                         // Sort Ressources
                         let obj = new Array(data.length);
-                        for(let i in data){  
-                            let pos = 0;                                  
-                            for(let x in data){
-                                if(data[i] === data[x]) continue;
-                                if(+data[x].pos_section < +data[i].pos_section){
+                        for (let i in data) {
+                            let pos = 0;
+                            for (let x in data) {
+                                if (data[i] === data[x]) continue;
+                                if (+data[x].pos_section < +data[i].pos_section) {
                                     pos++;
                                     continue;
                                 }
-                                if(+data[x].pos_module < +data[i].pos_module){
+                                if (+data[x].pos_module < +data[i].pos_module) {
                                     pos++;
                                     continue;
                                 }
                             }
-                            while(typeof obj[pos] === "object"){
+                            while (typeof obj[pos] === "object") {
                                 pos++;
                             }
                             obj[pos] = data[i];
-                        }                 
+                        }
                         _this.availableResources = obj;
                     } catch (e) {
                         // eslint-disable-next-line no-console
@@ -281,16 +281,16 @@ define(['jquery'], function ($) {
                     // generate milestones automatically
                     switch (this.objectives) {
                         case 'f1a': // wants examination
-                            if (courseid === biwiCourse) {
+                            if (courseid === biwiCourse && milestonePresets.biwi.exame.length > 0) {
                                 milestoneApp.addMilestones(milestonePresets.biwi.exame);
-                            } else if (courseid === csCourse) {
+                            } else if (courseid === csCourse && milestonePresets.cs.exame.length > 0) {
                                 milestoneApp.addMilestones(milestonePresets.cs.exame);
                             }
                             break;
                         case 'f1b': // wants orientation
-                            if (courseid === biwiCourse) {
+                            if (courseid === biwiCourse && milestonePresets.biwi.orientation.length > 0) {
                                 milestoneApp.addMilestones(milestonePresets.biwi.orientation);
-                            } else if (courseid === csCourse) {
+                            } else if (courseid === csCourse && milestonePresets.cs.orientation.length > 0) {
                                 milestoneApp.addMilestones(milestonePresets.cs.orientation);
                             }
                             break;
