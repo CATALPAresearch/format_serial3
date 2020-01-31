@@ -49,6 +49,38 @@ class format_ladtopics_renderer extends format_section_renderer_base {
         $page->set_other_editing_capability('moodle/course:setcurrentsection');
     }
 
+
+    /**
+     * A Attribute to store if the user is a moderator for the course
+     */
+    private $_moderator = null;
+
+    /**
+     * A Method to test if the user is a moderator for the course
+     */
+
+    private function checkModeratorStatus(){
+        if(!is_null($this->_moderator)) return $this->_moderator;
+        global $CFG, $DB, $COURSE, $USER;
+        $uid = (int)$USER->id;
+        $cid = (int)$COURSE->id;
+        $params[] = $uid;
+        $transaction = $DB->start_delegated_transaction(); 
+        $sql = "SELECT {$CFG->prefix}role.shortname FROM {$CFG->prefix}role INNER JOIN {$CFG->prefix}role_assignments ON {$CFG->prefix}role_assignments.roleid = {$CFG->prefix}role.id WHERE userid = ?";         
+        $res = $DB->get_records_sql($sql, $params);
+        $transaction->allow_commit(); 
+        foreach($res as $key => $value){
+            if(!isset($value->shortname)) continue;
+            $val = $value->shortname;            
+            if($val === "manager") {
+                $this->_moderator = true;
+                return true;
+            }
+        }
+        $this->_moderator = false;
+        return false;
+    }
+
     /**
      * Generate the starting container html for a list of sections
      * @return string HTML to output.
@@ -60,6 +92,32 @@ class format_ladtopics_renderer extends format_section_renderer_base {
         //$rr = $completion->get_completions(3);
         //print_r($rr);
         //print_r($COURSE);
+
+
+
+        $moderationModal = '       
+            <h3>test</h3>
+            <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="false">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    </div>
+                    <div class="modal-body">
+                    ...
+                    </div>
+                    <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                    </div>
+                </div>
+                </div>
+            </div>
+        ';
+
 
 
         $initialSurvey = '<!-- Initial survey -->
@@ -896,6 +954,7 @@ $modalMilestone = '
     </div>
 </div>
 
+'.($this->checkModeratorStatus()?$moderationModal:'').'
 
 <div id="page-content" class="row">
     <div class="region-main-box col-12 ladtopics-region-main">
@@ -954,9 +1013,13 @@ $modalMilestone = '
                                                         <i class="fa fa-cog"></i>
                                                         </button>
                                                         <div class="dropdown-menu" aria-labeledby="settingsMenuButton">
+                                                        '.($this->checkModeratorStatus()?'
+                                                            <a class="dropdown-item" @click="exportToICal" href="#">
+                                                                <i class="fa fa-clock"></i>Moderation
+                                                            </a>':'').'                                                            
                                                             <a class="dropdown-item" @click="exportToICal" href="#">
                                                                 <i class="fa fa-clock"></i>Exportieren
-                                                            </a>
+                                                            </a>                                                            
                                                         </div>
                                                     </div>
                                                     

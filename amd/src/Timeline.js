@@ -125,6 +125,7 @@ define([
                         milestones: [],
                         calendar: {},
                         roles: [],
+                        isModerator: false,
                         /*  [{
                               id: 3867650,
                               name: 'Planung',
@@ -281,13 +282,14 @@ define([
                             console.log("Der Kalender konnte nicht exportiert werden. \r\n" + error.toString());
                         }
                     });
-                    // Check Moderator
+                    // Check Moderator                    
                     utils.get_ws('checkmod', {
                         'courseid': parseInt(course.id, 10)
                     }, function (e) {
                         try {
                             if (typeof e.data === "string" && e.data.length > 0) {                               
-                                this.roles = e.data;                                                                       
+                                _this.roles = JSON.parse(e.data);     
+                                if(_this.checkModeratorStatus(_this.roles)) _this.isModerator = true;                                                                                            
                             }
                         } catch (error) {
                             console.log("Konnte die Rollen nicht laden. \r\n" + error.toString());
@@ -1821,8 +1823,17 @@ define([
                                 }
                             )
                         } catch (error) { }
-                    }
-                }
+                    },
+                    checkModeratorStatus: function(items){
+                        for(let i in items){
+                            let item = items[i];                           
+                            if(item === "manager" || item === "coursecreator") {                               
+                                return true;
+                            }
+                        }
+                        return false;
+                    }                    
+                }                
             });
 
 
