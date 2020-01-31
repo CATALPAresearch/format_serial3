@@ -33,6 +33,22 @@ class format_ladtopics_external extends external_api {
     }
 
     /**
+     * Check Moderator
+     */
+
+    public static function checkmod_parameters(){
+        return new external_function_parameters(
+            array(
+                'courseid' => new external_value(PARAM_INT, 'course id')
+            )
+        );
+    }
+
+    public static function checkmod_returns(){}
+
+    public static function checkmod($data){}
+
+    /**
      * Get calendar data
      */
 
