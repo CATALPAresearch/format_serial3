@@ -57,9 +57,9 @@ class format_ladtopics_external extends external_api {
         $uid = (int)$USER->id;
         $sql = '
             SELECT * FROM '.$CFG->prefix.'event
-            WHERE ('.$CFG->prefix.'event.eventtype = "site") 
-            OR ('.$CFG->prefix.'event.eventtype = "user" AND '.$CFG->prefix.'event.userid = '.$uid.')
-            OR ('.$CFG->prefix.'event.eventtype = "group" 
+            WHERE ('.$CFG->prefix.'event.eventtype = \'site\') 
+            OR ('.$CFG->prefix.'event.eventtype = \'user\' AND '.$CFG->prefix.'event.userid = '.$uid.')
+            OR ('.$CFG->prefix.'event.eventtype = \'group\'
                 AND '.$CFG->prefix.'event.courseid = '.$cid.'
                 AND '.$CFG->prefix.'event.groupid in 
                 (SELECT '.$CFG->prefix.'groups.id 
@@ -68,8 +68,8 @@ class format_ladtopics_external extends external_api {
                     ON '.$CFG->prefix.'groups.id = '.$CFG->prefix.'groups_members.groupid
                 WHERE '.$CFG->prefix.'groups_members.userid = '.$uid.')
             )
-            OR ('.$CFG->prefix.'event.eventtype = "course" AND '.$CFG->prefix.'event.courseid = '.$cid.')
-            OR ('.$CFG->prefix.'event.eventtype = "category" AND '.$CFG->prefix.'event.categoryid in
+            OR ('.$CFG->prefix.'event.eventtype = \'course\' AND '.$CFG->prefix.'event.courseid = '.$cid.')
+            OR ('.$CFG->prefix.'event.eventtype = \'category\' AND '.$CFG->prefix.'event.categoryid in
    		        (SELECT '.$CFG->prefix.'course_categories.id
                     FROM '.$CFG->prefix.'course_categories
                     INNER JOIN '.$CFG->prefix.'course
