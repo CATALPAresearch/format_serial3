@@ -358,8 +358,9 @@ $milestoneArchiveList = '
             <a :class="m.status == \'missed\' ? \'milestone-missed milestone-element-name\' : \'milestone-element-name\'" data-toggle="collapse" :href="\'#milestone-entry-archive-\' + m.id" role="button" aria-expanded="false" :aria-controls="\'milestone-entry-\' + m.id">
                 <i class="element-collapsed fa fa-angle-right angle"></i> 
                 <i class="element-not-collapsed fa fa-angle-down angle"></i> 
+                <span v-if="m.mod" class="fa fa-globe"></span>
                 {{ m.name }}
-            </a>
+            </a>           
             <span
                 data-toggle="tooltop" data-placement="top" :title="\'Beginn: \' + getReadableTime(m.start) + \'Ende: \' + getReadableTime(m.start)" 
                 :class="m.status == \'missed\' ? \'milestone-missed milestone-element-due\' : \'milestone-element-due\'">
@@ -480,7 +481,8 @@ $milestoneList = '
             <a :class="m.status == \'missed\' ? \'milestone-missed milestone-element-name\' : \'milestone-element-name\'" data-toggle="collapse" :href="\'#milestone-entry-\' + m.id" role="button" aria-expanded="false" :aria-controls="\'milestone-entry-\' + m.id">
                 <i class="element-collapsed fa fa-angle-right angle"></i> 
                 <i class="element-not-collapsed fa fa-angle-down angle"></i> 
-                {{ m.name }}
+                <span v-if="m.mod" class="fa fa-globe"></span>
+                {{ m.name }}                
             </a>
             <span
                 data-toggle="tooltop" data-placement="top" :title="\'Beginn: \' + getReadableTime(m.start) + \'Ende: \' + getReadableTime(m.start)" 
