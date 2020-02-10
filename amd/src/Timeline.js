@@ -1900,24 +1900,42 @@ define([
                             console.log(error);
                         }
                     },
-                    modSaveMilestones: function(){                        
+                    modSaveMilestones: function(){    
+                        let _this = this;
+                        let savePlan = function(plan){
+                            _this.milestones.forEach(
+                                function(element){
+                                     element.mod = true;                                        
+                                }
+                             );                             
+                             utils.get_ws('setmilestoneplan', {
+                                 data: {
+                                     'courseid': parseInt(course.id, 10),
+                                     'milestones': JSON.stringify(_this.milestones),
+                                     'plan': plan
+                                 }
+                             }, function (e) {
+                                let out = JSON.parse(e.data);
+                                if(out.success === true){
+                                    _this.modAlert("success", "Meilensteine wurden gespeichert."); 
+                                    
+                                } else {
+                                    if(typeof out.debug === "string" && out.debug.length > 0){
+                                        _this.modAlert("danger", out.debug); 
+                                    } else {
+                                        _this.modAlert("danger", "Unbekannter Fehler"); 
+                                    }
+                                }                                   
+                             });                             
+                        }
+
                         try{                            
                             if($("#modSaveExport").is(":checked")){
                                 this.exportMilestones();
                             } else if($("#modSaveOrientation").is(":checked")){
-                                this.milestones.forEach(
-                                   function(element){
-                                        element.mod = true;                                        
-                                   }
-                                );
-                               this.modAlert("success", "Meilensteine wurden gespeichert."); 
+                                savePlan(1);
                             } else if ($("#modSaveExam").is(":checked")){
-                                this.milestones.forEach(
-                                   function(element){
-                                        element.mod = true;                                        
-                                   }
-                                );
-                               this.modAlert("success", "Meilensteine wurden gespeichert."); 
+                                savePlan(2);
                             }
                         } catch(error){
                             this.modAlert("danger", "Konnte die Meilensteine nicht speichern."); 

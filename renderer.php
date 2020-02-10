@@ -114,13 +114,13 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="modSaveType" id="modSaveExam" value="0">
                                 <label class="form-check-label" for="modSaveExam">
-                                Ziel: Prüfung
+                                Prüfung
                                 </label>
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="modSaveType" id="modSaveOrientation" value="1">
                                 <label class="form-check-label" for="modSaveOrientation">
-                                Ziel: Orientierung
+                                Orientierung
                                 </label>
                             </div>
                             <div class="form-check">

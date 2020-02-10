@@ -66,7 +66,7 @@ $functions = array(
                 'description' => 'Obtain mielstones from database',
                 'type'        => 'read',
                 'ajax'        => true
-        ),
+        ),        
         'format_ladtopics_setmilestones' => array(
                 'classname'   => 'format_ladtopics_external',
                 'methodname'  => 'setmilestones',
@@ -74,6 +74,22 @@ $functions = array(
                 'description' => 'Save mielstones to database',
                 'type'        => 'write',
                 //'capabilities'  => 'format/ladtopics:view',
+                'ajax'        => true
+        ),
+        'format_ladtopics_getmilestoneplan' => array(
+                'classname'   => 'format_ladtopics_external',
+                'methodname'  => 'getmilestoneplan',
+                'classpath'   => 'course/format/ladtopics/api.php',
+                'description' => 'Obtain mielstones from database',
+                'type'        => 'read',
+                'ajax'        => true
+        ),
+        'format_ladtopics_setmilestoneplan' => array(
+                'classname'   => 'format_ladtopics_external',
+                'methodname'  => 'setmilestoneplan',
+                'classpath'   => 'course/format/ladtopics/api.php',
+                'description' => 'Obtain mielstones from database',
+                'type'        => 'read',
                 'ajax'        => true
         ),
         'format_ladtopics_userpreferences' => array(
