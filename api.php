@@ -550,40 +550,37 @@ class format_ladtopics_external extends external_api {
                 'data' => 
                     new external_single_structure(
                         array(
-                        'courseid' => new external_value(PARAM_INT, 'id of course', VALUE_OPTIONAL)
-                        //'userid' => new external_value(PARAM_INT, 'utc time', VALUE_OPTIONAL)
+                            'courseid' => new external_value(PARAM_INT, 'id of course', VALUE_OPTIONAL),
+                            'plan' => new external_value(PARAM_TEXT, 'the desired plan')
+                        )
                     )
-                )
             )
-        );
+        );      
     }
     public static function getmilestoneplan_returns() {
         return new external_single_structure(
-                array( 'milestones' => new external_value(PARAM_RAW, 'Server respons to the incomming log') )
+                array('data' => new external_value(PARAM_TEXT, 'Server respons to the incomming log'))
         );
     }
     
-    public static function getmilestoneplan($data) {
-        global $CFG, $DB, $USER;
-        (int)$data['userid'] = $USER->id;
+    public static function getmilestoneplan($param){
+        global $CFG, $DB, $USER;        
         $transaction = $DB->start_delegated_transaction(); 
+        $params = array();
+        $params[] = (int)$param['courseid'];
+        $params[] = $param['plan'];
         $sql='
-            SELECT t.milestones, t.settings, t.timemodified 
-            FROM '.$CFG->prefix.'ladtopics_milestones AS t
+            SELECT milestones 
+            FROM '.$CFG->prefix.'ladtopics_milestone_plans AS t
             WHERE   
-                t.course = ' . $data['courseid'] . ' 
-                AND t.userid = ' . (int)$data['userid'] . '
-            ORDER BY t.timemodified DESC
+                t.course = ? 
+                AND t.plan = ?
+            ORDER BY t.created DESC
             LIMIT 1
             ;';
-        $res = $DB->get_record_sql($sql);
+        $res = $DB->get_record_sql($sql, $params);
         $transaction->allow_commit();
-
-        return array('milestones'=> json_encode(array(
-            'settings'=>$res->settings,
-            'milestones'=>$res->milestones,
-            'utc'=>$res->timemodified
-        )));
+        return array('data'=> $res->milestones);       
     } 
     public static function getmilestoneplan_is_allowed_from_ajax() { return true; }
 
@@ -598,7 +595,7 @@ class format_ladtopics_external extends external_api {
                         array(
                         'courseid' => new external_value(PARAM_INT, 'id of course'),                        
                         'milestones' => new external_value(PARAM_RAW, 'milestones'),
-                        'plan' => new external_value(PARAM_INT, 'plan')
+                        'plan' => new external_value(PARAM_TEXT, 'plan')
                     )
                 )
             )
@@ -618,17 +615,7 @@ class format_ladtopics_external extends external_api {
             $data = array();       
             $uid = (int)$USER->id;
             $cid = (int)$param['courseid'];
-            $plan = (int)$param['plan'];
-            if(!is_int($cid)) {
-                $data['success'] = false;
-                $data['debug'] = "Unbekannter Kurs.";
-                return array('data'=>json_encode($data));
-            }
-            if(!is_int($plan)){
-                $data['success'] = false;
-                $data['debug'] = "Unbekannter Plan.";
-                return array('data'=>json_encode($data));
-            }            
+            $plan = $param['plan'];                           
             $params[] = $uid;
             $transaction = $DB->start_delegated_transaction(); 
             $sql = 'SELECT '.$CFG->prefix.'role.shortname FROM '.$CFG->prefix.'role INNER JOIN '.$CFG->prefix.'role_assignments ON '.$CFG->prefix.'role_assignments.roleid = '.$CFG->prefix.'role.id WHERE userid = ?';         
@@ -649,11 +636,31 @@ class format_ladtopics_external extends external_api {
                 $c->author = $uid;
                 $c->created = (int)$date->getTimestamp();
                 $c->plan = $plan;
-                $c->milestone = $param['milestones'];
-                $exists = $DB->record_exists('ladtopics_milestone_plans', array('course' => $cid, 'plan' => $plan));  
-                $data['success'] = false;
-                $data['debug'] = "EX";
-                return array('data'=>json_encode($data));            
+                $c->milestones = $param['milestones'];
+                $exists = $DB->record_exists('ladtopics_milestone_plans', array('course' => $cid, 'plan' => $plan)); 
+                if($exists === true){                   
+                    $rec = $DB->get_record("ladtopics_milestone_plans", array('course' => $cid, 'plan' => $plan));
+                    if(is_object($rec)){
+                        $c->id = $rec->id;
+                        $transaction = $DB->start_delegated_transaction();                       
+                        $res = $DB->update_record("ladtopics_milestone_plans", $c);     
+                        $transaction->allow_commit();
+                        if($res === true){
+                            $data['success'] = true;                           
+                        } else {
+                            $data['success'] = false;
+                            $data['debug'] = "Unbekannter Fehler.";
+                        }                       
+                        return array('data'=>json_encode($data)); 
+                    } else {
+                        return array('data'=>json_encode(array('success' => false, 'debug' => json_encode("Unbekannter Fehler."))));
+                    }                   
+                } else {
+                    $transaction = $DB->start_delegated_transaction();
+                    $res = $DB->insert_records("ladtopics_milestone_plans", array($c));
+                    $transaction->allow_commit();
+                    $data['success'] = true; 
+                }                                
             } else {               
                 $data['success'] = false;
                 $data['debug'] = "Sie haben keine Berechtigung.";

@@ -26,7 +26,7 @@
         <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="author" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="created" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="plan" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>        
+        <FIELD NAME="plan" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="milestones" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>

@@ -264,6 +264,30 @@ define([
                         }
                     });
 
+                    // Load milestone plan
+                    utils.get_ws('getmilestoneplan', {
+                        data: {
+                            'courseid': parseInt(course.id, 10),
+                            'plan': 'orientation'
+                        }
+                    }, function(e){
+                        try{
+                            if(typeof e.data === "string" && e.data.length > 0){                               
+                                let json = JSON.parse(e.data);
+                                if(typeof json !== "object" || !Array.isArray(json)){                                                                            
+                                    return;
+                                }
+                                json.forEach(function(element){    
+                                    element.start = moment(element.start).toDate(); 
+                                    element.end = moment(element.end).toDate();                                
+                                    _this.milestones.push(element); 
+                                });                                                                
+                            }                            
+                        } catch(error){
+                            console.log(error);
+                        }
+                    });
+
                     /* window.addEventListener('keyup', function(event) {
                         if (event.keyCode === 27 && this.modalVisible) {
                             _this.closeModal();
@@ -1903,39 +1927,67 @@ define([
                     modSaveMilestones: function(){    
                         let _this = this;
                         let savePlan = function(plan){
+                            let obj = [];
                             _this.milestones.forEach(
                                 function(element){
-                                     element.mod = true;                                        
+                                    if(element.mod !== true){
+                                        element.mod = true;
+                                        obj.push(element);
+                                    }                                                                           
                                 }
-                             );                             
+                             );                                                                                                          
                              utils.get_ws('setmilestoneplan', {
                                  data: {
                                      'courseid': parseInt(course.id, 10),
-                                     'milestones': JSON.stringify(_this.milestones),
+                                     'milestones': JSON.stringify(obj),
                                      'plan': plan
                                  }
                              }, function (e) {
                                 let out = JSON.parse(e.data);
                                 if(out.success === true){
-                                    _this.modAlert("success", "Meilensteine wurden gespeichert."); 
-                                    
+                                    _this.milestones = [];
+                                    _this.updateMilestones(); 
+                                    utils.get_ws('getmilestoneplan', {
+                                        data: {
+                                            'courseid': parseInt(course.id, 10),
+                                            'plan': 'orientation'
+                                        }
+                                    }, function(e){
+                                        try{
+                                            if(typeof e.data === "string" && e.data.length > 0){                               
+                                                let json = JSON.parse(e.data);
+                                                if(typeof json !== "object" || !Array.isArray(json)){                                                                            
+                                                    return;
+                                                }
+                                                json.forEach(function(element){ 
+                                                    element.start = moment(element.start).toDate(); 
+                                                    element.stop = moment(element.start).toDate();                                  
+                                                    _this.milestones.push(element);
+                                                });                                                          
+                                            }                            
+                                        } catch(error){
+                                            console.log(error);
+                                        }
+                                    });
+                                    _this.modAlert("success", "Meilensteine wurden gespeichert.");                                    
                                 } else {
                                     if(typeof out.debug === "string" && out.debug.length > 0){
                                         _this.modAlert("danger", out.debug); 
+                                        console.log(out.debug);
                                     } else {
                                         _this.modAlert("danger", "Unbekannter Fehler"); 
                                     }
                                 }                                   
-                             });                             
+                             });                        
                         }
 
                         try{                            
                             if($("#modSaveExport").is(":checked")){
                                 this.exportMilestones();
                             } else if($("#modSaveOrientation").is(":checked")){
-                                savePlan(1);
+                                savePlan("orientation");
                             } else if ($("#modSaveExam").is(":checked")){
-                                savePlan(2);
+                                savePlan("exam");
                             }
                         } catch(error){
                             this.modAlert("danger", "Konnte die Meilensteine nicht speichern."); 
@@ -1943,7 +1995,7 @@ define([
                         }
                     },
                     resetMilestones: function(){                       
-                        try{
+                        try{                           
                             var check = confirm('Wollen Sie wirklich alle Meilensteine zurücksetzen?'); 
                             if (check === true) {
                                 this.milestones = [];
@@ -1957,7 +2009,13 @@ define([
                     exportMilestones: function(){            
                         try{
                             var link = document.createElement("a");
-                            let json = JSON.stringify(this.milestones);
+                            let obj = [];
+                            this.milestones.forEach(
+                                function(element){
+                                    if(element.mod !== true) obj.push(element);
+                                }
+                            );
+                            let json = JSON.stringify(obj);
                             link.href = "data:text/json;charset=utf-8," + json;
                             let now = new Date();
                             let year = now.getFullYear().toString().padStart(4, "0");
