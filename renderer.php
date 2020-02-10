@@ -66,13 +66,13 @@ class format_ladtopics_renderer extends format_section_renderer_base {
         $cid = (int)$COURSE->id;
         $params[] = $uid;
         $transaction = $DB->start_delegated_transaction(); 
-        $sql = "SELECT {$CFG->prefix}role.shortname FROM {$CFG->prefix}role INNER JOIN {$CFG->prefix}role_assignments ON {$CFG->prefix}role_assignments.roleid = {$CFG->prefix}role.id WHERE userid = ?";         
+        $sql = 'SELECT '.$CFG->prefix.'role.shortname FROM '.$CFG->prefix.'role INNER JOIN '.$CFG->prefix.'role_assignments ON '.$CFG->prefix.'role_assignments.roleid = '.$CFG->prefix.'role.id WHERE userid = ?';         
         $res = $DB->get_records_sql($sql, $params);
         $transaction->allow_commit(); 
         foreach($res as $key => $value){
             if(!isset($value->shortname)) continue;
             $val = $value->shortname;            
-            if($val === "manager") {
+            if($val === 'manager') {
                 $this->_moderator = true;
                 return true;
             }
@@ -95,23 +95,52 @@ class format_ladtopics_renderer extends format_section_renderer_base {
 
 
 
-        $moderationModal = '       
-            <h3>test</h3>
-            <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="false">
+        $moderationModal = '    
+            <div class="modal fade" id="moderationModal" tabindex="-1" role="dialog" aria-labelledby="moderationModalLabel" aria-hidden="false">
                 <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+                    <h5 class="modal-title" id="moderationModalTitle">Moderation</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                     </div>
                     <div class="modal-body">
-                    ...
-                    </div>
+                        <h5>Speichern von Meilensteinen</h5> 
+                        <div class="my-2 mx-2">              
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="modSaveType" id="modSaveExam" value="0">
+                                <label class="form-check-label" for="modSaveExam">
+                                Ziel: Prüfung
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="modSaveType" id="modSaveOrientation" value="1">
+                                <label class="form-check-label" for="modSaveOrientation">
+                                Ziel: Orientierung
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="modSaveType" id="modSaveExport" value="2" checked>
+                                <label class="form-check-label" for="modSaveExport">
+                                Exportieren
+                                </label>
+                            </div>
+                        </div>
+                        <button type="button" @click="modSaveMilestones" class="btn btn-primary">Speichern</button>    
+                        <button type="button" @click="resetMilestones" class="btn btn-danger">Zurücksetzen</button>                   
+                        <hr>
+                        <h5>Laden von Meilensteinen</h5>                        
+                        <div class="col mb-4 px-0">
+                            <div class="custom-file">
+                                <input type="file" class="custom-file-input" id="modImportedFile" lang="de">
+                                <label class="custom-file-label" for="modImportedFile">Bitte wählen Sie eine Datei aus.</label>
+                            </div>
+                        </div>                        
+                        <button type="button" @click="modLoadMilestones" class="btn btn-secondary">Laden</button>                        
+                    </div>          
                     <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
+                        <!-- Footer -->
                     </div>
                 </div>
                 </div>
@@ -954,7 +983,7 @@ $modalMilestone = '
     </div>
 </div>
 
-'.($this->checkModeratorStatus()?$moderationModal:'').'
+
 
 <div id="page-content" class="row">
     <div class="region-main-box col-12 ladtopics-region-main">
@@ -968,6 +997,7 @@ $modalMilestone = '
 
                         <!-- Planing Component -->
                         <div id="planing-component" style="display:none;" v-cloak class="container dc-chart">
+                            '.($this->checkModeratorStatus()?$moderationModal:'').'
                             <div>
                                 <div v-if="surveyDone > 0" class="row">
                                     <div class="col-12">
@@ -1014,10 +1044,10 @@ $modalMilestone = '
                                                         </button>
                                                         <div class="dropdown-menu" aria-labeledby="settingsMenuButton">
                                                         '.($this->checkModeratorStatus()?'
-                                                            <a class="dropdown-item" @click="exportToICal" href="#">
+                                                            <a class="dropdown-item" data-toggle="modal" data-target="#moderationModal" href="#">
                                                                 <i class="fa fa-clock"></i>Moderation
                                                             </a>':'').'                                                            
-                                                            <a class="dropdown-item" @click="exportToICal" href="#">
+                                                            <a class="dropdown-item" @click="exportToICal()" href="#">
                                                                 <i class="fa fa-clock"></i>Exportieren
                                                             </a>                                                            
                                                         </div>

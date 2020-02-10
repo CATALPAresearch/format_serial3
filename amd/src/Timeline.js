@@ -124,8 +124,7 @@ define([
                         range: [],
                         milestones: [],
                         calendar: {},
-                        roles: [],
-                        isModerator: false,
+                        roles: [],                       
                         /*  [{
                               id: 3867650,
                               name: 'Planung',
@@ -281,20 +280,7 @@ define([
                         } catch (error) {
                             console.log("Der Kalender konnte nicht exportiert werden. \r\n" + error.toString());
                         }
-                    });
-                    // Check Moderator                    
-                    utils.get_ws('checkmod', {
-                        'courseid': parseInt(course.id, 10)
-                    }, function (e) {
-                        try {
-                            if (typeof e.data === "string" && e.data.length > 0) {                               
-                                _this.roles = JSON.parse(e.data);     
-                                if(_this.checkModeratorStatus(_this.roles)) _this.isModerator = true;                                                                                            
-                            }
-                        } catch (error) {
-                            console.log("Konnte die Rollen nicht laden. \r\n" + error.toString());
-                        }
-                    });
+                    });                   
                 },
                 created: function () {
                     var _this = this;
@@ -1824,15 +1810,51 @@ define([
                             )
                         } catch (error) { }
                     },
-                    checkModeratorStatus: function(items){
-                        for(let i in items){
-                            let item = items[i];                           
-                            if(item === "manager" || item === "coursecreator") {                               
-                                return true;
+                    modLoadMilestones: function(){
+                        console.log("load");
+                    },
+                    modSaveMilestones: function(){                        
+                        try{
+                            if($("#modSaveExport").is(":checked")){
+                                this.exportMilestones();
+                            } else if($("#modSaveOrientation").is(":checked")){
+                               
+                            } else if ($("#modSaveExam").is(":checked")){
+                                
                             }
+                        } catch(error){
+                            console.log(error);
                         }
-                        return false;
-                    }                    
+                    },
+                    resetMilestones: function(){                       
+                        try{
+                            var check = confirm('Wollen Sie wirklich alle Meilensteine zurücksetzen?'); 
+                            if (check === true) {
+                                this.milestones = [];
+                                this.updateMilestoneStatus();
+                            }                           
+                        } catch(error){
+                            console.log(error);
+                        }
+                    },
+                    exportMilestones: function(){            
+                        try{
+                            var link = document.createElement("a");
+                            let json = JSON.stringify(this.milestones);
+                            link.href = "data:text/json;charset=utf-8," + json;
+                            let now = new Date();
+                            let year = now.getFullYear().toString().padStart(4, "0");
+                            let month = now.getMonth() + 1;
+                            month = month.toString().padStart(2, "0");
+                            let day = now.getDate().toString().padStart(2, "0");
+                            let hour = now.getHours().toString().padStart(2, "0");
+                            let minutes = now.getMinutes().toString().padStart(2, "0");
+                            link.download = "Meilensteinplanung_" + year + month + day + hour + minutes + ".json";
+                            link.click();
+                        } catch(error){
+                            console.log(error);
+                        }       
+                    }                                  
                 }                
             });
 
