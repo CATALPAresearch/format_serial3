@@ -1910,7 +1910,8 @@ define([
                                             _this.createMilestone();                                                                     
                                         }
                                     );                                      
-                                    _this.updateMilestones();                                                        
+                                    _this.updateMilestones(); 
+                                    _this.modAlert("success", "Meilensteine wurden geladen.");                                                       
                                 } catch(error){
                                     console.log(error);
                                 }

@@ -358,7 +358,7 @@ $milestoneArchiveList = '
             <a :class="m.status == \'missed\' ? \'milestone-missed milestone-element-name\' : \'milestone-element-name\'" data-toggle="collapse" :href="\'#milestone-entry-archive-\' + m.id" role="button" aria-expanded="false" :aria-controls="\'milestone-entry-\' + m.id">
                 <i class="element-collapsed fa fa-angle-right angle"></i> 
                 <i class="element-not-collapsed fa fa-angle-down angle"></i> 
-                <span v-if="m.mod" class="fa fa-globe"></span>
+                '.($this->checkModeratorStatus()?"<span v-if=\"m.mod\" class=\"fa fa-globe\"></span>":"").'
                 {{ m.name }}
             </a>           
             <span
@@ -481,7 +481,7 @@ $milestoneList = '
             <a :class="m.status == \'missed\' ? \'milestone-missed milestone-element-name\' : \'milestone-element-name\'" data-toggle="collapse" :href="\'#milestone-entry-\' + m.id" role="button" aria-expanded="false" :aria-controls="\'milestone-entry-\' + m.id">
                 <i class="element-collapsed fa fa-angle-right angle"></i> 
                 <i class="element-not-collapsed fa fa-angle-down angle"></i> 
-                <span v-if="m.mod" class="fa fa-globe"></span>
+                '.($this->checkModeratorStatus()?"<span v-if=\"m.mod\" class=\"fa fa-globe\"></span>":"").'
                 {{ m.name }}                
             </a>
             <span
