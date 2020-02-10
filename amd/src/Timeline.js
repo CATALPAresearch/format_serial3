@@ -866,10 +866,7 @@ define([
                     },
                     createMilestone: function (e) {
                         this.emptyMilestone.id = Math.ceil(Math.random() * 1000);
-                        let id = this.emptyMilestone.id;
-                        this.emptyMilestone.end = this.startDate;                        
-                        var d = new Date();
-                        this.emptyMilestone.start = this.endDate;                        
+                        let id = this.emptyMilestone.id;                                            
 
                         this.milestones.push(this.emptyMilestone);
                         logger.add('milestone_created', {
@@ -973,16 +970,16 @@ define([
                             this.invalidEndDate = true; 
                         }      
                         this.invalidStartDate = false;                        
-                        this.getSelectedMilestone().start = date;    
+                        this.getSelectedMilestone().start = date;                                                   
                         return;       
                     },
                     validateEndDate: function(date){
-                        if(date <= this.dpRange.to || date < this.startDate || date >= this.dpRange.from){                            
+                        if(date <= this.dpRange.to || date < this.getSelectedMilestone().start || date >= this.dpRange.from){                            
                             this.invalidEndDate = true;                              
                             return;
                         }                         
                         this.invalidEndDate = false;
-                        this.getSelectedMilestone().end = date;         
+                        this.getSelectedMilestone().end = date;                               
                         return;
                     },
                     // <e> datepicker
@@ -1812,6 +1809,50 @@ define([
                     },
                     modLoadMilestones: function(){
                         console.log("load");
+                        try{
+                            let file = document.getElementById('modImportedFile').files[0];
+                            if(file === undefined){
+                                // kein file angegeben
+                                return;
+                            }
+                            if(file.type !== "application/json"){
+                                // kein json file
+                                return;
+                            }
+                            if(file.size <= 0){
+                                // keine größe
+                                return;
+                            }
+                            const reader = new FileReader();
+                            const _this = this;
+                            reader.readAsText(file);
+                            reader.onload = function(evt) {                            
+                                try{
+                                    let result = evt.target.result;
+                                    let json = JSON.parse(result);
+                                    if(typeof json !== "object" || !Array.isArray(json)){
+                                        // kein Array
+                                        return;
+                                    }                                   
+                                    json.forEach(
+                                        function(element){      
+                                            Object.assign(_this.emptyMilestone, element);                                           
+                                            _this.emptyMilestone.start = moment(element.start).toDate();                                            
+                                            _this.emptyMilestone.end = moment(element.end).toDate();                                            
+                                            _this.createMilestone();                                                                     
+                                        }
+                                    );  
+                                    _this.updateMilestones();                                                        
+                                } catch(error){
+                                    console.log(error);
+                                }
+                            };                             
+                            reader.onerror = function(error){
+                               console.log(error);
+                            }                  
+                        } catch(error){
+                            console.log("HEHEHE"+error);
+                        }
                     },
                     modSaveMilestones: function(){                        
                         try{
@@ -1831,7 +1872,7 @@ define([
                             var check = confirm('Wollen Sie wirklich alle Meilensteine zurücksetzen?'); 
                             if (check === true) {
                                 this.milestones = [];
-                                this.updateMilestoneStatus();
+                                this.updateMilestones();
                             }                           
                         } catch(error){
                             console.log(error);
