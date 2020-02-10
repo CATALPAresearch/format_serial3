@@ -173,7 +173,8 @@ define([
                             resources: [],
                             strategies: [],
                             reflections: [],
-                            yLane: 0
+                            yLane: 0,
+                            mod: false
                         },
                         invalidName: false,
                         invalidObjective: false,
@@ -896,7 +897,8 @@ define([
                             resources: [],
                             strategies: [],
                             reflections: [],
-                            yLane: 0
+                            yLane: 0,
+                            mod: false
                         };
                         $('#theMilestoneModal').modal('hide');
                         return id;
@@ -1185,10 +1187,17 @@ define([
                         this.sortMilestones();
                         // Update Milestones to the database using the webservice
                         var _this = this;
+                        let ms = [];
+                        _this.milestones.forEach(
+                            function(element){
+                                if(typeof element.mod === "undefined") element.mod = false;
+                                if(element.mod === false) ms.push(element);
+                            }
+                        )
                         utils.get_ws('setmilestones', {
                             data: {
                                 'courseid': parseInt(course.id, 10),
-                                'milestones': JSON.stringify(_this.milestones),
+                                'milestones': JSON.stringify(ms),
                                 'settings': JSON.stringify({})
                             }
                         }, function (e) {
@@ -1832,15 +1841,20 @@ define([
                             let file = document.getElementById('modImportedFile').files[0];
                             if(typeof file.name === "string" && file.name.length > 0){
                                 $("#modLoadPathLabel").text(file.name);
+                                $("#moderationModal").one('hidden.bs.modal', function(){                       
+                                    $("#modLoadPathLabel").text("Bitte wählen Sie eine Datei aus.");
+                                    document.getElementById('modImportedFile').value = "";         
+                                });
                             }
                         } catch(error){
                             console.log(error);
                         }                  
                     },
                     modLoadMilestones: function(){                        
-                        try{
-                            $("#modLoadPathLabel").text("Bitte wählen Sie eine Datei aus.");   
-                            let file = document.getElementById('modImportedFile').files[0];
+                        try{                                                        
+                            let file = document.getElementById('modImportedFile').files[0];  
+                            $("#modLoadPathLabel").text("Bitte wählen Sie eine Datei aus.");
+                            document.getElementById('modImportedFile').value = "";                          
                             if(file === undefined){
                                 this.modAlert("warning", "Bitte wählen Sie eine Datei aus.");                                                            
                                 return;
@@ -1891,9 +1905,19 @@ define([
                             if($("#modSaveExport").is(":checked")){
                                 this.exportMilestones();
                             } else if($("#modSaveOrientation").is(":checked")){
-                               
+                                this.milestones.forEach(
+                                   function(element){
+                                        element.mod = true;                                        
+                                   }
+                                );
+                               this.modAlert("success", "Meilensteine wurden gespeichert."); 
                             } else if ($("#modSaveExam").is(":checked")){
-                                
+                                this.milestones.forEach(
+                                   function(element){
+                                        element.mod = true;                                        
+                                   }
+                                );
+                               this.modAlert("success", "Meilensteine wurden gespeichert."); 
                             }
                         } catch(error){
                             this.modAlert("danger", "Konnte die Meilensteine nicht speichern."); 
