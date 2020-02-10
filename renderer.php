@@ -100,12 +100,15 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                 <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                    <h5 class="modal-title" id="moderationModalTitle">Moderation</h5>
+                        <h5 class="modal-title" id="moderationModalTitle">Moderation</h5>                                     
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                     </div>
                     <div class="modal-body">
+                        <div class="alert collapse fade" id="moderationAlert" data-dismiss="alert" role="alert">
+                            This is a success alert—check it out!
+                        </div> 
                         <h5>Speichern von Meilensteinen</h5> 
                         <div class="my-2 mx-2">              
                             <div class="form-check">
@@ -133,8 +136,8 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                         <h5>Laden von Meilensteinen</h5>                        
                         <div class="col mb-4 px-0">
                             <div class="custom-file">
-                                <input type="file" class="custom-file-input" id="modImportedFile" lang="de">
-                                <label class="custom-file-label" for="modImportedFile">Bitte wählen Sie eine Datei aus.</label>
+                                <input type="file" class="custom-file-input" @input="modLoadPath" id="modImportedFile" lang="de">
+                                <label id="modLoadPathLabel" class="custom-file-label" for="modImportedFile">Bitte wählen Sie eine Datei aus.</label>
                             </div>
                         </div>                        
                         <button type="button" @click="modLoadMilestones" class="btn btn-secondary">Laden</button>                        

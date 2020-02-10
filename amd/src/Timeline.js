@@ -1807,20 +1807,50 @@ define([
                             )
                         } catch (error) { }
                     },
-                    modLoadMilestones: function(){
-                        console.log("load");
+                    modAlert: function(type, text){
+                        let field = $("#moderationAlert");
+                        field.removeClass();       
+                        field.addClass("alert");
+                        switch(type){
+                            case "success": field.addClass("alert-success");
+                                            break;
+                            case "danger":  field.addClass("alert-danger");
+                                            break;
+                            case "warning": field.addClass("alert-warning");
+                                            break;
+                            case "info":    field.addClass("alert-info");
+                                            break;
+                            default:        field.addClass("alert-secondary");
+                        }  
+                        field.text(text);                                 
+                        field.fadeIn('slow', function () {
+                            $(this).delay(2000).fadeOut('slow');
+                        });
+                    },
+                    modLoadPath: function(e){
                         try{
                             let file = document.getElementById('modImportedFile').files[0];
+                            if(typeof file.name === "string" && file.name.length > 0){
+                                $("#modLoadPathLabel").text(file.name);
+                            }
+                        } catch(error){
+                            console.log(error);
+                        }                  
+                    },
+                    modLoadMilestones: function(){                        
+                        try{
+                            $("#modLoadPathLabel").text("Bitte wählen Sie eine Datei aus.");   
+                            let file = document.getElementById('modImportedFile').files[0];
                             if(file === undefined){
-                                // kein file angegeben
+                                this.modAlert("warning", "Bitte wählen Sie eine Datei aus.");                                                            
                                 return;
                             }
                             if(file.type !== "application/json"){
-                                // kein json file
+                                this.modAlert("warning", "Es wird eine Datei im JSON-Format benötigt.");      
                                 return;
                             }
                             if(file.size <= 0){
-                                // keine größe
+                                this.modAlert("danger", "Die Datei ist fehlerhaft.");      
                                 return;
                             }
                             const reader = new FileReader();
@@ -1831,7 +1861,7 @@ define([
                                     let result = evt.target.result;
                                     let json = JSON.parse(result);
                                     if(typeof json !== "object" || !Array.isArray(json)){
-                                        // kein Array
+                                        this.modAlert("danger", "Die Datei ist fehlerhaft.");   
                                         return;
                                     }                                   
                                     json.forEach(
@@ -1841,21 +1871,23 @@ define([
                                             _this.emptyMilestone.end = moment(element.end).toDate();                                            
                                             _this.createMilestone();                                                                     
                                         }
-                                    );  
+                                    );                                      
                                     _this.updateMilestones();                                                        
                                 } catch(error){
                                     console.log(error);
                                 }
                             };                             
                             reader.onerror = function(error){
-                               console.log(error);
+                                _this.modAlert("alert", "Die Datei konnte nicht gelesen werden.");  
+                                console.log(error);
                             }                  
                         } catch(error){
-                            console.log("HEHEHE"+error);
+                            this.modAlert("danger", "Konnte die Meilensteine nicht laden."); 
+                            console.log(error);
                         }
                     },
                     modSaveMilestones: function(){                        
-                        try{
+                        try{                            
                             if($("#modSaveExport").is(":checked")){
                                 this.exportMilestones();
                             } else if($("#modSaveOrientation").is(":checked")){
@@ -1864,6 +1896,7 @@ define([
                                 
                             }
                         } catch(error){
+                            this.modAlert("danger", "Konnte die Meilensteine nicht speichern."); 
                             console.log(error);
                         }
                     },
@@ -1875,6 +1908,7 @@ define([
                                 this.updateMilestones();
                             }                           
                         } catch(error){
+                            this.modAlert("danger", "Konnte die Meilensteine nicht zurücksetzen."); 
                             console.log(error);
                         }
                     },
