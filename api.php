@@ -65,6 +65,7 @@ class format_ladtopics_external extends external_api {
         $transaction = $DB->start_delegated_transaction(); 
 
         $sql = "SELECT {$CFG->prefix}role.shortname FROM {$CFG->prefix}role INNER JOIN {$CFG->prefix}role_assignments ON {$CFG->prefix}role_assignments.roleid = {$CFG->prefix}role.id WHERE userid = ?";         
+        
         $res = $DB->get_records_sql($sql, $params);
         $transaction->allow_commit();     
 
@@ -637,24 +638,32 @@ class format_ladtopics_external extends external_api {
                 $c->created = (int)$date->getTimestamp();
                 $c->plan = $plan;
                 $c->milestones = $param['milestones'];
-                $exists = $DB->record_exists('ladtopics_milestone_plans', array('course' => $cid, 'plan' => $plan)); 
-                if($exists === true){                   
-                    $rec = $DB->get_record("ladtopics_milestone_plans", array('course' => $cid, 'plan' => $plan));
-                    if(is_object($rec)){
-                        $c->id = $rec->id;
-                        $transaction = $DB->start_delegated_transaction();                       
-                        $res = $DB->update_record("ladtopics_milestone_plans", $c);     
-                        $transaction->allow_commit();
-                        if($res === true){
-                            $data['success'] = true;                           
-                        } else {
-                            $data['success'] = false;
-                            $data['debug'] = "Unbekannter Fehler.";
-                        }                       
-                        return array('data'=>json_encode($data)); 
+
+                // HIER
+
+                $sql = 'SELECT id FROM '.$CFG->prefix.'ladtopics_milestone_plans WHERE course = ? AND plan = ? LIMIT 1';
+                $transaction = $DB->start_delegated_transaction();
+                $params = array();
+                $params[] = $cid;
+                $params[] = $plan;
+                $res = $DB->get_records_sql($sql, $params);
+                $transaction->allow_commit();
+
+                $count = count($res);
+
+                if($count !== 0){    
+                    $id = reset($res);
+                    $c->id = $id->id;
+                    $transaction = $DB->start_delegated_transaction();                       
+                    $res = $DB->update_record("ladtopics_milestone_plans", $c);     
+                    $transaction->allow_commit();
+                    if($res === true){
+                        $data['success'] = true;                           
                     } else {
-                        return array('data'=>json_encode(array('success' => false, 'debug' => json_encode("Unbekannter Fehler."))));
-                    }                   
+                        $data['success'] = false;
+                        $data['debug'] = "Unbekannter Fehler.";
+                    }                       
+                    return array('data'=>json_encode($data));
                 } else {
                     $transaction = $DB->start_delegated_transaction();
                     $res = $DB->insert_records("ladtopics_milestone_plans", array($c));
