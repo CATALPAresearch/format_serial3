@@ -34,8 +34,7 @@ define([
         var course = {
             id: parseInt($('#courseid').text(), 10)
             // module: parseInt($('#moduleid').html()) 
-        };
-
+        };       
         utils.get_ws('logstore', {
             'courseid': parseInt(course.id, 10)
         }, function (e) {
@@ -329,7 +328,7 @@ define([
                     remainingMilestones: function () {
                         return this.milestones.filter(
                             function (f) {
-                                return f.status !== "missed" && f.status !== "reflected"
+                                return f.status !== "missed" && f.status !== "reflected";
                             }
                         );
                     },
@@ -2030,15 +2029,65 @@ define([
                                     }, function(e){
                                         try{
                                             if(typeof e.data === "string" && e.data.length > 0){                               
-                                                let json = JSON.parse(e.data);
-                                                if(typeof json !== "object" || !Array.isArray(json)){                                                                            
+                                                let obj = JSON.parse(e.data);
+                                                if(typeof obj !== "object" || !Array.isArray(obj)){                                                                            
                                                     return;
-                                                }                                                
-                                                json.forEach(function(element){    
-                                                    element.start = moment(element.start).toDate(); 
-                                                    element.end = moment(element.end).toDate();                                
-                                                    _this.milestones.push(element); 
-                                                });                                                                
+                                                }                                                   
+                                                let div = null;                                                 
+                                                switch(ps){
+                                                    case "planing-style-a": div = 1;
+                                                                            break;
+                                                    case "planing-style-b": div = 4;
+                                                                            break;
+                                                    case "planing-style-c": div = 1;
+                                                                            break;
+                                                    case "planing-style-d": div = 4;
+                                                                            break;
+                                                    case "planing-style-e": return;
+                                                }   
+
+                                                if(div === 4){
+                                                    let span = [];                                                
+                                                    let last = sr.from.toISOString();
+                                                    let target = sr.to.toISOString();
+                                                    last = moment(last).set({hour: 12}).toDate();
+                                                    target = moment(target).set({hour: 12}).toDate();
+                                                    span.push(last);
+                                                    let next = moment(last).add(div, 'w').toDate();
+                                                    while(next <= target){
+                                                        span.push(next);
+                                                        last = next;
+                                                        next = moment(last).add(div, 'w').toDate();
+                                                    }                                                
+                                                    obj.forEach(
+                                                        function (element) {
+                                                            element.start = moment(element.start).toDate(); 
+                                                            element.end = moment(element.end).toDate();
+                                                            element.mod = true;
+                                                            for(let i in span){
+                                                                if(element.end <= span[i]){
+                                                                    if(typeof span[i-1] !== "undefined"){
+                                                                        element.start = span[i-1];
+                                                                    } else {
+                                                                        element.start = span[i];
+                                                                    }
+                                                                    element.end = span[i];
+                                                                    break;
+                                                                }                                                                
+                                                            }
+                                                            _this.milestones.push(element);
+                                                        }
+                                                    );
+                                                } else {
+                                                    obj.forEach(
+                                                        function (element) {
+                                                            element.start = moment(element.start).toDate(); 
+                                                            element.end = moment(element.end).toDate();
+                                                            element.mod = true;
+                                                            _this.milestones.push(element);
+                                                        }
+                                                    );
+                                                }                                                              
                                             }                            
                                         } catch(error){
                                             console.log(error);

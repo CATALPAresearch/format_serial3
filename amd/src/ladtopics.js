@@ -10,6 +10,7 @@
  * @license    MIT
  * @since      3.1
  */
+
 define([
     'jquery',
     'jqueryui',
@@ -139,6 +140,7 @@ define([
                     context: 'format_ladtopics',
                     outputType: 1 // 0: console, 1: logstore_standard_log
                 });
+               
                 new Timeline(
                     vue,
                     d3,
