@@ -1926,16 +1926,20 @@ define([
                         return;
                     },
                     modResetSelect: function(){
-                        if($("#modSaveInterest").is(":checked")){
-                            this.modSaveMilestones("interest", []);
-                        } else if($("#modSaveOrientation").is(":checked")){
-                            this.modSaveMilestones("orientation", []);
-                        } else if ($("#modSaveExam").is(":checked")){
-                            this.modSaveMilestones("exam", []);
-                        } else if ($("#modSaveLocal").is(":checked")){
-                            this.resetMilestones();
+                        var check = confirm('Wollen Sie wirklich alle Meilensteine zurücksetzen?'); 
+                        if (check === true) {
+                            if($("#modSaveInterest").is(":checked")){
+                                this.modSaveMilestones("interest", []);
+                            } else if($("#modSaveOrientation").is(":checked")){
+                                this.modSaveMilestones("orientation", []);
+                            } else if ($("#modSaveExam").is(":checked")){
+                                this.modSaveMilestones("exam", []);
+                            } else if ($("#modSaveLocal").is(":checked")){
+                                this.resetMilestones();
+                            }                  
                         }
                         return;
+                        
                     },
                     modSaveMilestones: function(plan, milestones){    
                         let _this = this;                    
@@ -1952,7 +1956,7 @@ define([
                                     _this.milestones = [];
                                     _this.updateMilestones(); 
                                     _this.getMilestonePlan();
-                                    _this.modAlert("success", "Meilensteine wurden gespeichert.");                                    
+                                    _this.modAlert("success", "Meilensteine wurden aktualisiert.");                                    
                                 } else {
                                     if(typeof out.debug === "string" && out.debug.length > 0){
                                         _this.modAlert("danger", out.debug);                                        
@@ -1967,12 +1971,9 @@ define([
                     },
                     resetMilestones: function(){                       
                         try{                           
-                            var check = confirm('Wollen Sie wirklich alle Meilensteine zurücksetzen?'); 
-                            if (check === true) {
-                                this.milestones = [];
-                                this.updateMilestones();
-                                this.modAlert("success", "Meilensteine wurden zurückgesetzt."); 
-                            }                           
+                            this.milestones = [];
+                            this.updateMilestones();
+                            this.modAlert("success", "Meilensteine wurden zurückgesetzt.");                           
                         } catch(error){
                             this.modAlert("danger", "Konnte die Meilensteine nicht zurücksetzen."); 
                             console.log(error);

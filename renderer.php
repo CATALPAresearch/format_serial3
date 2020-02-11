@@ -137,7 +137,7 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                             </div>                             
                         </div>
                         <button type="button" @click="modSaveSelect" class="btn btn-primary">Speichern</button>    
-                        <button type="button" @click="resetMilestones" class="btn btn-danger">Zurücksetzen</button>                   
+                        <button type="button" @click="modResetSelect" class="btn btn-danger">Zurücksetzen</button>                   
                         <hr>                        
                         <h5>Meilensteine laden</h5>                        
                         <div class="col mb-4 px-0">
