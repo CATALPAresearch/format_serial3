@@ -100,7 +100,7 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                 <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="moderationModalTitle">Moderation</h5>                                     
+                        <h5 class="modal-title" id="moderationModalTitle">Planungsempfehlungen</h5>                                     
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -108,8 +108,8 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                     <div class="modal-body">
                         <div class="alert collapse fade" id="moderationAlert" data-dismiss="alert" role="alert">
                             This is a success alert—check it out!
-                        </div> 
-                        <h5>Speichern von Meilensteinen</h5> 
+                        </div>              
+                        <h5>Vorlagen</h5>           
                         <div class="my-2 mx-2">              
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="modSaveType" id="modSaveExam" value="0">
@@ -124,16 +124,22 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                                 </label>
                             </div>
                             <div class="form-check">
-                                <input class="form-check-input" type="radio" name="modSaveType" id="modSaveExport" value="2" checked>
-                                <label class="form-check-label" for="modSaveExport">
-                                Exportieren
+                                <input class="form-check-input" type="radio" name="modSaveType" id="modSaveInterest" value="2">
+                                <label class="form-check-label" for="modSaveInterest">
+                                Interesse am Themengebiet
                                 </label>
-                            </div>
+                            </div>  
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="modSaveType" id="modSaveLocal" value="3">
+                                <label class="form-check-label" for="modSaveLocal">
+                                Eigene Meilensteine
+                                </label>
+                            </div>                             
                         </div>
-                        <button type="button" @click="modSaveMilestones" class="btn btn-primary">Speichern</button>    
+                        <button type="button" @click="modSaveSelect" class="btn btn-primary">Speichern</button>    
                         <button type="button" @click="resetMilestones" class="btn btn-danger">Zurücksetzen</button>                   
-                        <hr>
-                        <h5>Laden von Meilensteinen</h5>                        
+                        <hr>                        
+                        <h5>Meilensteine laden</h5>                        
                         <div class="col mb-4 px-0">
                             <div class="custom-file">
                                 <input type="file" class="custom-file-input" @input="modLoadPath" id="modImportedFile" lang="de">
@@ -1050,7 +1056,7 @@ $modalMilestone = '
                                                         <div class="dropdown-menu" aria-labeledby="settingsMenuButton">
                                                         '.($this->checkModeratorStatus()?'
                                                             <a class="dropdown-item" data-toggle="modal" data-target="#moderationModal" href="#">
-                                                                <i class="fa fa-clock"></i>Moderation
+                                                                <i class="fa fa-clock"></i>Vorlagen
                                                             </a>':'').'                                                            
                                                             <a class="dropdown-item" @click="exportToICal()" href="#">
                                                                 <i class="fa fa-clock"></i>Exportieren

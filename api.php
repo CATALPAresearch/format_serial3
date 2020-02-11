@@ -637,9 +637,7 @@ class format_ladtopics_external extends external_api {
                 $c->author = $uid;
                 $c->created = (int)$date->getTimestamp();
                 $c->plan = $plan;
-                $c->milestones = $param['milestones'];
-
-                // HIER
+                $c->milestones = $param['milestones'];               
 
                 $sql = 'SELECT id FROM '.$CFG->prefix.'ladtopics_milestone_plans WHERE course = ? AND plan = ? LIMIT 1';
                 $transaction = $DB->start_delegated_transaction();
