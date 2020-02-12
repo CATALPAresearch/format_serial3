@@ -249,7 +249,7 @@ define([
                     }, function (e) {
                         try {
                             if (typeof e.data === "string" && e.data.length > 0) {
-                                _this.calendar = JSON.parse(e.data);
+                                _this.calendar = JSON.parse(e.data);                               
                             }
                         } catch (error) {
                             new ErrorHandler(error);
@@ -548,7 +548,8 @@ define([
                                 _this.resources = obj;
                                 for (let i in _this.calendar) {
                                     let element = _this.calendar[i];
-                                    if (element.eventtype !== "course" && element.eventtype !== "group") continue;
+                                    if (element.eventtype !== "course" && element.eventtype !== "group") continue;                                  
+                                    let date = moment.unix(+element.timestart).format("DD.MM.YYYY");
                                     let out = {
                                         course_id: course.id,
                                         id: element.id,
@@ -557,7 +558,7 @@ define([
                                         instance_type: element.eventtype === "course" ? "kurstermin" : "gruppentermin",
                                         instance_url_id: null,
                                         module_id: null,
-                                        name: element.name,
+                                        name: element.name+" ["+date+"]",
                                         pos_module: null,
                                         pos_section: null,
                                         section: null,
