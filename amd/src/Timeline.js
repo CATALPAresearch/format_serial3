@@ -1165,7 +1165,9 @@ define([
                         var _this = this;
                         let ms = _this.milestones.filter(
                             function (element) {
-                                if (element.mod !== true) return true;
+                                if (element.mod !== true) {                                    
+                                    return true;
+                                }
                                 if (typeof element.mod === "undefined") element.mod = false;
                                 return false;
                             }
@@ -1880,7 +1882,9 @@ define([
                     modSaveSelect: function () {
                         let ms = this.milestones.filter(
                             function (element) {
-                                if (element.mod !== true) return true;
+                                if (element.mod !== true) {                                   
+                                    return true;
+                                }
                                 return false;
                             }
                         );
@@ -1903,11 +1907,11 @@ define([
                         var check = confirm('Wollen Sie wirklich alle Meilensteine zurücksetzen?');
                         if (check === true) {
                             if ($("#modSaveInterest").is(":checked")) {
-                                this.modSaveMilestones("interest", []);
+                                this.modSaveMilestones("interest", [], false);
                             } else if ($("#modSaveOrientation").is(":checked")) {
-                                this.modSaveMilestones("orientation", []);
+                                this.modSaveMilestones("orientation", [], false);
                             } else if ($("#modSaveExam").is(":checked")) {
-                                this.modSaveMilestones("exam", []);
+                                this.modSaveMilestones("exam", [], false);
                             } else if ($("#modSaveLocal").is(":checked")) {
                                 this.resetMilestones();
                             }
@@ -1915,7 +1919,7 @@ define([
                         return;
 
                     },
-                    modSaveMilestones: function (plan, milestones) {
+                    modSaveMilestones: function (plan, milestones, reset = true) {
                         let _this = this;
                         try {
                             utils.get_ws('setmilestoneplan', {
@@ -1927,8 +1931,16 @@ define([
                             }, function (e) {
                                 let out = JSON.parse(e.data);
                                 if (out.success === true) {
-                                    _this.milestones = [];
-                                    _this.updateMilestones();
+                                    if(reset){
+                                        _this.milestones = [];
+                                        _this.updateMilestones();
+                                    } else {
+                                        let ms = [];
+                                        for(let u in _this.milestones){
+                                            if(_this.milestones[u].mod !== true) ms.push(_this.milestones[u]);
+                                        }
+                                        _this.milestones = ms;
+                                    }                               
                                     _this.getMilestonePlan();
                                     _this.modAlert("success", "Meilensteine wurden aktualisiert.");
                                 } else {
@@ -2051,7 +2063,14 @@ define([
                                                                 break;
                                                             }
                                                         }
-                                                        _this.milestones.push(element);
+                                                        let found = false;
+                                                        for(let u in _this.milestones){                                                            
+                                                            if(_this.milestones[u].id === element.id){
+                                                                found = true;                                                              
+                                                                break;
+                                                            }
+                                                        }
+                                                        if(!found) _this.milestones.push(element);                                                        
                                                     }
                                                 );
                                             } else {
@@ -2060,7 +2079,15 @@ define([
                                                         element.start = moment(element.start).toDate();
                                                         element.end = moment(element.end).toDate();
                                                         element.mod = true;
-                                                        _this.milestones.push(element);
+
+                                                        let found = false;
+                                                        for(let u in _this.milestones){                                                            
+                                                            if(_this.milestones[u].id === element.id){
+                                                                found = true;                                                              
+                                                                break;
+                                                            }
+                                                        }
+                                                        if(!found) _this.milestones.push(element);
                                                     }
                                                 );
                                             }
