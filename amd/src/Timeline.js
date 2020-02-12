@@ -24,11 +24,13 @@ define([
     'core/ajax'
 ], function ($, ajax) {
 
-
     /**
      * Plot a timeline
      */
+
+    
     var Timeline = function (Vue, d3, dc, crossfilter, moment, Sortable, utils, introJs, logger, FilterChart, ActivityChart, InitialSurvey, ICalExport, ICalLib, vDP, vDPde, ErrorHandler) {
+        throw new Error("meintest");
         var width = document.getElementById('ladtopic-container-0').offsetWidth;
         var margins = { top: 15, right: 10, bottom: 20, left: 10 };
         var course = {
@@ -261,7 +263,7 @@ define([
                                 logger.add('planing_tool_open', { pageLoaded: true });
                             }
                         }
-                    });
+                    });                    
 
                     this.getMilestonePlan();
 
@@ -1895,7 +1897,7 @@ define([
                                 }
                             };                             
                             reader.onerror = function(error){
-                                _this.modAlert("alert", "Die Datei konnte nicht gelesen werden.");  
+                                _this.modAlert("warning", "Die Datei konnte nicht gelesen werden.");  
                                 new ErrorHandler(error);
                             }                  
                         } catch(error){
@@ -1911,7 +1913,7 @@ define([
                             }
                         );
                         if(ms.length <= 0){
-                            this.modAlert("alert", "Keine Meilensteine vorhanden."); 
+                            this.modAlert("warning", "Keine Meilensteine vorhanden."); 
                             return;
                         }
                         if($("#modSaveInterest").is(":checked")){

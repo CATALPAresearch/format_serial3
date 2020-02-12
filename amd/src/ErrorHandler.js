@@ -48,6 +48,7 @@ define([
                 }
                 catch (error) { }
             });
+            console.log("ErrorHandler initialized");
             return;
         };
         EH.prototype._send = function (message) {

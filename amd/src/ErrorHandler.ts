@@ -46,7 +46,7 @@ define([
         public static logWindowErrors(){
             window.addEventListener('error', 
                 function(event) { 
-                    try{
+                    try{                        
                         let obj:any = {
                             message: event.message?event.message:undefined,
                             filename: event.filename?event.filename:undefined,
@@ -57,7 +57,8 @@ define([
                         new EH(obj);
                     } catch(error){}           
                 }
-            );            
+            );      
+            console.log("ErrorHandler initialized");      
             return;
         }
 

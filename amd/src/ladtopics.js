@@ -143,7 +143,7 @@ define([
                 });
 
                 ErrorHandler.logger = logger;
-                ErrorHandler.logWindowErrors();
+                ErrorHandler.logWindowErrors();                        
                
                 new Timeline(
                     vue,
