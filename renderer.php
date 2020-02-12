@@ -49,6 +49,38 @@ class format_ladtopics_renderer extends format_section_renderer_base {
         $page->set_other_editing_capability('moodle/course:setcurrentsection');
     }
 
+
+    /**
+     * A Attribute to store if the user is a moderator for the course
+     */
+    private $_moderator = null;
+
+    /**
+     * A Method to test if the user is a moderator for the course
+     */
+
+    private function checkModeratorStatus(){
+        if(!is_null($this->_moderator)) return $this->_moderator;
+        global $CFG, $DB, $COURSE, $USER;
+        $uid = (int)$USER->id;
+        $cid = (int)$COURSE->id;
+        $params[] = $uid;
+        $transaction = $DB->start_delegated_transaction(); 
+        $sql = 'SELECT '.$CFG->prefix.'role.shortname FROM '.$CFG->prefix.'role INNER JOIN '.$CFG->prefix.'role_assignments ON '.$CFG->prefix.'role_assignments.roleid = '.$CFG->prefix.'role.id WHERE userid = ?';         
+        $res = $DB->get_records_sql($sql, $params);
+        $transaction->allow_commit(); 
+        foreach($res as $key => $value){
+            if(!isset($value->shortname)) continue;
+            $val = $value->shortname;            
+            if($val === 'manager') {
+                $this->_moderator = true;
+                return true;
+            }
+        }
+        $this->_moderator = false;
+        return false;
+    }
+
     /**
      * Generate the starting container html for a list of sections
      * @return string HTML to output.
@@ -60,6 +92,70 @@ class format_ladtopics_renderer extends format_section_renderer_base {
         //$rr = $completion->get_completions(3);
         //print_r($rr);
         //print_r($COURSE);
+
+
+
+        $moderationModal = '    
+            <div class="modal fade" id="moderationModal" tabindex="-1" role="dialog" aria-labelledby="moderationModalLabel" aria-hidden="false">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="moderationModalTitle">Planungsempfehlungen</h5>                                     
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="alert collapse fade" id="moderationAlert" data-dismiss="alert" role="alert">
+                            This is a success alert—check it out!
+                        </div>              
+                        <h5>Vorlagen</h5>           
+                        <div class="my-2 mx-2">              
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="modSaveType" id="modSaveExam" value="0">
+                                <label class="form-check-label" for="modSaveExam">
+                                Prüfung
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="modSaveType" id="modSaveOrientation" value="1">
+                                <label class="form-check-label" for="modSaveOrientation">
+                                Orientierung
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="modSaveType" id="modSaveInterest" value="2">
+                                <label class="form-check-label" for="modSaveInterest">
+                                Interesse am Themengebiet
+                                </label>
+                            </div>  
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="modSaveType" id="modSaveLocal" value="3">
+                                <label class="form-check-label" for="modSaveLocal">
+                                Eigene Meilensteine
+                                </label>
+                            </div>                             
+                        </div>
+                        <button type="button" @click="modSaveSelect" class="btn btn-primary">Speichern</button>    
+                        <button type="button" @click="modResetSelect" class="btn btn-danger">Zurücksetzen</button>                   
+                        <hr>                        
+                        <h5>Meilensteine laden</h5>                        
+                        <div class="col mb-4 px-0">
+                            <div class="custom-file">
+                                <input type="file" class="custom-file-input" @input="modLoadPath" id="modImportedFile" lang="de">
+                                <label id="modLoadPathLabel" class="custom-file-label" for="modImportedFile">Bitte wählen Sie eine Datei aus.</label>
+                            </div>
+                        </div>                        
+                        <button type="button" @click="modLoadMilestones" class="btn btn-secondary">Laden</button>                        
+                    </div>          
+                    <div class="modal-footer">
+                        <!-- Footer -->
+                    </div>
+                </div>
+                </div>
+            </div>
+        ';
+
 
 
         $initialSurvey = '<!-- Initial survey -->
@@ -268,8 +364,9 @@ $milestoneArchiveList = '
             <a :class="m.status == \'missed\' ? \'milestone-missed milestone-element-name\' : \'milestone-element-name\'" data-toggle="collapse" :href="\'#milestone-entry-archive-\' + m.id" role="button" aria-expanded="false" :aria-controls="\'milestone-entry-\' + m.id">
                 <i class="element-collapsed fa fa-angle-right angle"></i> 
                 <i class="element-not-collapsed fa fa-angle-down angle"></i> 
+                '.($this->checkModeratorStatus()?"<span v-if=\"m.mod\" class=\"fa fa-globe\"></span>":"").'
                 {{ m.name }}
-            </a>
+            </a>           
             <span
                 data-toggle="tooltop" data-placement="top" :title="\'Beginn: \' + getReadableTime(m.start) + \'Ende: \' + getReadableTime(m.start)" 
                 :class="m.status == \'missed\' ? \'milestone-missed milestone-element-due\' : \'milestone-element-due\'">
@@ -390,7 +487,8 @@ $milestoneList = '
             <a :class="m.status == \'missed\' ? \'milestone-missed milestone-element-name\' : \'milestone-element-name\'" data-toggle="collapse" :href="\'#milestone-entry-\' + m.id" role="button" aria-expanded="false" :aria-controls="\'milestone-entry-\' + m.id">
                 <i class="element-collapsed fa fa-angle-right angle"></i> 
                 <i class="element-not-collapsed fa fa-angle-down angle"></i> 
-                {{ m.name }}
+                '.($this->checkModeratorStatus()?"<span v-if=\"m.mod\" class=\"fa fa-globe\"></span>":"").'
+                {{ m.name }}                
             </a>
             <span
                 data-toggle="tooltop" data-placement="top" :title="\'Beginn: \' + getReadableTime(m.start) + \'Ende: \' + getReadableTime(m.start)" 
@@ -898,6 +996,7 @@ $modalMilestone = '
 </div>
 
 
+
 <div id="page-content" class="row">
     <div class="region-main-box col-12 ladtopics-region-main">
         <section id="region-main" class="ladtopics-region">
@@ -910,6 +1009,7 @@ $modalMilestone = '
 
                         <!-- Planing Component -->
                         <div id="planing-component" style="display:none;" v-cloak class="container dc-chart">
+                            '.($this->checkModeratorStatus()?$moderationModal:'').'
                             <div>
                                 <div v-if="surveyDone > 0" class="row">
                                     <div class="col-12">
@@ -955,9 +1055,13 @@ $modalMilestone = '
                                                         <i class="fa fa-cog"></i>
                                                         </button>
                                                         <div class="dropdown-menu" aria-labeledby="settingsMenuButton">
-                                                            <a class="dropdown-item" @click="exportToICal" href="#">
+                                                        '.($this->checkModeratorStatus()?'
+                                                            <a class="dropdown-item" data-toggle="modal" data-target="#moderationModal" href="#">
+                                                                <i class="fa fa-clock"></i>Vorlagen
+                                                            </a>':'').'                                                            
+                                                            <a class="dropdown-item" @click="exportToICal()" href="#">
                                                                 <i class="fa fa-clock"></i>Exportieren
-                                                            </a>
+                                                            </a>                                                            
                                                         </div>
                                                     </div>
                                                     

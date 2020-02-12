@@ -10,6 +10,7 @@
  * @license    MIT
  * @since      3.1
  */
+
 define([
     'jquery',
     'jqueryui',
@@ -20,9 +21,10 @@ define([
     M.cfg.wwwroot + '/course/format/ladtopics/amd/src/InitialSurvey.js',
     M.cfg.wwwroot + '/course/format/ladtopics/amd/src/Assessment.js',
     M.cfg.wwwroot + '/course/format/ladtopics/amd/src/Logging.js',
-    M.cfg.wwwroot + '/course/format/ladtopics/amd/src/ICalExport.js'
+    M.cfg.wwwroot + '/course/format/ladtopics/amd/src/ICalExport.js',
+    M.cfg.wwwroot + '/course/format/ladtopics/amd/src/ErrorHandler.js'
 ],
-    function ($, jqueryui, Timeline, Utils, filterChart, activityChart, initialSurvey, Assessment, Log, ICalExport) {
+    function ($, jqueryui, Timeline, Utils, filterChart, activityChart, initialSurvey, Assessment, Log, ICalExport, ErrorHandler) {
 
         require.config({
             enforceDefine: false,
@@ -139,6 +141,10 @@ define([
                     context: 'format_ladtopics',
                     outputType: 1 // 0: console, 1: logstore_standard_log
                 });
+
+                ErrorHandler.logger = logger;
+                ErrorHandler.logWindowErrors();                        
+               
                 new Timeline(
                     vue,
                     d3,
@@ -155,7 +161,8 @@ define([
                     ICalExport,
                     ICalLib,
                     vDP,
-                    vDPde
+                    vDPde,
+                    ErrorHandler
                 );
                 // var t = new Assessment(vue, d3, dc, crossfilter, moment);
             });
