@@ -697,8 +697,7 @@ define([
                         this.reflectionsFormVisisble = this.getSelectedMilestone().status === 'reflected' ? true : false;
                         this.modalVisible = true;
                         this.getSelectedMilestone().mod = false;
-                        if (e > 0) {
-
+                        if (milestoneID > 0) {
                             logger.add('milestone_edit_dialog_open', {
                                 milestoneId: this.getSelectedMilestone().id,
                                 name: this.getSelectedMilestone().name,

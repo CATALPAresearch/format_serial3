@@ -372,7 +372,7 @@ $milestoneArchiveList = '
                 :class="m.status == \'missed\' ? \'milestone-missed milestone-element-due\' : \'milestone-element-due\'">
                 {{ fromNow(m.end) }}
             </span>
-            <a @click="showModal(m.id)" class="milestone-element-edit" data-legend="1" data-toggle="modal" data-target="#theMilestoneModal">
+            <a @click="showModal(m.id)" v-if="m.status !== \'reflected\'" class="milestone-element-edit" data-legend="1" data-toggle="modal" data-target="#theMilestoneModal">
                 <span data-toggle="tooltip" data-placement="top" title="Sie können diesen Meilenstein bearbeiten" class="fa fa-pencil"></span> bearbeiten
             </a>
             <div class="milestone-element-progress">
@@ -420,6 +420,7 @@ $milestoneArchiveList = '
                                         title="Setzen Sie das Häkchen, wenn Sie dieses Lernangebot bereits bearbeitet haben."
                                         v-model="s.checked" 
                                         :id="s.id"
+                                        :disabled = "m.status === \'reflected\'"
                                         @change="updateMilestoneStatus()"
                                         >
                                     <a 
@@ -448,6 +449,7 @@ $milestoneArchiveList = '
                                         title="Setzen Sie das Häkchen, wenn Sie diese Lernstrategie bereits angewendet haben."
                                         v-model="s.checked"
                                         :id="s.id"
+                                        :disabled = "m.status === \'reflected\'"
                                         @change="updateMilestoneStatus()"
                                         >
                                     <span class="strategy-selected-name">{{ s.name }}</span>
@@ -495,7 +497,7 @@ $milestoneList = '
                 :class="m.status == \'missed\' ? \'milestone-missed milestone-element-due\' : \'milestone-element-due\'">
                 {{ fromNow(m.end) }}
             </span>
-            <a @click="showModal(m.id)" class="milestone-element-edit" data-legend="1" data-toggle="modal" data-target="#theMilestoneModal">
+            <a @click="showModal(m.id)" v-if="m.status !== \'reflected\'" class="milestone-element-edit" data-legend="1" data-toggle="modal" data-target="#theMilestoneModal">
                 <span data-toggle="tooltip" data-placement="top" title="Sie können diesen Meilenstein bearbeiten" class="fa fa-pencil"></span> bearbeiten
             </a>
             <div class="milestone-element-progress">
