@@ -28,15 +28,15 @@ define([
      * Plot a timeline
      */
 
-    
+
     var Timeline = function (Vue, d3, dc, crossfilter, moment, Sortable, utils, introJs, logger, FilterChart, ActivityChart, InitialSurvey, ICalExport, ICalLib, vDP, vDPde, ErrorHandler) {
-        
+
         var width = document.getElementById('ladtopic-container-0').offsetWidth;
         var margins = { top: 15, right: 10, bottom: 20, left: 10 };
         var course = {
             id: parseInt($('#courseid').text(), 10)
             // module: parseInt($('#moduleid').html()) 
-        };       
+        };
         utils.get_ws('logstore', {
             'courseid': parseInt(course.id, 10)
         }, function (e) {
@@ -46,7 +46,7 @@ define([
                 // eslint-disable-next-line no-console
                 console.error(e);
             }
-        });       
+        });
 
         /**
          * 
@@ -125,47 +125,6 @@ define([
                         range: [],
                         milestones: [],
                         calendar: {},
-<<<<<<< HEAD
-=======
-                        roles: [],                       
-                        /*  [{
-                              id: 3867650,
-                              name: 'Planung',
-                              objective: 'Mein Semester planen',
-                              start: '2019,9,1',
-                              end: '2019,10,1',
-                              status: 'urgent',
-                              progress: 1.00,
-                              resources: [],
-                              strategies: [],
-                              reflections: [],
-                          },
-                          {
-                              id: 0,
-                              name: 'Lesen',
-                              objective: 'Die Kurstexte lesen',
-                              start: '2019,9,1',
-                              end: '2019,9,7',
-                              status: 'urgent',
-                              progress: 1.00,
-                              resources: [],
-                              strategies: [],
-                              reflections: [],
-                          },
-                          {
-                              id: 1,
-                              name: 'Tests',
-                              objective: 'Alle Tests bestehen',
-                              start: '2020,1,15',
-                              end: '2020,2,15',
-                              status: 'progress', // progress, ready, urgent, missed, reflected
-                              progress: 0.80,
-                              resources: [],
-                              strategies: [],
-                              reflections: [],
-                          }]*/
-
->>>>>>> fda99020d74fe5a3ddd8f24039d2aac62b02d74f
                         emptyMilestone: {
                             id: 10,
                             name: '',
@@ -266,7 +225,7 @@ define([
                                 logger.add('planing_tool_open', { pageLoaded: true });
                             }
                         }
-                    });                    
+                    });
 
                     this.getMilestonePlan();
 
@@ -285,9 +244,9 @@ define([
                                 _this.calendar = JSON.parse(e.data);
                             }
                         } catch (error) {
-                            new ErrorHandler(error);                            
+                            new ErrorHandler(error);
                         }
-                    });                   
+                    });
                 },
                 created: function () {
                     var _this = this;
@@ -737,12 +696,9 @@ define([
                         this.endDate = this.getSelectedMilestone().end;
                         this.reflectionsFormVisisble = this.getSelectedMilestone().status === 'reflected' ? true : false;
                         this.modalVisible = true;
-<<<<<<< HEAD
-                        if (milestoneID > 0) {
-=======
                         this.getSelectedMilestone().mod = false;
                         if (e > 0) {
->>>>>>> fda99020d74fe5a3ddd8f24039d2aac62b02d74f
+
                             logger.add('milestone_edit_dialog_open', {
                                 milestoneId: this.getSelectedMilestone().id,
                                 name: this.getSelectedMilestone().name,
@@ -877,15 +833,7 @@ define([
                     },
                     createMilestone: function (e) {
                         this.emptyMilestone.id = Math.ceil(Math.random() * 1000);
-<<<<<<< HEAD
                         let id = this.emptyMilestone.id;
-                        this.emptyMilestone.end = this.startDate;
-                        var d = new Date();
-                        this.emptyMilestone.start = this.endDate;
-=======
-                        let id = this.emptyMilestone.id;                                            
->>>>>>> fda99020d74fe5a3ddd8f24039d2aac62b02d74f
-
                         this.milestones.push(this.emptyMilestone);
                         logger.add('milestone_created', {
                             milestoneId: this.emptyMilestone.id,
@@ -984,7 +932,7 @@ define([
                         if (date <= this.dpRange.to || date >= this.dpRange.from) {
                             this.invalidStartDate = true;
                             return;
-<<<<<<< HEAD
+
                         }
                         if (date > this.endDate) {
                             this.invalidEndDate = true;
@@ -994,29 +942,15 @@ define([
                         return;
                     },
                     validateEndDate: function (date) {
-                        if (date <= this.dpRange.to || date < this.startDate || date >= this.dpRange.from) {
+                        if (date <= this.dpRange.to || date < this.getSelectedMilestone().start || date >= this.dpRange.from) {
                             this.invalidEndDate = true;
-=======
-                        }   
-                        if(date > this.endDate){
-                            this.invalidEndDate = true; 
-                        }      
-                        this.invalidStartDate = false;                        
-                        this.getSelectedMilestone().start = date;                                                   
-                        return;       
-                    },
-                    validateEndDate: function(date){
-                        if(date <= this.dpRange.to || date < this.getSelectedMilestone().start || date >= this.dpRange.from){                            
-                            this.invalidEndDate = true;                              
->>>>>>> fda99020d74fe5a3ddd8f24039d2aac62b02d74f
+
                             return;
                         }
                         this.invalidEndDate = false;
-<<<<<<< HEAD
+
                         this.getSelectedMilestone().end = date;
-=======
-                        this.getSelectedMilestone().end = date;                               
->>>>>>> fda99020d74fe5a3ddd8f24039d2aac62b02d74f
+
                         return;
                     },
                     // <e> datepicker
@@ -1223,12 +1157,12 @@ define([
                         // Update Milestones to the database using the webservice
                         var _this = this;
                         let ms = _this.milestones.filter(
-                            function(element){
-                                if(element.mod !== true) return true;
-                                if(typeof element.mod === "undefined") element.mod = false;
+                            function (element) {
+                                if (element.mod !== true) return true;
+                                if (typeof element.mod === "undefined") element.mod = false;
                                 return false;
                             }
-                        )                       
+                        )
                         utils.get_ws('setmilestones', {
                             data: {
                                 'courseid': parseInt(course.id, 10),
@@ -1495,7 +1429,7 @@ define([
                                                 description: "Der Meilenstein " + data.title + " ist bald erreicht!"
                                             });
                                         } catch (error) {
-                                            new ErrorHandler(error);                                            
+                                            new ErrorHandler(error);
                                         }
                                     }
                                 );
@@ -1543,7 +1477,7 @@ define([
                                                 description: "Der Termin " + data.title + " ist bald erreicht!"
                                             });
                                         } catch (error) {
-                                            new ErrorHandler(error);                                            
+                                            new ErrorHandler(error);
                                         }
                                     }
                                 )
@@ -1561,7 +1495,7 @@ define([
                             link.download = "Semesterplanung_" + title + "_" + year + month + day + hour + minutes + ".ics";
                             link.click();
                         } catch (error) {
-                            new ErrorHandler(error);                           
+                            new ErrorHandler(error);
                         }
                     },
                     createMilestonePicker: function () {
@@ -1851,170 +1785,170 @@ define([
                             )
                         } catch (error) { }
                     },
-                    modAlert: function(type, text){
+                    modAlert: function (type, text) {
                         let field = $("#moderationAlert");
-                        field.removeClass();       
+                        field.removeClass();
                         field.addClass("alert");
-                        switch(type){
+                        switch (type) {
                             case "success": field.addClass("alert-success");
-                                            break;
-                            case "danger":  field.addClass("alert-danger");
-                                            break;
+                                break;
+                            case "danger": field.addClass("alert-danger");
+                                break;
                             case "warning": field.addClass("alert-warning");
-                                            break;
-                            case "info":    field.addClass("alert-info");
-                                            break;
-                            default:        field.addClass("alert-secondary");
-                        }  
-                        field.text(text);                                 
+                                break;
+                            case "info": field.addClass("alert-info");
+                                break;
+                            default: field.addClass("alert-secondary");
+                        }
+                        field.text(text);
                         field.fadeIn('slow', function () {
                             $(this).delay(2000).fadeOut('slow');
                         });
                     },
-                    modLoadPath: function(e){
-                        try{
+                    modLoadPath: function (e) {
+                        try {
                             let file = document.getElementById('modImportedFile').files[0];
-                            if(typeof file.name === "string" && file.name.length > 0){
+                            if (typeof file.name === "string" && file.name.length > 0) {
                                 $("#modLoadPathLabel").text(file.name);
-                                $("#moderationModal").one('hidden.bs.modal', function(){                       
+                                $("#moderationModal").one('hidden.bs.modal', function () {
                                     $("#modLoadPathLabel").text("Bitte wählen Sie eine Datei aus.");
-                                    document.getElementById('modImportedFile').value = "";         
+                                    document.getElementById('modImportedFile').value = "";
                                 });
                             }
-                        } catch(error){
+                        } catch (error) {
                             new ErrorHandler(error);
-                        }                  
+                        }
                     },
-                    modLoadMilestones: function(){                        
-                        try{                                                        
-                            let file = document.getElementById('modImportedFile').files[0];  
+                    modLoadMilestones: function () {
+                        try {
+                            let file = document.getElementById('modImportedFile').files[0];
                             $("#modLoadPathLabel").text("Bitte wählen Sie eine Datei aus.");
-                            document.getElementById('modImportedFile').value = "";                          
-                            if(file === undefined){
-                                this.modAlert("warning", "Bitte wählen Sie eine Datei aus.");                                                            
+                            document.getElementById('modImportedFile').value = "";
+                            if (file === undefined) {
+                                this.modAlert("warning", "Bitte wählen Sie eine Datei aus.");
                                 return;
                             }
-                            if(file.type !== "application/json"){
-                                this.modAlert("warning", "Es wird eine Datei im JSON-Format benötigt.");      
+                            if (file.type !== "application/json") {
+                                this.modAlert("warning", "Es wird eine Datei im JSON-Format benötigt.");
                                 return;
                             }
-                            if(file.size <= 0){
-                                this.modAlert("danger", "Die Datei ist fehlerhaft.");      
+                            if (file.size <= 0) {
+                                this.modAlert("danger", "Die Datei ist fehlerhaft.");
                                 return;
                             }
                             const reader = new FileReader();
                             const _this = this;
                             reader.readAsText(file);
-                            reader.onload = function(evt) {                            
-                                try{
+                            reader.onload = function (evt) {
+                                try {
                                     let result = evt.target.result;
                                     let json = JSON.parse(result);
-                                    if(typeof json !== "object" || !Array.isArray(json)){
-                                        this.modAlert("danger", "Die Datei ist fehlerhaft.");   
+                                    if (typeof json !== "object" || !Array.isArray(json)) {
+                                        this.modAlert("danger", "Die Datei ist fehlerhaft.");
                                         return;
-                                    }                                   
+                                    }
                                     json.forEach(
-                                        function(element){      
-                                            Object.assign(_this.emptyMilestone, element);                                           
-                                            _this.emptyMilestone.start = moment(element.start).toDate();                                            
-                                            _this.emptyMilestone.end = moment(element.end).toDate();                                            
-                                            _this.createMilestone();                                                                     
+                                        function (element) {
+                                            Object.assign(_this.emptyMilestone, element);
+                                            _this.emptyMilestone.start = moment(element.start).toDate();
+                                            _this.emptyMilestone.end = moment(element.end).toDate();
+                                            _this.createMilestone();
                                         }
-                                    );                                      
-                                    _this.updateMilestones(); 
-                                    _this.modAlert("success", "Meilensteine wurden geladen.");                                                       
-                                } catch(error){
+                                    );
+                                    _this.updateMilestones();
+                                    _this.modAlert("success", "Meilensteine wurden geladen.");
+                                } catch (error) {
                                     new ErrorHandler(error);
                                 }
-                            };                             
-                            reader.onerror = function(error){
-                                _this.modAlert("warning", "Die Datei konnte nicht gelesen werden.");  
+                            };
+                            reader.onerror = function (error) {
+                                _this.modAlert("warning", "Die Datei konnte nicht gelesen werden.");
                                 new ErrorHandler(error);
-                            }                  
-                        } catch(error){
-                            this.modAlert("danger", "Konnte die Meilensteine nicht laden."); 
+                            }
+                        } catch (error) {
+                            this.modAlert("danger", "Konnte die Meilensteine nicht laden.");
                             new ErrorHandler(error);
                         }
                     },
-                    modSaveSelect: function(){                        
+                    modSaveSelect: function () {
                         let ms = this.milestones.filter(
-                            function(element){
-                                if(element.mod !== true) return true;
+                            function (element) {
+                                if (element.mod !== true) return true;
                                 return false;
                             }
                         );
-                        if(ms.length <= 0){
-                            this.modAlert("warning", "Keine Meilensteine vorhanden."); 
+                        if (ms.length <= 0) {
+                            this.modAlert("warning", "Keine Meilensteine vorhanden.");
                             return;
                         }
-                        if($("#modSaveInterest").is(":checked")){
+                        if ($("#modSaveInterest").is(":checked")) {
                             this.modSaveMilestones("interest", ms);
-                        } else if($("#modSaveOrientation").is(":checked")){
+                        } else if ($("#modSaveOrientation").is(":checked")) {
                             this.modSaveMilestones("orientation", ms);
-                        } else if ($("#modSaveExam").is(":checked")){
+                        } else if ($("#modSaveExam").is(":checked")) {
                             this.modSaveMilestones("exam", ms);
-                        } else if ($("#modSaveLocal").is(":checked")){
+                        } else if ($("#modSaveLocal").is(":checked")) {
                             this.exportMilestones(ms);
                         }
                         return;
                     },
-                    modResetSelect: function(){
-                        var check = confirm('Wollen Sie wirklich alle Meilensteine zurücksetzen?'); 
+                    modResetSelect: function () {
+                        var check = confirm('Wollen Sie wirklich alle Meilensteine zurücksetzen?');
                         if (check === true) {
-                            if($("#modSaveInterest").is(":checked")){
+                            if ($("#modSaveInterest").is(":checked")) {
                                 this.modSaveMilestones("interest", []);
-                            } else if($("#modSaveOrientation").is(":checked")){
+                            } else if ($("#modSaveOrientation").is(":checked")) {
                                 this.modSaveMilestones("orientation", []);
-                            } else if ($("#modSaveExam").is(":checked")){
+                            } else if ($("#modSaveExam").is(":checked")) {
                                 this.modSaveMilestones("exam", []);
-                            } else if ($("#modSaveLocal").is(":checked")){
+                            } else if ($("#modSaveLocal").is(":checked")) {
                                 this.resetMilestones();
-                            }                  
+                            }
                         }
                         return;
-                        
+
                     },
-                    modSaveMilestones: function(plan, milestones){    
-                        let _this = this;                    
-                        try{                                                                                                                             
-                             utils.get_ws('setmilestoneplan', {
-                                 data: {
-                                     'courseid': parseInt(course.id, 10),
-                                     'milestones': JSON.stringify(milestones),
-                                     'plan': plan
-                                 }
-                             }, function (e) {
+                    modSaveMilestones: function (plan, milestones) {
+                        let _this = this;
+                        try {
+                            utils.get_ws('setmilestoneplan', {
+                                data: {
+                                    'courseid': parseInt(course.id, 10),
+                                    'milestones': JSON.stringify(milestones),
+                                    'plan': plan
+                                }
+                            }, function (e) {
                                 let out = JSON.parse(e.data);
-                                if(out.success === true){
+                                if (out.success === true) {
                                     _this.milestones = [];
-                                    _this.updateMilestones(); 
+                                    _this.updateMilestones();
                                     _this.getMilestonePlan();
-                                    _this.modAlert("success", "Meilensteine wurden aktualisiert.");                                    
+                                    _this.modAlert("success", "Meilensteine wurden aktualisiert.");
                                 } else {
-                                    if(typeof out.debug === "string" && out.debug.length > 0){
-                                        _this.modAlert("danger", out.debug);                                        
+                                    if (typeof out.debug === "string" && out.debug.length > 0) {
+                                        _this.modAlert("danger", out.debug);
                                     } else {
-                                        _this.modAlert("danger", "Unbekannter Fehler"); 
+                                        _this.modAlert("danger", "Unbekannter Fehler");
                                     }
-                                }                                   
-                             });     
-                        } catch(error){
-                            this.modAlert("danger", "Konnte die Meilensteine nicht speichern.");                             
+                                }
+                            });
+                        } catch (error) {
+                            this.modAlert("danger", "Konnte die Meilensteine nicht speichern.");
                         }
                     },
-                    resetMilestones: function(){                       
-                        try{                           
+                    resetMilestones: function () {
+                        try {
                             this.milestones = [];
                             this.updateMilestones();
-                            this.modAlert("success", "Meilensteine wurden zurückgesetzt.");                           
-                        } catch(error){
-                            this.modAlert("danger", "Konnte die Meilensteine nicht zurücksetzen."); 
+                            this.modAlert("success", "Meilensteine wurden zurückgesetzt.");
+                        } catch (error) {
+                            this.modAlert("danger", "Konnte die Meilensteine nicht zurücksetzen.");
                             new ErrorHandler(error);
                         }
                     },
-                    exportMilestones: function(ms){            
-                        try{
-                            var link = document.createElement("a");                                                
+                    exportMilestones: function (ms) {
+                        try {
+                            var link = document.createElement("a");
                             let json = JSON.stringify(ms);
                             link.href = "data:text/json;charset=utf-8," + json;
                             let now = new Date();
@@ -2026,114 +1960,115 @@ define([
                             let minutes = now.getMinutes().toString().padStart(2, "0");
                             link.download = "Meilensteinplanung_" + year + month + day + hour + minutes + ".json";
                             link.click();
-                        } catch(error){
+                        } catch (error) {
                             new ErrorHandler(error);
-                        }       
+                        }
                     },
-                    getMilestonePlan: function(){
-                        try{
+                    getMilestonePlan: function () {
+                        try {
                             let _this = this;
                             utils.get_ws("userpreferences", {
                                 data: {
                                     'setget': 'get',
                                     'courseid': parseInt(course.id, 10),
                                     'fieldname': 'ladtopics_survey_results',
-                                }}, function(u){
-                                    let survey = JSON.parse(u.response);
-                                    let result = JSON.parse(survey.shift()["value"]);
-                                    let plan = result.objectives.toLowerCase();
-                                    let ps = result.planingStyle.toLowerCase();
-                                    let sr = _this.semesterRange;
-                                    let diff = Math.round((sr.to - sr.from) / (7 * 24 * 60 * 60 * 1000));                                   
-                                    switch(plan){
-                                        case 'f1a': plan = "exam";
-                                                    break;
-                                        case 'f1b': plan = "orientation";
-                                                    break;
-                                        case 'f1c': plan = "interest";
-                                                    break;
-                                        default: plan = null;
-                                    }                                    
-                                    if(typeof plan !== "string" && plan === null) return;
-                                    utils.get_ws('getmilestoneplan', {
-                                        data: {
-                                            'courseid': parseInt(course.id, 10),
-                                            'plan': plan
-                                        }
-                                    }, function(e){
-                                        try{
-                                            if(typeof e.data === "string" && e.data.length > 0){                               
-                                                let obj = JSON.parse(e.data);
-                                                if(typeof obj !== "object" || !Array.isArray(obj)){                                                                            
-                                                    return;
-                                                }                                                   
-                                                let div = null;                                                 
-                                                switch(ps){
-                                                    case "planing-style-a": div = 1;
-                                                                            break;
-                                                    case "planing-style-b": div = 4;
-                                                                            break;
-                                                    case "planing-style-c": div = 1;
-                                                                            break;
-                                                    case "planing-style-d": div = 4;
-                                                                            break;
-                                                    case "planing-style-e": return;
-                                                }   
-
-                                                if(div === 4){
-                                                    let span = [];                                                
-                                                    let last = sr.from.toISOString();
-                                                    let target = sr.to.toISOString();
-                                                    last = moment(last).set({hour: 12}).toDate();
-                                                    target = moment(target).set({hour: 12}).toDate();
-                                                    span.push(last);
-                                                    let next = moment(last).add(div, 'w').toDate();
-                                                    while(next <= target){
-                                                        span.push(next);
-                                                        last = next;
-                                                        next = moment(last).add(div, 'w').toDate();
-                                                    }                                                
-                                                    obj.forEach(
-                                                        function (element) {
-                                                            element.start = moment(element.start).toDate(); 
-                                                            element.end = moment(element.end).toDate();
-                                                            element.mod = true;
-                                                            for(let i in span){
-                                                                if(element.end <= span[i]){
-                                                                    if(typeof span[i-1] !== "undefined"){
-                                                                        element.start = span[i-1];
-                                                                    } else {
-                                                                        element.start = span[i];
-                                                                    }
-                                                                    element.end = span[i];
-                                                                    break;
-                                                                }                                                                
-                                                            }
-                                                            _this.milestones.push(element);
-                                                        }
-                                                    );
-                                                } else {
-                                                    obj.forEach(
-                                                        function (element) {
-                                                            element.start = moment(element.start).toDate(); 
-                                                            element.end = moment(element.end).toDate();
-                                                            element.mod = true;
-                                                            _this.milestones.push(element);
-                                                        }
-                                                    );
-                                                }                                                              
-                                            }                            
-                                        } catch(error){
-                                            new ErrorHandler(error);
-                                        }
-                                    });
                                 }
-                            );                   
-                        } catch(error){
+                            }, function (u) {
+                                let survey = JSON.parse(u.response);
+                                let result = JSON.parse(survey.shift()["value"]);
+                                let plan = result.objectives.toLowerCase();
+                                let ps = result.planingStyle.toLowerCase();
+                                let sr = _this.semesterRange;
+                                let diff = Math.round((sr.to - sr.from) / (7 * 24 * 60 * 60 * 1000));
+                                switch (plan) {
+                                    case 'f1a': plan = "exam";
+                                        break;
+                                    case 'f1b': plan = "orientation";
+                                        break;
+                                    case 'f1c': plan = "interest";
+                                        break;
+                                    default: plan = null;
+                                }
+                                if (typeof plan !== "string" && plan === null) return;
+                                utils.get_ws('getmilestoneplan', {
+                                    data: {
+                                        'courseid': parseInt(course.id, 10),
+                                        'plan': plan
+                                    }
+                                }, function (e) {
+                                    try {
+                                        if (typeof e.data === "string" && e.data.length > 0) {
+                                            let obj = JSON.parse(e.data);
+                                            if (typeof obj !== "object" || !Array.isArray(obj)) {
+                                                return;
+                                            }
+                                            let div = null;
+                                            switch (ps) {
+                                                case "planing-style-a": div = 1;
+                                                    break;
+                                                case "planing-style-b": div = 4;
+                                                    break;
+                                                case "planing-style-c": div = 1;
+                                                    break;
+                                                case "planing-style-d": div = 4;
+                                                    break;
+                                                case "planing-style-e": return;
+                                            }
+
+                                            if (div === 4) {
+                                                let span = [];
+                                                let last = sr.from.toISOString();
+                                                let target = sr.to.toISOString();
+                                                last = moment(last).set({ hour: 12 }).toDate();
+                                                target = moment(target).set({ hour: 12 }).toDate();
+                                                span.push(last);
+                                                let next = moment(last).add(div, 'w').toDate();
+                                                while (next <= target) {
+                                                    span.push(next);
+                                                    last = next;
+                                                    next = moment(last).add(div, 'w').toDate();
+                                                }
+                                                obj.forEach(
+                                                    function (element) {
+                                                        element.start = moment(element.start).toDate();
+                                                        element.end = moment(element.end).toDate();
+                                                        element.mod = true;
+                                                        for (let i in span) {
+                                                            if (element.end <= span[i]) {
+                                                                if (typeof span[i - 1] !== "undefined") {
+                                                                    element.start = span[i - 1];
+                                                                } else {
+                                                                    element.start = span[i];
+                                                                }
+                                                                element.end = span[i];
+                                                                break;
+                                                            }
+                                                        }
+                                                        _this.milestones.push(element);
+                                                    }
+                                                );
+                                            } else {
+                                                obj.forEach(
+                                                    function (element) {
+                                                        element.start = moment(element.start).toDate();
+                                                        element.end = moment(element.end).toDate();
+                                                        element.mod = true;
+                                                        _this.milestones.push(element);
+                                                    }
+                                                );
+                                            }
+                                        }
+                                    } catch (error) {
+                                        new ErrorHandler(error);
+                                    }
+                                });
+                            }
+                            );
+                        } catch (error) {
                             new ErrorHandler(error);
                         }
-                    }                                 
-                }                
+                    }
+                }
             });
 
 
