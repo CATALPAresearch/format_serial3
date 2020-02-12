@@ -1216,7 +1216,7 @@ define([
                         let c = this;
                         for (var j = 0; j < this.milestones.length; j++) {
                             let pos = this.milestones[j].id;
-                            let obj = this.milestones[j];
+                            let obj = this.milestones[j];                            
                             for (var i = 0; i < this.milestones[j].resources.length; i++) {
                                 badge = $('<span></span>')
                                     .addClass('badge badge-secondary badge-ms')
@@ -1235,7 +1235,7 @@ define([
                                         "cursor": "pointer"
                                     })
                                     ;
-                                if (!this.milestones[j].resources[i].checked && this.milestones[j].status === 'missed') {
+                                if (!this.milestones[j].resources[i].checked && this.milestones[j].status === 'missed' && new Date() <= moment(this.milestones[j].end).add(1, 'w').toDate()) {
                                     badge
                                         .html('<i class="fa fa-exclamation"></i>' + this.limitTextLength(this.milestones[j].name, 14))
                                         .attr('title', 'Dieses Element haben Sie im Meilenstein \"' + this.milestones[j].name + '\" noch nicht erledigt oder als "erledigt" markiert.')
@@ -1504,7 +1504,7 @@ define([
                                 let list = "";
                                 _this.milestones.forEach(
                                     (element) => {
-                                        if(element.status === "reflected") return;
+                                        if(element.status === "reflected" || (element.status === "missed" &&  new Date() > moment(element.end).add(1, 'w').toDate())) return;
                                         let icon = "fa-square";
                                         if (typeof element.resources === "object") {
                                             element.resources.forEach(
