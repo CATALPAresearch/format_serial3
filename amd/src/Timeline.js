@@ -124,43 +124,6 @@ define([
                         range: [],
                         milestones: [],
                         calendar: {},
-                        /*  [{
-                              id: 3867650,
-                              name: 'Planung',
-                              objective: 'Mein Semester planen',
-                              start: '2019,9,1',
-                              end: '2019,10,1',
-                              status: 'urgent',
-                              progress: 1.00,
-                              resources: [],
-                              strategies: [],
-                              reflections: [],
-                          },
-                          {
-                              id: 0,
-                              name: 'Lesen',
-                              objective: 'Die Kurstexte lesen',
-                              start: '2019,9,1',
-                              end: '2019,9,7',
-                              status: 'urgent',
-                              progress: 1.00,
-                              resources: [],
-                              strategies: [],
-                              reflections: [],
-                          },
-                          {
-                              id: 1,
-                              name: 'Tests',
-                              objective: 'Alle Tests bestehen',
-                              start: '2020,1,15',
-                              end: '2020,2,15',
-                              status: 'progress', // progress, ready, urgent, missed, reflected
-                              progress: 0.80,
-                              resources: [],
-                              strategies: [],
-                              reflections: [],
-                          }]*/
-
                         emptyMilestone: {
                             id: 10,
                             name: '',
@@ -273,8 +236,8 @@ define([
                         'courseid': parseInt(course.id, 10)
                     }, function (e) {
                         try {
-                            if (typeof e.data === "string" && e.data.length > 0) {                                  
-                                _this.calendar = JSON.parse(e.data);                                            
+                            if (typeof e.data === "string" && e.data.length > 0) {
+                                _this.calendar = JSON.parse(e.data);
                             }
                         } catch (error) {
                             console.log("Der Kalender konnte nicht exportiert werden. \r\n" + error.toString());
@@ -296,11 +259,11 @@ define([
                     // initialize the semester range and the datepicker range
                     this.semesterRange = this.getSemesterRange();
                     let start = new Date(this.semesterRange.from);
-                    let end = new Date(this.semesterRange.to);                    
+                    let end = new Date(this.semesterRange.to);
                     this.dpRange = {
-                        to: start, 
+                        to: start,
                         from: new Date(end.setDate(end.getDate() + 1 + this.daysOffset)) // had to create new date otherwise it will throw a parse error 
-                    }                                            
+                    };
                 },
                 watch: {
                     milestones: function (newMilestone) {
@@ -545,35 +508,35 @@ define([
                                     "glossary",
                                     "quiz",
                                     "wiki"
-                                ])                               
+                                ])
                             }
                         }, function (e) {
                             try {
-                                let data = JSON.parse(e.data);                             
+                                let data = JSON.parse(e.data);
                                 // Sort Ressources
                                 let obj = new Array(data.length);
-                                for(let i in data){  
-                                    let pos = 0;                                  
-                                    for(let x in data){
-                                        if(data[i] === data[x]) continue;
-                                        if(+data[x].pos_section < +data[i].pos_section){
+                                for (let i in data) {
+                                    let pos = 0;
+                                    for (let x in data) {
+                                        if (data[i] === data[x]) continue;
+                                        if (+data[x].pos_section < +data[i].pos_section) {
                                             pos++;
                                             continue;
                                         }
-                                        if(+data[x].pos_module < +data[i].pos_module){
+                                        if (+data[x].pos_module < +data[i].pos_module) {
                                             pos++;
                                             continue;
                                         }
                                     }
-                                    while(typeof obj[pos] === "object"){
+                                    while (typeof obj[pos] === "object") {
                                         pos++;
                                     }
-                                    obj[pos] = data[i];                                   
-                                }                     
-                                _this.resources = obj;                                                                                     
-                                for(let i in _this.calendar){
-                                    let element = _this.calendar[i];                                    
-                                    if(element.eventtype !== "course" && element.eventtype !== "group") continue;
+                                    obj[pos] = data[i];
+                                }
+                                _this.resources = obj;
+                                for (let i in _this.calendar) {
+                                    let element = _this.calendar[i];
+                                    if (element.eventtype !== "course" && element.eventtype !== "group") continue;
                                     let out = {
                                         course_id: course.id,
                                         id: element.id,
@@ -588,9 +551,9 @@ define([
                                         section: null,
                                         section_id: 999,
                                         section_name: null
-                                    }                            
+                                    }
                                     _this.resources.push(out);
-                                }                       
+                                }
                                 _this.createMilestonePicker();
                                 //console.log('Ladezeit', t1 - (new Date()).getTime());
                                 //console.log('course-structure-result', _this.resources.map(function(e) { return e.id; }));
@@ -666,7 +629,6 @@ define([
                             .range(this.colors);
                     },
                     getYLane: function (id) {
-
                         return this.milestones.filter(function (m) {
                             return m.id === id ? true : false;
                         })[0].yLane;
@@ -699,18 +661,18 @@ define([
                                     this.milestones[i].yLane = lane;
                                     break lanesLoop;
                                 }
-                                var geht = true;
+                                var sufficientSpace = true;
                                 for (var j = 0; j < lanes[lane].length; j++) {
                                     if (moment(this.milestones[i].end).diff(moment(lanes[lane][j].start)) < 0) {
                                         // ms liegt davor
                                     } else if (moment(this.milestones[i].start).diff(moment(lanes[lane][j].end)) > 0) {
                                         // ms liegt dahinter
                                     } else {
-                                        geht = false;
+                                        sufficientSpace = false;
                                         //break lanesLoop;
                                     }
                                 }
-                                if (geht) {
+                                if (sufficientSpace) {
                                     lanes[lane].push(this.milestones[i]);
                                     this.milestones[i].yLane = lane;
                                     break lanesLoop;
@@ -724,13 +686,13 @@ define([
 
                         this.height = this.maxLanes * 24;
                     },
-                    showModal: function (e) {
-                        this.selectedMilestone = e;
+                    showModal: function (milestoneID) {
+                        this.selectedMilestone = milestoneID;
                         this.startDate = this.getSelectedMilestone().start;
-                        this.endDate = this.getSelectedMilestone().end;                      
+                        this.endDate = this.getSelectedMilestone().end;
                         this.reflectionsFormVisisble = this.getSelectedMilestone().status === 'reflected' ? true : false;
                         this.modalVisible = true;
-                        if (e > 0) {
+                        if (milestoneID > 0) {
                             logger.add('milestone_edit_dialog_open', {
                                 milestoneId: this.getSelectedMilestone().id,
                                 name: this.getSelectedMilestone().name,
@@ -784,7 +746,7 @@ define([
                         var t = new Date();
                         this.startDate = t;
                         this.endDate = t;
-                        this.modalVisible = true;                        
+                        this.modalVisible = true;
                         logger.add('milestone_dialog_open_new', { dialogOpen: true });
                     },
                     updateName: function (e) {
@@ -866,9 +828,9 @@ define([
                     createMilestone: function (e) {
                         this.emptyMilestone.id = Math.ceil(Math.random() * 1000);
                         let id = this.emptyMilestone.id;
-                        this.emptyMilestone.end = this.startDate;                        
+                        this.emptyMilestone.end = this.startDate;
                         var d = new Date();
-                        this.emptyMilestone.start = this.endDate;                        
+                        this.emptyMilestone.start = this.endDate;
 
                         this.milestones.push(this.emptyMilestone);
                         logger.add('milestone_created', {
@@ -937,12 +899,12 @@ define([
                         this.updateMilestones();
                     },
                     // <s> datepicker                   
-                    getSemesterRange: function(){
+                    getSemesterRange: function () {
                         let now = new Date();
                         let month = now.getMonth();
                         let year = now.getFullYear();
-                        if(month > 8 || month < 3){
-                            if(month < 3){
+                        if (month > 8 || month < 3) {
+                            if (month < 3) {
                                 return {
                                     from: new Date(year - 1, 9, 1), // 01.10.(Y - 1)
                                     to: new Date(year, 2, 31),      // 31.03.Y
@@ -952,7 +914,7 @@ define([
                                 return {
                                     from: new Date(year, 9, 1),     // 01.10.Y
                                     to: new Date(year + 1, 2, 31),  // 31.03.(Y + 1)
-                                    sem: 0                              
+                                    sem: 0
                                 }
                             }
                         } else {
@@ -963,25 +925,25 @@ define([
                             }
                         }
                     },
-                    validateStartDate: function(date){
-                        if(date <= this.dpRange.to || date >= this.dpRange.from){                            
+                    validateStartDate: function (date) {
+                        if (date <= this.dpRange.to || date >= this.dpRange.from) {
                             this.invalidStartDate = true;
                             return;
-                        }   
-                        if(date > this.endDate){
-                            this.invalidEndDate = true; 
-                        }      
-                        this.invalidStartDate = false;                        
-                        this.getSelectedMilestone().start = date;    
-                        return;       
+                        }
+                        if (date > this.endDate) {
+                            this.invalidEndDate = true;
+                        }
+                        this.invalidStartDate = false;
+                        this.getSelectedMilestone().start = date;
+                        return;
                     },
-                    validateEndDate: function(date){
-                        if(date <= this.dpRange.to || date < this.startDate || date >= this.dpRange.from){                            
-                            this.invalidEndDate = true;                              
+                    validateEndDate: function (date) {
+                        if (date <= this.dpRange.to || date < this.startDate || date >= this.dpRange.from) {
+                            this.invalidEndDate = true;
                             return;
-                        }                         
+                        }
                         this.invalidEndDate = false;
-                        this.getSelectedMilestone().end = date;         
+                        this.getSelectedMilestone().end = date;
                         return;
                     },
                     // <e> datepicker
@@ -1111,7 +1073,7 @@ define([
                             /*if (this.resources[i].section_name === ' '){
                              console.log(this.resources[i].section_id + '__' + this.resources[i].section_name + '__' + this.resources[i].name)
                             }*/
-                            if (this.resources[i] === undefined){
+                            if (this.resources[i] === undefined) {
                                 return 0;
                             }
                             sections[this.resources[i].section_id] = {
