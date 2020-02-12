@@ -31,6 +31,14 @@ define([
 
     var Timeline = function (Vue, d3, dc, crossfilter, moment, Sortable, utils, introJs, logger, FilterChart, ActivityChart, InitialSurvey, ICalExport, ICalLib, vDP, vDPde, ErrorHandler) {
 
+        $(document).ready(function(){
+            let edit = $("a.milestone-element-edit");
+            let filler = $("span.ms-edit-filler");
+            filler.innerWidth(edit.innerWidth());
+            filler.css('display','inline-block');
+        });
+
+
         var width = document.getElementById('ladtopic-container-0').offsetWidth;
         var margins = { top: 15, right: 10, bottom: 20, left: 10 };
         var course = {

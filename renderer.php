@@ -372,6 +372,7 @@ $milestoneArchiveList = '
                 :class="m.status == \'missed\' ? \'milestone-missed milestone-element-due\' : \'milestone-element-due\'">
                 {{ fromNow(m.end) }}
             </span>
+            <span class="ms-edit-filler" v-if="m.status === \'reflected\'"></span>
             <a @click="showModal(m.id)" v-if="m.status !== \'reflected\'" class="milestone-element-edit" data-legend="1" data-toggle="modal" data-target="#theMilestoneModal">
                 <span data-toggle="tooltip" data-placement="top" title="Sie können diesen Meilenstein bearbeiten" class="fa fa-pencil"></span> bearbeiten
             </a>
@@ -497,6 +498,7 @@ $milestoneList = '
                 :class="m.status == \'missed\' ? \'milestone-missed milestone-element-due\' : \'milestone-element-due\'">
                 {{ fromNow(m.end) }}
             </span>
+            <span class="ms-edit-filler" v-if="m.status === \'reflected\'"></span>
             <a @click="showModal(m.id)" v-if="m.status !== \'reflected\'" class="milestone-element-edit" data-legend="1" data-toggle="modal" data-target="#theMilestoneModal">
                 <span data-toggle="tooltip" data-placement="top" title="Sie können diesen Meilenstein bearbeiten" class="fa fa-pencil"></span> bearbeiten
             </a>
