@@ -28,9 +28,7 @@ define(['jquery'], function ($) {
         var csCourse = 3;// 2
         var courseid = parseInt($('#courseid').text(), 10);
 
-        $.get('somefile.json', function (data) {
-            // do something with your data
-        });
+        //$.get('somefile.json', function (data) {});
 
         var milestonePresets = {};
         milestonePresets.biwi = {};
@@ -86,6 +84,7 @@ define(['jquery'], function ($) {
                     }
                     // eslint-disable-next-line space-before-function-paren
                 }, function (e) {
+                    var _this = this;
                     try {
                         let data = JSON.parse(e.data);
                         // Sort Ressources
@@ -124,7 +123,6 @@ define(['jquery'], function ($) {
                 }, function (e) {
                     try {
                         e = JSON.parse(e.response);
-                        console.log('got data from user pref ', e);
                         if (e[0]) {
                             if (parseInt(e[0].value, 10)) {
                                 _this.surveyComplete = parseInt(e[0].value, 10) > 0 ? true : false;
@@ -137,32 +135,16 @@ define(['jquery'], function ($) {
                         } else {
                             $('#planningsurvey').show();
                         }
-                        /* 
-                        if (localStorage.surveyDone) {
-                            this.surveyDone = localStorage.surveyDone;
-                            if (this.surveyDone) {
-                                $('#planing-component').show();
-                            } 
-                        }
-                        */
                     } catch (e) {
                         // eslint-disable-next-line no-console
                         console.error('Could not fetch user_preferences: ', e);
                     }
 
                 });
-                //if (localStorage.surveyComplete) {
-                //localStorage.surveyComplete;
-                //console.log('local ',localStorage.surveyComplete)
-                //}
             },
-            /*watchwatch: {
-                surveyComplete: function (newStatus) {
-                    //localStorage.surveyComplete = newStatus;
-                }
-            },*/
             created: function () {
                 //$('#planningsurvey').show();
+                this.showModal();
             },
             methods: {
                 showModal: function (e) {
@@ -263,21 +245,41 @@ define(['jquery'], function ($) {
                     //return ! isValid;
                 },
                 isAvailableTimeSufficient: function () {
+                    var availablaTimeMinimum = 6; // xxx needs to be part of teh course setup
+                    var availablaTimeMaximum = 30;
                     if (this.availableTime <= 0) {
                         return "";
                     } else if (this.objective === "f1a" && this.availableTime === 1) {
                         return "Eine Stunde pro Woche ist zu wenig Zeit, um sich auf die Prüfung vorzubereiten. Der Arbeitsaufwand für ein Modul beträgt 19h pro Woche.";
-                    } else if (this.objective === "f1a" && this.availableTime > 1 && this.availableTime <= 10) {
+                    } else if (this.objective === "f1a" && this.availableTime > 1 && this.availableTime <= availablaTimeMinimum) {
                         return this.availableTime + " Stunden pro Woche sind zu wenig Zeit, um sich auf die Prüfung vorzubereiten. Der Arbeitsaufwand für ein Modul beträgt 19h pro Woche.";
                     } else if (this.objective !== "f1a" && this.availableTime === 1) {
                         return "Eine Stunde pro Woche ist zu wenig Zeit, um das Modul in einem Semester durchzuarbeiten. Der Arbeitsaufwand für ein Modul beträgt 19h pro Woche.";
-                    } else if (this.objective !== "f1a" && this.availableTime > 1 && this.availableTime <= 10) {
+                    } else if (this.objective !== "f1a" && this.availableTime > 1 && this.availableTime <= availablaTimeMinimum) {
                         return this.availableTime + " Stunden pro Woche sind zu wenig Zeit, um das Modul in einem Semester durchzuarbeiten. Der Arbeitsaufwand für ein Modul beträgt 19h pro Woche.";
-                    } else if (this.availableTime >= 30) {
+                    } else if (this.availableTime >= availablaTimeMaximum) {
                         return "Wollen Sie wirklich " + this.availableTime + " Stunden pro Woche aufwenden? Normalerweise benötigt man ca. 20 h/Woche für eine gute Vorbereitung.";
                     }
                 },
+                buttonText: function () {
+                    var text = '';
+                    var takt = {
+                        'planing-style-a': 'Wochentakt',
+                        'planing-style-b': '2-Wochentakt',
+                        'planing-style-c': '4-Wochentakt',
+                        'planing-style-d': '',
+                        'planing-style-e': '',
+                        'planing-style-f': ''
+                    };
+                    var reason = {
+                        'f1a': 'um mich gut auf die Prüfung vorbereiten zu können.',
+                        'f1b': 'um mich im Kurs orientieren zu können.'
+                    };
+                    text = 'Semesterplanung im ' + takt[this.planingStyle] + ' vorschlagen, ' + reason[this.objective];
+                    return text;
+                },
                 saveSurvey: function () {
+                    this.modalSurveyVisible = false;
                     // generate milestones automatically
                     switch (this.objectives) {
                         case 'f1a': // wants examination

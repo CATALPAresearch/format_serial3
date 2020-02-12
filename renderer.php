@@ -64,7 +64,7 @@ class format_ladtopics_renderer extends format_section_renderer_base {
 
         $initialSurvey = '<!-- Initial survey -->
                         <div id="planningsurvey" display="visibility: hidden;">
-                            <div v-if="!surveyComplete" class="row survey-btn">
+                            <div v-if="!surveyComplete" hidden class="row survey-btn">
                                 <div class="col-sm-2 col-centered">
                                     <div class="wrapper">
                                         <div @click="showModal()" class="survey-starter survey-animate" data-toggle="modal" data-target="#theSurveyModal">
@@ -73,8 +73,8 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                                     </div>
                                 </div>
                             </div>
-                            <div id="theSurveyModal" class="modal" tabindex="-1" role="dialog">
-                                <div v-if="modalSurveyVisible" class="modal-dialog modal-lg" role="document">
+                            <div id="theSurveyModal" class="xmodal" tabindex="-1" role="dialog">
+                                <div v-if="modalSurveyVisible" class="xmodal-dialog xmodal-lg" role="document">
                                     <div class="modal-content">
                                         <div class="modal-header">
                                             <h5 class="modal-title" id="MilestoneModalLabel">Vorbereitung Ihrer Semesterplanung für diesen Kurs</h5>
@@ -240,9 +240,9 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                                             <div class="row row-smooth">
                                                 <div class="col-md">
                                                     <div>
-                                                        <button @click="validateSurveyForm()" class="btn btn-primary btn-sm">Planung anzeigen</button>
+                                                        <button @click="validateSurveyForm()" class="btn btn-primary btn-sm">{{ buttonText()}}</button>
                                                         <button class="right btn btn-link right" data-dismiss="modal"
-                                                            aria-label="abbrechen">abbrechen</button>
+                                                            aria-label="abbrechen">jetzt nicht</button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -500,7 +500,7 @@ $milestoneTimeline = '
     <svg style="border: none;" :width="width" :height="height+margins.top">
         <g :transform="\'translate(\'+( margins.left  ) +\',\'+ margins.top +\')\'">
             <rect v-for="m in milestones" @click="showModal(m.id)" class="milestone-learning-progress"
-                :x="xx(m.start)" :y="getYLane(m.id) * (barheight + bardist)" :height="barheight"
+                :x="xx(m.start)" :y="m.yLane" * (barheight + bardist)" :height="barheight"
                 :width="duration(m.start, m.end) * m.progress" data-toggle="modal" data-target="#theMilestoneModal">
             </rect>
             <rect v-for="m in milestones" @click="showModal(m.id)"
@@ -732,6 +732,7 @@ $modalMilestone = '
                     <div class="col-4">
                         <datepicker id="endDP" :value="endDate" format="dd MMMM yyyy" :language="DPde" :disabled-dates="dpRange" @input="validateEndDate"></datepicker>                       
                     </div>                   
+                    {{ endDate }}
                     <div v-if="invalidEndDate" class="col-sm-10 alert-invalid">Wählen Sie bitte ein passendes Datum aus. Der Termin muss nach dem Beginn liegen! </div>
                 </div>
                 <hr />
