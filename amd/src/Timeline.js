@@ -1504,6 +1504,7 @@ define([
                                 let list = "";
                                 _this.milestones.forEach(
                                     (element) => {
+                                        if(element.status === "reflected") return;
                                         let icon = "fa-square";
                                         if (typeof element.resources === "object") {
                                             element.resources.forEach(
@@ -1511,11 +1512,11 @@ define([
                                                     if (+res.instance_url_id === id) icon = "fa-check-square";
                                                 }
                                             )
-                                        }
+                                        }                                        
                                         list += "<a class=\"dropdown-item\" href=\"#\" id=\"" + element.id + "\"><i class=\"icon fa " + icon + "\"></i>" + element.name + "</a>";
                                     }
                                 );
-                                return list;
+                                return list.length <= 0?"<span class=\"px-2\" style=\"user-select:none;\">Kein Meilenstein</span>":list;
                             } catch (error) {
                                 return "<div class=\"dropdown-item\">Meilensteine konnten nicht geladen werden.</div>";
                             }
@@ -1585,7 +1586,7 @@ define([
                                                             e.preventDefault();
                                                             if (typeof _this.milestones === "object" && typeof _this.resources === "object") {
                                                                 for (let i in _this.milestones) {
-                                                                    if (_this.milestones[i]["id"] === entryID) {
+                                                                    if (_this.milestones[i]["id"] === entryID) {                                                                        
                                                                         for (let u in _this.resources) {
                                                                             if (+_this.resources[u]["instance_url_id"] === id) {
                                                                                 if (typeof _this.milestones[i]["resources"] === "object") {
@@ -1599,7 +1600,7 @@ define([
                                                                                         if (found !== null) {
                                                                                             _this.milestones[i]["resources"].splice(found, 1);
                                                                                             icon.removeClass("fa-check-square");
-                                                                                            icon.addClass("fa-square");
+                                                                                            icon.addClass("fa-square");                                                                                   
                                                                                         } else {
                                                                                             _this.milestones[i]["resources"].push(_this.resources[u]);
                                                                                             icon.addClass("fa-check-square");
@@ -1608,14 +1609,13 @@ define([
                                                                                     } else {
                                                                                         _this.milestones[i]["resources"].push(_this.resources[u]);
                                                                                         icon.addClass("fa-check-square");
-                                                                                        icon.removeClass("fa-square");
+                                                                                        icon.removeClass("fa-square");                                                                                        
                                                                                     }
-
                                                                                 } else {
                                                                                     _this.milestones[i]["resources"] = array(_this.resources[u]);
                                                                                     icon.addClass("fa-check-square");
                                                                                     icon.removeClass("fa-square");
-                                                                                }
+                                                                                }                                                                               
                                                                                 _this.updateMilestoneStatus();
                                                                             }
                                                                         }

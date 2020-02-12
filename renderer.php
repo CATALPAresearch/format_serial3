@@ -472,7 +472,7 @@ $milestoneArchiveList = '
 $milestoneList = '
 <!-- Milestone list -->
 <ul>
-    <li v-if="remainingMilestones.length === 0">
+    <li v-if="remainingMilestones.length === 0 && archivedMilestones.length === 0">
         <span data-toggle="modal" data-target="#theMilestoneModal">
             <button @click="showEmptyMilestone()" class="btn btn-sm right btn-primary ms-btn ms-coldstart-btn"
                 data-toggle="tooltip" data-placement="bottom" title="Neuen Meilenstein hinzufügen"><i
