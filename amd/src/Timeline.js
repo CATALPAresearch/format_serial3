@@ -28,7 +28,7 @@ define([
     /**
      * Plot a timeline
      */
-    var Timeline = function (Vue, d3, dc, crossfilter, moment, Sortable, utils, introJs, logger, FilterChart, ActivityChart, InitialSurvey, ICalExport, ICalLib, vDP, vDPde) {
+    var Timeline = function (Vue, d3, dc, crossfilter, moment, Sortable, utils, introJs, logger, FilterChart, ActivityChart, InitialSurvey, ICalExport, ICalLib, vDP, vDPde, ErrorHandler) {
         var width = document.getElementById('ladtopic-container-0').offsetWidth;
         var margins = { top: 15, right: 10, bottom: 20, left: 10 };
         var course = {
@@ -44,7 +44,7 @@ define([
                 // eslint-disable-next-line no-console
                 console.error(e);
             }
-        });
+        });       
 
         /**
          * 
@@ -280,7 +280,7 @@ define([
                                 _this.calendar = JSON.parse(e.data);                                            
                             }
                         } catch (error) {
-                            console.log("Der Kalender konnte nicht exportiert werden. \r\n" + error.toString());
+                            new ErrorHandler(error);                            
                         }
                     });                   
                 },
@@ -1462,7 +1462,7 @@ define([
                                                 description: "Der Meilenstein " + data.title + " ist bald erreicht!"
                                             });
                                         } catch (error) {
-                                            console.log("ICalExport: Konnte Event nicht registrieren! \r\n" + error.toString());
+                                            new ErrorHandler(error);                                            
                                         }
                                     }
                                 );
@@ -1510,7 +1510,7 @@ define([
                                                 description: "Der Termin " + data.title + " ist bald erreicht!"
                                             });
                                         } catch (error) {
-                                            console.log("ICalExport: Konnte Event nicht registrieren! \r\n" + error.toString());
+                                            new ErrorHandler(error);                                            
                                         }
                                     }
                                 )
@@ -1528,7 +1528,7 @@ define([
                             link.download = "Semesterplanung_" + title + "_" + year + month + day + hour + minutes + ".ics";
                             link.click();
                         } catch (error) {
-                            console.log("ICalExport: Konnte den Export nicht erfolgreich abschließen! \r\n " + error.toString());
+                            new ErrorHandler(error);                           
                         }
                     },
                     createMilestonePicker: function () {
@@ -1849,7 +1849,7 @@ define([
                                 });
                             }
                         } catch(error){
-                            console.log(error);
+                            new ErrorHandler(error);
                         }                  
                     },
                     modLoadMilestones: function(){                        
@@ -1891,16 +1891,16 @@ define([
                                     _this.updateMilestones(); 
                                     _this.modAlert("success", "Meilensteine wurden geladen.");                                                       
                                 } catch(error){
-                                    console.log(error);
+                                    new ErrorHandler(error);
                                 }
                             };                             
                             reader.onerror = function(error){
                                 _this.modAlert("alert", "Die Datei konnte nicht gelesen werden.");  
-                                console.log(error);
+                                new ErrorHandler(error);
                             }                  
                         } catch(error){
                             this.modAlert("danger", "Konnte die Meilensteine nicht laden."); 
-                            console.log(error);
+                            new ErrorHandler(error);
                         }
                     },
                     modSaveSelect: function(){                        
@@ -1976,7 +1976,7 @@ define([
                             this.modAlert("success", "Meilensteine wurden zurückgesetzt.");                           
                         } catch(error){
                             this.modAlert("danger", "Konnte die Meilensteine nicht zurücksetzen."); 
-                            console.log(error);
+                            new ErrorHandler(error);
                         }
                     },
                     exportMilestones: function(ms){            
@@ -1994,7 +1994,7 @@ define([
                             link.download = "Meilensteinplanung_" + year + month + day + hour + minutes + ".json";
                             link.click();
                         } catch(error){
-                            console.log(error);
+                            new ErrorHandler(error);
                         }       
                     },
                     getMilestonePlan: function(){
@@ -2091,13 +2091,13 @@ define([
                                                 }                                                              
                                             }                            
                                         } catch(error){
-                                            console.log(error);
+                                            new ErrorHandler(error);
                                         }
                                     });
                                 }
                             );                   
                         } catch(error){
-                            console.log(error);
+                            new ErrorHandler(error);
                         }
                     }                                 
                 }                
