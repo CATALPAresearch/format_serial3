@@ -79,6 +79,7 @@ define([
         private static _validate(message:any):string|null{            
             if(message === null) return null;
             if(typeof message === "number") message = message.toString();
+            if(typeof message === "string" && message.length > 0) message = JSON.stringify({message: message});
             if(typeof message === "object"){
                 if(message instanceof Error){
                     let obj = {

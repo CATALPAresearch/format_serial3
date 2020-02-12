@@ -72,6 +72,8 @@ define([
                 return null;
             if (typeof message === "number")
                 message = message.toString();
+            if (typeof message === "string" && message.length > 0)
+                message = JSON.stringify({ message: message });
             if (typeof message === "object") {
                 if (message instanceof Error) {
                     var obj = {
