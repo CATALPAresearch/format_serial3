@@ -33,6 +33,52 @@ class format_ladtopics_external extends external_api {
     }
 
     /**
+     * Check If the User is a moderator
+     */
+
+    public static function checkmod_parameters(){
+        return new external_function_parameters(
+            array(
+                'courseid' => new external_value(PARAM_INT, 'course id')
+            )
+        );
+    }
+
+    public static function checkmod_returns(){
+        return new external_single_structure(
+            array(
+                'data' => new external_value(PARAM_RAW, 'data'),
+                'debug' => new external_value(PARAM_RAW, 'debug')              
+            )
+        );
+    }
+
+    public static function checkmod($data){
+        global $CFG, $DB, $USER;
+
+        $data = array();
+        $debug = array();
+        $params = array();
+        $uid = (int)$USER->id;
+        $params[] = $uid;
+
+        $transaction = $DB->start_delegated_transaction(); 
+
+        $sql = "SELECT {$CFG->prefix}role.shortname FROM {$CFG->prefix}role INNER JOIN {$CFG->prefix}role_assignments ON {$CFG->prefix}role_assignments.roleid = {$CFG->prefix}role.id WHERE userid = ?";         
+        
+        $res = $DB->get_records_sql($sql, $params);
+        $transaction->allow_commit();     
+
+        foreach($res as $key => $value){
+            $data[] = $value->shortname;
+        }
+        
+        return array('data'=>json_encode($data), 'debug'=>json_encode($debug));
+    }
+
+    public static function checkmod_is_allowed_from_ajax() { return true; }
+
+    /**
      * Get calendar data
      */
 
@@ -466,9 +512,10 @@ class format_ladtopics_external extends external_api {
     }
     public static function setmilestones_returns() {
         return new external_single_structure(
-                array( 'response' => new external_value(PARAM_RAW, 'Server respons to the incomming log') )
+            array( 'response' => new external_value(PARAM_RAW, 'Server respons to the incomming log') )
         );
     }
+
     public static function setmilestones($data) {
         global $CFG, $DB, $USER;
 
@@ -494,6 +541,144 @@ class format_ladtopics_external extends external_api {
         return array('response'=> json_encode( array($res, $data) ));
     } 
     public static function setmilestones_is_allowed_from_ajax() { return true; }
+
+    /**
+     * Get Milestone Plan
+     */
+    public static function getmilestoneplan_parameters() {
+        return new external_function_parameters(                
+            array(
+                'data' => 
+                    new external_single_structure(
+                        array(
+                            'courseid' => new external_value(PARAM_INT, 'id of course', VALUE_OPTIONAL),
+                            'plan' => new external_value(PARAM_TEXT, 'the desired plan')
+                        )
+                    )
+            )
+        );      
+    }
+    public static function getmilestoneplan_returns() {
+        return new external_single_structure(
+                array('data' => new external_value(PARAM_TEXT, 'Server respons to the incomming log'))
+        );
+    }
+    
+    public static function getmilestoneplan($param){
+        global $CFG, $DB, $USER;        
+        $transaction = $DB->start_delegated_transaction(); 
+        $params = array();
+        $params[] = (int)$param['courseid'];
+        $params[] = $param['plan'];
+        $sql='
+            SELECT milestones 
+            FROM '.$CFG->prefix.'ladtopics_milestone_plans AS t
+            WHERE   
+                t.course = ? 
+                AND t.plan = ?
+            ORDER BY t.created DESC
+            LIMIT 1
+            ;';
+        $res = $DB->get_record_sql($sql, $params);
+        $transaction->allow_commit();
+        return array('data'=> $res->milestones);       
+    } 
+    public static function getmilestoneplan_is_allowed_from_ajax() { return true; }
+
+    /**
+     * Get Milestone Plan
+     */
+    public static function setmilestoneplan_parameters() {
+       return new external_function_parameters(                
+            array(
+                'data' => 
+                    new external_single_structure(
+                        array(
+                        'courseid' => new external_value(PARAM_INT, 'id of course'),                        
+                        'milestones' => new external_value(PARAM_RAW, 'milestones'),
+                        'plan' => new external_value(PARAM_TEXT, 'plan')
+                    )
+                )
+            )
+        );
+    }
+    public static function setmilestoneplan_returns() {
+        return new external_single_structure(
+            array(
+                'data' => new external_value(PARAM_RAW, 'data')                           
+            )
+        );
+    }
+    
+    public static function setmilestoneplan($param) {       
+        try{
+            global $CFG, $DB, $COURSE, $USER;       
+            $data = array();       
+            $uid = (int)$USER->id;
+            $cid = (int)$param['courseid'];
+            $plan = $param['plan'];                           
+            $params[] = $uid;
+            $transaction = $DB->start_delegated_transaction(); 
+            $sql = 'SELECT '.$CFG->prefix.'role.shortname FROM '.$CFG->prefix.'role INNER JOIN '.$CFG->prefix.'role_assignments ON '.$CFG->prefix.'role_assignments.roleid = '.$CFG->prefix.'role.id WHERE userid = ?';         
+            $res = $DB->get_records_sql($sql, $params);
+            $transaction->allow_commit(); 
+            $found = false;
+            foreach($res as $key => $value){
+                if(!isset($value->shortname)) continue;
+                $val = $value->shortname;            
+                if($val === 'manager') {
+                    $found = true;               
+                } 
+            }
+            if($found){   
+                $date = new DateTime();
+                $c = new stdClass();
+                $c->course = $cid;
+                $c->author = $uid;
+                $c->created = (int)$date->getTimestamp();
+                $c->plan = $plan;
+                $c->milestones = $param['milestones'];               
+
+                $sql = 'SELECT id FROM '.$CFG->prefix.'ladtopics_milestone_plans WHERE course = ? AND plan = ? LIMIT 1';
+                $transaction = $DB->start_delegated_transaction();
+                $params = array();
+                $params[] = $cid;
+                $params[] = $plan;
+                $res = $DB->get_records_sql($sql, $params);
+                $transaction->allow_commit();
+
+                $count = count($res);
+
+                if($count !== 0){    
+                    $id = reset($res);
+                    $c->id = $id->id;
+                    $transaction = $DB->start_delegated_transaction();                       
+                    $res = $DB->update_record("ladtopics_milestone_plans", $c);     
+                    $transaction->allow_commit();
+                    if($res === true){
+                        $data['success'] = true;                           
+                    } else {
+                        $data['success'] = false;
+                        $data['debug'] = "Unbekannter Fehler.";
+                    }                       
+                    return array('data'=>json_encode($data));
+                } else {
+                    $transaction = $DB->start_delegated_transaction();
+                    $res = $DB->insert_records("ladtopics_milestone_plans", array($c));
+                    $transaction->allow_commit();
+                    $data['success'] = true; 
+                }                                
+            } else {               
+                $data['success'] = false;
+                $data['debug'] = "Sie haben keine Berechtigung.";
+            }           
+            return array('data'=>json_encode($data));
+        } catch (Exception $e){
+            return array('data'=>json_encode(array('success' => false, 'debug' => json_encode($e))));
+        }       
+    } 
+    public static function setmilestoneplan_is_allowed_from_ajax() { return true; }
+
 
 
 

@@ -26,11 +26,19 @@ $functions = array(
                 'type'        => 'read',
                 'ajax'        => true 
         ),
+        'format_ladtopics_checkmod' => array(
+                'classname'   => 'format_ladtopics_external',
+                'methodname'  => 'checkmod',
+                'classpath'   => 'course/format/ladtopics/api.php',
+                'description' => 'Get the moderator status',
+                'type'        => 'read',
+                'ajax'        => true 
+        ),
         'format_ladtopics_getcalendar' => array(
                 'classname'   => 'format_ladtopics_external',
                 'methodname'  => 'getcalendar',
                 'classpath'   => 'course/format/ladtopics/api.php',
-                'description' => 'Obtain logstore date from database',
+                'description' => 'Get the calendar data from moodle native calendar',
                 'type'        => 'read',
                 'ajax'        => true 
         ),
@@ -58,7 +66,7 @@ $functions = array(
                 'description' => 'Obtain mielstones from database',
                 'type'        => 'read',
                 'ajax'        => true
-        ),
+        ),        
         'format_ladtopics_setmilestones' => array(
                 'classname'   => 'format_ladtopics_external',
                 'methodname'  => 'setmilestones',
@@ -66,6 +74,22 @@ $functions = array(
                 'description' => 'Save mielstones to database',
                 'type'        => 'write',
                 //'capabilities'  => 'format/ladtopics:view',
+                'ajax'        => true
+        ),
+        'format_ladtopics_getmilestoneplan' => array(
+                'classname'   => 'format_ladtopics_external',
+                'methodname'  => 'getmilestoneplan',
+                'classpath'   => 'course/format/ladtopics/api.php',
+                'description' => 'Obtain mielstones from database',
+                'type'        => 'read',
+                'ajax'        => true
+        ),
+        'format_ladtopics_setmilestoneplan' => array(
+                'classname'   => 'format_ladtopics_external',
+                'methodname'  => 'setmilestoneplan',
+                'classpath'   => 'course/format/ladtopics/api.php',
+                'description' => 'Obtain mielstones from database',
+                'type'        => 'read',
                 'ajax'        => true
         ),
         'format_ladtopics_userpreferences' => array(
