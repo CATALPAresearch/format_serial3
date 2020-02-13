@@ -25,15 +25,7 @@ $functions = array(
                 'description' => 'Obtain calendar events from database',
                 'type'        => 'read',
                 'ajax'        => true 
-        ),
-        'format_ladtopics_checkmod' => array(
-                'classname'   => 'format_ladtopics_external',
-                'methodname'  => 'checkmod',
-                'classpath'   => 'course/format/ladtopics/api.php',
-                'description' => 'Get the moderator status',
-                'type'        => 'read',
-                'ajax'        => true 
-        ),
+        ),        
         'format_ladtopics_getcalendar' => array(
                 'classname'   => 'format_ladtopics_external',
                 'methodname'  => 'getcalendar',

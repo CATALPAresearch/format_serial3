@@ -6,7 +6,41 @@ require_once($CFG->libdir . '/externallib.php');
 
 class format_ladtopics_external extends external_api {
 
-    
+    /**
+     * Get all required meta-data of the user and the course.
+     */
+    private static get_meta(){
+        try{
+            global $USER, $COURSE;
+            require_login($courseid);
+            $obj = new stdClass();
+            $obj->course = new stdClass();
+            $obj->course->id = $COURSE->id;            
+            $obj->course->context = context_course::instance($courseid);
+            $obj->course->global = $COURSE;
+            $obj->user = new stdClass();
+            $obj->user->id = $USER->id;
+            $obj->user->loggedin = isloggedin();
+            $obj->user->siteadmin = is_siteadmin($USER->id);
+            $obj->user->enrolled = is_enrolled($obj->course->context, $USER->id);
+            $obj->user->guest = is_guest($obj->course->context, $USER->id);
+            $obj->user->viewing = is_viewing($obj->course->context, $USER->id);
+            $obj->user->roles = array();
+            $obj->user->global = $USER;       
+            $roles = get_user_roles($obj->course->context, $USER->id);            
+            foreach($roles as $key => $value){
+                if(isset($value->shortname)){
+                    $obj->user->roles[] = $value->shortname;
+                }
+            }     
+            return $obj;    
+        } catch(Exception $ex){
+            return null;
+        }
+    }
+
+
+
     /**
      * Obtain plugin name
      */
@@ -31,53 +65,7 @@ class format_ladtopics_external extends external_api {
             'data' => 'LAD Topics Format'
         );
     }
-
-    /**
-     * Check If the User is a moderator
-     */
-
-    public static function checkmod_parameters(){
-        return new external_function_parameters(
-            array(
-                'courseid' => new external_value(PARAM_INT, 'course id')
-            )
-        );
-    }
-
-    public static function checkmod_returns(){
-        return new external_single_structure(
-            array(
-                'data' => new external_value(PARAM_RAW, 'data'),
-                'debug' => new external_value(PARAM_RAW, 'debug')              
-            )
-        );
-    }
-
-    public static function checkmod($data){
-        global $CFG, $DB, $USER;
-
-        $data = array();
-        $debug = array();
-        $params = array();
-        $uid = (int)$USER->id;
-        $params[] = $uid;
-
-        $transaction = $DB->start_delegated_transaction(); 
-
-        $sql = "SELECT {$CFG->prefix}role.shortname FROM {$CFG->prefix}role INNER JOIN {$CFG->prefix}role_assignments ON {$CFG->prefix}role_assignments.roleid = {$CFG->prefix}role.id WHERE userid = ?";         
-        
-        $res = $DB->get_records_sql($sql, $params);
-        $transaction->allow_commit();     
-
-        foreach($res as $key => $value){
-            $data[] = $value->shortname;
-        }
-        
-        return array('data'=>json_encode($data), 'debug'=>json_encode($debug));
-    }
-
-    public static function checkmod_is_allowed_from_ajax() { return true; }
-
+   
     /**
      * Get calendar data
      */

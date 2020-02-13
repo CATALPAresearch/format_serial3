@@ -45,6 +45,20 @@ define([
             id: parseInt($('#courseid').text(), 10)
             // module: parseInt($('#moduleid').html()) 
         };
+
+
+        utils.get_ws('checkmod', {
+            'courseid': parseInt(course.id, 10)
+        }, function (e) {
+            try {
+                console.log("===ALOGIN===");
+                console.log(e);
+                console.log("===ELOGIN===");
+            } catch (error) {
+                new ErrorHandler(error);
+            }
+        });
+
         utils.get_ws('logstore', {
             'courseid': parseInt(course.id, 10)
         }, function (e) {
