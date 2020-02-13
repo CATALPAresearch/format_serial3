@@ -27,7 +27,8 @@ class format_ladtopics_external extends external_api {
             $obj->user->viewing = is_viewing($obj->course->context, $USER->id);
             $obj->user->roles = array();
             $obj->user->global = $USER;       
-            $roles = get_user_roles($obj->course->context, $USER->id);            
+            $roles = get_user_roles($obj->course->context, $USER->id);
+            $obj->user->roles_raw = $roles;            
             foreach($roles as $key => $value){
                 if(isset($value->shortname)){
                     $obj->user->roles[] = $value->shortname;
