@@ -23,9 +23,26 @@ function get_meta($courseID){
         $obj->user->roles = array();
         $obj->user->global = $USER;       
         $roles = get_user_roles($obj->course->context, $USER->id);
-        $obj->user->roles_raw = $roles;            
+        $obj->user->roles_raw = $roles;   
+        $obj->user->student = false;
+        $obj->user->teacher = false;    
+        $obj->user->editingteacher = false;
+        $obj->user->coursecreator = false;  
+        $obj->user->manager = false; 
         foreach($roles as $key => $value){
-            if(isset($value->shortname)){                
+            if(isset($value->shortname)){      
+                switch($value->shortname){
+                    case 'student':         $obj->user->student = true;
+                                            break;
+                    case 'teacher':         $obj->user->teacher = true;
+                                            break;
+                    case 'editingteacher':  $obj->user->editingteacher = true;
+                                            break;
+                    case 'coursecreator':   $obj->user->coursecreator = true;
+                                            break;
+                    case 'manager':         $obj->user->manager = true;
+                                            break;
+                }         
                 $obj->user->roles[] = $value->shortname;
             }
         }     
@@ -599,15 +616,8 @@ class format_ladtopics_external extends external_api {
             global $CFG, $DB;
             $data = array();
             $meta = get_meta($param["courseid"]);            
-            if(is_null($meta)) throw new Exception("Keine Meta-Daten erhalten");
-            $found = false;
-            foreach($meta->user->roles as $key => $value){
-                if($value === "manager"){
-                    $found = true;
-                    break;
-                }
-            }
-            if($meta->user->loggedin === true && $found === true){
+            if(is_null($meta)) throw new Exception("Keine Meta-Daten erhalten");            
+            if($meta->user->loggedin === true && $meta->user->manager === true){
                 $date = new DateTime();
                 $c = new stdClass();
                 $c->course = (int)$meta->course->id;   
@@ -643,7 +653,7 @@ class format_ladtopics_external extends external_api {
                 }                                
             } else {
                 $data['success'] = false;
-                $data['debug'] = "Unbekannter Fehler. ".$meta->course->id.'-'.serialize($meta->user->roles).'x'.serialize($meta->course->global).'X';
+                $data['debug'] = "Keine Berechtigung";
             }         
             return array('data'=>json_encode($data));            
         } catch (Exception $e){
