@@ -11,12 +11,12 @@ class format_ladtopics_external extends external_api {
      */
     private static get_meta(){
         try{
-            global $USER, $COURSE;
-            require_login($courseid);
+            global $USER, $COURSE;            
             $obj = new stdClass();
             $obj->course = new stdClass();
             $obj->course->id = $COURSE->id;            
-            $obj->course->context = context_course::instance($courseid);
+            require_login($COURSE->id);
+            $obj->course->context = context_course::instance($COURSE->id);
             $obj->course->global = $COURSE;
             $obj->user = new stdClass();
             $obj->user->id = $USER->id;
