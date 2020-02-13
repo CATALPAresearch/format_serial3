@@ -1033,8 +1033,8 @@ $modalMilestone = '
                                                         <li v-if="milestones.length > 0" class="nav-item">
                                                             <a 
                                                                 class="nav-link active" @click="hideAdditionalCharts()" id="milestone-list-tab" data-toggle="pill" href="#view-list" role="tab" aria-controls="view-list" aria-selected="false">
-                                                                <i hidden class="fa fa-list"></i> Aktuelle Meilensteine
-                                                            </a>
+                                                                <i hidden class="fa fa-list"></i> Aktuelle Meilensteine <span>({{remainingMilestones.length}})</span>
+                                                            </a>                                                            
                                                         </li>
                                                         <li v-if="milestones.length > 0" class="nav-item">
                                                             <a 
@@ -1045,7 +1045,7 @@ $modalMilestone = '
                                                         <li v-if="milestones.length > 0" class="nav-item">
                                                             <a 
                                                                 class="nav-link" @click="hideAdditionalCharts()" id="milestone-archive-list-tab" data-toggle="pill" href="#view-archive-list" role="tab" aria-controls="view-archive-list" aria-selected="false">
-                                                                <i hidden class="fa fa-list"></i> Archiv
+                                                                <i hidden class="fa fa-list"></i> Archiv <span>({{archivedMilestones.length}})</span>
                                                             </a>
                                                         </li>                                                                                                        
                                                     </ul>                                           
