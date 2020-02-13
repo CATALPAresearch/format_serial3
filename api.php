@@ -4,43 +4,38 @@ defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->libdir . '/externallib.php');
 
-class format_ladtopics_external extends external_api {
+function get_meta($courseID){
+    try{
+        global $USER, $COURSE;            
+        $obj = new stdClass();
+        $obj->course = new stdClass();
+        $obj->course->id = (int)$courseID;            
+        require_login($obj->course->id);
+        $obj->course->context = context_course::instance($obj->course->id);
+        $obj->course->global = $COURSE;
+        $obj->user = new stdClass();
+        $obj->user->id = $USER->id;
+        $obj->user->loggedin = isloggedin();
+        $obj->user->siteadmin = is_siteadmin($USER->id);
+        $obj->user->enrolled = is_enrolled($obj->course->context, $USER->id);
+        $obj->user->guest = is_guest($obj->course->context, $USER->id);
+        $obj->user->viewing = is_viewing($obj->course->context, $USER->id);
+        $obj->user->roles = array();
+        $obj->user->global = $USER;       
+        $roles = get_user_roles($obj->course->context, $USER->id);
+        $obj->user->roles_raw = $roles;            
+        foreach($roles as $key => $value){
+            if(isset($value->shortname)){                
+                $obj->user->roles[] = $value->shortname;
+            }
+        }     
+        return $obj;    
+    } catch(Exception $ex){
+        return null;
+    }
+}
 
-    /**
-     * Get all required meta-data of the user and the course.
-     */
-    /*private static get_meta(){
-        try{
-            global $USER, $COURSE;            
-            $obj = new stdClass();
-            $obj->course = new stdClass();
-            $obj->course->id = $COURSE->id;            
-            require_login($COURSE->id);
-            $obj->course->context = context_course::instance($COURSE->id);
-            $obj->course->global = $COURSE;
-            $obj->user = new stdClass();
-            $obj->user->id = $USER->id;
-            $obj->user->loggedin = isloggedin();
-            $obj->user->siteadmin = is_siteadmin($USER->id);
-            $obj->user->enrolled = is_enrolled($obj->course->context, $USER->id);
-            $obj->user->guest = is_guest($obj->course->context, $USER->id);
-            $obj->user->viewing = is_viewing($obj->course->context, $USER->id);
-            $obj->user->roles = array();
-            $obj->user->global = $USER;       
-            $roles = get_user_roles($obj->course->context, $USER->id);
-            $obj->user->roles_raw = $roles;            
-            foreach($roles as $key => $value){
-                if(isset($value->shortname)){
-                    $obj->user->roles[] = $value->shortname;
-                }
-            }     
-            return $obj;    
-        } catch(Exception $ex){
-            return null;
-        }
-    }*/
-
-
+class format_ladtopics_external extends external_api {       
 
     /**
      * Obtain plugin name
@@ -601,43 +596,33 @@ class format_ladtopics_external extends external_api {
     
     public static function setmilestoneplan($param) {       
         try{
-            global $CFG, $DB, $COURSE, $USER;       
-            $data = array();       
-            $uid = (int)$USER->id;
-            $cid = (int)$param['courseid'];
-            $plan = $param['plan'];                           
-            $params[] = $uid;
-            $transaction = $DB->start_delegated_transaction(); 
-            $sql = 'SELECT '.$CFG->prefix.'role.shortname FROM '.$CFG->prefix.'role INNER JOIN '.$CFG->prefix.'role_assignments ON '.$CFG->prefix.'role_assignments.roleid = '.$CFG->prefix.'role.id WHERE userid = ?';         
-            $res = $DB->get_records_sql($sql, $params);
-            $transaction->allow_commit(); 
+            global $CFG, $DB;
+            $data = array();
+            $meta = get_meta($param["courseid"]);            
+            if(is_null($meta)) throw new Exception("Keine Meta-Daten erhalten");
             $found = false;
-            foreach($res as $key => $value){
-                if(!isset($value->shortname)) continue;
-                $val = $value->shortname;            
-                if($val === 'manager') {
-                    $found = true;               
-                } 
+            foreach($meta->user->roles as $key => $value){
+                if($value === "manager"){
+                    $found = true;
+                    break;
+                }
             }
-            if($found){   
+            if($meta->user->loggedin === true && $found === true){
                 $date = new DateTime();
                 $c = new stdClass();
-                $c->course = $cid;
-                $c->author = $uid;
+                $c->course = (int)$meta->course->id;   
+                $c->author = (int)$meta->user->id;           
                 $c->created = (int)$date->getTimestamp();
-                $c->plan = $plan;
-                $c->milestones = $param['milestones'];               
-
+                $c->plan = $param['plan'];
+                $c->milestones = $param['milestones'];
                 $sql = 'SELECT id FROM '.$CFG->prefix.'ladtopics_milestone_plans WHERE course = ? AND plan = ? LIMIT 1';
                 $transaction = $DB->start_delegated_transaction();
                 $params = array();
-                $params[] = $cid;
-                $params[] = $plan;
+                $params[] = (int)$meta->course->id;
+                $params[] = strtolower($param['plan']);
                 $res = $DB->get_records_sql($sql, $params);
                 $transaction->allow_commit();
-
                 $count = count($res);
-
                 if($count !== 0){    
                     $id = reset($res);
                     $c->id = $id->id;
@@ -649,19 +634,18 @@ class format_ladtopics_external extends external_api {
                     } else {
                         $data['success'] = false;
                         $data['debug'] = "Unbekannter Fehler.";
-                    }                       
-                    return array('data'=>json_encode($data));
+                    }                         
                 } else {
                     $transaction = $DB->start_delegated_transaction();
                     $res = $DB->insert_records("ladtopics_milestone_plans", array($c));
                     $transaction->allow_commit();
                     $data['success'] = true; 
                 }                                
-            } else {               
+            } else {
                 $data['success'] = false;
-                $data['debug'] = "Sie haben keine Berechtigung.";
-            }           
-            return array('data'=>json_encode($data));
+                $data['debug'] = "Unbekannter Fehler. ".$meta->course->id.'-'.serialize($meta->user->roles).'x'.serialize($meta->course->global).'X';
+            }         
+            return array('data'=>json_encode($data));            
         } catch (Exception $e){
             return array('data'=>json_encode(array('success' => false, 'debug' => json_encode($e))));
         }       

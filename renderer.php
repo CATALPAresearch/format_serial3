@@ -65,7 +65,7 @@ class format_ladtopics_renderer extends format_section_renderer_base {
     private function checkModeratorStatus(){
         if(!is_null($this->_moderator)) return $this->_moderator;
         try{
-            global $USER, $COURSE;            
+            global $USER, $COURSE;      
             $context = context_course::instance($COURSE->id);            
             $loggedIn = isloggedin();
             $roles = get_user_roles($context, $USER->id);                 
