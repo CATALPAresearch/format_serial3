@@ -54,6 +54,9 @@ class format_ladtopics_renderer extends format_section_renderer_base {
      * A Attribute to store if the user is a moderator for the course
      */
     private $_moderator = null;
+    private $courseid;
+    private $found;
+    private $islogged;
 
     /**
      * A Method to test if the user is a moderator for the course
@@ -61,24 +64,27 @@ class format_ladtopics_renderer extends format_section_renderer_base {
 
     private function checkModeratorStatus(){
         if(!is_null($this->_moderator)) return $this->_moderator;
-        global $CFG, $DB, $COURSE, $USER;
-        $uid = (int)$USER->id;
-        $cid = (int)$COURSE->id;
-        $params[] = $uid;
-        $transaction = $DB->start_delegated_transaction(); 
-        $sql = 'SELECT '.$CFG->prefix.'role.shortname FROM '.$CFG->prefix.'role INNER JOIN '.$CFG->prefix.'role_assignments ON '.$CFG->prefix.'role_assignments.roleid = '.$CFG->prefix.'role.id WHERE userid = ?';         
-        $res = $DB->get_records_sql($sql, $params);
-        $transaction->allow_commit(); 
-        foreach($res as $key => $value){
-            if(!isset($value->shortname)) continue;
-            $val = $value->shortname;            
-            if($val === 'manager') {
-                $this->_moderator = true;
-                return true;
-            }
-        }
-        $this->_moderator = false;
-        return false;
+        try{
+            global $USER, $COURSE;            
+            $context = context_course::instance($COURSE->id);            
+            $loggedIn = isloggedin();
+            $roles = get_user_roles($context, $USER->id);                 
+            $found = false;
+            foreach($roles as $key => $value){
+                if(isset($value->shortname) && $value->shortname === "manager"){
+                    $found = true;
+                    break;
+                }
+            }    
+            $this->courseid = $COURSE->id;
+            $this->found = $found;
+            $this->islogged = $loggedIn;
+            if($found === true && $loggedIn === true) return true;            
+            return false;        
+        } catch(Exception $ex){
+            var_dump($ex);
+            return false;
+        }    
     }
 
     /**

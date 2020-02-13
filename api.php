@@ -9,7 +9,7 @@ class format_ladtopics_external extends external_api {
     /**
      * Get all required meta-data of the user and the course.
      */
-    private static get_meta(){
+    /*private static get_meta(){
         try{
             global $USER, $COURSE;            
             $obj = new stdClass();
@@ -38,7 +38,7 @@ class format_ladtopics_external extends external_api {
         } catch(Exception $ex){
             return null;
         }
-    }
+    }*/
 
 
 
