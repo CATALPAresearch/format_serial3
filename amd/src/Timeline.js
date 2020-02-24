@@ -2008,7 +2008,10 @@ define([
                         try{
                             $("input.mru:not(:checked)").parent().remove();
                             let list = $('div.userAutocomplete');  
-                            if(list.children().length <= 0) list.removeClass("bg-secondary");
+                            if(list.children().length <= 0) {
+                                list.removeClass("bg-secondary");
+                                list.removeClass("mb-3");                                 
+                            }
                             if(typeof value !== "string" || value.length <= 0) return;                                                           
                             if(typeof this.modUsers !== "object" || this.modUsers.length < 1){
                                 let result = await new Promise(
@@ -2045,10 +2048,13 @@ define([
                                     ident += ident.length > 0 ? " - "+element.email:element.email;                                  
                                 }                                
                                 if(found){
+                                    if(list.children().length <= 0){
+                                        list.addClass("bg-secondary");
+                                        list.addClass("mb-3");
+                                    }
                                     let divElem = $("<div class=\"form-check\"></div>").appendTo(list);                                     
                                     $("<input class=\"mru form-check-input\" type=\"checkbox\" id=\"mru-"+element.id+"\" />").appendTo(divElem);
                                     $("<label class=\"form-check-label\" for=\"modResetUsers\" />").text(ident).appendTo(divElem);
-                                    list.addClass("bg-secondary");
                                 }                          
                             }
                         } catch(error){

@@ -162,7 +162,7 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                             <div class="form-group">                                 
                                 <input type="string" @input="userAutocomplete($event.target, $event.target.value)" class="form-control" id="modResetUser" placeholder="Benutzer suchen">
                             </div>
-                            <div class="userAutocomplete col mb-3 px-2"></div>                           
+                            <div class="userAutocomplete col px-2"></div>                           
                             <div class="col mb-3 px-2">                                
                                 <div class="form-check">
                                     <input class="form-check-input" type="checkbox" value="" id="modResetUserPlan">
