@@ -35,7 +35,7 @@ define([
             let edit = $("a.milestone-element-edit");
             let filler = $("span.ms-edit-filler");
             filler.innerWidth(edit.innerWidth());
-            filler.css('display','inline-block');
+            filler.css('display','inline-block');            
         });
 
 
@@ -45,19 +45,6 @@ define([
             id: parseInt($('#courseid').text(), 10)
             // module: parseInt($('#moduleid').html()) 
         };
-
-
-        utils.get_ws('checkmod', {
-            'courseid': parseInt(course.id, 10)
-        }, function (e) {
-            try {
-                console.log("===ALOGIN===");
-                console.log(e);
-                console.log("===ELOGIN===");
-            } catch (error) {
-                new ErrorHandler(error);
-            }
-        });
 
         utils.get_ws('logstore', {
             'courseid': parseInt(course.id, 10)
@@ -182,6 +169,7 @@ define([
                         modalVisible: false,
                         modalReflectionVisible: false,
                         reflectionsFormVisisble: false,
+                        modUsers: [],                     
                         strategyCategories: [
                             { id: 'organization', name: 'Organisation' },
                             { id: 'elaboration', name: 'Elaborationsstrategien' },
@@ -268,7 +256,8 @@ define([
                         } catch (error) {
                             new ErrorHandler(error);
                         }
-                    });
+                    });           
+                   
                 },
                 created: function () {
                     var _this = this;
@@ -1998,6 +1987,74 @@ define([
                             new ErrorHandler(error);
                         }
                     },
+                    getAllUser: function(){
+                        utils.get_ws("getalluser", {
+                            'courseid': parseInt(course.id, 10)
+                        }, function (u) {
+                            console.log("=== ENROLLED ===");
+                            console.log(u);
+                            console.log("=== ENROLLED ===");
+                        });
+                    },
+                    updateUser: function(userid, milestones,plan){
+                        utils.get_ws("getalluser", {
+                            'courseid': parseInt(course.id, 10)
+                        }, function (u) {
+                            console.log(u);
+                            resolve();
+                        });
+                    },
+                    userAutocomplete: async function(target, value){
+                        try{
+                            $("input.mru:not(:checked)").parent().remove();
+                            let list = $('div.userAutocomplete');  
+                            if(list.children().length <= 0) list.removeClass("bg-secondary");
+                            if(typeof value !== "string" || value.length <= 0) return;                                                           
+                            if(typeof this.modUsers !== "object" || this.modUsers.length < 1){
+                                let result = await new Promise(
+                                    (resolve, reject) => {
+                                        utils.get_ws("getalluser", {
+                                            'courseid': parseInt(course.id, 10)
+                                        }, function (u) {                                            
+                                            let obj = JSON.parse(u.data);
+                                            if(!obj.user) throw new Error("Invalid Return");
+                                            return resolve(obj.user);
+                                        });
+                                    }
+                                );         
+                                this.modUsers = result;                       
+                            }                            
+                            value = value.toLowerCase();                            
+                            for(let i in this.modUsers){
+                                let element = this.modUsers[i];
+                                element.id = +element.id;
+                                if(typeof element.id !== "number" || element.id < 0) continue;                                
+                                if($("#mru-"+element.id).length > 0) continue;                 
+                                let ident = "";         
+                                let found = false;                   
+                                if(element.username){       
+                                    if(element.username.toLowerCase().indexOf(value) !== -1) found = true;
+                                    ident += ident.length > 0 ? " - "+element.username:element.username;
+                                }
+                                if(element.name){                                     
+                                    if(element.name.toLowerCase().indexOf(value) !== -1) found = true;
+                                    ident += ident.length > 0 ? " - "+element.name:element.name;
+                                }
+                                if(element.email){                                     
+                                    if(element.email.toLowerCase().indexOf(value) !== -1) found = true;
+                                    ident += ident.length > 0 ? " - "+element.email:element.email;                                  
+                                }                                
+                                if(found){
+                                    let divElem = $("<div class=\"form-check\"></div>").appendTo(list);                                     
+                                    $("<input class=\"mru form-check-input\" type=\"checkbox\" id=\"mru-"+element.id+"\" />").appendTo(divElem);
+                                    $("<label class=\"form-check-label\" for=\"modResetUsers\" />").text(ident).appendTo(divElem);
+                                    list.addClass("bg-secondary");
+                                }                          
+                            }
+                        } catch(error){
+                            console.log(error);
+                        }
+                    },
                     getMilestonePlan: function () {
                         try {
                             let _this = this;
@@ -2119,6 +2176,7 @@ define([
                     }
                 }
             });
+
 
 
             var survey = new InitialSurvey(Vue, Sortable, milestoneApp, utils, course);

@@ -159,10 +159,10 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                         <button type="button" @click="modLoadMilestones" class="btn btn-secondary">Laden</button>  
                         <hr>   
                             <h5>Benutzerplanung zurücksetzen</h5>        
-                            <div class="form-group">
-                                <label for="modResetUser">E-Mail des Benutzers</label>
-                                <input type="email" class="form-control" id="modResetUser" placeholder="E-Mail des Benutzers">
-                            </div>                           
+                            <div class="form-group">                                 
+                                <input type="string" @input="userAutocomplete($event.target, $event.target.value)" class="form-control" id="modResetUser" placeholder="Benutzer suchen">
+                            </div>
+                            <div class="userAutocomplete col mb-3 px-2"></div>                           
                             <div class="col mb-3 px-2">                                
                                 <div class="form-check">
                                     <input class="form-check-input" type="checkbox" value="" id="modResetUserPlan">

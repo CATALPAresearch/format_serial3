@@ -31,9 +31,7 @@ function get_meta($courseID){
         $obj->user->manager = false; 
         foreach($roles as $key => $value){
             if(isset($value->shortname)){      
-                switch($value->shortname){
-                    case 'student':         $obj->user->student = true;
-                                            break;
+                switch($value->shortname){                    
                     case 'teacher':         $obj->user->teacher = true;
                                             break;
                     case 'editingteacher':  $obj->user->editingteacher = true;
@@ -41,6 +39,8 @@ function get_meta($courseID){
                     case 'coursecreator':   $obj->user->coursecreator = true;
                                             break;
                     case 'manager':         $obj->user->manager = true;
+                                            break;
+                    case 'student':         $obj->user->student = true;
                                             break;
                 }         
                 $obj->user->roles[] = $value->shortname;
@@ -52,7 +52,66 @@ function get_meta($courseID){
     }
 }
 
-class format_ladtopics_external extends external_api {       
+class format_ladtopics_external extends external_api { 
+    
+    
+    
+    public static function getalluser_parameters(){
+        return new external_function_parameters(
+            array(
+                'courseid' => new external_value(PARAM_INT, 'course id')
+            )
+        );
+    }
+
+    public static function getalluser($param){
+        $out = array();
+        try{
+            if(is_null($param)) throw new Exception("No courseid");
+            $context = get_meta((int)$param);
+            if($context->user->loggedin === false || $context->user->manager === false) throw new Exception("No Admin");
+            $enrolled = get_enrolled_users($context->course->context);
+            $array = array();
+            foreach($enrolled as $key=>$value){
+                if(!isset($value->id)) continue;
+                $user = new stdClass();
+                $user->id = $value->id;               
+                if(isset($value->username) && strlen($value->username) > 0) {
+                    $username = ucfirst(strtolower($value->username));
+                    $user->username = $username;                      
+                    // Admin; marc.burchart@tu
+                }
+                if(isset($value->lastname) && strlen($value->lastname) > 0) {
+                    $name = ucfirst(strtolower($value->lastname));                    
+                    if(isset($value->middlename) && strlen($value->middlename) > 0) $name = ucfirst(strtolower($value->moddlename))." ".$name; 
+                    if(isset($value->firstname) && strlen($value->firstname) > 0) $name = ucfirst(strtolower($value->firstname))." ".$name;
+                    $user->name = $name;                   
+                }
+                if(isset($value->email) && strlen($value->email) > 0) {
+                    $email = strtolower($value->email);
+                    $user->email = $email;                   
+                }                             
+                $array[] = $user;
+            }            
+            $out['user'] = $array;
+        } catch(Exception $ex){
+            $out['debug'] = $ex->getMessage();
+        }
+        return array('data' => json_encode($out));
+    }
+
+    public static function getalluser_is_allowed_from_ajax(){
+        return true;
+    }
+
+    public static function getalluser_returns(){
+        return new external_single_structure(
+            array(
+                'data' => new external_value(PARAM_RAW, 'data')
+            )
+        );
+    }
+
 
     /**
      * Obtain plugin name
@@ -78,6 +137,62 @@ class format_ladtopics_external extends external_api {
             'data' => 'LAD Topics Format'
         );
     }
+
+    /**
+     * Update user
+     */
+    public static function updateuser_parameters() {
+        //  VALUE_REQUIRED, VALUE_OPTIONAL, or VALUE_DEFAULT. If not mentioned, a value is VALUE_REQUIRED 
+        return new external_function_parameters(
+            array(
+                'courseid' => new external_value(PARAM_INT, 'id of course'),
+                'userid' => new external_value(PARAM_INT, 'id of course', VALUE_OPTIONAL),
+                'data' => new external_value(PARAM_RAW, 'id of course', VALUE_OPTIONAL)               
+            )
+        );
+    }
+
+    public static function updateuser($param){
+        global $CFG, $DB;
+        $out = array();
+        try{
+            $perm = get_meta($param['courseid']);
+            if($perm->loggedin === true && $perm->manager === true && !is_null($param['userid'])){
+                $userid = (int)$param['userid'];
+            } else {
+                $userid = (int)$perm->user->id;
+            }            
+            if(!isset($param['data'])) throw new Exception("no Data");
+            $data = json_decode($param['data']);
+            if($perm->loggedin === true && $perm->manager === true){
+
+            } else {
+                if(isset($data['milestones'])){
+                    $sql = 'UPDATE '.$CFG->prefix.'ladtopics_milestones SET milestones WHERE userid = ?';
+                }
+                if(isset($data['survey'])){
+
+                }
+            }
+            
+            // durchführen mit $userid;
+            
+        } catch(Exception $ex){
+            $out['debug'] = $ex->getMessage();
+        }
+        return array('data' => json_encode($out));
+    }
+
+    public static function updateuser_returns() {
+        return new external_single_structure(
+                array(
+                    'data' => new external_value(PARAM_RAW, 'data')
+                )
+        );
+    }    
+
+    public static function updateuser_is_allowed_from_ajax() { return true; }
+     
    
     /**
      * Get calendar data
@@ -265,7 +380,7 @@ class format_ladtopics_external extends external_api {
                     $params[] = (int)$courseid;
                     $params[] = (int)$courseid;
                     $params[] = $value;
-                    $query = "
+                    $query = '
                         SELECT 
                         cm.instance AS instance_id,     
                         m.name AS instance_type, 
@@ -278,21 +393,21 @@ class format_ladtopics_external extends external_api {
                         cs.name AS section_name,
                         cs.sequence AS section_sequence,
                         cs.section AS section_pos
-                        FROM {$CFG->prefix}course_modules AS cm
-                        JOIN {$CFG->prefix}modules AS m 
+                        FROM '.$CFG->prefix.'course_modules AS cm
+                        JOIN '.$CFG->prefix.'modules AS m 
                         ON m.id = cm.module
-                        JOIN {$CFG->prefix}course_sections AS cs 
+                        JOIN '.$CFG->prefix.'course_sections AS cs 
                         ON cs.id = cm.section
-                        RIGHT OUTER JOIN {$CFG->prefix}{$value} AS f
+                        RIGHT OUTER JOIN '.$CFG->prefix.$value.' AS f
                         ON cm.instance = f.id 
                         WHERE cm.course = ? AND cs.course = ? AND f.course = ? AND m.name = ?
-                    ";
+                    ';
                     if(isset($select["sectionid"]) && !is_null($select["sectionid"])){
-                        $query .= " AND cs.id = ?";
+                        $query .= ' AND cs.id = ?';
                         $params[] = (int)$select["sectionid"];
                     }
                     if(isset($select["moduleid"]) && !is_null($select["moduleid"])){
-                        $query .= " AND cm.id = ?";
+                        $query .= ' AND cm.id = ?';
                         $params[] = (int)$select["moduleid"];
                     }
                     $transaction = $DB->start_delegated_transaction();
@@ -589,6 +704,7 @@ class format_ladtopics_external extends external_api {
     /**
      * Get Milestone Plan
      */
+
     public static function setmilestoneplan_parameters() {
        return new external_function_parameters(                
             array(
@@ -660,6 +776,7 @@ class format_ladtopics_external extends external_api {
             return array('data'=>json_encode(array('success' => false, 'debug' => json_encode($e))));
         }       
     } 
+
     public static function setmilestoneplan_is_allowed_from_ajax() { return true; }
 
 
