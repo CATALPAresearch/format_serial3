@@ -86,7 +86,7 @@ define(['jquery'], function ($) {
                 }, function (e) {
                     var _this = this;
                     try {
-                        let data = JSON.parse(e.data);
+                        var data = JSON.parse(e.data);
                         // Sort Ressources
                         let obj = new Array(data.length);
                         for (let i in data) {

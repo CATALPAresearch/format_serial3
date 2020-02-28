@@ -177,7 +177,7 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                                     </label>
                                 </div>                                                     
                         </div>                        
-                        <button type="button" @click="modResetSelect" class="btn btn-danger">Zurücksetzen</button>                         
+                        <button type="button" @click="modUpdateUser" class="btn btn-danger">Zurücksetzen</button>                         
                     </div>          
                     <div class="modal-footer">
                         <!-- Footer -->

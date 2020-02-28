@@ -10,6 +10,14 @@
 
 
 $functions = array(
+        'format_ladtopics_sendmail' => array(
+                'classname'   => 'format_ladtopics_external',
+                'methodname'  => 'sendmail',
+                'classpath'   => 'course/format/ladtopics/api.php',
+                'description' => 'Obtain the plugin name',
+                'type'        => 'read',
+                'ajax'        => true 
+        ),
         'format_ladtopics_getalluser' => array(
                 'classname'   => 'format_ladtopics_external',
                 'methodname'  => 'getalluser',

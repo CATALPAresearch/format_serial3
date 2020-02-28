@@ -53,7 +53,62 @@ function get_meta($courseID){
 }
 
 class format_ladtopics_external extends external_api { 
-    
+
+    public static function sendmail_parameters(){
+        return new external_function_parameters(
+            array(
+                'courseid' => new external_value(PARAM_INT, 'course id'),
+                'subject' => new external_value(PARAM_TEXT, 'course id'),
+                'text' => new external_value(PARAM_TEXT, 'course id')
+            )
+        );
+    }
+
+    public static function sendmail($data){
+        global $CFG, $DB, $USER;
+        $out = array();
+        try{
+            //\core\notification::info("HIER IST ES");
+            //return array('data' => json_encode($out));
+            $meta = get_meta(4);
+            $message = new \core\message\message();           
+            $message->component = 'moodle';
+            $message->name = 'instantmessage';
+            $message->userfrom = $USER;
+            $message->userto = $USER;
+            $message->subject = 'Neue Message';
+            $message->fullmessage = 'message body';
+            $message->fullmessageformat = FORMAT_MARKDOWN;
+            $message->fullmessagehtml = '<p>message body</p>';
+            $message->smallmessage = 'Testen wir es!';
+            $message->notification = "0";
+            $message->contexturl = 'http://GalaxyFarFarAway.com';
+            $message->contexturlname = 'Context name';
+            $message->replyto = "random@example.com";
+            $message->courseid = 4; 
+
+            $out['type'] = gettype($message);
+
+            $out['messageid'] = message_send($message);         
+            //message_send();
+        } catch(Exception $ex){
+            $out['debug'] = $ex->getMessage();
+        }
+        return array('data' => json_encode($out));
+    }
+
+    public static function sendmail_is_allowed_from_ajax(){
+        return true;
+    }
+
+    public static function sendmail_returns(){
+        return new external_single_structure(
+            array(
+                'data' => new external_value(PARAM_RAW, 'data')
+            )
+        );
+    }
+       
     
     
     public static function getalluser_parameters(){
@@ -145,38 +200,45 @@ class format_ladtopics_external extends external_api {
         //  VALUE_REQUIRED, VALUE_OPTIONAL, or VALUE_DEFAULT. If not mentioned, a value is VALUE_REQUIRED 
         return new external_function_parameters(
             array(
-                'courseid' => new external_value(PARAM_INT, 'id of course'),
-                'userid' => new external_value(PARAM_INT, 'id of course', VALUE_OPTIONAL),
-                'data' => new external_value(PARAM_RAW, 'id of course', VALUE_OPTIONAL)               
+                'data' => new external_value(PARAM_RAW, 'id of course')                              
             )
         );
     }
 
-    public static function updateuser($param){
-        global $CFG, $DB;
+    public static function updateuser($data){
+        global $CFG, $DB, $USER;
         $out = array();
-        try{
-            $perm = get_meta($param['courseid']);
-            if($perm->loggedin === true && $perm->manager === true && !is_null($param['userid'])){
-                $userid = (int)$param['userid'];
-            } else {
-                $userid = (int)$perm->user->id;
-            }            
-            if(!isset($param['data'])) throw new Exception("no Data");
-            $data = json_decode($param['data']);
-            if($perm->loggedin === true && $perm->manager === true){
+        try{        
 
-            } else {
-                if(isset($data['milestones'])){
-                    $sql = 'UPDATE '.$CFG->prefix.'ladtopics_milestones SET milestones WHERE userid = ?';
-                }
-                if(isset($data['survey'])){
+            $out['what'] = gettype(core_message_send_instant_messages());
 
-                }
+
+
+
+            $out['debug'] = "EHEHEHE";
+
+            return array('data' => json_encode($out));
+
+
+
+
+
+            if(is_null($data)) throw new Exception("Keine Daten erhalten.");
+            $data = json_decode($data);
+            if(!is_int($data->courseid)) throw new Exception("Keine Kurse-ID");    
+            $userid = $meta->user->id;        
+            $meta = get_meta($data->courseid);            
+            if(is_null($meta)) throw new Exception("Keine Meta-Daten erhalten");            
+            if($meta->user->loggedin === true && $meta->user->manager === true){
+                if(is_int($data->userid)) $userid = $data->userid;
             }
-            
-            // durchführen mit $userid;
-            
+            $out['data'] = $data;
+            if(!is_null($data->milestones)){
+                $out['milestones'] = $data->milestones;
+            }          
+            if(!is_null($data->plan)){
+                $out['plan'] = $data->plan;
+            }
         } catch(Exception $ex){
             $out['debug'] = $ex->getMessage();
         }

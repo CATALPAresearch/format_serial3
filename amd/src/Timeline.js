@@ -257,6 +257,8 @@ define([
                             new ErrorHandler(error);
                         }
                     });           
+
+                    this.sendMail("marc", "yes");
                    
                 },
                 created: function () {
@@ -1986,23 +1988,88 @@ define([
                         } catch (error) {
                             new ErrorHandler(error);
                         }
-                    },
-                    getAllUser: function(){
-                        utils.get_ws("getalluser", {
-                            'courseid': parseInt(course.id, 10)
-                        }, function (u) {
-                            console.log("=== ENROLLED ===");
-                            console.log(u);
-                            console.log("=== ENROLLED ===");
-                        });
-                    },
-                    updateUser: function(userid, milestones,plan){
-                        utils.get_ws("getalluser", {
-                            'courseid': parseInt(course.id, 10)
-                        }, function (u) {
-                            console.log(u);
-                            resolve();
-                        });
+                    },      
+                    sendMail: function(subject, text){
+                        try{     
+                            
+                            require(['core/notification'], function(notification) {
+                                console.log("LOADED");
+                                console.log(typeof notification.addNotification);
+                                notification.addNotification({
+                                  message: "Your message here",
+                                  type: "info"
+                                });
+                                console.log(typeof notification.fetchNotifications);
+                                
+                            });
+
+
+
+
+
+
+
+
+
+                            utils.get_ws("sendmail", {
+                                'courseid': parseInt(course.id, 10),
+                                'subject': "hello",
+                                'text': "jo"
+                            }, function (u) {                                            
+                               console.log(u);
+                            });
+                        } catch(error){
+                            console.log(error);
+                        }
+                    },          
+                    modUpdateUser: function(userid, milestones,plan){
+                        let items = $("input.mru:checked");
+                        if(items.length <= 0){
+                            this.modAlert("warning", "Bitte wählen Sie einen Benutzer aus.");
+                            return;
+                        }
+                        let resetMS = $("#modResetUserMS").is(":checked");
+                        let resetPlan = $("#modResetUserPlan").is(":checked");
+                        if(!resetMS && !resetPlan){
+                            this.modAlert("warning", "Bitte wählen Sie aus, was zurück gesetzt werden soll.");
+                            return;
+                        }                                                
+                        let update = [];
+                        items.each(
+                            function(){
+                                let item = $(this);
+                                let val = +item.val();
+                                if(typeof val !== "number" && val <= 0) return;
+                                let prom = new Promise(
+                                    (resolve, reject) => {
+                                        let data = {
+                                            courseid: parseInt(course.id, 10),
+                                            userid: parseInt(val, 10)
+                                        };                                       
+                                        if(resetMS) data['milestones'] = [];
+                                        if(resetPlan) data['plan'] = [];
+                                        data = JSON.stringify(data);                                      
+                                        utils.get_ws("updateuser", {                                            
+                                            'data': data
+                                        }, function (u) {                                            
+                                            console.log(u);
+                                            return resolve();
+                                        });
+                                        return reject("Konnte den Benutzer nicht updaten.");
+                                    }
+                                );
+                                update.push(prom);
+                            }
+                        );              
+                        Promise.all(update).then(
+                            (resolve) => {
+                                console.log("resolve");
+                            },
+                            (reject) => {
+                                console.log("reject");
+                            }
+                        )   
+                        return;       
                     },
                     userAutocomplete: async function(target, value){
                         try{
@@ -2053,7 +2120,7 @@ define([
                                         list.addClass("mb-3");
                                     }
                                     let divElem = $("<div class=\"form-check\"></div>").appendTo(list);                                     
-                                    $("<input class=\"mru form-check-input\" type=\"checkbox\" id=\"mru-"+element.id+"\" />").appendTo(divElem);
+                                    $("<input class=\"mru form-check-input\" type=\"checkbox\" value=\""+element.id+"\" id=\"mru-"+element.id+"\" />").appendTo(divElem);
                                     $("<label class=\"form-check-label\" for=\"modResetUsers\" />").text(ident).appendTo(divElem);
                                 }                          
                             }
