@@ -79,6 +79,7 @@ class format_ladtopics_renderer extends format_section_renderer_base {
             $this->courseid = $COURSE->id;
             $this->found = $found;
             $this->islogged = $loggedIn;
+            return false;
             if($found === true && $loggedIn === true) return true;            
             return false;        
         } catch(Exception $ex){
@@ -102,8 +103,12 @@ class format_ladtopics_renderer extends format_section_renderer_base {
 
 
         $userMSPlan = '
-
-        ';
+            <a class="dropdown-item" @click="modResetSelect()" href="#">
+                <i class="fa fa-clock"></i>Meilensteine zurücksetzen
+            </a> 
+            <a class="dropdown-item" @click="modResetPlan()" href="#">
+                <i class="fa fa-clock"></i>Semesterplanung zurücksetzen
+            </a>';
 
         $moderationModal = '    
             <div class="modal fade" id="moderationModal" tabindex="-1" role="dialog" aria-labelledby="moderationModalLabel" aria-hidden="false">
@@ -1044,7 +1049,7 @@ $modalMilestone = '
 
                         <!-- Planing Component -->
                         <div id="planing-component" style="display:none;" v-cloak class="container dc-chart">
-                            '.($this->checkModeratorStatus()?$moderationModal:$userMSPlan).'
+                            '.($this->checkModeratorStatus()?$moderationModal:'').'
                             <div>
                                 <div v-if="surveyDone > 0" class="row">
                                     <div class="col-12">
@@ -1093,7 +1098,7 @@ $modalMilestone = '
                                                         '.($this->checkModeratorStatus()?'
                                                             <a class="dropdown-item" data-toggle="modal" data-target="#moderationModal" href="#">
                                                                 <i class="fa fa-clock"></i>Planung
-                                                            </a>':'').'                                                            
+                                                            </a>':$userMSPlan).'                                                            
                                                             <a class="dropdown-item" @click="exportToICal()" href="#">
                                                                 <i class="fa fa-clock"></i>Exportieren
                                                             </a>                                                            

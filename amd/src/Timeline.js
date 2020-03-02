@@ -1920,10 +1920,55 @@ define([
                                 this.modSaveMilestones("exam", [], false);
                             } else if ($("#modSaveLocal").is(":checked")) {
                                 this.resetMilestones();
+                            } else {
+                                this.resetMilestones();
                             }
                         }
                         return;
 
+                    },
+                    modResetPlan: function(){
+                        var check = confirm('Wollen Sie wirklich alle Meilensteine zurücksetzen?');
+                        if (check === true) {   
+                            let todo = [];
+                            todo.push(new Promise(
+                                (resolve, reject) => {
+                                    utils.get_ws('userpreferences', {
+                                        data: {
+                                            'setget': 'set',
+                                            'courseid': parseInt(course.id, 10),
+                                            'fieldname': 'ladtopics_survey_done',
+                                            'value': 0
+                                        }
+                                    }, function (e) {
+                                       return resolve();
+                                    });
+                                }
+                            ));
+                            todo.push(new Promise(
+                                (resolve, reject) => {
+                                    utils.get_ws('userpreferences', {
+                                        data: {
+                                            'setget': 'set',
+                                            'courseid': parseInt(course.id, 10),
+                                            'fieldname': 'ladtopics_survey_results',
+                                            'value': ""
+                                        }
+                                    }, function (e) {
+                                       return resolve();
+                                    });
+                                }
+                            ));                  
+                            Promise.all(todo).then(
+                                (resolve) => {
+                                    location.reload(); 
+                                },
+                                (reject) => {
+                                    console.log(reject);
+                                }
+                            )
+                        }
+                        return;
                     },
                     modSaveMilestones: function (plan, milestones, reset = true) {
                         let _this = this;
@@ -1962,11 +2007,11 @@ define([
                         }
                     },
                     resetMilestones: function () {
-                        try {
+                        try {                           
                             this.milestones = [];
-                            this.updateMilestones();
-                            this.modAlert("success", "Meilensteine wurden zurückgesetzt.");
-                        } catch (error) {
+                            this.updateMilestones();                           
+                            this.modAlert("success", "Meilensteine wurden zurückgesetzt.");                            
+                        } catch (error) {                            
                             this.modAlert("danger", "Konnte die Meilensteine nicht zurücksetzen.");
                             new ErrorHandler(error);
                         }
@@ -2010,7 +2055,6 @@ define([
 
 
 
-
                             utils.get_ws("sendmail", {
                                 'courseid': parseInt(course.id, 10),
                                 'subject': "hello",
@@ -2022,7 +2066,7 @@ define([
                             console.log(error);
                         }
                     },          
-                    modUpdateUser: function(userid, milestones,plan){
+                    modUpdateUser: function(){
                         let items = $("input.mru:checked");
                         if(items.length <= 0){
                             this.modAlert("warning", "Bitte wählen Sie einen Benutzer aus.");
