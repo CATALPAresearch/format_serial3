@@ -2138,6 +2138,7 @@ define([
                                     'fieldname': 'ladtopics_survey_results',
                                 }
                             }, function (u) {
+                                if(typeof u !== "string" || u.length <= 0) return;
                                 let survey = JSON.parse(u.response);
                                 let result = JSON.parse(survey.shift()["value"]);
                                 let plan = result.objectives.toLowerCase();

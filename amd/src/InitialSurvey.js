@@ -121,7 +121,7 @@ define(['jquery'], function ($) {
                         'courseid': parseInt(course.id, 10)
                     }
                 }, function (e) {
-                    try {
+                    try {                        
                         e = JSON.parse(e.response);
                         if (e[0]) {
                             if (parseInt(e[0].value, 10)) {

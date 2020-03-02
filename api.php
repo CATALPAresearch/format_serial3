@@ -208,21 +208,7 @@ class format_ladtopics_external extends external_api {
     public static function updateuser($data){
         global $CFG, $DB, $USER;
         $out = array();
-        try{        
-
-            $out['what'] = gettype(core_message_send_instant_messages());
-
-
-
-
-            $out['debug'] = "EHEHEHE";
-
-            return array('data' => json_encode($out));
-
-
-
-
-
+        try{      
             if(is_null($data)) throw new Exception("Keine Daten erhalten.");
             $data = json_decode($data);
             if(!is_int($data->courseid)) throw new Exception("Keine Kurse-ID");    
@@ -233,12 +219,47 @@ class format_ladtopics_external extends external_api {
                 if(is_int($data->userid)) $userid = $data->userid;
             }
             $out['data'] = $data;
-            if(!is_null($data->milestones)){
+            if(!is_null($data->milestones)){                
+                $date = new DateTime();
+                $r = new stdClass();
+                $r->userid=(int)$userid;
+                $r->course=(int)$data->courseid;
+                $r->milestones=$data->milestones;
+                $r->settings=[];
+                $r->timemodified=(int)$date->getTimestamp();        
+                $transaction = $DB->start_delegated_transaction();
+                $res = $DB->insert_record("ladtopics_milestones", $r);
+                $transaction->allow_commit();
                 $out['milestones'] = $data->milestones;
             }          
-            if(!is_null($data->plan)){
-                $out['plan'] = $data->plan;
-            }
+            if(!is_null($data->plan)){               
+                function func($field, $courseid, $userid, $value){
+                    global $CFG, $DB, $USER;
+                    $r = new stdClass();
+                    $r->userid = $userid;
+                    $r->name = $field . '-course-' . (int)$courseid;
+                    $exists = $DB->record_exists('user_preferences', array(
+                        'name' => $field . '-course-' . (int)$courseid, 
+                        'userid'=>$userid
+                    ));
+                    $res='nix';
+                    if($exists != true){
+                        $r->value=$value == NULL ? 0 : $value;
+                        $transaction = $DB->start_delegated_transaction();
+                        $res = $DB->insert_records("user_preferences", array($r));
+                        $transaction->allow_commit(); 
+                    } elseif($exists == true){                       
+                        $transaction = $DB->start_delegated_transaction();                       
+                        $res = $DB->set_field("user_preferences", 'value', $value, array(
+                            'userid' => $userid,
+                            'name' => $field . '-course-' . $courseid
+                        ));                       
+                        $transaction->allow_commit();                        
+                    }     
+                }                
+                func("ladtopics_survey_results",(int)$data->courseid,(int)$userid,$data->plan);
+                func("ladtopics_survey_done",(int)$data->courseid,(int)$userid, 0);
+            }            
         } catch(Exception $ex){
             $out['debug'] = $ex->getMessage();
         }
@@ -883,8 +904,7 @@ class format_ladtopics_external extends external_api {
                 $r->value=$data['value'] == NULL ? 0 : $data['value'];
                 $transaction = $DB->start_delegated_transaction();
                 $res = $DB->insert_records("user_preferences", array($r));
-                $transaction->allow_commit();
-                
+                $transaction->allow_commit();    
             } elseif($exists == true && $data['setget'] == 'get'){
                 $transaction = $DB->start_delegated_transaction();
                 $res = $DB->get_record("user_preferences", array(
