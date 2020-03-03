@@ -103,12 +103,40 @@ class format_ladtopics_renderer extends format_section_renderer_base {
 
 
         $userMSPlan = '
-            <a class="dropdown-item" @click="modResetSelect()" href="#">
-                <i class="fa fa-clock"></i>Meilensteine zurücksetzen
-            </a> 
-            <a class="dropdown-item" @click="modResetPlan()" href="#">
-                <i class="fa fa-clock"></i>Semesterplanung zurücksetzen
-            </a>';
+        <div class="modal fade" id="moderationModal" tabindex="-1" role="dialog" aria-labelledby="moderationModalLabel" aria-hidden="false">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="moderationModalTitle">Planung</h5>                                     
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert collapse fade" id="moderationAlert" data-dismiss="alert" role="alert">
+                        This is a success alert—check it out!
+                    </div>          
+                    <h5>Semesterplanung zurücksetzen</h5>         
+                    <button type="button" @click="modUpdateUser" class="btn btn-danger">Zurücksetzen</button> 
+                    <hr>                     
+                    <h5>Meilensteine</h5>                        
+                    <div class="col mb-4 px-0">
+                        <div class="custom-file">
+                            <input type="file" class="custom-file-input" @input="modLoadPath" id="modImportedFile" lang="de">
+                            <label id="modLoadPathLabel" class="custom-file-label" for="modImportedFile">Bitte wählen Sie eine Datei aus.</label>
+                        </div>
+                    </div>      
+                    <button type="button" @click="modSaveSelect" class="btn btn-primary">Speichern</button>                                     
+                    <button type="button" @click="modLoadMilestones" class="btn btn-secondary">Laden</button>  
+                    <button type="button" @click="modResetSelect" class="btn btn-danger">Zurücksetzen</button>                      
+                </div>          
+                <div class="modal-footer">
+                    <!-- Footer -->
+                </div>
+            </div>
+            </div>
+        </div>
+        ';
 
         $moderationModal = '    
             <div class="modal fade" id="moderationModal" tabindex="-1" role="dialog" aria-labelledby="moderationModalLabel" aria-hidden="false">
@@ -1049,7 +1077,7 @@ $modalMilestone = '
 
                         <!-- Planing Component -->
                         <div id="planing-component" style="display:none;" v-cloak class="container dc-chart">
-                            '.($this->checkModeratorStatus()?$moderationModal:'').'
+                            '.($this->checkModeratorStatus()?$moderationModal:$userMSPlan).'
                             <div>
                                 <div v-if="surveyDone > 0" class="row">
                                     <div class="col-12">
@@ -1098,7 +1126,10 @@ $modalMilestone = '
                                                         '.($this->checkModeratorStatus()?'
                                                             <a class="dropdown-item" data-toggle="modal" data-target="#moderationModal" href="#">
                                                                 <i class="fa fa-clock"></i>Planung
-                                                            </a>':$userMSPlan).'                                                            
+                                                            </a>':
+                                                            '<a class="dropdown-item" data-toggle="modal" data-target="#moderationModal" href="#">
+                                                                <i class="fa fa-clock"></i>Planung
+                                                            </a>').'                                                            
                                                             <a class="dropdown-item" @click="exportToICal()" href="#">
                                                                 <i class="fa fa-clock"></i>Exportieren
                                                             </a>                                                            
