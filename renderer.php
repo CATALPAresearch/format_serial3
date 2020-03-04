@@ -107,7 +107,7 @@ class format_ladtopics_renderer extends format_section_renderer_base {
             <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="moderationModalTitle">Planung</h5>                                     
+                    <h5 class="modal-title" id="moderationModalTitle">Einstellungen</h5>                                     
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -117,7 +117,7 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                         This is a success alert—check it out!
                     </div>          
                     <h5>Semesterplanung zurücksetzen</h5>         
-                    <button type="button" @click="modUpdateUser" class="btn btn-danger">Zurücksetzen</button> 
+                    <button type="button" @click="modResetPlan()" class="btn btn-danger">Zurücksetzen</button> 
                     <hr>                     
                     <h5>Meilensteine</h5>                        
                     <div class="col mb-4 px-0">
@@ -127,8 +127,8 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                         </div>
                     </div>      
                     <button type="button" @click="modSaveSelect" class="btn btn-primary">Speichern</button>                                     
-                    <button type="button" @click="modLoadMilestones" class="btn btn-secondary">Laden</button>  
-                    <button type="button" @click="modResetSelect" class="btn btn-danger">Zurücksetzen</button>                      
+                    <button type="button" @click="modLoadMilestones()" class="btn btn-secondary">Laden</button>  
+                    <button type="button" @click="modResetSelect()" class="btn btn-danger">Zurücksetzen</button>                      
                 </div>          
                 <div class="modal-footer">
                     <!-- Footer -->
@@ -1128,7 +1128,7 @@ $modalMilestone = '
                                                                 <i class="fa fa-clock"></i>Planung
                                                             </a>':
                                                             '<a class="dropdown-item" data-toggle="modal" data-target="#moderationModal" href="#">
-                                                                <i class="fa fa-clock"></i>Planung
+                                                                <i class="fa fa-clock"></i>Einstellungen
                                                             </a>').'                                                            
                                                             <a class="dropdown-item" @click="exportToICal()" href="#">
                                                                 <i class="fa fa-clock"></i>Exportieren

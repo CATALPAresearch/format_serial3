@@ -1885,7 +1885,7 @@ define([
                             new ErrorHandler(error);
                         }
                     },
-                    modSaveSelect: function () {
+                    modSaveSelect: function () {                                              
                         let ms = this.milestones.filter(
                             function (element) {
                                 if (element.mod !== true) {                                   
@@ -1893,11 +1893,11 @@ define([
                                 }
                                 return false;
                             }
-                        );
+                        );                
                         if (ms.length <= 0) {
                             this.modAlert("warning", "Keine Meilensteine vorhanden.");
                             return;
-                        }
+                        }                        
                         if ($("#modSaveInterest").is(":checked")) {
                             this.modSaveMilestones("interest", ms);
                         } else if ($("#modSaveOrientation").is(":checked")) {
@@ -1905,6 +1905,8 @@ define([
                         } else if ($("#modSaveExam").is(":checked")) {
                             this.modSaveMilestones("exam", ms);
                         } else if ($("#modSaveLocal").is(":checked")) {
+                            this.exportMilestones(ms);
+                        } else {                                                      
                             this.exportMilestones(ms);
                         }
                         return;
@@ -1928,8 +1930,8 @@ define([
 
                     },
                     modResetPlan: function(){
-                        var check = confirm('Wollen Sie wirklich alle Meilensteine zurücksetzen?');
-                        if (check === true) {   
+                        var check = confirm('Wollen Sie wirklich ihren Semesterplan zurücksetzen?');
+                        if (check === true) {                               
                             let todo = [];
                             todo.push(new Promise(
                                 (resolve, reject) => {
