@@ -489,7 +489,7 @@ $milestoneArchiveList = '
                                         @change="updateMilestoneStatus()"
                                         >
                                     <a 
-                                        :href="getMoodlePath() + \'/mod/\' + s.instance_type + \'/view.php?id=\'+ s.instance_url_id" 
+                                        :href="(s.instance_type === \'kurstermin\'?(getMoodlePath() + \'/calendar/view.php?month&course=\' + '.$COURSE->id.'):(getMoodlePath() + \'/mod/\' + s.instance_type + \'/view.php?id=\'+ s.instance_url_id))" 
                                         class="resources-selected-name">{{ s.name }}</a>
                                     <span hidden class="resources-selected-remove remove-btn" data-toggle="tooltip" title="Thema, Material oder Aktivität entfernen">
                                         <i class="fa fa-trash" @click="resourceRemove(s.id)"></i>
@@ -614,7 +614,7 @@ $milestoneList = '
                                         @change="updateMilestoneStatus()"
                                         >
                                     <a 
-                                        :href="getMoodlePath() + \'/mod/\' + s.instance_type + \'/view.php?id=\'+ s.instance_url_id" 
+                                        :href="(s.instance_type === \'kurstermin\'?(getMoodlePath() + \'/calendar/view.php?month&course=\' + '.$COURSE->id.'):(getMoodlePath() + \'/mod/\' + s.instance_type + \'/view.php?id=\'+ s.instance_url_id))" 
                                         class="resources-selected-name">{{ s.name }}</a>
                                     <span hidden class="resources-selected-remove remove-btn" data-toggle="tooltip" title="Thema, Material oder Aktivität entfernen">
                                         <i class="fa fa-trash" @click="resourceRemove(s.id)"></i>

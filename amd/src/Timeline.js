@@ -2038,7 +2038,6 @@ define([
                     },      
                     sendMail: function(subject, text){
                         try{     
-                            
                             require(['core/notification'], function(notification) {
                                 console.log("LOADED");
                                 console.log(typeof notification.addNotification);
@@ -2046,17 +2045,8 @@ define([
                                   message: "Your message here",
                                   type: "info"
                                 });
-                                console.log(typeof notification.fetchNotifications);
-                                
+                                console.log(typeof notification.fetchNotifications);                                
                             });
-
-
-
-
-
-
-
-
                             utils.get_ws("sendmail", {
                                 'courseid': parseInt(course.id, 10),
                                 'subject': "hello",
