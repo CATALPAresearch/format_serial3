@@ -619,8 +619,7 @@ $milestoneList = '
                                     <span hidden class="resources-selected-remove remove-btn" data-toggle="tooltip" title="Thema, Material oder Aktivität entfernen">
                                         <i class="fa fa-trash" @click="resourceRemove(s.id)"></i>
                                     </span>
-                                </label>
-                                
+                                </label>                                
                             </li>
                         </ul>
 

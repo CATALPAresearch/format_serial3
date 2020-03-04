@@ -56,7 +56,7 @@ class format_ladtopics_external extends external_api {
 
     public static function sendmail_parameters(){
         return new external_function_parameters(
-            array(
+            array(              
                 'courseid' => new external_value(PARAM_INT, 'course id'),
                 'subject' => new external_value(PARAM_TEXT, 'course id'),
                 'text' => new external_value(PARAM_TEXT, 'course id')
@@ -64,33 +64,13 @@ class format_ladtopics_external extends external_api {
         );
     }
 
-    public static function sendmail($data){
+    public static function sendmail($courseid, $subject, $message){
         global $CFG, $DB, $USER;
         $out = array();
-        try{
-            //\core\notification::info("HIER IST ES");
-            //return array('data' => json_encode($out));
-            $meta = get_meta(4);
-            $message = new \core\message\message();           
-            $message->component = 'moodle';
-            $message->name = 'instantmessage';
-            $message->userfrom = $USER;
-            $message->userto = $USER;
-            $message->subject = 'Neue Message';
-            $message->fullmessage = 'message body';
-            $message->fullmessageformat = FORMAT_MARKDOWN;
-            $message->fullmessagehtml = '<p>message body</p>';
-            $message->smallmessage = 'Testen wir es!';
-            $message->notification = "0";
-            $message->contexturl = 'http://GalaxyFarFarAway.com';
-            $message->contexturlname = 'Context name';
-            $message->replyto = "random@example.com";
-            $message->courseid = 4; 
-
-            $out['type'] = gettype($message);
-
-            $out['messageid'] = message_send($message);         
-            //message_send();
+        try{         
+            if(is_null($courseid) || is_null($subject) || is_null($message)) throw new Exception("Missing Parameter");    
+            $meta = get_meta($courseid); 
+            $out['result'] = email_to_user($USER, $USER, $subject, $message, "", "", "", true);           
         } catch(Exception $ex){
             $out['debug'] = $ex->getMessage();
         }
