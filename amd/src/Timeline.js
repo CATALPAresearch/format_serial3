@@ -258,7 +258,7 @@ define([
                         }
                     });           
 
-                    this.sendMail("marc", "yes");
+                    this.sendNotification("marc", "yes");
                    
                 },
                 created: function () {
@@ -2037,16 +2037,7 @@ define([
                         }
                     },      
                     sendMail: function(subject, text){
-                        try{     
-                            /*require(['core/notification'], function(notification) {
-                                console.log("LOADED");
-                                console.log(typeof notification.addNotification);
-                                notification.addNotification({
-                                  message: "Your message here",
-                                  type: "info"
-                                });
-                                console.log(typeof notification.fetchNotifications);                                
-                            });*/
+                        try{    
                             utils.get_ws("sendmail", {
                                 'courseid': parseInt(course.id, 10),
                                 'subject': "hello",
@@ -2057,7 +2048,39 @@ define([
                         } catch(error){
                             console.log(error);
                         }
-                    },          
+                    }, 
+                    sendNotification: function(subject, text){
+                        /*require(['core/notification'], function(notification) {
+                            notification.addNotification({
+                              message: "Your message here",
+                              type: "info"
+                            });
+                        });*/
+
+                        try{    
+                            utils.get_ws("notification", {
+                                'courseid': parseInt(course.id, 10),
+                                'subject': "hello",
+                                'short': "ss",
+                                'text': "Hier steht deine Werbung"
+                            }, function (u) {                                            
+                               console.log(u);
+                            });
+                        } catch(error){
+                            console.log(error);
+                        }
+
+
+                        /*require(['core/notification'], function(notification) {
+                                console.log("LOADED");
+                                console.log(typeof notification.addNotification);
+                                notification.addNotification({
+                                  message: "Your message here",
+                                  type: "info"
+                                });
+                                console.log(typeof notification.fetchNotifications);                                
+                            });*/
+                    },         
                     modUpdateUser: function(){
                         let items = $("input.mru:checked");
                         if(items.length <= 0){

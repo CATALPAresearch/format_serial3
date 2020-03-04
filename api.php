@@ -54,6 +54,60 @@ function get_meta($courseID){
 
 class format_ladtopics_external extends external_api { 
 
+    public static function notification_parameters(){
+        return new external_function_parameters(
+            array(              
+                'courseid' => new external_value(PARAM_INT, 'course id'),
+                'subject' => new external_value(PARAM_TEXT, 'course id'),
+                'short' => new external_value(PARAM_TEXT, 'course id'),
+                'text' => new external_value(PARAM_TEXT, 'course id')
+            )
+        );
+    }
+
+    public static function notification($courseid, $subject, $short, $text){
+        global $CFG, $DB, $USER;
+        $out = array();
+        try{  
+            if(is_null($courseid) || is_null($subject) || is_null($text)) throw new Exception("Invalid Parameter");           
+            $meta = get_meta($courseid);
+            $message = new \core\message\message();           
+            $message->component = 'moodle';
+            $message->name = 'instantmessage';
+            $message->userfrom = $USER;
+            $message->userto = $USER;
+            $message->subject = $subject;
+            //$message->fullmessage = $text;
+            $message->fullmessageformat = FORMAT_MARKDOWN;
+            $message->fullmessagehtml = $text;
+            $message->smallmessage = $short;
+            $message->notification = "0";
+            //$message->contexturl = 'http://GalaxyFarFarAway.com';
+            //$message->contexturlname = 'Context name';
+            //$message->replyto = "random@example.com";      
+            $message->courseid = $courseid; 
+            $result = message_send($message);            
+            $out['result'] = $result;        
+        } catch(Exception $ex){
+            $out['debug'] = $ex->getMessage();
+        }
+        return array('data' => json_encode($out));
+    }
+
+    public static function notification_is_allowed_from_ajax(){
+        return true;
+    }
+
+    public static function notification_returns(){
+        return new external_single_structure(
+            array(
+                'data' => new external_value(PARAM_RAW, 'data')
+            )
+        );
+    }  
+    
+    // sss
+
     public static function sendmail_parameters(){
         return new external_function_parameters(
             array(              
@@ -87,9 +141,7 @@ class format_ladtopics_external extends external_api {
                 'data' => new external_value(PARAM_RAW, 'data')
             )
         );
-    }
-       
-    
+    }     
     
     public static function getalluser_parameters(){
         return new external_function_parameters(
