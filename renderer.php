@@ -78,8 +78,7 @@ class format_ladtopics_renderer extends format_section_renderer_base {
             }    
             $this->courseid = $COURSE->id;
             $this->found = $found;
-            $this->islogged = $loggedIn;
-            return false;
+            $this->islogged = $loggedIn;            
             if($found === true && $loggedIn === true) return true;            
             return false;        
         } catch(Exception $ex){
@@ -135,7 +134,7 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                 </div>
             </div>
             </div>
-        </div>
+        </div>        
         ';
 
         $moderationModal = '    
@@ -216,6 +215,18 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                         <!-- Footer -->
                     </div>
                 </div>
+                </div>
+            </div>
+            <div class="modal fade" id="reportModal" tabindex="-1" role="dialog" aria-labelledby="reportModal" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="moderationModalTitle">Statistik</h5>                                     
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         ';
@@ -1125,6 +1136,9 @@ $modalMilestone = '
                                                         '.($this->checkModeratorStatus()?'
                                                             <a class="dropdown-item" data-toggle="modal" data-target="#moderationModal" href="#">
                                                                 <i class="fa fa-clock"></i>Planung
+                                                            </a>
+                                                            <a class="dropdown-item" data-toggle="modal" data-target="#reportModal" href="#">
+                                                                <i class="fa fa-clock"></i>Statistik
                                                             </a>':
                                                             '<a class="dropdown-item" data-toggle="modal" data-target="#moderationModal" href="#">
                                                                 <i class="fa fa-clock"></i>Einstellungen

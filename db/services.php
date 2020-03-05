@@ -10,6 +10,14 @@
 
 
 $functions = array(
+        'format_ladtopics_statistics' => array(
+                'classname'   => 'format_ladtopics_external',
+                'methodname'  => 'statistics',
+                'classpath'   => 'course/format/ladtopics/api.php',
+                'description' => 'Obtain the plugin name',
+                'type'        => 'read',
+                'ajax'        => true 
+        ),
         'format_ladtopics_notification' => array(
                 'classname'   => 'format_ladtopics_external',
                 'methodname'  => 'notification',

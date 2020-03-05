@@ -54,6 +54,43 @@ function get_meta($courseID){
 
 class format_ladtopics_external extends external_api { 
 
+    public static function statistics_parameters(){
+        return new external_function_parameters(
+            array(
+                'courseid' => new external_value(PARAM_INT, 'course id')
+            )
+        );
+    }
+
+    public static function statistics($courseid){
+        global $CFG, $DB, $USER;
+        $out = array();
+        try{
+            if(is_null($courseid)) throw new Exception("No course specified");            
+            $context = get_meta($courseid);
+            if($context->user->loggedin === false || $context->user->manager === false) throw new Exception("No Admin");
+            $users = get_enrolled_users($context->course->context);
+            $num_users = count_enrolled_users($context->course->context);
+            $out['users'] = $users;
+            $out['num_users'] = $num_users;
+        } catch(Exception $ex){
+            $out['debug'] = $ex->getMessage();
+        }
+        return array('data' => json_encode($out));
+    }
+
+    public static function statistics_is_allowed_from_ajax(){
+        return true;
+    }
+
+    public static function statistics_returns(){
+        return new external_single_structure(
+            array(
+                'data' => new external_value(PARAM_RAW, 'data')
+            )
+        );
+    }  
+
     public static function notification_parameters(){
         return new external_function_parameters(
             array(              

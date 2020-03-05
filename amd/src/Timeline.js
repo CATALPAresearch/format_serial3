@@ -258,7 +258,7 @@ define([
                         }
                     });           
 
-                    this.sendNotification("marc", "yes");
+                    this.modGetStatisticData();
                    
                 },
                 created: function () {
@@ -2049,6 +2049,17 @@ define([
                             console.log(error);
                         }
                     }, 
+                    modGetStatisticData: function(){
+                        try{    
+                            utils.get_ws("statistics", {
+                                'courseid': parseInt(course.id, 10)                               
+                            }, function (u) {                                            
+                               console.log(u);
+                            });
+                        } catch(error){
+                            console.log(error);
+                        }
+                    },
                     sendNotification: function(subject, text){
                         /*require(['core/notification'], function(notification) {
                             notification.addNotification({
