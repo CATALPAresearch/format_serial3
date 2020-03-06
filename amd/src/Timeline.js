@@ -231,7 +231,7 @@ define([
                                 _this.milestones = JSON.parse(data.milestones);
                                 _this.emptyMilestone.end = new Date();
                                 _this.emptyMilestone.start = new Date();
-                                _this.updateMilestoneStatus();
+                                _this.updateMilestoneStatus();                                
                                 _this.initializeChart();
 
                                 var facts = crossfilter(activityData);
@@ -566,8 +566,9 @@ define([
                                         pos++;
                                     }
                                     obj[pos] = data[i];
-                                }
+                                }                                
                                 _this.resources = obj;
+                                console.log(_this.resources);
                                 for (let i in _this.calendar) {
                                     let element = _this.calendar[i];
                                     if (element.eventtype !== "course" && element.eventtype !== "group") continue;                                  
@@ -2284,11 +2285,9 @@ define([
                                         data = JSON.stringify(data);                                      
                                         utils.get_ws("updateuser", {                                            
                                             'data': data
-                                        }, function (u) {                                            
-                                            console.log(u);
+                                        }, function (u) {                                          
                                             return resolve();
-                                        });
-                                        return reject("Konnte den Benutzer nicht updaten.");
+                                        });                                        
                                     }
                                 );
                                 update.push(prom);
@@ -2296,10 +2295,10 @@ define([
                         );              
                         Promise.all(update).then(
                             (resolve) => {
-                                console.log("resolve");
+                                this.modAlert("success", "Benutzerplanung zurückgesetzt");
                             },
                             (reject) => {
-                                console.log("reject");
+                                this.modAlert("danger", reject);
                             }
                         )   
                         return;       

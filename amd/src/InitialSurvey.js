@@ -246,16 +246,16 @@ define(['jquery'], function ($) {
                 },
                 isAvailableTimeSufficient: function () {
                     var availablaTimeMinimum = 6; // xxx needs to be part of teh course setup
-                    var availablaTimeMaximum = 30;
+                    var availablaTimeMaximum = 30;                             
                     if (this.availableTime <= 0) {
                         return "";
-                    } else if (this.objective === "f1a" && this.availableTime === 1) {
+                    } else if (this.objectives === "f1a" && +this.availableTime === 1) {
                         return "Eine Stunde pro Woche ist zu wenig Zeit, um sich auf die Prüfung vorzubereiten. Der Arbeitsaufwand für ein Modul beträgt 19h pro Woche.";
-                    } else if (this.objective === "f1a" && this.availableTime > 1 && this.availableTime <= availablaTimeMinimum) {
+                    } else if (this.objectives === "f1a" && this.availableTime > 1 && this.availableTime <= availablaTimeMinimum) {
                         return this.availableTime + " Stunden pro Woche sind zu wenig Zeit, um sich auf die Prüfung vorzubereiten. Der Arbeitsaufwand für ein Modul beträgt 19h pro Woche.";
-                    } else if (this.objective !== "f1a" && this.availableTime === 1) {
+                    } else if (this.objectives !== "f1a" && this.availableTime === 1) {
                         return "Eine Stunde pro Woche ist zu wenig Zeit, um das Modul in einem Semester durchzuarbeiten. Der Arbeitsaufwand für ein Modul beträgt 19h pro Woche.";
-                    } else if (this.objective !== "f1a" && this.availableTime > 1 && this.availableTime <= availablaTimeMinimum) {
+                    } else if (this.objectives !== "f1a" && this.availableTime > 1 && this.availableTime <= availablaTimeMinimum) {
                         return this.availableTime + " Stunden pro Woche sind zu wenig Zeit, um das Modul in einem Semester durchzuarbeiten. Der Arbeitsaufwand für ein Modul beträgt 19h pro Woche.";
                     } else if (this.availableTime >= availablaTimeMaximum) {
                         return "Wollen Sie wirklich " + this.availableTime + " Stunden pro Woche aufwenden? Normalerweise benötigt man ca. 20 h/Woche für eine gute Vorbereitung.";
@@ -275,7 +275,7 @@ define(['jquery'], function ($) {
                         'f1a': 'um mich gut auf die Prüfung vorbereiten zu können.',
                         'f1b': 'um mich im Kurs orientieren zu können.'
                     };
-                    text = 'Semesterplanung im ' + takt[this.planingStyle] + ' vorschlagen, ' + reason[this.objective];
+                    text = 'Semesterplanung im ' + takt[this.planingStyle] + ' vorschlagen, ' + reason[this.objectives];
                     return text;
                 },
                 saveSurvey: function () {

@@ -227,7 +227,35 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                             </button>
                         </div>
                         <div class="modal-body" id="modReport">
-                            <div class="statistic-container">                               
+                            <div class="statistic-container">     
+                                <!-- Plan -->                          
+                                <div class="table-responsive">                                    
+                                    <table class="table" border="0">
+                                        <tr>
+                                            <th colspan="2">
+                                                Ziele der Teilnehmer
+                                            </th>
+                                        </tr>
+                                        <tr>
+                                            <td>Prüfung erfolgreich absolvieren</td>                                            
+                                            <td style="padding-right: 30px; text-align: right;">{{modStatistics.msProgessed}}</td>                                            
+                                        </tr>                                
+                                        <tr>
+                                            <td>Orientierung im Themengebiet erlangen </td>
+                                            <td style="padding-right: 30px; text-align: right;">{{modStatistics.msUrgent}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Meinen eigenen Interessen bzgl. bestimmter Themengebiete nachgehen</td>
+                                            <td style="padding-right: 30px; text-align: right;">{{modStatistics.msReady}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Keine Angaben </td>
+                                            <td style="padding-right: 30px; text-align: right;">{{modStatistics.msReflected}}</td>
+                                        </tr>                                       
+                                        <td colspan="2" id="stChartTA"></td>
+                                    </table>
+                                </div>
+                                <!-- Milestones -->                          
                                 <div class="table-responsive">                                    
                                     <table class="table" border="0">
                                         <tr>
