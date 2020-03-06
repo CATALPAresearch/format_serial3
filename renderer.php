@@ -226,6 +226,49 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
+                        <div class="modal-body" id="modReport">
+                            <div>
+                                <h5 class="modal-title">Allgemein</h5> 
+                                <table style="width: 100%;" border="1">
+                                    <tr>
+                                        <td>Teilnehmer/innen</td>
+                                        <td>{{modStatistics.users}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Semesterplanungen</td>
+                                        <td>{{modStatistics.surveys}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2">Meilensteine</td>                                       
+                                    </tr>                                   
+                                    <tr>
+                                        <td>In Bearbeitung</td>
+                                        <td>{{modStatistics.msProgessed}}</td>
+                                    </tr>
+                                   
+                                    <tr>
+                                        <td>Dringend</td>
+                                        <td>{{modStatistics.msUrgent}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Abgeschlossen</td>
+                                        <td>{{modStatistics.msReady}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Reflektiert</td>
+                                        <td>{{modStatistics.msReflected}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Abgelaufen</td>
+                                        <td>{{modStatistics.msMissed}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Gesamt</td>
+                                        <td>{{modStatistics.milestones}}</td>
+                                    </tr>
+                                </table>                                
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

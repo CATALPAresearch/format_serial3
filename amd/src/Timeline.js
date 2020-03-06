@@ -169,7 +169,17 @@ define([
                         modalVisible: false,
                         modalReflectionVisible: false,
                         reflectionsFormVisisble: false,
-                        modUsers: [],                     
+                        modUsers: [],        
+                        modStatistics: {
+                            users: 0,
+                            surveys: 0,
+                            milestones: 0,
+                            msProgessed: 0,
+                            msReady: 0,
+                            msUrgent: 0,
+                            msMissed: 0,                            
+                            msReflected: 0                          
+                        },             
                         strategyCategories: [
                             { id: 'organization', name: 'Organisation' },
                             { id: 'elaboration', name: 'Elaborationsstrategien' },
@@ -2051,12 +2061,63 @@ define([
                     }, 
                     modGetStatisticData: function(){
                         try{    
-                            utils.get_ws("statistics", {
-                                'courseid': parseInt(course.id, 10)                               
-                            }, function (u) {                                            
-                               let obj = JSON.parse(u.data);
-                               console.log(obj);
-                            });
+                            let _this = this;                   
+                            new Promise(
+                                (resolve, reject) => {
+                                    utils.get_ws("statistics", {
+                                        'courseid': parseInt(course.id, 10)                               
+                                    }, function (u) {                                            
+                                       let obj = JSON.parse(u.data);
+                                       return resolve(obj);                                       
+                                    });
+                                }
+                            ).then(
+                                (resolve) => {                         
+                                    console.log(resolve.users);           
+                                    _this.modStatistics.users = resolve.num_users?+resolve.num_users:0;
+                                    _this.modStatistics.surveys = resolve.num_survey?+resolve.num_survey:0;      
+                                    _this.modStatistics.msProgessed = 0,
+                                    _this.modStatistics.msReady = 0,
+                                    _this.modStatistics.msUrgent = 0,
+                                    _this.modStatistics.msMissed = 0,                            
+                                    _this.modStatistics.msReflected = 0
+                                    // get all milestones
+                                    if(resolve.users){                                                                            
+                                        for(let i in resolve.users){
+                                            if(resolve.users[i]["milestones"] && resolve.users[i]["milestones"]["milestones"]){
+                                                resolve.users[i]["milestones"] = JSON.parse(resolve.users[i]["milestones"]["milestones"]);
+                                                let msCount = resolve.users[i]["milestones"].length;
+                                                for(let t in resolve.users[i]["milestones"]){
+                                                    let ms = resolve.users[i]["milestones"][t];
+                                                    switch(ms.status){
+                                                        case 'progress':    _this.modStatistics.msProgessed++;
+                                                                            break;
+                                                        case 'ready':       _this.modStatistics.msReady++;
+                                                                            break;
+                                                        case 'urgent':      _this.modStatistics.msUrgent++;
+                                                                            break;
+                                                        case 'missed':      _this.modStatistics.msMissed++;
+                                                                            break;
+                                                        case 'reflected':   _this.modStatistics.msReflected++;
+                                                                            _this.modStatistics.msReady++;
+                                                                            break;
+                                                    }
+                                                }
+                                                _this.modStatistics.milestones += msCount;
+                                            }
+                                            
+                                            //console.log(JSON.parse(resolve.users[i]["milestones"]["milestones"]));
+                                            /*
+                                            resolve.users[i]["milestones"] = JSON.parse(resolve.users[i]["milestones"]["milestones"]);*/
+                                        }
+                                        //console.log(resolve.users);
+                                    }                        
+                                },
+                                (reject) => {
+                                    console.log(reject);
+                                }
+                            )
+                            
                         } catch(error){
                             console.log(error);
                         }
