@@ -268,7 +268,14 @@ define([
                         }
                     });           
 
-                    this.modGetStatisticData();
+                    $(document).ready(function(){
+                        if($('#reportModal').length > 0){
+                            $('#reportModal').on('shown.bs.modal', function(){
+                                console.log("STARTED");
+                                _this.modGetStatisticData(_this);
+                            });
+                        }
+                    });
                    
                 },
                 created: function () {
@@ -2059,9 +2066,10 @@ define([
                             console.log(error);
                         }
                     }, 
-                    modGetStatisticData: function(){
+                    modGetStatisticData: function(parent){
                         try{    
-                            let _this = this;                   
+                            let _this = parent; 
+                            console.log("element");                  
                             new Promise(
                                 (resolve, reject) => {
                                     utils.get_ws("statistics", {
@@ -2081,9 +2089,90 @@ define([
                                     _this.modStatistics.msUrgent = 0,
                                     _this.modStatistics.msMissed = 0,                            
                                     _this.modStatistics.msReflected = 0
+                                    // initialize charts
+                                   
+                                    let createPie = function(parent, data, color){
+                                        let jqp = $(parent);
+                                        if(jqp.length > 0){
+                                            jqp.empty();
+                                            let width = jqp.width()/2;
+                                            let radius = width / 2 - 20;
+                                            let chart = d3.select(parent)
+                                                            .append("svg")
+                                                                .attr("width", width)
+                                                                .attr("height", width)                                                               
+                                                                .append("g")
+                                                                    .attr("transform", "translate(" + width / 2 + "," + width / 2 + ")");
+                                            var color = d3.scaleOrdinal()
+                                                            .domain(data)
+                                                            .range(color);
+                                            var pie = d3.pie().value(function(d) {return d.value; });
+                                            var data_ready = pie(d3.entries(data));
+
+                                            $(parent+" svg").css({
+                                                "margin": "auto",
+                                                "display": "block"
+                                            });
+
+                                            var arcGenerator = d3.arc()
+                                                .innerRadius(0)
+                                                .outerRadius(radius);
+
+                                            chart
+                                                .selectAll('whatever')
+                                                .data(data_ready)
+                                                .enter()
+                                                .append('path')
+                                                .attr('d', arcGenerator)
+                                                .attr('fill', function(d){ return(color(d.data.key)) })
+                                                .attr("stroke", "black")
+                                                .style("stroke-width", "2px")
+                                                .style("opacity", 0.7);
+                                            chart
+                                                .selectAll('mySlices')
+                                                .data(data_ready)
+                                                .enter()
+                                                .append('text')
+                                                .text(function(d){ return d.data.key})
+                                                .attr("transform", function(d) { return "translate(" + arcGenerator.centroid(d) + ")";  })
+                                                .style("text-anchor", "middle")
+                                                .style("font-size", 17)
+                                        }                                        
+                                    }
+
+                                    let data = {
+                                        "TEST MICH": 10,
+                                        b: 20, 
+                                        c: 30, 
+                                        d: 30
+                                    };
+                                    var color = ["#98abc5", "#8a89a6", "#7b6888", "#6b486b"];
+                                    createPie("#stChartMS", data, color);
+                                  
+
+
+
+                                  
+
+
+                                    //var arc = d3.svg.arc().outerRadius(radius * 0.8).innerRadius(radius * 0.4);
+                                    //var outerArc = d3.svg.arc().innerRadius(radius * 0.9).outerRadius(radius * 0.9);                                    
+                                    //chartSP.attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+                                  
+                                    
+                                    
+
+
                                     // get all milestones
                                     if(resolve.users){                                                                            
                                         for(let i in resolve.users){
+                                            if(resolve.users[i]['survey'] && resolve.users[i]['survey']['value']){
+                                                resolve.users[i]['survey'] = JSON.parse(resolve.users[i]['survey']['value']);
+                                                let surv = resolve.users[i]['survey'];
+                                                switch(surv.objectives){
+                                                    // TODO
+                                                }
+                                            }
                                             if(resolve.users[i]["milestones"] && resolve.users[i]["milestones"]["milestones"]){
                                                 resolve.users[i]["milestones"] = JSON.parse(resolve.users[i]["milestones"]["milestones"]);
                                                 let msCount = resolve.users[i]["milestones"].length;
@@ -2110,6 +2199,7 @@ define([
                                             /*
                                             resolve.users[i]["milestones"] = JSON.parse(resolve.users[i]["milestones"]["milestones"]);*/
                                         }
+
                                         //console.log(resolve.users);
                                     }                        
                                 },
