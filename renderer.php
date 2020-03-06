@@ -238,19 +238,19 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                                         </tr>
                                         <tr>
                                             <td>Prüfung erfolgreich absolvieren</td>                                            
-                                            <td style="padding-right: 30px; text-align: right;">{{modStatistics.msProgessed}}</td>                                            
+                                            <td style="padding-right: 30px; text-align: right;">{{modStatistics.ptExam}}</td>                                            
                                         </tr>                                
                                         <tr>
                                             <td>Orientierung im Themengebiet erlangen </td>
-                                            <td style="padding-right: 30px; text-align: right;">{{modStatistics.msUrgent}}</td>
+                                            <td style="padding-right: 30px; text-align: right;">{{modStatistics.ptOrientation}}</td>
                                         </tr>
                                         <tr>
                                             <td>Meinen eigenen Interessen bzgl. bestimmter Themengebiete nachgehen</td>
-                                            <td style="padding-right: 30px; text-align: right;">{{modStatistics.msReady}}</td>
+                                            <td style="padding-right: 30px; text-align: right;">{{modStatistics.ptInterest}}</td>
                                         </tr>
                                         <tr>
                                             <td>Keine Angaben </td>
-                                            <td style="padding-right: 30px; text-align: right;">{{modStatistics.msReflected}}</td>
+                                            <td style="padding-right: 30px; text-align: right;">{{modStatistics.ptNoAnswer}}</td>
                                         </tr>                                       
                                         <td colspan="2" id="stChartTA"></td>
                                     </table>

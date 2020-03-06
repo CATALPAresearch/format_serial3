@@ -178,7 +178,11 @@ define([
                             msReady: 0,
                             msUrgent: 0,
                             msMissed: 0,                            
-                            msReflected: 0                          
+                            msReflected: 0,
+                            ptExam: 0,
+                            ptOrientation: 0,
+                            ptInterest: 0,
+                            ptNoAnswer: 0                        
                         },             
                         strategyCategories: [
                             { id: 'organization', name: 'Organisation' },
@@ -2090,14 +2094,19 @@ define([
                                     _this.modStatistics.msUrgent = 0,
                                     _this.modStatistics.msMissed = 0,                            
                                     _this.modStatistics.msReflected = 0
+                                    _this.modStatistics.ptExam = 0;
+                                    _this.modStatistics.ptOrientation = 0;
+                                    _this.modStatistics.ptInterest = 0;
+                                    _this.modStatistics.ptNoAnswer = 0;
                                     // initialize charts
                                    
-                                    let createPie = function(parent, data, color){
+                                    let createPie = function(parent, data, color){                                        
                                         for(let i in data){
                                             if(data[i] <= 0){
                                                 delete(data[i]);
                                             }
                                         }
+                                        if(Object.keys(data).length <= 0) return;                                       
                                         let jqp = $(parent);
                                         if(jqp.length > 0){
                                             jqp.empty();
@@ -2146,21 +2155,7 @@ define([
                                                 .style("text-anchor", "middle")
                                                 .style("font-size", 17)
                                         }                                        
-                                    }                               
-                                  
-
-
-
-    
-
-
-                                    //var arc = d3.svg.arc().outerRadius(radius * 0.8).innerRadius(radius * 0.4);
-                                    //var outerArc = d3.svg.arc().innerRadius(radius * 0.9).outerRadius(radius * 0.9);                                    
-                                    //chartSP.attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
-                                  
-                                    
-                                    
-
+                                    }                            
 
                                     // get all milestones
                                     if(resolve.users){                                                                            
@@ -2169,7 +2164,14 @@ define([
                                                 resolve.users[i]['survey'] = JSON.parse(resolve.users[i]['survey']['value']);
                                                 let surv = resolve.users[i]['survey'];
                                                 switch(surv.objectives){
-                                                    // TODO
+                                                    case 'f1a': _this.modStatistics.ptExam++;
+                                                                break;
+                                                    case 'f1b': _this.modStatistics.ptOrientation++;
+                                                                break;
+                                                    case 'f1c': _this.modStatistics.ptInterest++;
+                                                                break;
+                                                    case 'f1d': _this.modStatistics.ptNoAnswer++;
+                                                                break;
                                                 }
                                             }
                                             if(resolve.users[i]["milestones"] && resolve.users[i]["milestones"]["milestones"]){
@@ -2190,8 +2192,8 @@ define([
                                                                             _this.modStatistics.msReady++;
                                                                             break;
                                                     }
-                                                }
-                                                _this.modStatistics.milestones += msCount;
+                                                    _this.modStatistics.milestones += msCount;
+                                                }                                                
                                             }
                                             
                                             //console.log(JSON.parse(resolve.users[i]["milestones"]["milestones"]));
@@ -2206,11 +2208,18 @@ define([
                                             "Abgeschlossen": _this.modStatistics.msReady, 
                                             "Reflektiert": _this.modStatistics.msReflected,
                                             "Abgelaufen": _this.modStatistics.msMissed
-                                        };                                    
-
-                                        console.log(data);
+                                        };                                   
+                                        
                                         var color = ["#003f5c", "#ffa600", "#bc5090", "#58508d", "#ff6361"];
                                         createPie("#stChartMS", data, color);
+
+                                        data = {
+                                            "Prüfung": _this.modStatistics.ptExam,                                     
+                                            "Orientierung": _this.modStatistics.ptOrientation,                                                              
+                                            "Interesse": _this.modStatistics.ptInterest,                                                             
+                                            "Keine Angabe": _this.modStatistics.ptNoAnswer
+                                        }
+                                        createPie("#stChartTA", data, color);
 
                                         //console.log(resolve.users);
                                     }                        
@@ -2257,6 +2266,7 @@ define([
                             });*/
                     },         
                     modUpdateUser: function(){
+                        let _this = this;
                         let items = $("input.mru:checked");
                         if(items.length <= 0){
                             this.modAlert("warning", "Bitte wählen Sie einen Benutzer aus.");
@@ -2285,8 +2295,18 @@ define([
                                         data = JSON.stringify(data);                                      
                                         utils.get_ws("updateuser", {                                            
                                             'data': data
-                                        }, function (u) {                                          
-                                            return resolve();
+                                        }, function (u) {    
+                                            for(let i in _this.modUsers){
+                                                if(_this.modUsers[i]['id'] === val){
+                                                    console.log(_this.modUsers[i]['id'])
+                                                    if(_this.modUsers[i]['self'] === true){
+                                                        console.log(_this.modUsers[i]['self']);
+                                                        return resolve(true);
+                                                    } else {
+                                                        return resolve(false);
+                                                    }
+                                                }
+                                            }                                     
                                         });                                        
                                     }
                                 );
@@ -2295,6 +2315,9 @@ define([
                         );              
                         Promise.all(update).then(
                             (resolve) => {
+                                for(let i in resolve){
+                                    if(resolve[i] === true) location.reload();
+                                }                              
                                 this.modAlert("success", "Benutzerplanung zurückgesetzt");
                             },
                             (reject) => {

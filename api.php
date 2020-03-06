@@ -251,7 +251,12 @@ class format_ladtopics_external extends external_api {
             foreach($enrolled as $key=>$value){
                 if(!isset($value->id)) continue;
                 $user = new stdClass();
-                $user->id = $value->id;               
+                $user->id = $value->id;   
+                if($user->id === $context->user->id){
+                    $user->self = true;
+                } else {
+                    $user->self = false;
+                }
                 if(isset($value->username) && strlen($value->username) > 0) {
                     $username = ucfirst(strtolower($value->username));
                     $user->username = $username;                      
