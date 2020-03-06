@@ -2092,6 +2092,11 @@ define([
                                     // initialize charts
                                    
                                     let createPie = function(parent, data, color){
+                                        for(let i in data){
+                                            if(data[i] <= 0){
+                                                delete(data[i]);
+                                            }
+                                        }
                                         let jqp = $(parent);
                                         if(jqp.length > 0){
                                             jqp.empty();
@@ -2099,10 +2104,10 @@ define([
                                             let radius = width / 2 - 20;
                                             let chart = d3.select(parent)
                                                             .append("svg")
-                                                                .attr("width", width)
-                                                                .attr("height", width)                                                               
-                                                                .append("g")
-                                                                    .attr("transform", "translate(" + width / 2 + "," + width / 2 + ")");
+                                                            .attr("width", width)
+                                                            .attr("height", width)                                                               
+                                            chart.append("g").attr("class", "slices").attr("transform", "translate(" + width / 2 + "," + width / 2 + ")");
+                                            chart.append("g").attr("class", "labels").attr("transform", "translate(" + width / 2 + "," + width / 2 + ")");
                                             var color = d3.scaleOrdinal()
                                                             .domain(data)
                                                             .range(color);
@@ -2119,7 +2124,8 @@ define([
                                                 .outerRadius(radius);
 
                                             chart
-                                                .selectAll('whatever')
+                                                .select('.slices')
+                                                .selectAll("path.slice")
                                                 .data(data_ready)
                                                 .enter()
                                                 .append('path')
@@ -2129,30 +2135,22 @@ define([
                                                 .style("stroke-width", "2px")
                                                 .style("opacity", 0.7);
                                             chart
-                                                .selectAll('mySlices')
+                                                .select('.labels')
+                                                .selectAll("text")
                                                 .data(data_ready)
                                                 .enter()
                                                 .append('text')
-                                                .text(function(d){ return d.data.key})
+                                                .text(function(d){ return d.data.key+" ("+d.data.value+")"})
                                                 .attr("transform", function(d) { return "translate(" + arcGenerator.centroid(d) + ")";  })
                                                 .style("text-anchor", "middle")
                                                 .style("font-size", 17)
                                         }                                        
-                                    }
-
-                                    let data = {
-                                        "TEST MICH": 10,
-                                        b: 20, 
-                                        c: 30, 
-                                        d: 30
-                                    };
-                                    var color = ["#98abc5", "#8a89a6", "#7b6888", "#6b486b"];
-                                    createPie("#stChartMS", data, color);
+                                    }                               
                                   
 
 
 
-                                  
+    
 
 
                                     //var arc = d3.svg.arc().outerRadius(radius * 0.8).innerRadius(radius * 0.4);
@@ -2199,6 +2197,19 @@ define([
                                             /*
                                             resolve.users[i]["milestones"] = JSON.parse(resolve.users[i]["milestones"]["milestones"]);*/
                                         }
+
+
+                                        let data = {
+                                            "Bearbeitung": _this.modStatistics.msProgessed,
+                                            "Dringend": _this.modStatistics.msUrgent, 
+                                            "Abgeschlossen": _this.modStatistics.msReady, 
+                                            "Reflektiert": _this.modStatistics.msReflected,
+                                            "Abgelaufen": _this.modStatistics.msMissed
+                                        };                                    
+
+                                        console.log(data);
+                                        var color = ["#003f5c", "#ffa600", "#bc5090", "#58508d", "#ff6361"];
+                                        createPie("#stChartMS", data, color);
 
                                         //console.log(resolve.users);
                                     }                        

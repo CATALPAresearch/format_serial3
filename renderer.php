@@ -228,96 +228,36 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                         </div>
                         <div class="modal-body" id="modReport">
                             <div class="statistic-container">                               
-                                <div class="table-responsive">
-                                    <table class="table">
-                                        <tr>
-                                            <th colspan="2">Teilnehmer/innen</th>                                       
-                                        </tr>
-                                        <tr>
-                                            <td>Männlich</td>
-                                            <td>{{modStatistics.surveys}}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Weiblich</td>
-                                            <td>{{modStatistics.surveys}}</td>
-                                        </tr>
-                                        <tr>
-                                            <th colspan="2">Semesterplanungen</th>                                       
-                                        </tr>
-                                        <tr>
-                                            <td>Die Prüfung erfolgreich absolvieren</td>
-                                            <td>{{modStatistics.surveys}}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Orientierung im Themengebiet erlangen</td>
-                                            <td>{{modStatistics.surveys}}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Meinen eigenen Interessen bzgl. bestimmter Themengebiete nachgehen</td>
-                                            <td>{{modStatistics.surveys}}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>keine Angaben</td>
-                                            <td>{{modStatistics.surveys}}</td>
-                                        </tr>
-                                        <tr>
-                                            <th colspan="2">Meilensteine</th>                                       
-                                        </tr>                                   
-                                        <tr>
-                                            <td>In Bearbeitung</td>
-                                            <td>{{modStatistics.msProgessed}}</td>
-                                        </tr>
-                                    
-                                        <tr>
-                                            <td>Dringend</td>
-                                            <td>{{modStatistics.msUrgent}}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Abgeschlossen</td>
-                                            <td>{{modStatistics.msReady}}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Reflektiert</td>
-                                            <td>{{modStatistics.msReflected}}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Abgelaufen</td>
-                                            <td>{{modStatistics.msMissed}}</td>
-                                        </tr>
-                                        <tr class="table-secondary">
-                                            <td>Gesamt</td>
-                                            <td>{{modStatistics.milestones}}</td>
-                                        </tr>
-                                    </table> 
-                                    <table class="table">
+                                <div class="table-responsive">                                    
+                                    <table class="table" border="0">
                                         <tr>
                                             <th colspan="2">
                                                 Meilensteine
                                             </th>
                                         </tr>
                                         <tr>
-                                            <td>In Bearbeitung</td>
-                                            <td>{{modStatistics.msProgessed}}</td>
+                                            <td>Bearbeitung</td>                                            
+                                            <td style="padding-right: 30px; text-align: right;">{{modStatistics.msProgessed}}</td>                                            
                                         </tr>                                
                                         <tr>
                                             <td>Dringend</td>
-                                            <td>{{modStatistics.msUrgent}}</td>
+                                            <td style="padding-right: 30px; text-align: right;">{{modStatistics.msUrgent}}</td>
                                         </tr>
                                         <tr>
                                             <td>Abgeschlossen</td>
-                                            <td>{{modStatistics.msReady}}</td>
+                                            <td style="padding-right: 30px; text-align: right;">{{modStatistics.msReady}}</td>
                                         </tr>
                                         <tr>
                                             <td>Reflektiert</td>
-                                            <td>{{modStatistics.msReflected}}</td>
+                                            <td style="padding-right: 30px; text-align: right;">{{modStatistics.msReflected}}</td>
                                         </tr>
                                         <tr>
                                             <td>Abgelaufen</td>
-                                            <td>{{modStatistics.msMissed}}</td>
+                                            <td style="padding-right: 30px; text-align: right;">{{modStatistics.msMissed}}</td>
                                         </tr>
                                         <tr class="table-secondary">
                                             <td>Gesamt</td>
-                                            <td>{{modStatistics.milestones}}</td>
+                                            <td style="padding-right: 30px; text-align: right;">{{modStatistics.milestones}}</td>
                                         </tr>
                                         <td colspan="2" id="stChartMS"></td>
                                     </table>
