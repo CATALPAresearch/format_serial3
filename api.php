@@ -63,7 +63,7 @@ class format_ladtopics_external extends external_api {
     }
 
     public static function statistics($courseid){
-        global $CFG, $DB, $USER;
+        global $CFG, $DB;
         $out = array();
         try{
             if(is_null($courseid)) throw new Exception("No course specified");            
@@ -71,7 +71,59 @@ class format_ladtopics_external extends external_api {
             if($context->user->loggedin === false || $context->user->manager === false) throw new Exception("No Admin");
             $users = get_enrolled_users($context->course->context);
             $num_users = count_enrolled_users($context->course->context);
-            $out['users'] = $users;
+            $out['users'] = array();  
+            $out['num_survey'] = 0;      
+            foreach($users as $user){
+                $uo = new stdClass();
+                $uo->firstaccess = $user->firstaccess;
+                $uo->lastaccess = $user->lastaccess;
+                $uo->lastlogin = $user->lastlogin;  
+                $uo->isEnrolled = is_enrolled($context->course->context, $user->id);
+                $uo->currentLogin = $user->currentlogin;
+                // milesones           
+                $transaction = $DB->start_delegated_transaction(); 
+                $sql='
+                    SELECT t.milestones, t.settings, t.timemodified 
+                    FROM '.$CFG->prefix.'ladtopics_milestones AS t
+                    WHERE   
+                        t.course = ' . (int)$courseid . ' 
+                        AND t.userid = ' . (int)$user->id . '
+                    ORDER BY t.timemodified DESC
+                    LIMIT 1
+                    ;';                    
+                $uo->milestones = $DB->get_record_sql($sql);                
+                $transaction->allow_commit();
+                // numbers
+                $transaction = $DB->start_delegated_transaction(); 
+                $sql='
+                    SELECT t.timemodified 
+                    FROM '.$CFG->prefix.'ladtopics_milestones AS t
+                    WHERE   
+                        t.course = ' . (int)$courseid . ' 
+                        AND t.userid = ' . (int)$user->id . '
+                    ORDER BY t.timemodified DESC                 
+                    ;';                    
+                $uo->milestonesChanged = $DB->get_records_sql($sql);
+                $transaction->allow_commit();
+                // preferences               
+                $transaction = $DB->start_delegated_transaction();
+                $resSD = $DB->get_record("user_preferences", array(
+                    'name' => 'ladtopics_survey_done-course-' . (int)$courseid, 
+                    'userid'=>(int)$user->id
+                ));
+                $transaction->allow_commit();
+                $uo->surveyDone = $resSD;            
+                $transaction = $DB->start_delegated_transaction();
+                $res = $DB->get_record("user_preferences", array(
+                    'name' => 'ladtopics_survey_results-course-' . (int)$courseid, 
+                    'userid'=>(int)$user->id
+                ));
+                $transaction->allow_commit();
+                $uo->survey = $res;
+                $out['users'][] = $uo;
+                if(!is_bool($resSD) && !is_bool($res)) $out['num_survey']++;
+                //$out[] = $user;
+            }
             $out['num_users'] = $num_users;
         } catch(Exception $ex){
             $out['debug'] = $ex->getMessage();

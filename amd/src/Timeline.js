@@ -2054,7 +2054,8 @@ define([
                             utils.get_ws("statistics", {
                                 'courseid': parseInt(course.id, 10)                               
                             }, function (u) {                                            
-                               console.log(u);
+                               let obj = JSON.parse(u.data);
+                               console.log(obj);
                             });
                         } catch(error){
                             console.log(error);
