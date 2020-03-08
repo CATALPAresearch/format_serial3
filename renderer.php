@@ -251,8 +251,23 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                                         <tr>
                                             <td>Keine Angaben </td>
                                             <td style="padding-right: 30px; text-align: right;">{{modStatistics.ptNoAnswer}}</td>
-                                        </tr>                                       
-                                        <td colspan="2" id="stChartTA"></td>
+                                        </tr>  
+                                        <tr>                                     
+                                            <td colspan="2" id="stChartTA"></td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <!-- Stunden -->
+                                <div class="table-responsive">
+                                    <table class="table" border="0">
+                                        <tr>
+                                            <th colspan="2">
+                                                Stundenpensum
+                                            </th>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2" id="stChartHR"></td>
+                                        </tr>
                                     </table>
                                 </div>
                                 <!-- Milestones -->                          
@@ -287,7 +302,9 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                                             <td>Gesamt</td>
                                             <td style="padding-right: 30px; text-align: right;">{{modStatistics.milestones}}</td>
                                         </tr>
-                                        <td colspan="2" id="stChartMS"></td>
+                                        <tr>
+                                            <td colspan="2" id="stChartMS"></td>
+                                        </tr>
                                     </table>
                                 </div>                                                             
                             </div>

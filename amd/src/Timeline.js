@@ -2153,9 +2153,96 @@ define([
                                                 .text(function(d){ return d.data.key+" ("+d.data.value+")"})
                                                 .attr("transform", function(d) { return "translate(" + arcGenerator.centroid(d) + ")";  })
                                                 .style("text-anchor", "middle")
-                                                .style("font-size", 17)
+                                                .style("font-size", 17);
                                         }                                        
-                                    }                            
+                                    }   
+                                    
+                                    let createBarChart = function(parent, data, color){
+                                        
+                                        for(let i in data){
+                                            if(data[i] <= 0){
+                                                delete(data[i]);
+                                            }
+                                        }
+
+                                        if(Object.keys(data).length <= 0) return;   
+
+                                        let jqp = $(parent);
+
+                                        if(jqp.length > 0){
+                                            
+                                            jqp.empty();
+
+                                            let margin = 30;
+                                            let width = jqp.width() - 8;
+                                            let height = (width / 2) - 2 * margin;
+                                            width = width - 2 * margin;                                           
+
+                                            let chart = d3
+                                                .select(parent)
+                                                .append("svg")
+                                                .attr("width", width + 2 * margin)
+                                                .attr("height", height + 2 * margin)                                                
+
+                                            let maxY = 0;
+                                            let maxX = 0;
+
+                                            for(let t in data){
+                                                let obj = data[t];
+                                                if(+obj['numb'] > maxX) maxX = obj['numb'];
+                                                if(+obj['count'] > maxY) maxY = obj['count'];
+                                            }                                            
+                                         
+                                            let yScale = d3
+                                                .scaleLinear()
+                                                .range([height, 0])
+                                                .domain([0, maxY + 1])                                                
+                                                .nice();
+
+                                            chart
+                                                .append("g")
+                                                .attr('transform', `translate(${margin}, ${margin})`)
+                                                .attr("class", "Yaxis")                           
+                                                .call(
+                                                    d3
+                                                        .axisLeft(yScale)
+                                                        .tickFormat(d3.format('.0f'))
+                                                        .ticks(maxY + 1)
+                                                );
+                                       
+                                            let xScale = d3
+                                                .scaleLinear()
+                                                .range([0, width])
+                                                .domain([0, maxX + 1])
+                                                .nice();
+                                                
+                                            chart
+                                                .append("g")                                                
+                                                .attr("class", "Xaxis")
+                                                .attr('transform', `translate(${margin}, ${height + margin})`)
+                                                .call(d3.axisBottom(xScale));
+                                        
+                                            let barWidth = (width / maxX) / 2;
+
+                                            chart
+                                                .append("g")
+                                                .attr('transform', `translate(${margin - barWidth / 2}, ${margin})`)
+                                                .attr("class", "bars")
+                                                .selectAll()
+                                                .data(data)
+                                                .enter()
+                                                .append('rect')
+                                                .style("fill", color)
+                                                .attr('x', (s) => xScale(s.numb))
+                                                .attr('y', (s) => yScale(s.count))
+                                                .attr('height', (s) => height - yScale(s.count))
+                                                .attr('width', barWidth);                                            
+                                         
+                                        }
+                                        return;                               
+                                    }
+                                    
+                                    let availTime = {};                                   
 
                                     // get all milestones
                                     if(resolve.users){                                                                            
@@ -2174,6 +2261,14 @@ define([
                                                                 break;
                                                 }
                                             }
+                                            if(resolve.users[i]['survey']['availableTime']){
+                                                let time = resolve.users[i]['survey']['availableTime'];                                                
+                                                if(availTime[time]){
+                                                    availTime[time]++;
+                                                } else {
+                                                    availTime[time] = 1;
+                                                }
+                                            }                                            
                                             if(resolve.users[i]["milestones"] && resolve.users[i]["milestones"]["milestones"]){
                                                 resolve.users[i]["milestones"] = JSON.parse(resolve.users[i]["milestones"]["milestones"]);
                                                 let msCount = resolve.users[i]["milestones"].length;
@@ -2191,9 +2286,9 @@ define([
                                                         case 'reflected':   _this.modStatistics.msReflected++;
                                                                             _this.modStatistics.msReady++;
                                                                             break;
-                                                    }
-                                                    _this.modStatistics.milestones += msCount;
-                                                }                                                
+                                                    }                                                    
+                                                } 
+                                                _this.modStatistics.milestones += msCount;                                               
                                             }
                                             
                                             //console.log(JSON.parse(resolve.users[i]["milestones"]["milestones"]));
@@ -2201,6 +2296,20 @@ define([
                                             resolve.users[i]["milestones"] = JSON.parse(resolve.users[i]["milestones"]["milestones"]);*/
                                         }
 
+                                        availTime[9] = 2;
+                                        let timeArray = [];
+                                        console.log(timeArray);
+
+                                        for(let u in availTime){
+                                            timeArray.push(
+                                                {
+                                                    numb: parseInt(u),
+                                                    count: availTime[u]
+                                                }
+                                            );
+                                        }
+
+                                        createBarChart("#stChartHR", timeArray, "#003f5c");                                        
 
                                         let data = {
                                             "Bearbeitung": _this.modStatistics.msProgessed,
@@ -2219,7 +2328,7 @@ define([
                                             "Interesse": _this.modStatistics.ptInterest,                                                             
                                             "Keine Angabe": _this.modStatistics.ptNoAnswer
                                         }
-                                        createPie("#stChartTA", data, color);
+                                        createPie("#stChartTA", data, color);                                        
 
                                         //console.log(resolve.users);
                                     }                        
