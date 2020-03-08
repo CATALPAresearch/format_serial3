@@ -2220,7 +2220,12 @@ define([
                                                 .append("g")                                                
                                                 .attr("class", "Xaxis")
                                                 .attr('transform', `translate(${margin}, ${height + margin})`)
-                                                .call(d3.axisBottom(xScale));
+                                                .call(
+                                                    d3
+                                                        .axisBottom(xScale)
+                                                        .tickFormat(d3.format('.0f'))
+                                                        .ticks(maxX + 1)
+                                                );
                                         
                                             let barWidth = (width / maxX) / 2;
 
@@ -2295,12 +2300,18 @@ define([
                                             /*
                                             resolve.users[i]["milestones"] = JSON.parse(resolve.users[i]["milestones"]["milestones"]);*/
                                         }
+                                       
+                                        availTime[15] = 2;
+                                        availTime[14] = 2;
 
-                                        availTime[9] = 2;
-                                        let timeArray = [];
-                                        console.log(timeArray);
+                                        let timeArray = [];     
+                                        
+                                        let table = "";
 
                                         for(let u in availTime){
+
+                                            table += `<tr><td>${u} SWS</td><td>${availTime[u]}</td></tr>`;
+                                            
                                             timeArray.push(
                                                 {
                                                     numb: parseInt(u),
@@ -2308,6 +2319,8 @@ define([
                                                 }
                                             );
                                         }
+
+                                        $('#modWorkload tr:first').after(table);
 
                                         createBarChart("#stChartHR", timeArray, "#003f5c");                                        
 

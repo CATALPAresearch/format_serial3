@@ -259,7 +259,7 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                                 </div>
                                 <!-- Stunden -->
                                 <div class="table-responsive">
-                                    <table class="table" border="0">
+                                    <table class="table" border="0" id="modWorkload">
                                         <tr>
                                             <th colspan="2">
                                                 Stundenpensum
