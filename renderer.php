@@ -227,7 +227,29 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                             </button>
                         </div>
                         <div class="modal-body" id="modReport">
-                            <div class="statistic-container">     
+                            <div class="statistic-container"> 
+                                <!-- Allgemein -->
+                                <div class="table-responsive"> 
+                                    <table class="table" border="0">
+                                        <tr>
+                                            <th colspan="2">
+                                                Allgemein
+                                            </th>
+                                        </tr>
+                                        <tr>
+                                            <td>Semesterplanung erledigt</td>                                            
+                                            <td style="padding-right: 30px; text-align: right;">{{modStatistics.ptSum}}</td>                                            
+                                        </tr>
+                                        <tr>
+                                            <td>Meilensteine angelegt</td>                                            
+                                            <td style="padding-right: 30px; text-align: right;">{{modStatistics.ptMS}}</td>                                            
+                                        </tr>
+                                        <tr class="table-secondary">
+                                            <td>Einschreibungen</td>
+                                            <td style="padding-right: 30px; text-align: right;">{{modStatistics.ptUser}}</td>
+                                        </tr>
+                                    </table>
+                                </div>    
                                 <!-- Plan -->                          
                                 <div class="table-responsive">                                    
                                     <table class="table" border="0">
@@ -279,23 +301,31 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                                             </th>
                                         </tr>
                                         <tr>
-                                            <td>Prüfung erfolgreich absolvieren</td>                                            
-                                            <td style="padding-right: 30px; text-align: right;">{{modStatistics.ptExam}}</td>                                            
+                                            <td>Für eine Woche</td>                                            
+                                            <td style="padding-right: 30px; text-align: right;">{{modStatistics.ptW1}}</td>                                            
                                         </tr>                                
                                         <tr>
-                                            <td>Orientierung im Themengebiet erlangen </td>
-                                            <td style="padding-right: 30px; text-align: right;">{{modStatistics.ptOrientation}}</td>
+                                            <td>Für die nächsten 4 Wochen</td>
+                                            <td style="padding-right: 30px; text-align: right;">{{modStatistics.ptW4}}</td>
                                         </tr>
                                         <tr>
-                                            <td>Meinen eigenen Interessen bzgl. bestimmter Themengebiete nachgehen</td>
-                                            <td style="padding-right: 30px; text-align: right;">{{modStatistics.ptInterest}}</td>
+                                            <td>Für das ganze Semester mit Arbeitspaketen für je eine Woche</td>
+                                            <td style="padding-right: 30px; text-align: right;">{{modStatistics.ptWA}}</td>
                                         </tr>
+                                        <tr>
+                                            <td>Für das ganze Semester mit Arbeitspaketen für je 2 Wochen</td>
+                                            <td style="padding-right: 30px; text-align: right;">{{modStatistics.ptWA2}}</td>
+                                        </tr> 
+                                        <tr>
+                                            <td>Für das ganze Semester mit Arbeitspaketen für je einen Monat</td>
+                                            <td style="padding-right: 30px; text-align: right;">{{modStatistics.ptWA4}}</td>
+                                        </tr> 
                                         <tr>
                                             <td>Keine Angaben </td>
-                                            <td style="padding-right: 30px; text-align: right;">{{modStatistics.ptNoAnswer}}</td>
+                                            <td style="padding-right: 30px; text-align: right;">{{modStatistics.ptWANA}}</td>
                                         </tr>  
                                         <tr>                                     
-                                            <td colspan="2" id="stChartTA"></td>
+                                            <td colspan="2" id="stChartPS"></td>
                                         </tr>
                                     </table>
                                 </div>

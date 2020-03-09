@@ -182,7 +182,13 @@ define([
                             ptExam: 0,
                             ptOrientation: 0,
                             ptInterest: 0,
-                            ptNoAnswer: 0                        
+                            ptNoAnswer: 0,
+                            ptW1: 0,
+                            ptW4: 0,
+                            ptWA: 0,
+                            ptWA2: 0,
+                            ptWA4: 0,
+                            ptWANA: 0                      
                         },             
                         strategyCategories: [
                             { id: 'organization', name: 'Organisation' },
@@ -2098,6 +2104,15 @@ define([
                                     _this.modStatistics.ptOrientation = 0;
                                     _this.modStatistics.ptInterest = 0;
                                     _this.modStatistics.ptNoAnswer = 0;
+                                    _this.modStatistics.ptW1 = 0;
+                                    _this.modStatistics.ptW4 = 0;
+                                    _this.modStatistics.ptWA = 0;
+                                    _this.modStatistics.ptWA2 = 0;
+                                    _this.modStatistics.ptWA4 = 0;
+                                    _this.modStatistics.ptWANA = 0;  
+                                    _this.modStatistics.ptSum = 0;
+                                    _this.modStatistics.ptMS = 0;
+                                    _this.modStatistics.ptUser = 0;
                                     // initialize charts
                                    
                                     let createPie = function(parent, data, color){                                        
@@ -2251,30 +2266,52 @@ define([
 
                                     // get all milestones
                                     if(resolve.users){                                                                            
-                                        for(let i in resolve.users){
-                                            if(resolve.users[i]['survey'] && resolve.users[i]['survey']['value']){
-                                                resolve.users[i]['survey'] = JSON.parse(resolve.users[i]['survey']['value']);
-                                                let surv = resolve.users[i]['survey'];
-                                                switch(surv.objectives){
-                                                    case 'f1a': _this.modStatistics.ptExam++;
-                                                                break;
-                                                    case 'f1b': _this.modStatistics.ptOrientation++;
-                                                                break;
-                                                    case 'f1c': _this.modStatistics.ptInterest++;
-                                                                break;
-                                                    case 'f1d': _this.modStatistics.ptNoAnswer++;
-                                                                break;
+                                        for(let i in resolve.users){                                           
+                                            _this.modStatistics.ptUser++;
+                                            if(resolve.users[i]['survey']){
+                                                _this.modStatistics.ptSum++;   
+                                                if(resolve.users[i]['survey']['value']){
+                                                    resolve.users[i]['survey'] = JSON.parse(resolve.users[i]['survey']['value']);
+                                                    let surv = resolve.users[i]['survey'];
+                                                    switch(surv.objectives){
+                                                        case 'f1a': _this.modStatistics.ptExam++;
+                                                                    break;
+                                                        case 'f1b': _this.modStatistics.ptOrientation++;
+                                                                    break;
+                                                        case 'f1c': _this.modStatistics.ptInterest++;
+                                                                    break;
+                                                        case 'f1d': _this.modStatistics.ptNoAnswer++;
+                                                                    break;
+                                                    }
                                                 }
-                                            }
-                                            if(resolve.users[i]['survey']['availableTime']){
-                                                let time = resolve.users[i]['survey']['availableTime'];                                                
-                                                if(availTime[time]){
-                                                    availTime[time]++;
-                                                } else {
-                                                    availTime[time] = 1;
-                                                }
-                                            }                                            
+                                                if(resolve.users[i]['survey']['availableTime']){
+                                                    let time = resolve.users[i]['survey']['availableTime'];                                                
+                                                    if(availTime[time]){
+                                                        availTime[time]++;
+                                                    } else {
+                                                        availTime[time] = 1;
+                                                    }
+                                                }  
+                                                if(resolve.users[i]['survey']['planingStyle']){
+                                                    let ps = resolve.users[i]['survey']['planingStyle'];
+                                                    switch(ps){
+                                                        case 'planing-style-a': _this.modStatistics.ptW1++;
+                                                                                break;
+                                                        case 'planing-style-b': _this.modStatistics.ptW4++;
+                                                                                break;
+                                                        case 'planing-style-c': _this.modStatistics.ptWA++;
+                                                                                break;
+                                                        case 'planing-style-d': _this.modStatistics.ptWA2++;
+                                                                                break;
+                                                        case 'planing-style-e': _this.modStatistics.ptWA4++;
+                                                                                break;
+                                                        case 'planing-style-f': _this.modStatistics.ptWANA++;
+                                                                                break;
+                                                    }
+                                                }                                                       
+                                            }                                                                            
                                             if(resolve.users[i]["milestones"] && resolve.users[i]["milestones"]["milestones"]){
+                                                _this.modStatistics.ptMS++;
                                                 resolve.users[i]["milestones"] = JSON.parse(resolve.users[i]["milestones"]["milestones"]);
                                                 let msCount = resolve.users[i]["milestones"].length;
                                                 for(let t in resolve.users[i]["milestones"]){
@@ -2338,7 +2375,17 @@ define([
                                             "Interesse": _this.modStatistics.ptInterest,                                                             
                                             "Keine Angabe": _this.modStatistics.ptNoAnswer
                                         }
-                                        createPie("#stChartTA", data, color);                                        
+                                        createPie("#stChartTA", data, color);                                
+
+                                        data = {
+                                            "Nur eine Woche": _this.modStatistics.ptW1,
+                                            "Nur vier Wochen": _this.modStatistics.ptW4,
+                                            "Semester eine Woche": _this.modStatistics.ptWA,
+                                            "Semester zwei Wochen": _this.modStatistics.ptWA2,
+                                            "Semester vier Wochen": _this.modStatistics.ptWA4,
+                                            "Keine Angabe": _this.modStatistics.ptWANA
+                                        }
+                                        createPie("#stChartPS", data, color);
 
                                         //console.log(resolve.users);
                                     }                        
