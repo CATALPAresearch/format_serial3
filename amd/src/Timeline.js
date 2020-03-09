@@ -2091,8 +2091,15 @@ define([
                                     });
                                 }
                             ).then(
-                                (resolve) => {                         
-                                    console.log(resolve.users);           
+                                (resolve) => {     
+                                    
+                                    
+                                    if($('#stUserList').length > 0){
+                                        $('#stUserList tr:gt(1)').remove();                                        
+                                    }    
+
+                                    $('#modWorkload tr').not(':first').not(':last').remove();
+                                            
                                     _this.modStatistics.users = resolve.num_users?+resolve.num_users:0;
                                     _this.modStatistics.surveys = resolve.num_survey?+resolve.num_survey:0;      
                                     _this.modStatistics.msProgessed = 0,
