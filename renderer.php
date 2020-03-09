@@ -365,7 +365,24 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                                             <td colspan="2" id="stChartMS"></td>
                                         </tr>
                                     </table>
-                                </div>                                                             
+                                </div>  
+                                <!-- XY -->
+                                <div class="table-responsive">
+                                    <table class="table" border="0" id="stUserList">
+                                        <tr>
+                                            <th colspan="6">
+                                                Meilensteine
+                                            </th>
+                                        </tr> 
+                                        <tr>
+                                            <td>Vorname</td>
+                                            <td>Nachname</td>
+                                            <td>E-Mail</td>
+                                            <td>Planung</td>
+                                            <td>Angelegte MS</td>
+                                            <td>Reflektierte MS</td>                                                                   
+                                    </table>
+                                </div>                                                           
                             </div>
                         </div>
                     </div>

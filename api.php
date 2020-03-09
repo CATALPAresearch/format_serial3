@@ -80,6 +80,9 @@ class format_ladtopics_external extends external_api {
                 $uo->lastlogin = $user->lastlogin;  
                 $uo->isEnrolled = is_enrolled($context->course->context, $user->id);
                 $uo->currentLogin = $user->currentlogin;
+                $uo->firstname = $user->firstname;
+                $uo->lastname = $user->lastname;
+                $uo->email = $user->email;              
                 // milesones           
                 $transaction = $DB->start_delegated_transaction(); 
                 $sql='

@@ -2267,7 +2267,13 @@ define([
                                     // get all milestones
                                     if(resolve.users){                                                                            
                                         for(let i in resolve.users){                                           
-                                            _this.modStatistics.ptUser++;
+                                            _this.modStatistics.ptUser++;                                               
+                                            
+                                            let surveyDone = 0;
+                                            if(resolve.users[i]['surveyDone'] && +resolve.users[i]['surveyDone']['value'] > 0){
+                                                surveyDone = 1;
+                                            }
+
                                             if(resolve.users[i]['survey']){
                                                 _this.modStatistics.ptSum++;   
                                                 if(resolve.users[i]['survey']['value']){
@@ -2309,12 +2315,15 @@ define([
                                                                                 break;
                                                     }
                                                 }                                                       
-                                            }                                                                            
+                                            }   
+                                            let milestones = 0;  
+                                            let msDone = 0;                                                                       
                                             if(resolve.users[i]["milestones"] && resolve.users[i]["milestones"]["milestones"]){
                                                 _this.modStatistics.ptMS++;
                                                 resolve.users[i]["milestones"] = JSON.parse(resolve.users[i]["milestones"]["milestones"]);
                                                 let msCount = resolve.users[i]["milestones"].length;
                                                 for(let t in resolve.users[i]["milestones"]){
+                                                    milestones++;
                                                     let ms = resolve.users[i]["milestones"][t];
                                                     switch(ms.status){
                                                         case 'progress':    _this.modStatistics.msProgessed++;
@@ -2327,12 +2336,16 @@ define([
                                                                             break;
                                                         case 'reflected':   _this.modStatistics.msReflected++;
                                                                             _this.modStatistics.msReady++;
+                                                                            msDone++;
                                                                             break;
                                                     }                                                    
                                                 } 
                                                 _this.modStatistics.milestones += msCount;                                               
                                             }
                                             
+                                            if($('#stUserList').length > 0){
+                                                $('#stUserList tr:last').after(`<tr><td>${resolve.users[i]['firstname']}</td><td>${resolve.users[i]['lastname']}</td><td>${resolve.users[i]['email']}</td><td>${surveyDone}</td><td>${milestones}</td><td>${msDone}</td></tr>`);
+                                            }                                       
                                             //console.log(JSON.parse(resolve.users[i]["milestones"]["milestones"]));
                                             /*
                                             resolve.users[i]["milestones"] = JSON.parse(resolve.users[i]["milestones"]["milestones"]);*/
