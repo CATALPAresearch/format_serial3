@@ -334,7 +334,7 @@ define(['jquery'], function ($) {
                                         //availableResources: _this.availableResources
                                     })
                                 }
-                            }, function (e) {
+                            }, function (e) {                                
                                 // console.log('saved survey ', e);
                             });
 

@@ -225,36 +225,41 @@ define([
                 mounted: function () {
                     moment.locale('de');
                     var _this = this;
-                    this.range = xRange;
+                    this.range = xRange;                    
                     // load milestone data from database via webservice
                     utils.get_ws('getmilestones', {
                         data: {
                             'courseid': parseInt(course.id, 10)
                         }
                     }, function (e) {
-                        if (e !== null) {
-                            var data = JSON.parse(e.milestones);
-                            if (!data || !data.milestones) {
-                                _this.milestones = [];
-                            } else {
-                                // todo: A validation of the JSON should be feasible
-                                _this.milestones = JSON.parse(data.milestones);
-                                _this.emptyMilestone.end = new Date();
-                                _this.emptyMilestone.start = new Date();
-                                _this.updateMilestoneStatus();                                
-                                _this.initializeChart();
-
-                                var facts = crossfilter(activityData);
-                                _this.timeFilterChart = new FilterChart(d3, dc, crossfilter, facts, xRange, _this, utils, logger);
-
-                                _this.setFilterPreset('last-month');
-                                var activityChart = new ActivityChart(d3, dc, crossfilter, moment, activityData, utils);
-                                xRange = activityChart.getXRange();
-                                _this.timeFilterChart.registerChart(activityChart);
-
-                                logger.add('planing_tool_open', { pageLoaded: true });
+                        _this.emptyMilestone.end = new Date();
+                        _this.emptyMilestone.start = new Date();
+                        _this.initializeChart();    
+                        try{
+                            if (e !== null) {
+                                var data = JSON.parse(e.milestones);
+                                if (!data || !data.milestones) {
+                                    _this.milestones = [];
+                                } else {
+                                    // todo: A validation of the JSON should be feasible
+                                    _this.milestones = JSON.parse(data.milestones);                                              
+                                    _this.updateMilestoneStatus();                              
+    
+                                    var facts = crossfilter(activityData);
+                                    _this.timeFilterChart = new FilterChart(d3, dc, crossfilter, facts, xRange, _this, utils, logger);
+    
+                                    _this.setFilterPreset('last-month');
+                                    var activityChart = new ActivityChart(d3, dc, crossfilter, moment, activityData, utils);
+                                    xRange = activityChart.getXRange();
+                                    _this.timeFilterChart.registerChart(activityChart);
+    
+                                    logger.add('planing_tool_open', { pageLoaded: true });
+                                }
                             }
-                        }
+                        } catch(error){
+                            _this.milestones = [];
+                        }                 
+                        
                     });
 
                     this.getMilestonePlan();
@@ -280,8 +285,7 @@ define([
 
                     $(document).ready(function(){
                         if($('#reportModal').length > 0){
-                            $('#reportModal').on('shown.bs.modal', function(){
-                                console.log("STARTED");
+                            $('#reportModal').on('shown.bs.modal', function(){                                
                                 _this.modGetStatisticData(_this);
                             });
                         }
@@ -555,7 +559,7 @@ define([
                                 ])
                             }
                         }, function (e) {
-                            try {
+                            try {                                
                                 let data = JSON.parse(e.data);
                                 // Sort Ressources
                                 let obj = new Array(data.length);
@@ -577,8 +581,7 @@ define([
                                     }
                                     obj[pos] = data[i];
                                 }                                
-                                _this.resources = obj;
-                                console.log(_this.resources);
+                                _this.resources = obj;                                
                                 for (let i in _this.calendar) {
                                     let element = _this.calendar[i];
                                     if (element.eventtype !== "course" && element.eventtype !== "group") continue;                                  
@@ -732,7 +735,7 @@ define([
 
                         this.height = this.maxLanes * 24;
                     },
-                    showModal: function (milestoneID) {
+                    showModal: function (milestoneID) {                        
                         this.selectedMilestone = milestoneID;
                         this.startDate = this.getSelectedMilestone().start;
                         this.endDate = this.getSelectedMilestone().end;
@@ -752,7 +755,7 @@ define([
                             });
                         }
                     },
-                    closeModal: function (e) {
+                    closeModal: function (e) {                       
                         this.modalVisible = false;
                         this.updateMilestoneStatus();
                         this.updateChart(this.range);
@@ -860,10 +863,10 @@ define([
                                 });
                                 if ($("#milestone-list-tab").hasClass("active") || $("#milestone-archive-list-tab").hasClass("active")) {
                                     if (this.getSelectedMilestone().status === "missed" || this.getSelectedMilestone().status === "reflected") {
-                                        console.log("Archiv");
+                                        
                                         this.moveToMilestoneArchiveListEntry(this.getSelectedMilestone().id, true);
                                     } else {
-                                        console.log("Other");
+                                       
                                         this.moveToMilestoneListEntry(this.getSelectedMilestone().id, true);
                                     }
                                 } else if ($("#milestone-timeline-tab").hasClass("active")) {
@@ -2071,7 +2074,7 @@ define([
                                 'subject': "hello",
                                 'text': "jo"
                             }, function (u) {                                            
-                               console.log(u);
+                             
                             });
                         } catch(error){
                             console.log(error);
@@ -2079,8 +2082,7 @@ define([
                     }, 
                     modGetStatisticData: function(parent){
                         try{    
-                            let _this = parent; 
-                            console.log("element");                  
+                            let _this = parent;                                              
                             new Promise(
                                 (resolve, reject) => {
                                     utils.get_ws("statistics", {
@@ -2091,15 +2093,11 @@ define([
                                     });
                                 }
                             ).then(
-                                (resolve) => {     
-                                    
-                                    
+                                (resolve) => {                                
                                     if($('#stUserList').length > 0){
                                         $('#stUserList tr:gt(1)').remove();                                        
-                                    }    
-
-                                    $('#modWorkload tr').not(':first').not(':last').remove();
-                                            
+                                    }   
+                                    $('#modWorkload tr').not(':first').not(':last').remove();       
                                     _this.modStatistics.users = resolve.num_users?+resolve.num_users:0;
                                     _this.modStatistics.surveys = resolve.num_survey?+resolve.num_survey:0;      
                                     _this.modStatistics.msProgessed = 0,
@@ -2120,8 +2118,7 @@ define([
                                     _this.modStatistics.ptSum = 0;
                                     _this.modStatistics.ptMS = 0;
                                     _this.modStatistics.ptUser = 0;
-                                    _this.modStatistics.milestones = 0;
-                                    // initialize charts
+                                    _this.modStatistics.milestones = 0;                              
                                    
                                     let createPie = function(parent, data, color){                                        
                                         for(let i in data){
@@ -2369,7 +2366,7 @@ define([
 
                                         for(let u in availTime){
 
-                                            table += `<tr><td>${u} SWS</td><td>${availTime[u]}</td></tr>`;
+                                            table += `<tr><td>${u} SWS</td><td style="padding-right: 30px; text-align: right;">${availTime[u]}</td></tr>`;
                                             
                                             timeArray.push(
                                                 {
