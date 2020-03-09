@@ -237,11 +237,11 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                                             </th>
                                         </tr>
                                         <tr>
-                                            <td>Semesterplanung erledigt</td>                                            
+                                            <td>Studierende, die die Semesterplanung erledigt haben</td>                                            
                                             <td style="padding-right: 30px; text-align: right;">{{modStatistics.ptSum}}</td>                                            
                                         </tr>
                                         <tr>
-                                            <td>Meilensteine angelegt</td>                                            
+                                            <td>Studierende, die Meilensteine angelegt haben</td>                                            
                                             <td style="padding-right: 30px; text-align: right;">{{modStatistics.ptMS}}</td>                                            
                                         </tr>
                                         <tr class="table-secondary">
