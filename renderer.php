@@ -1306,7 +1306,7 @@ $modalMilestone = '
                                                                 <i class="fa fa-clock"></i>Einstellungen
                                                             </a>').'                                                            
                                                             <a class="dropdown-item" @click="exportToICal()" href="#">
-                                                                <i class="fa fa-clock"></i>Exportieren
+                                                                <i class="fa fa-clock"></i>Exportieren (iCal)
                                                             </a>                                                            
                                                         </div>
                                                     </div>
