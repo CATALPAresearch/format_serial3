@@ -2120,6 +2120,7 @@ define([
                                     _this.modStatistics.ptSum = 0;
                                     _this.modStatistics.ptMS = 0;
                                     _this.modStatistics.ptUser = 0;
+                                    _this.modStatistics.milestones = 0;
                                     // initialize charts
                                    
                                     let createPie = function(parent, data, color){                                        
