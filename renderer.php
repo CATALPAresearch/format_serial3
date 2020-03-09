@@ -370,7 +370,7 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                                 <div class="table-responsive">
                                     <table class="table" border="0" id="stUserList">
                                         <tr>
-                                            <th colspan="6">
+                                            <th colspan="8">
                                                 Übersicht der Einschreibungen
                                             </th>
                                         </tr> 
@@ -380,6 +380,8 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                                             <td><b>E-Mail</b></td>
                                             <td><b>Planung</b></td>
                                             <td><b>Angelegte MS</b></td>
+                                            <td><b>Abgelaufene MS</b></td>
+                                            <td><b>Abgeschlossene MS</b></td>                                            
                                             <td><b>Reflektierte MS</b></td>  
                                         </tr>                                                                 
                                     </table>

@@ -2325,7 +2325,9 @@ define([
                                                 }                                                       
                                             }   
                                             let milestones = 0;  
-                                            let msDone = 0;                                                                       
+                                            let msDone = 0;  
+                                            let msReady = 0;
+                                            let msFailed = 0;                                                                     
                                             if(resolve.users[i]["milestones"] && resolve.users[i]["milestones"]["milestones"]){
                                                 _this.modStatistics.ptMS++;
                                                 resolve.users[i]["milestones"] = JSON.parse(resolve.users[i]["milestones"]["milestones"]);
@@ -2337,10 +2339,12 @@ define([
                                                         case 'progress':    _this.modStatistics.msProgessed++;
                                                                             break;
                                                         case 'ready':       _this.modStatistics.msReady++;
+                                                                            msReady++;
                                                                             break;
                                                         case 'urgent':      _this.modStatistics.msUrgent++;
                                                                             break;
                                                         case 'missed':      _this.modStatistics.msMissed++;
+                                                                            msFailed++;
                                                                             break;
                                                         case 'reflected':   _this.modStatistics.msReflected++;
                                                                             _this.modStatistics.msReady++;
@@ -2352,7 +2356,7 @@ define([
                                             }
                                             
                                             if($('#stUserList').length > 0){
-                                                $('#stUserList tr:last').after(`<tr><td>${resolve.users[i]['firstname']}</td><td>${resolve.users[i]['lastname']}</td><td>${resolve.users[i]['email']}</td><td>${surveyDone}</td><td>${milestones}</td><td>${msDone}</td></tr>`);
+                                                $('#stUserList tr:last').after(`<tr><td>${resolve.users[i]['firstname']}</td><td>${resolve.users[i]['lastname']}</td><td>${resolve.users[i]['email']}</td><td>${surveyDone}</td><td>${milestones}</td><td>${msFailed}</td><td>${msReady}</td><td>${msDone}</td></tr>`);
                                             }                                       
                                             //console.log(JSON.parse(resolve.users[i]["milestones"]["milestones"]));
                                             /*
