@@ -270,6 +270,35 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                                         </tr>
                                     </table>
                                 </div>
+                                <!-- Planung von Lernaktivitäten -->
+                                <div class="table-responsive">
+                                     <table class="table" border="0">
+                                        <tr>
+                                            <th colspan="2">
+                                                Planung von Lernaktivitäten
+                                            </th>
+                                        </tr>
+                                        <tr>
+                                            <td>Prüfung erfolgreich absolvieren</td>                                            
+                                            <td style="padding-right: 30px; text-align: right;">{{modStatistics.ptExam}}</td>                                            
+                                        </tr>                                
+                                        <tr>
+                                            <td>Orientierung im Themengebiet erlangen </td>
+                                            <td style="padding-right: 30px; text-align: right;">{{modStatistics.ptOrientation}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Meinen eigenen Interessen bzgl. bestimmter Themengebiete nachgehen</td>
+                                            <td style="padding-right: 30px; text-align: right;">{{modStatistics.ptInterest}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Keine Angaben </td>
+                                            <td style="padding-right: 30px; text-align: right;">{{modStatistics.ptNoAnswer}}</td>
+                                        </tr>  
+                                        <tr>                                     
+                                            <td colspan="2" id="stChartTA"></td>
+                                        </tr>
+                                    </table>
+                                </div>
                                 <!-- Milestones -->                          
                                 <div class="table-responsive">                                    
                                     <table class="table" border="0">

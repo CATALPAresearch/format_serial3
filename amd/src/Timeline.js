@@ -2299,12 +2299,9 @@ define([
                                             //console.log(JSON.parse(resolve.users[i]["milestones"]["milestones"]));
                                             /*
                                             resolve.users[i]["milestones"] = JSON.parse(resolve.users[i]["milestones"]["milestones"]);*/
-                                        }
-                                       
-                                        availTime[15] = 2;
-                                        availTime[14] = 2;
-
-                                        let timeArray = [];     
+                                        }                                      
+                                      
+                                        let timeArray = [];    
                                         
                                         let table = "";
 
