@@ -371,16 +371,17 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                                     <table class="table" border="0" id="stUserList">
                                         <tr>
                                             <th colspan="6">
-                                                Meilensteine
+                                                Übersicht der Einschreibungen
                                             </th>
                                         </tr> 
                                         <tr>
-                                            <td>Vorname</td>
-                                            <td>Nachname</td>
-                                            <td>E-Mail</td>
-                                            <td>Planung</td>
-                                            <td>Angelegte MS</td>
-                                            <td>Reflektierte MS</td>                                                                   
+                                            <td><b>Vorname</b></td>
+                                            <td><b>Nachname</b></td>
+                                            <td><b>E-Mail</b></td>
+                                            <td><b>Planung</b></td>
+                                            <td><b>Angelegte MS</b></td>
+                                            <td><b>Reflektierte MS</b></td>  
+                                        </tr>                                                                 
                                     </table>
                                 </div>                                                           
                             </div>
