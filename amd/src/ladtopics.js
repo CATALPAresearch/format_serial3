@@ -21,7 +21,7 @@ define([
     M.cfg.wwwroot + '/course/format/ladtopics/amd/src/InitialSurvey.js',
     M.cfg.wwwroot + '/course/format/ladtopics/amd/src/Assessment.js',
     M.cfg.wwwroot + '/course/format/ladtopics/amd/src/Logging.js',
-    M.cfg.wwwroot + '/course/format/ladtopics/amd/src/ICalExport.js',
+    M.cfg.wwwroot + '/course/format/ladtopics/amd/src/ICalExport.js',  
     M.cfg.wwwroot + '/course/format/ladtopics/amd/src/ErrorHandler.js'
 ],
     function ($, jqueryui, Timeline, Utils, filterChart, activityChart, initialSurvey, Assessment, Log, ICalExport, ErrorHandler) {

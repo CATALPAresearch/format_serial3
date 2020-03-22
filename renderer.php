@@ -54,6 +54,9 @@ class format_ladtopics_renderer extends format_section_renderer_base {
      * A Attribute to store if the user is a moderator for the course
      */
     private $_moderator = null;
+    private $courseid;
+    private $found;
+    private $islogged;
 
     /**
      * A Method to test if the user is a moderator for the course
@@ -61,24 +64,27 @@ class format_ladtopics_renderer extends format_section_renderer_base {
 
     private function checkModeratorStatus(){
         if(!is_null($this->_moderator)) return $this->_moderator;
-        global $CFG, $DB, $COURSE, $USER;
-        $uid = (int)$USER->id;
-        $cid = (int)$COURSE->id;
-        $params[] = $uid;
-        $transaction = $DB->start_delegated_transaction(); 
-        $sql = 'SELECT '.$CFG->prefix.'role.shortname FROM '.$CFG->prefix.'role INNER JOIN '.$CFG->prefix.'role_assignments ON '.$CFG->prefix.'role_assignments.roleid = '.$CFG->prefix.'role.id WHERE userid = ?';         
-        $res = $DB->get_records_sql($sql, $params);
-        $transaction->allow_commit(); 
-        foreach($res as $key => $value){
-            if(!isset($value->shortname)) continue;
-            $val = $value->shortname;            
-            if($val === 'manager') {
-                $this->_moderator = true;
-                return true;
-            }
-        }
-        $this->_moderator = false;
-        return false;
+        try{
+            global $USER, $COURSE;      
+            $context = context_course::instance($COURSE->id);            
+            $loggedIn = isloggedin();
+            $roles = get_user_roles($context, $USER->id);                 
+            $found = false;
+            foreach($roles as $key => $value){
+                if(isset($value->shortname) && $value->shortname === "manager"){
+                    $found = true;
+                    break;
+                }
+            }    
+            $this->courseid = $COURSE->id;
+            $this->found = $found;
+            $this->islogged = $loggedIn;            
+            if($found === true && $loggedIn === true) return true;            
+            return false;        
+        } catch(Exception $ex){
+            var_dump($ex);
+            return false;
+        }    
     }
 
     /**
@@ -95,12 +101,48 @@ class format_ladtopics_renderer extends format_section_renderer_base {
 
 
 
+        $userMSPlan = '
+        <div class="modal fade" id="moderationModal" tabindex="-1" role="dialog" aria-labelledby="moderationModalLabel" aria-hidden="false">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="moderationModalTitle">Einstellungen</h5>                                     
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert collapse fade" id="moderationAlert" data-dismiss="alert" role="alert">
+                        This is a success alert—check it out!
+                    </div>          
+                    <h5>Semesterplanung zurücksetzen</h5>         
+                    <button type="button" @click="modResetPlan()" class="btn btn-danger">Zurücksetzen</button> 
+                    <hr>                     
+                    <h5>Meilensteine</h5>                        
+                    <div class="col mb-4 px-0">
+                        <div class="custom-file">
+                            <input type="file" class="custom-file-input" @input="modLoadPath" id="modImportedFile" lang="de">
+                            <label id="modLoadPathLabel" class="custom-file-label" for="modImportedFile">Bitte wählen Sie eine Datei aus.</label>
+                        </div>
+                    </div>      
+                    <button type="button" @click="modSaveSelect" class="btn btn-primary">Speichern</button>                                     
+                    <button type="button" @click="modLoadMilestones()" class="btn btn-secondary">Laden</button>  
+                    <button type="button" @click="modResetSelect()" class="btn btn-danger">Zurücksetzen</button>                      
+                </div>          
+                <div class="modal-footer">
+                    <!-- Footer -->
+                </div>
+            </div>
+            </div>
+        </div>        
+        ';
+
         $moderationModal = '    
             <div class="modal fade" id="moderationModal" tabindex="-1" role="dialog" aria-labelledby="moderationModalLabel" aria-hidden="false">
                 <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="moderationModalTitle">Planungsempfehlungen</h5>                                     
+                        <h5 class="modal-title" id="moderationModalTitle">Planung</h5>                                     
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -109,7 +151,7 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                         <div class="alert collapse fade" id="moderationAlert" data-dismiss="alert" role="alert">
                             This is a success alert—check it out!
                         </div>              
-                        <h5>Vorlagen</h5>           
+                        <h5>Planungsempfehlungen</h5>           
                         <div class="my-2 mx-2">              
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="modSaveType" id="modSaveExam" value="0">
@@ -146,12 +188,207 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                                 <label id="modLoadPathLabel" class="custom-file-label" for="modImportedFile">Bitte wählen Sie eine Datei aus.</label>
                             </div>
                         </div>                        
-                        <button type="button" @click="modLoadMilestones" class="btn btn-secondary">Laden</button>                        
+                        <button type="button" @click="modLoadMilestones" class="btn btn-secondary">Laden</button>  
+                        <hr>   
+                            <h5>Benutzerplanung zurücksetzen</h5>        
+                            <div class="form-group">                                 
+                                <input type="string" @input="userAutocomplete($event.target, $event.target.value)" class="form-control" id="modResetUser" placeholder="Benutzer suchen">
+                            </div>
+                            <div class="userAutocomplete col px-2"></div>                           
+                            <div class="col mb-3 px-2">                                
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="" id="modResetUserPlan">
+                                    <label class="form-check-label" for="modResetUserPlan">
+                                    Eingangsbefragung
+                                    </label>
+                                </div> 
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="" id="modResetUserMS">
+                                    <label class="form-check-label" for="modResetUserMS">
+                                    Meilensteine
+                                    </label>
+                                </div>                                                     
+                        </div>                        
+                        <button type="button" @click="modUpdateUser" class="btn btn-danger">Zurücksetzen</button>                         
                     </div>          
                     <div class="modal-footer">
                         <!-- Footer -->
                     </div>
                 </div>
+                </div>
+            </div>
+            <div class="modal fade" id="reportModal" tabindex="-1" role="dialog" aria-labelledby="reportModal" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="moderationModalTitle">Statistik</h5>                                     
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body" id="modReport">
+                            <div class="statistic-container"> 
+                                <!-- Allgemein -->
+                                <div class="table-responsive"> 
+                                    <table class="table" border="0">
+                                        <tr>
+                                            <th colspan="2">
+                                                Allgemein
+                                            </th>
+                                        </tr>
+                                        <tr>
+                                            <td>Studierende, die die Semesterplanung erledigt haben</td>                                            
+                                            <td style="padding-right: 30px; text-align: right;">{{modStatistics.ptSum}}</td>                                            
+                                        </tr>
+                                        <tr>
+                                            <td>Studierende, die Meilensteine angelegt haben</td>                                            
+                                            <td style="padding-right: 30px; text-align: right;">{{modStatistics.ptMS}}</td>                                            
+                                        </tr>
+                                        <tr class="table-secondary">
+                                            <td>Einschreibungen</td>
+                                            <td style="padding-right: 30px; text-align: right;">{{modStatistics.ptUser}}</td>
+                                        </tr>
+                                    </table>
+                                </div>    
+                                <!-- Plan -->                          
+                                <div class="table-responsive">                                    
+                                    <table class="table" border="0">
+                                        <tr>
+                                            <th colspan="2">
+                                                Ziele der Teilnehmer
+                                            </th>
+                                        </tr>
+                                        <tr>
+                                            <td>Prüfung erfolgreich absolvieren</td>                                            
+                                            <td style="padding-right: 30px; text-align: right;">{{modStatistics.ptExam}}</td>                                            
+                                        </tr>                                
+                                        <tr>
+                                            <td>Orientierung im Themengebiet erlangen </td>
+                                            <td style="padding-right: 30px; text-align: right;">{{modStatistics.ptOrientation}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Meinen eigenen Interessen bzgl. bestimmter Themengebiete nachgehen</td>
+                                            <td style="padding-right: 30px; text-align: right;">{{modStatistics.ptInterest}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Keine Angaben </td>
+                                            <td style="padding-right: 30px; text-align: right;">{{modStatistics.ptNoAnswer}}</td>
+                                        </tr>  
+                                        <tr>                                     
+                                            <td colspan="2" id="stChartTA"></td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <!-- Stunden -->
+                                <div class="table-responsive">
+                                    <table class="table" border="0" id="modWorkload">
+                                        <tr>
+                                            <th colspan="2">
+                                                Stundenpensum
+                                            </th>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2" id="stChartHR"></td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <!-- Planung von Lernaktivitäten -->
+                                <div class="table-responsive">
+                                     <table class="table" border="0">
+                                        <tr>
+                                            <th colspan="2">
+                                                Planung von Lernaktivitäten
+                                            </th>
+                                        </tr>
+                                        <tr>
+                                            <td>Für eine Woche</td>                                            
+                                            <td style="padding-right: 30px; text-align: right;">{{modStatistics.ptW1}}</td>                                            
+                                        </tr>                                
+                                        <tr>
+                                            <td>Für die nächsten 4 Wochen</td>
+                                            <td style="padding-right: 30px; text-align: right;">{{modStatistics.ptW4}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Für das ganze Semester mit Arbeitspaketen für je eine Woche</td>
+                                            <td style="padding-right: 30px; text-align: right;">{{modStatistics.ptWA}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Für das ganze Semester mit Arbeitspaketen für je 2 Wochen</td>
+                                            <td style="padding-right: 30px; text-align: right;">{{modStatistics.ptWA2}}</td>
+                                        </tr> 
+                                        <tr>
+                                            <td>Für das ganze Semester mit Arbeitspaketen für je einen Monat</td>
+                                            <td style="padding-right: 30px; text-align: right;">{{modStatistics.ptWA4}}</td>
+                                        </tr> 
+                                        <tr>
+                                            <td>Keine Angaben </td>
+                                            <td style="padding-right: 30px; text-align: right;">{{modStatistics.ptWANA}}</td>
+                                        </tr>  
+                                        <tr>                                     
+                                            <td colspan="2" id="stChartPS"></td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <!-- Milestones -->                          
+                                <div class="table-responsive">                                    
+                                    <table class="table" border="0">
+                                        <tr>
+                                            <th colspan="2">
+                                                Meilensteine
+                                            </th>
+                                        </tr>
+                                        <tr>
+                                            <td>Bearbeitung</td>                                            
+                                            <td style="padding-right: 30px; text-align: right;">{{modStatistics.msProgessed}}</td>                                            
+                                        </tr>                                
+                                        <tr>
+                                            <td>Dringend</td>
+                                            <td style="padding-right: 30px; text-align: right;">{{modStatistics.msUrgent}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Abgeschlossen</td>
+                                            <td style="padding-right: 30px; text-align: right;">{{modStatistics.msReady}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Reflektiert</td>
+                                            <td style="padding-right: 30px; text-align: right;">{{modStatistics.msReflected}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Abgelaufen</td>
+                                            <td style="padding-right: 30px; text-align: right;">{{modStatistics.msMissed}}</td>
+                                        </tr>
+                                        <tr class="table-secondary">
+                                            <td>Gesamt</td>
+                                            <td style="padding-right: 30px; text-align: right;">{{modStatistics.milestones}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2" id="stChartMS"></td>
+                                        </tr>
+                                    </table>
+                                </div>  
+                                <!-- XY -->
+                                <div class="table-responsive">
+                                    <table class="table" border="0" id="stUserList">
+                                        <tr>
+                                            <th colspan="8">
+                                                Übersicht der Einschreibungen
+                                            </th>
+                                        </tr> 
+                                        <tr>
+                                            <td><b>Vorname</b></td>
+                                            <td><b>Nachname</b></td>
+                                            <td><b>E-Mail</b></td>
+                                            <td><b>Planung</b></td>
+                                            <td><b>Angelegte MS</b></td>
+                                            <td><b>Abgelaufene MS</b></td>
+                                            <td><b>Abgeschlossene MS</b></td>                                            
+                                            <td><b>Reflektierte MS</b></td>  
+                                        </tr>                                                                 
+                                    </table>
+                                </div>                                                           
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         ';
@@ -372,7 +609,8 @@ $milestoneArchiveList = '
                 :class="m.status == \'missed\' ? \'milestone-missed milestone-element-due\' : \'milestone-element-due\'">
                 {{ fromNow(m.end) }}
             </span>
-            <a @click="showModal(m.id)" class="milestone-element-edit" data-legend="1" data-toggle="modal" data-target="#theMilestoneModal">
+            <span class="ms-edit-filler" v-if="m.status === \'reflected\'"></span>
+            <a @click="showModal(m.id)" v-if="m.status !== \'reflected\'" class="milestone-element-edit" data-legend="1" data-toggle="modal" data-target="#theMilestoneModal">
                 <span data-toggle="tooltip" data-placement="top" title="Sie können diesen Meilenstein bearbeiten" class="fa fa-pencil"></span> bearbeiten
             </a>
             <div class="milestone-element-progress">
@@ -420,10 +658,11 @@ $milestoneArchiveList = '
                                         title="Setzen Sie das Häkchen, wenn Sie dieses Lernangebot bereits bearbeitet haben."
                                         v-model="s.checked" 
                                         :id="s.id"
+                                        :disabled = "m.status === \'reflected\'"
                                         @change="updateMilestoneStatus()"
                                         >
                                     <a 
-                                        :href="getMoodlePath() + \'/mod/\' + s.instance_type + \'/view.php?id=\'+ s.instance_url_id" 
+                                        :href="(s.instance_type === \'kurstermin\'?(getMoodlePath() + \'/calendar/view.php?month&course=\' + '.$COURSE->id.'):(getMoodlePath() + \'/mod/\' + s.instance_type + \'/view.php?id=\'+ s.instance_url_id))" 
                                         class="resources-selected-name">{{ s.name }}</a>
                                     <span hidden class="resources-selected-remove remove-btn" data-toggle="tooltip" title="Thema, Material oder Aktivität entfernen">
                                         <i class="fa fa-trash" @click="resourceRemove(s.id)"></i>
@@ -448,6 +687,7 @@ $milestoneArchiveList = '
                                         title="Setzen Sie das Häkchen, wenn Sie diese Lernstrategie bereits angewendet haben."
                                         v-model="s.checked"
                                         :id="s.id"
+                                        :disabled = "m.status === \'reflected\'"
                                         @change="updateMilestoneStatus()"
                                         >
                                     <span class="strategy-selected-name">{{ s.name }}</span>
@@ -470,7 +710,7 @@ $milestoneArchiveList = '
 $milestoneList = '
 <!-- Milestone list -->
 <ul>
-    <li v-if="remainingMilestones.length === 0">
+    <li v-if="remainingMilestones.length === 0 && archivedMilestones.length === 0">
         <span data-toggle="modal" data-target="#theMilestoneModal">
             <button @click="showEmptyMilestone()" class="btn btn-sm right btn-primary ms-btn ms-coldstart-btn"
                 data-toggle="tooltip" data-placement="bottom" title="Neuen Meilenstein hinzufügen"><i
@@ -495,7 +735,8 @@ $milestoneList = '
                 :class="m.status == \'missed\' ? \'milestone-missed milestone-element-due\' : \'milestone-element-due\'">
                 {{ fromNow(m.end) }}
             </span>
-            <a @click="showModal(m.id)" class="milestone-element-edit" data-legend="1" data-toggle="modal" data-target="#theMilestoneModal">
+            <span class="ms-edit-filler" v-if="m.status === \'reflected\'"></span>
+            <a @click="showModal(m.id)" v-if="m.status !== \'reflected\'" class="milestone-element-edit" data-legend="1" data-toggle="modal" data-target="#theMilestoneModal">
                 <span data-toggle="tooltip" data-placement="top" title="Sie können diesen Meilenstein bearbeiten" class="fa fa-pencil"></span> bearbeiten
             </a>
             <div class="milestone-element-progress">
@@ -546,13 +787,12 @@ $milestoneList = '
                                         @change="updateMilestoneStatus()"
                                         >
                                     <a 
-                                        :href="getMoodlePath() + \'/mod/\' + s.instance_type + \'/view.php?id=\'+ s.instance_url_id" 
+                                        :href="(s.instance_type === \'kurstermin\'?(getMoodlePath() + \'/calendar/view.php?month&course=\' + '.$COURSE->id.'):(getMoodlePath() + \'/mod/\' + s.instance_type + \'/view.php?id=\'+ s.instance_url_id))" 
                                         class="resources-selected-name">{{ s.name }}</a>
                                     <span hidden class="resources-selected-remove remove-btn" data-toggle="tooltip" title="Thema, Material oder Aktivität entfernen">
                                         <i class="fa fa-trash" @click="resourceRemove(s.id)"></i>
                                     </span>
-                                </label>
-                                
+                                </label>                                
                             </li>
                         </ul>
 
@@ -1008,7 +1248,7 @@ $modalMilestone = '
 
                         <!-- Planing Component -->
                         <div id="planing-component" style="display:none;" v-cloak class="container dc-chart">
-                            '.($this->checkModeratorStatus()?$moderationModal:'').'
+                            '.($this->checkModeratorStatus()?$moderationModal:$userMSPlan).'
                             <div>
                                 <div v-if="surveyDone > 0" class="row">
                                     <div class="col-12">
@@ -1028,8 +1268,8 @@ $modalMilestone = '
                                                         <li v-if="milestones.length > 0" class="nav-item">
                                                             <a 
                                                                 class="nav-link active" @click="hideAdditionalCharts()" id="milestone-list-tab" data-toggle="pill" href="#view-list" role="tab" aria-controls="view-list" aria-selected="false">
-                                                                <i hidden class="fa fa-list"></i> Aktuelle Meilensteine
-                                                            </a>
+                                                                <i hidden class="fa fa-list"></i> Aktuelle Meilensteine <span>({{remainingMilestones.length}})</span>
+                                                            </a>                                                            
                                                         </li>
                                                         <li v-if="milestones.length > 0" class="nav-item">
                                                             <a 
@@ -1040,7 +1280,7 @@ $modalMilestone = '
                                                         <li v-if="milestones.length > 0" class="nav-item">
                                                             <a 
                                                                 class="nav-link" @click="hideAdditionalCharts()" id="milestone-archive-list-tab" data-toggle="pill" href="#view-archive-list" role="tab" aria-controls="view-archive-list" aria-selected="false">
-                                                                <i hidden class="fa fa-list"></i> Archiv
+                                                                <i hidden class="fa fa-list"></i> Archiv <span>({{archivedMilestones.length}})</span>
                                                             </a>
                                                         </li>                                                                                                        
                                                     </ul>                                           
@@ -1056,10 +1296,16 @@ $modalMilestone = '
                                                         <div class="dropdown-menu" aria-labeledby="settingsMenuButton">
                                                         '.($this->checkModeratorStatus()?'
                                                             <a class="dropdown-item" data-toggle="modal" data-target="#moderationModal" href="#">
-                                                                <i class="fa fa-clock"></i>Vorlagen
-                                                            </a>':'').'                                                            
+                                                                <i class="fa fa-clock"></i>Planung
+                                                            </a>
+                                                            <a class="dropdown-item" data-toggle="modal" data-target="#reportModal" href="#">
+                                                                <i class="fa fa-clock"></i>Statistik
+                                                            </a>':
+                                                            '<a class="dropdown-item" data-toggle="modal" data-target="#moderationModal" href="#">
+                                                                <i class="fa fa-clock"></i>Einstellungen
+                                                            </a>').'                                                            
                                                             <a class="dropdown-item" @click="exportToICal()" href="#">
-                                                                <i class="fa fa-clock"></i>Exportieren
+                                                                <i class="fa fa-clock"></i>Exportieren (iCal)
                                                             </a>                                                            
                                                         </div>
                                                     </div>

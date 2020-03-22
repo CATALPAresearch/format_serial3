@@ -31,12 +31,21 @@ define([
 
     var Timeline = function (Vue, d3, dc, crossfilter, moment, Sortable, utils, introJs, logger, FilterChart, ActivityChart, InitialSurvey, ICalExport, ICalLib, vDP, vDPde, ErrorHandler) {
 
+        $(document).ready(function(){
+            let edit = $("a.milestone-element-edit");
+            let filler = $("span.ms-edit-filler");
+            filler.innerWidth(edit.innerWidth());
+            filler.css('display','inline-block');            
+        });
+
+
         var width = document.getElementById('ladtopic-container-0').offsetWidth;
         var margins = { top: 15, right: 10, bottom: 20, left: 10 };
         var course = {
             id: parseInt($('#courseid').text(), 10)
             // module: parseInt($('#moduleid').html()) 
         };
+
         utils.get_ws('logstore', {
             'courseid': parseInt(course.id, 10)
         }, function (e) {
@@ -160,6 +169,27 @@ define([
                         modalVisible: false,
                         modalReflectionVisible: false,
                         reflectionsFormVisisble: false,
+                        modUsers: [],        
+                        modStatistics: {
+                            users: 0,
+                            surveys: 0,
+                            milestones: 0,
+                            msProgessed: 0,
+                            msReady: 0,
+                            msUrgent: 0,
+                            msMissed: 0,                            
+                            msReflected: 0,
+                            ptExam: 0,
+                            ptOrientation: 0,
+                            ptInterest: 0,
+                            ptNoAnswer: 0,
+                            ptW1: 0,
+                            ptW4: 0,
+                            ptWA: 0,
+                            ptWA2: 0,
+                            ptWA4: 0,
+                            ptWANA: 0                      
+                        },             
                         strategyCategories: [
                             { id: 'organization', name: 'Organisation' },
                             { id: 'elaboration', name: 'Elaborationsstrategien' },
@@ -195,36 +225,41 @@ define([
                 mounted: function () {
                     moment.locale('de');
                     var _this = this;
-                    this.range = xRange;
+                    this.range = xRange;                    
                     // load milestone data from database via webservice
                     utils.get_ws('getmilestones', {
                         data: {
                             'courseid': parseInt(course.id, 10)
                         }
                     }, function (e) {
-                        if (e !== null) {
-                            var data = JSON.parse(e.milestones);
-                            if (!data || !data.milestones) {
-                                _this.milestones = [];
-                            } else {
-                                // todo: A validation of the JSON should be feasible
-                                _this.milestones = JSON.parse(data.milestones);
-                                _this.emptyMilestone.end = new Date();
-                                _this.emptyMilestone.start = new Date();
-                                _this.updateMilestoneStatus();
-                                _this.initializeChart();
-
-                                var facts = crossfilter(activityData);
-                                _this.timeFilterChart = new FilterChart(d3, dc, crossfilter, facts, xRange, _this, utils, logger);
-
-                                _this.setFilterPreset('last-month');
-                                var activityChart = new ActivityChart(d3, dc, crossfilter, moment, activityData, utils);
-                                xRange = activityChart.getXRange();
-                                _this.timeFilterChart.registerChart(activityChart);
-
-                                logger.add('planing_tool_open', { pageLoaded: true });
+                        _this.emptyMilestone.end = new Date();
+                        _this.emptyMilestone.start = new Date();
+                        _this.initializeChart();    
+                        try{
+                            if (e !== null) {
+                                var data = JSON.parse(e.milestones);
+                                if (!data || !data.milestones) {
+                                    _this.milestones = [];
+                                } else {
+                                    // todo: A validation of the JSON should be feasible
+                                    _this.milestones = JSON.parse(data.milestones);                                              
+                                    _this.updateMilestoneStatus();                              
+    
+                                    var facts = crossfilter(activityData);
+                                    _this.timeFilterChart = new FilterChart(d3, dc, crossfilter, facts, xRange, _this, utils, logger);
+    
+                                    _this.setFilterPreset('last-month');
+                                    var activityChart = new ActivityChart(d3, dc, crossfilter, moment, activityData, utils);
+                                    xRange = activityChart.getXRange();
+                                    _this.timeFilterChart.registerChart(activityChart);
+    
+                                    logger.add('planing_tool_open', { pageLoaded: true });
+                                }
                             }
-                        }
+                        } catch(error){
+                            _this.milestones = [];
+                        }                 
+                        
                     });
 
                     this.getMilestonePlan();
@@ -241,12 +276,21 @@ define([
                     }, function (e) {
                         try {
                             if (typeof e.data === "string" && e.data.length > 0) {
-                                _this.calendar = JSON.parse(e.data);
+                                _this.calendar = JSON.parse(e.data);                               
                             }
                         } catch (error) {
                             new ErrorHandler(error);
                         }
+                    });           
+
+                    $(document).ready(function(){
+                        if($('#reportModal').length > 0){
+                            $('#reportModal').on('shown.bs.modal', function(){                                
+                                _this.modGetStatisticData(_this);
+                            });
+                        }
                     });
+                   
                 },
                 created: function () {
                     var _this = this;
@@ -515,7 +559,7 @@ define([
                                 ])
                             }
                         }, function (e) {
-                            try {
+                            try {                                
                                 let data = JSON.parse(e.data);
                                 // Sort Ressources
                                 let obj = new Array(data.length);
@@ -536,11 +580,12 @@ define([
                                         pos++;
                                     }
                                     obj[pos] = data[i];
-                                }
-                                _this.resources = obj;
+                                }                                
+                                _this.resources = obj;                                
                                 for (let i in _this.calendar) {
                                     let element = _this.calendar[i];
-                                    if (element.eventtype !== "course" && element.eventtype !== "group") continue;
+                                    if (element.eventtype !== "course" && element.eventtype !== "group") continue;                                  
+                                    let date = moment.unix(+element.timestart).format("DD.MM.YYYY");
                                     let out = {
                                         course_id: course.id,
                                         id: element.id,
@@ -549,7 +594,7 @@ define([
                                         instance_type: element.eventtype === "course" ? "kurstermin" : "gruppentermin",
                                         instance_url_id: null,
                                         module_id: null,
-                                        name: element.name,
+                                        name: element.name+" ["+date+"]",
                                         pos_module: null,
                                         pos_section: null,
                                         section: null,
@@ -690,15 +735,14 @@ define([
 
                         this.height = this.maxLanes * 24;
                     },
-                    showModal: function (milestoneID) {
+                    showModal: function (milestoneID) {                        
                         this.selectedMilestone = milestoneID;
                         this.startDate = this.getSelectedMilestone().start;
                         this.endDate = this.getSelectedMilestone().end;
                         this.reflectionsFormVisisble = this.getSelectedMilestone().status === 'reflected' ? true : false;
                         this.modalVisible = true;
                         this.getSelectedMilestone().mod = false;
-                        if (e > 0) {
-
+                        if (milestoneID > 0) {
                             logger.add('milestone_edit_dialog_open', {
                                 milestoneId: this.getSelectedMilestone().id,
                                 name: this.getSelectedMilestone().name,
@@ -711,7 +755,7 @@ define([
                             });
                         }
                     },
-                    closeModal: function (e) {
+                    closeModal: function (e) {                       
                         this.modalVisible = false;
                         this.updateMilestoneStatus();
                         this.updateChart(this.range);
@@ -819,10 +863,10 @@ define([
                                 });
                                 if ($("#milestone-list-tab").hasClass("active") || $("#milestone-archive-list-tab").hasClass("active")) {
                                     if (this.getSelectedMilestone().status === "missed" || this.getSelectedMilestone().status === "reflected") {
-                                        console.log("Archiv");
+                                        
                                         this.moveToMilestoneArchiveListEntry(this.getSelectedMilestone().id, true);
                                     } else {
-                                        console.log("Other");
+                                       
                                         this.moveToMilestoneListEntry(this.getSelectedMilestone().id, true);
                                     }
                                 } else if ($("#milestone-timeline-tab").hasClass("active")) {
@@ -1158,7 +1202,9 @@ define([
                         var _this = this;
                         let ms = _this.milestones.filter(
                             function (element) {
-                                if (element.mod !== true) return true;
+                                if (element.mod !== true) {                                    
+                                    return true;
+                                }
                                 if (typeof element.mod === "undefined") element.mod = false;
                                 return false;
                             }
@@ -1217,7 +1263,7 @@ define([
                         let c = this;
                         for (var j = 0; j < this.milestones.length; j++) {
                             let pos = this.milestones[j].id;
-                            let obj = this.milestones[j];
+                            let obj = this.milestones[j];                            
                             for (var i = 0; i < this.milestones[j].resources.length; i++) {
                                 badge = $('<span></span>')
                                     .addClass('badge badge-secondary badge-ms')
@@ -1236,7 +1282,7 @@ define([
                                         "cursor": "pointer"
                                     })
                                     ;
-                                if (!this.milestones[j].resources[i].checked && this.milestones[j].status === 'missed') {
+                                if (!this.milestones[j].resources[i].checked && this.milestones[j].status === 'missed' && new Date() <= moment(this.milestones[j].end).add(1, 'w').toDate()) {
                                     badge
                                         .html('<i class="fa fa-exclamation"></i>' + this.limitTextLength(this.milestones[j].name, 14))
                                         .attr('title', 'Dieses Element haben Sie im Meilenstein \"' + this.milestones[j].name + '\" noch nicht erledigt oder als "erledigt" markiert.')
@@ -1505,6 +1551,7 @@ define([
                                 let list = "";
                                 _this.milestones.forEach(
                                     (element) => {
+                                        if(element.status === "reflected" || (element.status === "missed" &&  new Date() > moment(element.end).add(1, 'w').toDate())) return;
                                         let icon = "fa-square";
                                         if (typeof element.resources === "object") {
                                             element.resources.forEach(
@@ -1512,11 +1559,11 @@ define([
                                                     if (+res.instance_url_id === id) icon = "fa-check-square";
                                                 }
                                             )
-                                        }
+                                        }                                        
                                         list += "<a class=\"dropdown-item\" href=\"#\" id=\"" + element.id + "\"><i class=\"icon fa " + icon + "\"></i>" + element.name + "</a>";
                                     }
                                 );
-                                return list;
+                                return list.length <= 0?"<span class=\"px-2\" style=\"user-select:none;\">Kein Meilenstein</span>":list;
                             } catch (error) {
                                 return "<div class=\"dropdown-item\">Meilensteine konnten nicht geladen werden.</div>";
                             }
@@ -1586,7 +1633,7 @@ define([
                                                             e.preventDefault();
                                                             if (typeof _this.milestones === "object" && typeof _this.resources === "object") {
                                                                 for (let i in _this.milestones) {
-                                                                    if (_this.milestones[i]["id"] === entryID) {
+                                                                    if (_this.milestones[i]["id"] === entryID) {                                                                        
                                                                         for (let u in _this.resources) {
                                                                             if (+_this.resources[u]["instance_url_id"] === id) {
                                                                                 if (typeof _this.milestones[i]["resources"] === "object") {
@@ -1600,7 +1647,7 @@ define([
                                                                                         if (found !== null) {
                                                                                             _this.milestones[i]["resources"].splice(found, 1);
                                                                                             icon.removeClass("fa-check-square");
-                                                                                            icon.addClass("fa-square");
+                                                                                            icon.addClass("fa-square");                                                                                   
                                                                                         } else {
                                                                                             _this.milestones[i]["resources"].push(_this.resources[u]);
                                                                                             icon.addClass("fa-check-square");
@@ -1609,14 +1656,13 @@ define([
                                                                                     } else {
                                                                                         _this.milestones[i]["resources"].push(_this.resources[u]);
                                                                                         icon.addClass("fa-check-square");
-                                                                                        icon.removeClass("fa-square");
+                                                                                        icon.removeClass("fa-square");                                                                                        
                                                                                     }
-
                                                                                 } else {
                                                                                     _this.milestones[i]["resources"] = array(_this.resources[u]);
                                                                                     icon.addClass("fa-check-square");
                                                                                     icon.removeClass("fa-square");
-                                                                                }
+                                                                                }                                                                               
                                                                                 _this.updateMilestoneStatus();
                                                                             }
                                                                         }
@@ -1870,17 +1916,19 @@ define([
                             new ErrorHandler(error);
                         }
                     },
-                    modSaveSelect: function () {
+                    modSaveSelect: function () {                                              
                         let ms = this.milestones.filter(
                             function (element) {
-                                if (element.mod !== true) return true;
+                                if (element.mod !== true) {                                   
+                                    return true;
+                                }
                                 return false;
                             }
-                        );
+                        );                
                         if (ms.length <= 0) {
                             this.modAlert("warning", "Keine Meilensteine vorhanden.");
                             return;
-                        }
+                        }                        
                         if ($("#modSaveInterest").is(":checked")) {
                             this.modSaveMilestones("interest", ms);
                         } else if ($("#modSaveOrientation").is(":checked")) {
@@ -1889,6 +1937,8 @@ define([
                             this.modSaveMilestones("exam", ms);
                         } else if ($("#modSaveLocal").is(":checked")) {
                             this.exportMilestones(ms);
+                        } else {                                                      
+                            this.exportMilestones(ms);
                         }
                         return;
                     },
@@ -1896,19 +1946,64 @@ define([
                         var check = confirm('Wollen Sie wirklich alle Meilensteine zurücksetzen?');
                         if (check === true) {
                             if ($("#modSaveInterest").is(":checked")) {
-                                this.modSaveMilestones("interest", []);
+                                this.modSaveMilestones("interest", [], false);
                             } else if ($("#modSaveOrientation").is(":checked")) {
-                                this.modSaveMilestones("orientation", []);
+                                this.modSaveMilestones("orientation", [], false);
                             } else if ($("#modSaveExam").is(":checked")) {
-                                this.modSaveMilestones("exam", []);
+                                this.modSaveMilestones("exam", [], false);
                             } else if ($("#modSaveLocal").is(":checked")) {
+                                this.resetMilestones();
+                            } else {
                                 this.resetMilestones();
                             }
                         }
                         return;
 
                     },
-                    modSaveMilestones: function (plan, milestones) {
+                    modResetPlan: function(){
+                        var check = confirm('Wollen Sie wirklich ihren Semesterplan zurücksetzen?');
+                        if (check === true) {                               
+                            let todo = [];
+                            todo.push(new Promise(
+                                (resolve, reject) => {
+                                    utils.get_ws('userpreferences', {
+                                        data: {
+                                            'setget': 'set',
+                                            'courseid': parseInt(course.id, 10),
+                                            'fieldname': 'ladtopics_survey_done',
+                                            'value': 0
+                                        }
+                                    }, function (e) {
+                                       return resolve();
+                                    });
+                                }
+                            ));
+                            todo.push(new Promise(
+                                (resolve, reject) => {
+                                    utils.get_ws('userpreferences', {
+                                        data: {
+                                            'setget': 'set',
+                                            'courseid': parseInt(course.id, 10),
+                                            'fieldname': 'ladtopics_survey_results',
+                                            'value': ""
+                                        }
+                                    }, function (e) {
+                                       return resolve();
+                                    });
+                                }
+                            ));                  
+                            Promise.all(todo).then(
+                                (resolve) => {
+                                    location.reload(); 
+                                },
+                                (reject) => {
+                                    console.log(reject);
+                                }
+                            )
+                        }
+                        return;
+                    },
+                    modSaveMilestones: function (plan, milestones, reset = true) {
                         let _this = this;
                         try {
                             utils.get_ws('setmilestoneplan', {
@@ -1920,8 +2015,16 @@ define([
                             }, function (e) {
                                 let out = JSON.parse(e.data);
                                 if (out.success === true) {
-                                    _this.milestones = [];
-                                    _this.updateMilestones();
+                                    if(reset){
+                                        _this.milestones = [];
+                                        _this.updateMilestones();
+                                    } else {
+                                        let ms = [];
+                                        for(let u in _this.milestones){
+                                            if(_this.milestones[u].mod !== true) ms.push(_this.milestones[u]);
+                                        }
+                                        _this.milestones = ms;
+                                    }                               
                                     _this.getMilestonePlan();
                                     _this.modAlert("success", "Meilensteine wurden aktualisiert.");
                                 } else {
@@ -1937,11 +2040,11 @@ define([
                         }
                     },
                     resetMilestones: function () {
-                        try {
+                        try {                           
                             this.milestones = [];
-                            this.updateMilestones();
-                            this.modAlert("success", "Meilensteine wurden zurückgesetzt.");
-                        } catch (error) {
+                            this.updateMilestones();                           
+                            this.modAlert("success", "Meilensteine wurden zurückgesetzt.");                            
+                        } catch (error) {                            
                             this.modAlert("danger", "Konnte die Meilensteine nicht zurücksetzen.");
                             new ErrorHandler(error);
                         }
@@ -1963,6 +2066,510 @@ define([
                         } catch (error) {
                             new ErrorHandler(error);
                         }
+                    },      
+                    sendMail: function(subject, text){
+                        try{    
+                            utils.get_ws("sendmail", {
+                                'courseid': parseInt(course.id, 10),
+                                'subject': "hello",
+                                'text': "jo"
+                            }, function (u) {                                            
+                             
+                            });
+                        } catch(error){
+                            console.log(error);
+                        }
+                    }, 
+                    modGetStatisticData: function(parent){
+                        try{    
+                            let _this = parent;                                              
+                            new Promise(
+                                (resolve, reject) => {
+                                    utils.get_ws("statistics", {
+                                        'courseid': parseInt(course.id, 10)                               
+                                    }, function (u) {                                            
+                                       let obj = JSON.parse(u.data);
+                                       return resolve(obj);                                       
+                                    });
+                                }
+                            ).then(
+                                (resolve) => {                                
+                                    if($('#stUserList').length > 0){
+                                        $('#stUserList tr:gt(1)').remove();                                        
+                                    }   
+                                    $('#modWorkload tr').not(':first').not(':last').remove();       
+                                    _this.modStatistics.users = resolve.num_users?+resolve.num_users:0;
+                                    _this.modStatistics.surveys = resolve.num_survey?+resolve.num_survey:0;      
+                                    _this.modStatistics.msProgessed = 0,
+                                    _this.modStatistics.msReady = 0,
+                                    _this.modStatistics.msUrgent = 0,
+                                    _this.modStatistics.msMissed = 0,                            
+                                    _this.modStatistics.msReflected = 0
+                                    _this.modStatistics.ptExam = 0;
+                                    _this.modStatistics.ptOrientation = 0;
+                                    _this.modStatistics.ptInterest = 0;
+                                    _this.modStatistics.ptNoAnswer = 0;
+                                    _this.modStatistics.ptW1 = 0;
+                                    _this.modStatistics.ptW4 = 0;
+                                    _this.modStatistics.ptWA = 0;
+                                    _this.modStatistics.ptWA2 = 0;
+                                    _this.modStatistics.ptWA4 = 0;
+                                    _this.modStatistics.ptWANA = 0;  
+                                    _this.modStatistics.ptSum = 0;
+                                    _this.modStatistics.ptMS = 0;
+                                    _this.modStatistics.ptUser = 0;
+                                    _this.modStatistics.milestones = 0;                              
+                                   
+                                    let createPie = function(parent, data, color){                                        
+                                        for(let i in data){
+                                            if(data[i] <= 0){
+                                                delete(data[i]);
+                                            }
+                                        }
+                                        if(Object.keys(data).length <= 0) return;                                       
+                                        let jqp = $(parent);
+                                        if(jqp.length > 0){
+                                            jqp.empty();
+                                            let width = jqp.width()/2;
+                                            let radius = width / 2 - 20;
+                                            let chart = d3.select(parent)
+                                                            .append("svg")
+                                                            .attr("width", width)
+                                                            .attr("height", width)                                                               
+                                            chart.append("g").attr("class", "slices").attr("transform", "translate(" + width / 2 + "," + width / 2 + ")");
+                                            chart.append("g").attr("class", "labels").attr("transform", "translate(" + width / 2 + "," + width / 2 + ")");
+                                            var color = d3.scaleOrdinal()
+                                                            .domain(data)
+                                                            .range(color);
+                                            var pie = d3.pie().value(function(d) {return d.value; });
+                                            var data_ready = pie(d3.entries(data));
+
+                                            $(parent+" svg").css({
+                                                "margin": "auto",
+                                                "display": "block"
+                                            });
+
+                                            var arcGenerator = d3.arc()
+                                                .innerRadius(0)
+                                                .outerRadius(radius);
+
+                                            chart
+                                                .select('.slices')
+                                                .selectAll("path.slice")
+                                                .data(data_ready)
+                                                .enter()
+                                                .append('path')
+                                                .attr('d', arcGenerator)
+                                                .attr('fill', function(d){ return(color(d.data.key)) })
+                                                .attr("stroke", "black")
+                                                .style("stroke-width", "2px")
+                                                .style("opacity", 0.7);
+                                            chart
+                                                .select('.labels')
+                                                .selectAll("text")
+                                                .data(data_ready)
+                                                .enter()
+                                                .append('text')
+                                                .text(function(d){ return d.data.key+" ("+d.data.value+")"})
+                                                .attr("transform", function(d) { return "translate(" + arcGenerator.centroid(d) + ")";  })
+                                                .style("text-anchor", "middle")
+                                                .style("font-size", 17);
+                                        }                                        
+                                    }   
+                                    
+                                    let createBarChart = function(parent, data, color){
+                                        
+                                        for(let i in data){
+                                            if(data[i] <= 0){
+                                                delete(data[i]);
+                                            }
+                                        }
+
+                                        if(Object.keys(data).length <= 0) return;   
+
+                                        let jqp = $(parent);
+
+                                        if(jqp.length > 0){
+                                            
+                                            jqp.empty();
+
+                                            let margin = 30;
+                                            let width = jqp.width() - 8;
+                                            let height = (width / 2) - 2 * margin;
+                                            width = width - 2 * margin;                                           
+
+                                            let chart = d3
+                                                .select(parent)
+                                                .append("svg")
+                                                .attr("width", width + 2 * margin)
+                                                .attr("height", height + 2 * margin)                                                
+
+                                            let maxY = 0;
+                                            let maxX = 0;
+
+                                            for(let t in data){
+                                                let obj = data[t];
+                                                if(+obj['numb'] > maxX) maxX = obj['numb'];
+                                                if(+obj['count'] > maxY) maxY = obj['count'];
+                                            }                                            
+                                         
+                                            let yScale = d3
+                                                .scaleLinear()
+                                                .range([height, 0])
+                                                .domain([0, maxY + 1])                                                
+                                                .nice();
+
+                                            chart
+                                                .append("g")
+                                                .attr('transform', `translate(${margin}, ${margin})`)
+                                                .attr("class", "Yaxis")                           
+                                                .call(
+                                                    d3
+                                                        .axisLeft(yScale)
+                                                        .tickFormat(d3.format('.0f'))
+                                                        .ticks(maxY + 1)
+                                                );
+                                       
+                                            let xScale = d3
+                                                .scaleLinear()
+                                                .range([0, width])
+                                                .domain([0, maxX + 1])
+                                                .nice();
+                                                
+                                            chart
+                                                .append("g")                                                
+                                                .attr("class", "Xaxis")
+                                                .attr('transform', `translate(${margin}, ${height + margin})`)
+                                                .call(
+                                                    d3
+                                                        .axisBottom(xScale)
+                                                        .tickFormat(d3.format('.0f'))
+                                                        .ticks(maxX + 1)
+                                                );
+                                        
+                                            let barWidth = (width / maxX) / 2;
+
+                                            chart
+                                                .append("g")
+                                                .attr('transform', `translate(${margin - barWidth / 2}, ${margin})`)
+                                                .attr("class", "bars")
+                                                .selectAll()
+                                                .data(data)
+                                                .enter()
+                                                .append('rect')
+                                                .style("fill", color)
+                                                .attr('x', (s) => xScale(s.numb))
+                                                .attr('y', (s) => yScale(s.count))
+                                                .attr('height', (s) => height - yScale(s.count))
+                                                .attr('width', barWidth);                                            
+                                         
+                                        }
+                                        return;                               
+                                    }
+                                    
+                                    let availTime = {};                                   
+
+                                    // get all milestones
+                                    if(resolve.users){                                                                            
+                                        for(let i in resolve.users){                                           
+                                            _this.modStatistics.ptUser++;                                               
+                                            
+                                            let surveyDone = 0;
+                                            if(resolve.users[i]['surveyDone'] && +resolve.users[i]['surveyDone']['value'] > 0){
+                                                surveyDone = 1;
+                                            }
+
+                                            if(resolve.users[i]['survey']){
+                                                _this.modStatistics.ptSum++;   
+                                                if(resolve.users[i]['survey']['value']){
+                                                    resolve.users[i]['survey'] = JSON.parse(resolve.users[i]['survey']['value']);
+                                                    let surv = resolve.users[i]['survey'];
+                                                    switch(surv.objectives){
+                                                        case 'f1a': _this.modStatistics.ptExam++;
+                                                                    break;
+                                                        case 'f1b': _this.modStatistics.ptOrientation++;
+                                                                    break;
+                                                        case 'f1c': _this.modStatistics.ptInterest++;
+                                                                    break;
+                                                        case 'f1d': _this.modStatistics.ptNoAnswer++;
+                                                                    break;
+                                                    }
+                                                }
+                                                if(resolve.users[i]['survey']['availableTime']){
+                                                    let time = resolve.users[i]['survey']['availableTime'];                                                
+                                                    if(availTime[time]){
+                                                        availTime[time]++;
+                                                    } else {
+                                                        availTime[time] = 1;
+                                                    }
+                                                }  
+                                                if(resolve.users[i]['survey']['planingStyle']){
+                                                    let ps = resolve.users[i]['survey']['planingStyle'];
+                                                    switch(ps){
+                                                        case 'planing-style-a': _this.modStatistics.ptW1++;
+                                                                                break;
+                                                        case 'planing-style-b': _this.modStatistics.ptW4++;
+                                                                                break;
+                                                        case 'planing-style-c': _this.modStatistics.ptWA++;
+                                                                                break;
+                                                        case 'planing-style-d': _this.modStatistics.ptWA2++;
+                                                                                break;
+                                                        case 'planing-style-e': _this.modStatistics.ptWA4++;
+                                                                                break;
+                                                        case 'planing-style-f': _this.modStatistics.ptWANA++;
+                                                                                break;
+                                                    }
+                                                }                                                       
+                                            }   
+                                            let milestones = 0;  
+                                            let msDone = 0;  
+                                            let msReady = 0;
+                                            let msFailed = 0;                                                                     
+                                            if(resolve.users[i]["milestones"] && resolve.users[i]["milestones"]["milestones"]){
+                                                _this.modStatistics.ptMS++;
+                                                resolve.users[i]["milestones"] = JSON.parse(resolve.users[i]["milestones"]["milestones"]);
+                                                let msCount = resolve.users[i]["milestones"].length;
+                                                for(let t in resolve.users[i]["milestones"]){
+                                                    milestones++;
+                                                    let ms = resolve.users[i]["milestones"][t];
+                                                    switch(ms.status){
+                                                        case 'progress':    _this.modStatistics.msProgessed++;
+                                                                            break;
+                                                        case 'ready':       _this.modStatistics.msReady++;
+                                                                            msReady++;
+                                                                            break;
+                                                        case 'urgent':      _this.modStatistics.msUrgent++;
+                                                                            break;
+                                                        case 'missed':      _this.modStatistics.msMissed++;
+                                                                            msFailed++;
+                                                                            break;
+                                                        case 'reflected':   _this.modStatistics.msReflected++;
+                                                                            _this.modStatistics.msReady++;
+                                                                            msDone++;
+                                                                            break;
+                                                    }                                                    
+                                                } 
+                                                _this.modStatistics.milestones += msCount;                                               
+                                            }
+                                            
+                                            if($('#stUserList').length > 0){
+                                                $('#stUserList tr:last').after(`<tr><td>${resolve.users[i]['firstname']}</td><td>${resolve.users[i]['lastname']}</td><td>${resolve.users[i]['email']}</td><td>${surveyDone}</td><td>${milestones}</td><td>${msFailed}</td><td>${msReady}</td><td>${msDone}</td></tr>`);
+                                            }                                       
+                                            //console.log(JSON.parse(resolve.users[i]["milestones"]["milestones"]));
+                                            /*
+                                            resolve.users[i]["milestones"] = JSON.parse(resolve.users[i]["milestones"]["milestones"]);*/
+                                        }                                      
+                                      
+                                        let timeArray = [];    
+                                        
+                                        let table = "";
+
+                                        for(let u in availTime){
+
+                                            table += `<tr><td>${u} SWS</td><td style="padding-right: 30px; text-align: right;">${availTime[u]}</td></tr>`;
+                                            
+                                            timeArray.push(
+                                                {
+                                                    numb: parseInt(u),
+                                                    count: availTime[u]
+                                                }
+                                            );
+                                        }
+
+                                        $('#modWorkload tr:first').after(table);
+
+                                        createBarChart("#stChartHR", timeArray, "#003f5c");                                        
+
+                                        let data = {
+                                            "Bearbeitung": _this.modStatistics.msProgessed,
+                                            "Dringend": _this.modStatistics.msUrgent, 
+                                            "Abgeschlossen": _this.modStatistics.msReady, 
+                                            "Reflektiert": _this.modStatistics.msReflected,
+                                            "Abgelaufen": _this.modStatistics.msMissed
+                                        };                                   
+                                        
+                                        var color = ["#003f5c", "#ffa600", "#bc5090", "#58508d", "#ff6361"];
+                                        createPie("#stChartMS", data, color);
+
+                                        data = {
+                                            "Prüfung": _this.modStatistics.ptExam,                                     
+                                            "Orientierung": _this.modStatistics.ptOrientation,                                                              
+                                            "Interesse": _this.modStatistics.ptInterest,                                                             
+                                            "Keine Angabe": _this.modStatistics.ptNoAnswer
+                                        }
+                                        createPie("#stChartTA", data, color);                                
+
+                                        data = {
+                                            "Nur eine Woche": _this.modStatistics.ptW1,
+                                            "Nur vier Wochen": _this.modStatistics.ptW4,
+                                            "Semester eine Woche": _this.modStatistics.ptWA,
+                                            "Semester zwei Wochen": _this.modStatistics.ptWA2,
+                                            "Semester vier Wochen": _this.modStatistics.ptWA4,
+                                            "Keine Angabe": _this.modStatistics.ptWANA
+                                        }
+                                        createPie("#stChartPS", data, color);
+
+                                        //console.log(resolve.users);
+                                    }                        
+                                },
+                                (reject) => {
+                                    console.log(reject);
+                                }
+                            )
+                            
+                        } catch(error){
+                            console.log(error);
+                        }
+                    },
+                    sendNotification: function(subject, text){
+                        /*require(['core/notification'], function(notification) {
+                            notification.addNotification({
+                              message: "Your message here",
+                              type: "info"
+                            });
+                        });*/
+
+                        try{    
+                            utils.get_ws("notification", {
+                                'courseid': parseInt(course.id, 10),
+                                'subject': "hello",
+                                'short': "ss",
+                                'text': "Hier steht deine Werbung"
+                            }, function (u) {                                            
+                               console.log(u);
+                            });
+                        } catch(error){
+                            console.log(error);
+                        }
+
+
+                        /*require(['core/notification'], function(notification) {
+                                console.log("LOADED");
+                                console.log(typeof notification.addNotification);
+                                notification.addNotification({
+                                  message: "Your message here",
+                                  type: "info"
+                                });
+                                console.log(typeof notification.fetchNotifications);                                
+                            });*/
+                    },         
+                    modUpdateUser: function(){
+                        let _this = this;
+                        let items = $("input.mru:checked");
+                        if(items.length <= 0){
+                            this.modAlert("warning", "Bitte wählen Sie einen Benutzer aus.");
+                            return;
+                        }
+                        let resetMS = $("#modResetUserMS").is(":checked");
+                        let resetPlan = $("#modResetUserPlan").is(":checked");
+                        if(!resetMS && !resetPlan){
+                            this.modAlert("warning", "Bitte wählen Sie aus, was zurück gesetzt werden soll.");
+                            return;
+                        }                                                
+                        let update = [];
+                        items.each(
+                            function(){
+                                let item = $(this);
+                                let val = +item.val();
+                                if(typeof val !== "number" && val <= 0) return;
+                                let prom = new Promise(
+                                    (resolve, reject) => {
+                                        let data = {
+                                            courseid: parseInt(course.id, 10),
+                                            userid: parseInt(val, 10)
+                                        };                                       
+                                        if(resetMS) data['milestones'] = [];
+                                        if(resetPlan) data['plan'] = [];
+                                        data = JSON.stringify(data);                                      
+                                        utils.get_ws("updateuser", {                                            
+                                            'data': data
+                                        }, function (u) {    
+                                            for(let i in _this.modUsers){
+                                                if(_this.modUsers[i]['id'] === val){
+                                                    console.log(_this.modUsers[i]['id'])
+                                                    if(_this.modUsers[i]['self'] === true){
+                                                        console.log(_this.modUsers[i]['self']);
+                                                        return resolve(true);
+                                                    } else {
+                                                        return resolve(false);
+                                                    }
+                                                }
+                                            }                                     
+                                        });                                        
+                                    }
+                                );
+                                update.push(prom);
+                            }
+                        );              
+                        Promise.all(update).then(
+                            (resolve) => {
+                                for(let i in resolve){
+                                    if(resolve[i] === true) location.reload();
+                                }                              
+                                this.modAlert("success", "Benutzerplanung zurückgesetzt");
+                            },
+                            (reject) => {
+                                this.modAlert("danger", reject);
+                            }
+                        )   
+                        return;       
+                    },
+                    userAutocomplete: async function(target, value){
+                        try{
+                            $("input.mru:not(:checked)").parent().remove();
+                            let list = $('div.userAutocomplete');  
+                            if(list.children().length <= 0) {
+                                list.removeClass("bg-secondary");
+                                list.removeClass("mb-3");                                 
+                            }
+                            if(typeof value !== "string" || value.length <= 0) return;                                                           
+                            if(typeof this.modUsers !== "object" || this.modUsers.length < 1){
+                                let result = await new Promise(
+                                    (resolve, reject) => {
+                                        utils.get_ws("getalluser", {
+                                            'courseid': parseInt(course.id, 10)
+                                        }, function (u) {                                            
+                                            let obj = JSON.parse(u.data);
+                                            if(!obj.user) throw new Error("Invalid Return");
+                                            return resolve(obj.user);
+                                        });
+                                    }
+                                );         
+                                this.modUsers = result;                       
+                            }                            
+                            value = value.toLowerCase();                            
+                            for(let i in this.modUsers){
+                                let element = this.modUsers[i];
+                                element.id = +element.id;
+                                if(typeof element.id !== "number" || element.id < 0) continue;                                
+                                if($("#mru-"+element.id).length > 0) continue;                 
+                                let ident = "";         
+                                let found = false;                   
+                                if(element.username){       
+                                    if(element.username.toLowerCase().indexOf(value) !== -1) found = true;
+                                    ident += ident.length > 0 ? " - "+element.username:element.username;
+                                }
+                                if(element.name){                                     
+                                    if(element.name.toLowerCase().indexOf(value) !== -1) found = true;
+                                    ident += ident.length > 0 ? " - "+element.name:element.name;
+                                }
+                                if(element.email){                                     
+                                    if(element.email.toLowerCase().indexOf(value) !== -1) found = true;
+                                    ident += ident.length > 0 ? " - "+element.email:element.email;                                  
+                                }                                
+                                if(found){
+                                    if(list.children().length <= 0){
+                                        list.addClass("bg-secondary");
+                                        list.addClass("mb-3");
+                                    }
+                                    let divElem = $("<div class=\"form-check\"></div>").appendTo(list);                                     
+                                    $("<input class=\"mru form-check-input\" type=\"checkbox\" value=\""+element.id+"\" id=\"mru-"+element.id+"\" />").appendTo(divElem);
+                                    $("<label class=\"form-check-label\" for=\"modResetUsers\" />").text(ident).appendTo(divElem);
+                                }                          
+                            }
+                        } catch(error){
+                            console.log(error);
+                        }
                     },
                     getMilestonePlan: function () {
                         try {
@@ -1974,6 +2581,7 @@ define([
                                     'fieldname': 'ladtopics_survey_results',
                                 }
                             }, function (u) {
+                                if(typeof u !== "string" || u.length <= 0) return;
                                 let survey = JSON.parse(u.response);
                                 let result = JSON.parse(survey.shift()["value"]);
                                 let plan = result.objectives.toLowerCase();
@@ -2044,7 +2652,14 @@ define([
                                                                 break;
                                                             }
                                                         }
-                                                        _this.milestones.push(element);
+                                                        let found = false;
+                                                        for(let u in _this.milestones){                                                            
+                                                            if(_this.milestones[u].id === element.id){
+                                                                found = true;                                                              
+                                                                break;
+                                                            }
+                                                        }
+                                                        if(!found) _this.milestones.push(element);                                                        
                                                     }
                                                 );
                                             } else {
@@ -2053,7 +2668,15 @@ define([
                                                         element.start = moment(element.start).toDate();
                                                         element.end = moment(element.end).toDate();
                                                         element.mod = true;
-                                                        _this.milestones.push(element);
+
+                                                        let found = false;
+                                                        for(let u in _this.milestones){                                                            
+                                                            if(_this.milestones[u].id === element.id){
+                                                                found = true;                                                              
+                                                                break;
+                                                            }
+                                                        }
+                                                        if(!found) _this.milestones.push(element);
                                                     }
                                                 );
                                             }
@@ -2070,6 +2693,7 @@ define([
                     }
                 }
             });
+
 
 
             var survey = new InitialSurvey(Vue, Sortable, milestoneApp, utils, course);

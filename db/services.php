@@ -10,6 +10,38 @@
 
 
 $functions = array(
+        'format_ladtopics_statistics' => array(
+                'classname'   => 'format_ladtopics_external',
+                'methodname'  => 'statistics',
+                'classpath'   => 'course/format/ladtopics/api.php',
+                'description' => 'Obtain the plugin name',
+                'type'        => 'read',
+                'ajax'        => true 
+        ),
+        'format_ladtopics_notification' => array(
+                'classname'   => 'format_ladtopics_external',
+                'methodname'  => 'notification',
+                'classpath'   => 'course/format/ladtopics/api.php',
+                'description' => 'Obtain the plugin name',
+                'type'        => 'read',
+                'ajax'        => true 
+        ),
+        'format_ladtopics_sendmail' => array(
+                'classname'   => 'format_ladtopics_external',
+                'methodname'  => 'sendmail',
+                'classpath'   => 'course/format/ladtopics/api.php',
+                'description' => 'Obtain the plugin name',
+                'type'        => 'read',
+                'ajax'        => true 
+        ),
+        'format_ladtopics_getalluser' => array(
+                'classname'   => 'format_ladtopics_external',
+                'methodname'  => 'getalluser',
+                'classpath'   => 'course/format/ladtopics/api.php',
+                'description' => 'Obtain the plugin name',
+                'type'        => 'read',
+                'ajax'        => true 
+        ),
         'format_ladtopics_name' => array(
                 'classname'   => 'format_ladtopics_external',
                 'methodname'  => 'name',
@@ -25,15 +57,7 @@ $functions = array(
                 'description' => 'Obtain calendar events from database',
                 'type'        => 'read',
                 'ajax'        => true 
-        ),
-        'format_ladtopics_checkmod' => array(
-                'classname'   => 'format_ladtopics_external',
-                'methodname'  => 'checkmod',
-                'classpath'   => 'course/format/ladtopics/api.php',
-                'description' => 'Get the moderator status',
-                'type'        => 'read',
-                'ajax'        => true 
-        ),
+        ),        
         'format_ladtopics_getcalendar' => array(
                 'classname'   => 'format_ladtopics_external',
                 'methodname'  => 'getcalendar',
@@ -58,6 +82,14 @@ $functions = array(
                 'type'        => 'write',
                 'ajax'        => true,
                 'capabilities'  => 'format/ladtopics:view', 
+        ),
+        'format_ladtopics_updateuser' => array(
+                'classname'   => 'format_ladtopics_external',
+                'methodname'  => 'updateuser',
+                'classpath'   => 'course/format/ladtopics/api.php',
+                'description' => 'Obtain logger date from database',
+                'type'        => 'write',
+                'ajax'        => true
         ),
         'format_ladtopics_getmilestones' => array(
                 'classname'   => 'format_ladtopics_external',

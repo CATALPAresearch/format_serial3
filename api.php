@@ -4,9 +4,299 @@ defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->libdir . '/externallib.php');
 
-class format_ladtopics_external extends external_api {
+function get_meta($courseID){
+    try{
+        global $USER, $COURSE;            
+        $obj = new stdClass();
+        $obj->course = new stdClass();
+        $obj->course->id = (int)$courseID;            
+        require_login($obj->course->id);
+        $obj->course->context = context_course::instance($obj->course->id);
+        $obj->course->global = $COURSE;
+        $obj->user = new stdClass();
+        $obj->user->id = $USER->id;
+        $obj->user->loggedin = isloggedin();
+        $obj->user->siteadmin = is_siteadmin($USER->id);
+        $obj->user->enrolled = is_enrolled($obj->course->context, $USER->id);
+        $obj->user->guest = is_guest($obj->course->context, $USER->id);
+        $obj->user->viewing = is_viewing($obj->course->context, $USER->id);
+        $obj->user->roles = array();
+        $obj->user->global = $USER;       
+        $roles = get_user_roles($obj->course->context, $USER->id);
+        $obj->user->roles_raw = $roles;   
+        $obj->user->student = false;
+        $obj->user->teacher = false;    
+        $obj->user->editingteacher = false;
+        $obj->user->coursecreator = false;  
+        $obj->user->manager = false; 
+        foreach($roles as $key => $value){
+            if(isset($value->shortname)){      
+                switch($value->shortname){                    
+                    case 'teacher':         $obj->user->teacher = true;
+                                            break;
+                    case 'editingteacher':  $obj->user->editingteacher = true;
+                                            break;
+                    case 'coursecreator':   $obj->user->coursecreator = true;
+                                            break;
+                    case 'manager':         $obj->user->manager = true;
+                                            break;
+                    case 'student':         $obj->user->student = true;
+                                            break;
+                }         
+                $obj->user->roles[] = $value->shortname;
+            }
+        }     
+        return $obj;    
+    } catch(Exception $ex){
+        return null;
+    }
+}
 
+class format_ladtopics_external extends external_api { 
+
+    public static function statistics_parameters(){
+        return new external_function_parameters(
+            array(
+                'courseid' => new external_value(PARAM_INT, 'course id')
+            )
+        );
+    }
+
+    public static function statistics($courseid){
+        global $CFG, $DB;
+        $out = array();
+        try{
+            if(is_null($courseid)) throw new Exception("No course specified");            
+            $context = get_meta($courseid);
+            if($context->user->loggedin === false || $context->user->manager === false) throw new Exception("No Admin");
+            $users = get_enrolled_users($context->course->context);
+            $num_users = count_enrolled_users($context->course->context);
+            $out['users'] = array();  
+            $out['num_survey'] = 0;      
+            foreach($users as $user){
+                $uo = new stdClass();
+                $uo->firstaccess = $user->firstaccess;
+                $uo->lastaccess = $user->lastaccess;
+                $uo->lastlogin = $user->lastlogin;  
+                $uo->isEnrolled = is_enrolled($context->course->context, $user->id);
+                $uo->currentLogin = $user->currentlogin;
+                $uo->firstname = $user->firstname;
+                $uo->lastname = $user->lastname;
+                $uo->email = $user->email;              
+                // milesones           
+                $transaction = $DB->start_delegated_transaction(); 
+                $sql='
+                    SELECT t.milestones, t.settings, t.timemodified 
+                    FROM '.$CFG->prefix.'ladtopics_milestones AS t
+                    WHERE   
+                        t.course = ' . (int)$courseid . ' 
+                        AND t.userid = ' . (int)$user->id . '
+                    ORDER BY t.timemodified DESC
+                    LIMIT 1
+                    ;';                    
+                $uo->milestones = $DB->get_record_sql($sql);                
+                $transaction->allow_commit();
+                // numbers
+                $transaction = $DB->start_delegated_transaction(); 
+                $sql='
+                    SELECT t.timemodified 
+                    FROM '.$CFG->prefix.'ladtopics_milestones AS t
+                    WHERE   
+                        t.course = ' . (int)$courseid . ' 
+                        AND t.userid = ' . (int)$user->id . '
+                    ORDER BY t.timemodified DESC                 
+                    ;';                    
+                $uo->milestonesChanged = $DB->get_records_sql($sql);
+                $transaction->allow_commit();
+                // preferences               
+                $transaction = $DB->start_delegated_transaction();
+                $resSD = $DB->get_record("user_preferences", array(
+                    'name' => 'ladtopics_survey_done-course-' . (int)$courseid, 
+                    'userid'=>(int)$user->id
+                ));
+                $transaction->allow_commit();
+                $uo->surveyDone = $resSD;            
+                $transaction = $DB->start_delegated_transaction();
+                $res = $DB->get_record("user_preferences", array(
+                    'name' => 'ladtopics_survey_results-course-' . (int)$courseid, 
+                    'userid'=>(int)$user->id
+                ));
+                $transaction->allow_commit();
+                $uo->survey = $res;
+                $out['users'][] = $uo;
+                if(!is_bool($resSD) && !is_bool($res)) $out['num_survey']++;
+                //$out[] = $user;
+            }
+            $out['num_users'] = $num_users;
+        } catch(Exception $ex){
+            $out['debug'] = $ex->getMessage();
+        }
+        return array('data' => json_encode($out));
+    }
+
+    public static function statistics_is_allowed_from_ajax(){
+        return true;
+    }
+
+    public static function statistics_returns(){
+        return new external_single_structure(
+            array(
+                'data' => new external_value(PARAM_RAW, 'data')
+            )
+        );
+    }  
+
+    public static function notification_parameters(){
+        return new external_function_parameters(
+            array(              
+                'courseid' => new external_value(PARAM_INT, 'course id'),
+                'subject' => new external_value(PARAM_TEXT, 'course id'),
+                'short' => new external_value(PARAM_TEXT, 'course id'),
+                'text' => new external_value(PARAM_TEXT, 'course id')
+            )
+        );
+    }
+
+    public static function notification($courseid, $subject, $short, $text){
+        global $CFG, $DB, $USER;
+        $out = array();
+        try{  
+            if(is_null($courseid) || is_null($subject) || is_null($text)) throw new Exception("Invalid Parameter");           
+            $meta = get_meta($courseid);
+            $message = new \core\message\message();           
+            $message->component = 'moodle';
+            $message->name = 'instantmessage';
+            $message->userfrom = $USER;
+            $message->userto = $USER;
+            $message->subject = $subject;
+            //$message->fullmessage = $text;
+            $message->fullmessageformat = FORMAT_MARKDOWN;
+            $message->fullmessagehtml = $text;
+            $message->smallmessage = $short;
+            $message->notification = "0";
+            //$message->contexturl = 'http://GalaxyFarFarAway.com';
+            //$message->contexturlname = 'Context name';
+            //$message->replyto = "random@example.com";      
+            $message->courseid = $courseid; 
+            $result = message_send($message);            
+            $out['result'] = $result;        
+        } catch(Exception $ex){
+            $out['debug'] = $ex->getMessage();
+        }
+        return array('data' => json_encode($out));
+    }
+
+    public static function notification_is_allowed_from_ajax(){
+        return true;
+    }
+
+    public static function notification_returns(){
+        return new external_single_structure(
+            array(
+                'data' => new external_value(PARAM_RAW, 'data')
+            )
+        );
+    }  
     
+    // sss
+
+    public static function sendmail_parameters(){
+        return new external_function_parameters(
+            array(              
+                'courseid' => new external_value(PARAM_INT, 'course id'),
+                'subject' => new external_value(PARAM_TEXT, 'course id'),
+                'text' => new external_value(PARAM_TEXT, 'course id')
+            )
+        );
+    }
+
+    public static function sendmail($courseid, $subject, $message){
+        global $CFG, $DB, $USER;
+        $out = array();
+        try{         
+            if(is_null($courseid) || is_null($subject) || is_null($message)) throw new Exception("Missing Parameter");    
+            $meta = get_meta($courseid); 
+            $out['result'] = email_to_user($USER, $USER, $subject, $message, "", "", "", true);           
+        } catch(Exception $ex){
+            $out['debug'] = $ex->getMessage();
+        }
+        return array('data' => json_encode($out));
+    }
+
+    public static function sendmail_is_allowed_from_ajax(){
+        return true;
+    }
+
+    public static function sendmail_returns(){
+        return new external_single_structure(
+            array(
+                'data' => new external_value(PARAM_RAW, 'data')
+            )
+        );
+    }     
+    
+    public static function getalluser_parameters(){
+        return new external_function_parameters(
+            array(
+                'courseid' => new external_value(PARAM_INT, 'course id')
+            )
+        );
+    }
+
+    public static function getalluser($param){
+        $out = array();
+        try{
+            if(is_null($param)) throw new Exception("No courseid");
+            $context = get_meta((int)$param);
+            if($context->user->loggedin === false || $context->user->manager === false) throw new Exception("No Admin");
+            $enrolled = get_enrolled_users($context->course->context);
+            $array = array();
+            foreach($enrolled as $key=>$value){
+                if(!isset($value->id)) continue;
+                $user = new stdClass();
+                $user->id = $value->id;   
+                if($user->id === $context->user->id){
+                    $user->self = true;
+                } else {
+                    $user->self = false;
+                }
+                if(isset($value->username) && strlen($value->username) > 0) {
+                    $username = ucfirst(strtolower($value->username));
+                    $user->username = $username;                      
+                    // Admin; marc.burchart@tu
+                }
+                if(isset($value->lastname) && strlen($value->lastname) > 0) {
+                    $name = ucfirst(strtolower($value->lastname));                    
+                    if(isset($value->middlename) && strlen($value->middlename) > 0) $name = ucfirst(strtolower($value->moddlename))." ".$name; 
+                    if(isset($value->firstname) && strlen($value->firstname) > 0) $name = ucfirst(strtolower($value->firstname))." ".$name;
+                    $user->name = $name;                   
+                }
+                if(isset($value->email) && strlen($value->email) > 0) {
+                    $email = strtolower($value->email);
+                    $user->email = $email;                   
+                }                             
+                $array[] = $user;
+            }            
+            $out['user'] = $array;
+        } catch(Exception $ex){
+            $out['debug'] = $ex->getMessage();
+        }
+        return array('data' => json_encode($out));
+    }
+
+    public static function getalluser_is_allowed_from_ajax(){
+        return true;
+    }
+
+    public static function getalluser_returns(){
+        return new external_single_structure(
+            array(
+                'data' => new external_value(PARAM_RAW, 'data')
+            )
+        );
+    }
+
+
     /**
      * Obtain plugin name
      */
@@ -33,51 +323,89 @@ class format_ladtopics_external extends external_api {
     }
 
     /**
-     * Check If the User is a moderator
+     * Update user
      */
-
-    public static function checkmod_parameters(){
+    public static function updateuser_parameters() {
+        //  VALUE_REQUIRED, VALUE_OPTIONAL, or VALUE_DEFAULT. If not mentioned, a value is VALUE_REQUIRED 
         return new external_function_parameters(
             array(
-                'courseid' => new external_value(PARAM_INT, 'course id')
+                'data' => new external_value(PARAM_RAW, 'id of course')                              
             )
         );
     }
 
-    public static function checkmod_returns(){
-        return new external_single_structure(
-            array(
-                'data' => new external_value(PARAM_RAW, 'data'),
-                'debug' => new external_value(PARAM_RAW, 'debug')              
-            )
-        );
-    }
-
-    public static function checkmod($data){
+    public static function updateuser($data){
         global $CFG, $DB, $USER;
-
-        $data = array();
-        $debug = array();
-        $params = array();
-        $uid = (int)$USER->id;
-        $params[] = $uid;
-
-        $transaction = $DB->start_delegated_transaction(); 
-
-        $sql = "SELECT {$CFG->prefix}role.shortname FROM {$CFG->prefix}role INNER JOIN {$CFG->prefix}role_assignments ON {$CFG->prefix}role_assignments.roleid = {$CFG->prefix}role.id WHERE userid = ?";         
-        
-        $res = $DB->get_records_sql($sql, $params);
-        $transaction->allow_commit();     
-
-        foreach($res as $key => $value){
-            $data[] = $value->shortname;
+        $out = array();
+        try{      
+            if(is_null($data)) throw new Exception("Keine Daten erhalten.");
+            $data = json_decode($data);
+            if(!is_int($data->courseid)) throw new Exception("Keine Kurse-ID");    
+            $userid = $meta->user->id;        
+            $meta = get_meta($data->courseid);            
+            if(is_null($meta)) throw new Exception("Keine Meta-Daten erhalten");            
+            if($meta->user->loggedin === true && $meta->user->manager === true){
+                if(is_int($data->userid)) $userid = $data->userid;
+            }
+            $out['data'] = $data;
+            if(!is_null($data->milestones)){                
+                $date = new DateTime();
+                $r = new stdClass();
+                $r->userid=(int)$userid;
+                $r->course=(int)$data->courseid;
+                $r->milestones=$data->milestones;
+                $r->settings=[];
+                $r->timemodified=(int)$date->getTimestamp();        
+                $transaction = $DB->start_delegated_transaction();
+                $res = $DB->insert_record("ladtopics_milestones", $r);
+                $transaction->allow_commit();
+                $out['milestones'] = $data->milestones;
+            }          
+            if(!is_null($data->plan)){               
+                function func($field, $courseid, $userid, $value){
+                    global $CFG, $DB, $USER;
+                    $r = new stdClass();
+                    $r->userid = $userid;
+                    $r->name = $field . '-course-' . (int)$courseid;
+                    $exists = $DB->record_exists('user_preferences', array(
+                        'name' => $field . '-course-' . (int)$courseid, 
+                        'userid'=>$userid
+                    ));
+                    $res='nix';
+                    if($exists != true){
+                        $r->value=$value == NULL ? 0 : $value;
+                        $transaction = $DB->start_delegated_transaction();
+                        $res = $DB->insert_records("user_preferences", array($r));
+                        $transaction->allow_commit(); 
+                    } elseif($exists == true){                       
+                        $transaction = $DB->start_delegated_transaction();                       
+                        $res = $DB->set_field("user_preferences", 'value', $value, array(
+                            'userid' => $userid,
+                            'name' => $field . '-course-' . $courseid
+                        ));                       
+                        $transaction->allow_commit();                        
+                    }     
+                }                
+                func("ladtopics_survey_results",(int)$data->courseid,(int)$userid,$data->plan);
+                func("ladtopics_survey_done",(int)$data->courseid,(int)$userid, 0);
+            }            
+        } catch(Exception $ex){
+            $out['debug'] = $ex->getMessage();
         }
-        
-        return array('data'=>json_encode($data), 'debug'=>json_encode($debug));
+        return array('data' => json_encode($out));
     }
 
-    public static function checkmod_is_allowed_from_ajax() { return true; }
+    public static function updateuser_returns() {
+        return new external_single_structure(
+                array(
+                    'data' => new external_value(PARAM_RAW, 'data')
+                )
+        );
+    }    
 
+    public static function updateuser_is_allowed_from_ajax() { return true; }
+     
+   
     /**
      * Get calendar data
      */
@@ -264,7 +592,7 @@ class format_ladtopics_external extends external_api {
                     $params[] = (int)$courseid;
                     $params[] = (int)$courseid;
                     $params[] = $value;
-                    $query = "
+                    $query = '
                         SELECT 
                         cm.instance AS instance_id,     
                         m.name AS instance_type, 
@@ -277,21 +605,21 @@ class format_ladtopics_external extends external_api {
                         cs.name AS section_name,
                         cs.sequence AS section_sequence,
                         cs.section AS section_pos
-                        FROM {$CFG->prefix}course_modules AS cm
-                        JOIN {$CFG->prefix}modules AS m 
+                        FROM '.$CFG->prefix.'course_modules AS cm
+                        JOIN '.$CFG->prefix.'modules AS m 
                         ON m.id = cm.module
-                        JOIN {$CFG->prefix}course_sections AS cs 
+                        JOIN '.$CFG->prefix.'course_sections AS cs 
                         ON cs.id = cm.section
-                        RIGHT OUTER JOIN {$CFG->prefix}{$value} AS f
+                        RIGHT OUTER JOIN '.$CFG->prefix.$value.' AS f
                         ON cm.instance = f.id 
                         WHERE cm.course = ? AND cs.course = ? AND f.course = ? AND m.name = ?
-                    ";
+                    ';
                     if(isset($select["sectionid"]) && !is_null($select["sectionid"])){
-                        $query .= " AND cs.id = ?";
+                        $query .= ' AND cs.id = ?';
                         $params[] = (int)$select["sectionid"];
                     }
                     if(isset($select["moduleid"]) && !is_null($select["moduleid"])){
-                        $query .= " AND cm.id = ?";
+                        $query .= ' AND cm.id = ?';
                         $params[] = (int)$select["moduleid"];
                     }
                     $transaction = $DB->start_delegated_transaction();
@@ -588,6 +916,7 @@ class format_ladtopics_external extends external_api {
     /**
      * Get Milestone Plan
      */
+
     public static function setmilestoneplan_parameters() {
        return new external_function_parameters(                
             array(
@@ -612,43 +941,26 @@ class format_ladtopics_external extends external_api {
     
     public static function setmilestoneplan($param) {       
         try{
-            global $CFG, $DB, $COURSE, $USER;       
-            $data = array();       
-            $uid = (int)$USER->id;
-            $cid = (int)$param['courseid'];
-            $plan = $param['plan'];                           
-            $params[] = $uid;
-            $transaction = $DB->start_delegated_transaction(); 
-            $sql = 'SELECT '.$CFG->prefix.'role.shortname FROM '.$CFG->prefix.'role INNER JOIN '.$CFG->prefix.'role_assignments ON '.$CFG->prefix.'role_assignments.roleid = '.$CFG->prefix.'role.id WHERE userid = ?';         
-            $res = $DB->get_records_sql($sql, $params);
-            $transaction->allow_commit(); 
-            $found = false;
-            foreach($res as $key => $value){
-                if(!isset($value->shortname)) continue;
-                $val = $value->shortname;            
-                if($val === 'manager') {
-                    $found = true;               
-                } 
-            }
-            if($found){   
+            global $CFG, $DB;
+            $data = array();
+            $meta = get_meta($param["courseid"]);            
+            if(is_null($meta)) throw new Exception("Keine Meta-Daten erhalten");            
+            if($meta->user->loggedin === true && $meta->user->manager === true){
                 $date = new DateTime();
                 $c = new stdClass();
-                $c->course = $cid;
-                $c->author = $uid;
+                $c->course = (int)$meta->course->id;   
+                $c->author = (int)$meta->user->id;           
                 $c->created = (int)$date->getTimestamp();
-                $c->plan = $plan;
-                $c->milestones = $param['milestones'];               
-
+                $c->plan = $param['plan'];
+                $c->milestones = $param['milestones'];
                 $sql = 'SELECT id FROM '.$CFG->prefix.'ladtopics_milestone_plans WHERE course = ? AND plan = ? LIMIT 1';
                 $transaction = $DB->start_delegated_transaction();
                 $params = array();
-                $params[] = $cid;
-                $params[] = $plan;
+                $params[] = (int)$meta->course->id;
+                $params[] = strtolower($param['plan']);
                 $res = $DB->get_records_sql($sql, $params);
                 $transaction->allow_commit();
-
                 $count = count($res);
-
                 if($count !== 0){    
                     $id = reset($res);
                     $c->id = $id->id;
@@ -660,23 +972,23 @@ class format_ladtopics_external extends external_api {
                     } else {
                         $data['success'] = false;
                         $data['debug'] = "Unbekannter Fehler.";
-                    }                       
-                    return array('data'=>json_encode($data));
+                    }                         
                 } else {
                     $transaction = $DB->start_delegated_transaction();
                     $res = $DB->insert_records("ladtopics_milestone_plans", array($c));
                     $transaction->allow_commit();
                     $data['success'] = true; 
                 }                                
-            } else {               
+            } else {
                 $data['success'] = false;
-                $data['debug'] = "Sie haben keine Berechtigung.";
-            }           
-            return array('data'=>json_encode($data));
+                $data['debug'] = "Keine Berechtigung";
+            }         
+            return array('data'=>json_encode($data));            
         } catch (Exception $e){
             return array('data'=>json_encode(array('success' => false, 'debug' => json_encode($e))));
         }       
     } 
+
     public static function setmilestoneplan_is_allowed_from_ajax() { return true; }
 
 
@@ -721,8 +1033,7 @@ class format_ladtopics_external extends external_api {
                 $r->value=$data['value'] == NULL ? 0 : $data['value'];
                 $transaction = $DB->start_delegated_transaction();
                 $res = $DB->insert_records("user_preferences", array($r));
-                $transaction->allow_commit();
-                
+                $transaction->allow_commit();    
             } elseif($exists == true && $data['setget'] == 'get'){
                 $transaction = $DB->start_delegated_transaction();
                 $res = $DB->get_record("user_preferences", array(
