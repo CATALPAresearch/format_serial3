@@ -21,7 +21,7 @@ define([
     M.cfg.wwwroot + '/course/format/ladtopics/amd/src/InitialSurvey.js',
     M.cfg.wwwroot + '/course/format/ladtopics/amd/src/Assessment.js',
     M.cfg.wwwroot + '/course/format/ladtopics/amd/src/Logging.js',
-    M.cfg.wwwroot + '/course/format/ladtopics/amd/src/ICalExport.js',  
+    M.cfg.wwwroot + '/course/format/ladtopics/amd/src/ICalExport.js',
     M.cfg.wwwroot + '/course/format/ladtopics/amd/src/ErrorHandler.js'
 ],
     function ($, jqueryui, Timeline, Utils, filterChart, activityChart, initialSurvey, Assessment, Log, ICalExport, ErrorHandler) {
@@ -34,25 +34,12 @@ define([
                 "crossfilter": ["crossfilter"],
                 "d3": ["d3.v4.min"],
                 "dc": ["dc.v3"],
-                /*
-                 "reductio": ["https://rawgit.com/crossfilter/reductio/master/reductio", "reductio"],
-                 "universe": ["https://npmcdn.com/universe@latest/universe", "universe"],
-                 "bootstrap_select": [
-                    "https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/js/bootstrap-select.min", 
-                    "bootstrap-select.min"
-                ],
-                    */
                 "moment224": ["moment-with-locales-gz.min"], // ["moment.min"],
                 "intro293": ["intro"],
                 "sortable110": ["sortable.min"],
                 "ICAL": ["ical.min"],
                 "vDP": ["vDP"],
                 "vDPde": ["vDPde"]
-
-                /*
-                "crossfilter2": "crossfilter.v2",
-                "crossfilter": "https://cdnjs.cloudflare.com/ajax/libs/crossfilter/1.3.5/crossfilter",
-                */
             },
             shim: {
                 'vue259': {
@@ -79,28 +66,18 @@ define([
                 "vDPde": {
                     exports: "vDPde"
                 }
-                /*,
-                'reductio': {
-                    deps: ['d3', 'crossfilter'],
-                    exports: 'reductio'
-                },
-                'universe': {
-                    deps: ['d3', 'crossfilter'],
-                    exports: 'universe'
-                } */
-
             }
         });
 
         // hide unused div
         let box = $("#region-main-box");
-        let h = box.outerHeight();
-        box.change(function(){
-            if(box.outerHeight() > h) box.show();
+        const h = box.outerHeight();
+        box.change(function () {
+            if (box.outerHeight() > h) {
+                box.show();
+            }
         });
         box.hide();
-        
-     
 
         function start(courseid) {
             // Add style sheets        
@@ -126,9 +103,6 @@ define([
                 'crossfilter',
                 'd3',
                 'dc',
-                // 'reductio',
-                // 'universe',
-                // 'bootstrap_select',
                 'moment224',
                 'intro293',
                 'sortable110',
@@ -143,8 +117,8 @@ define([
                 });
 
                 ErrorHandler.logger = logger;
-                ErrorHandler.logWindowErrors();                        
-               
+                ErrorHandler.logWindowErrors();
+
                 new Timeline(
                     vue,
                     d3,
@@ -171,9 +145,7 @@ define([
         return {
             init: function (courseid) {
                 courseid = courseid === undefined ? parseInt($('#courseid').text(), 10) : courseid;
-                //if (courseid === 3) {
                 start(courseid);
-                //}
             }
         };
     });

@@ -107,7 +107,7 @@ define(['jquery', 'core/ajax'], function($, ajax) {
         /**
          * Makes an AJAX call to send the log data set to the server
          */
-        this.sendLog = function (entry) {
+        this.sendLog = function(entry) {
             ajax.call([{
                 methodname: 'format_ladtopics_logger',
                 args: {
@@ -124,8 +124,6 @@ define(['jquery', 'core/ajax'], function($, ajax) {
                     // console.error(e);
                 }
             }]);
-
-
         };
 
     };

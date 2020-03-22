@@ -37,15 +37,15 @@ define(['jquery'
      * @param utils (Object) Custome util class
      */
     var activityChart = function (d3, dc, crossfilter, moment, data, utils) {
-        
+
         const courseSettings = {
             start: 1569880800, // 1.08.19
             end: 1585691999
-        }; 
+        };
         data = data.filter(function (d) {
             return d.utc >= courseSettings.start && d.utc < courseSettings.end ? true : false;
         });
-        
+
         // charts
         chart = dc.bubbleChart("#timeline-chart");
 

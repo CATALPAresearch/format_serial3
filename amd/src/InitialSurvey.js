@@ -28,8 +28,6 @@ define(['jquery'], function ($) {
         var csCourse = 3;// 2
         var courseid = parseInt($('#courseid').text(), 10);
 
-        //$.get('somefile.json', function (data) {});
-
         var milestonePresets = {};
         milestonePresets.biwi = {};
 
