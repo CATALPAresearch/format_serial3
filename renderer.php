@@ -829,8 +829,7 @@ $modalMilestone = '
                     <label for="" class="col-2 col-form-label">Termin *</label>
                     <div class="col-4">
                         <datepicker id="endDP" :value="endDate" format="dd MMMM yyyy" :language="DPde" :disabled-dates="dpRange" @input="validateEndDate"></datepicker>                       
-                    </div>                   
-                    {{ endDate }}
+                    </div>
                     <div v-if="invalidEndDate" class="col-sm-10 alert-invalid">Wählen Sie bitte ein passendes Datum aus. Der Termin muss nach dem Beginn liegen! </div>
                 </div>
                 <hr />
