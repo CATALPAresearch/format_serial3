@@ -115,8 +115,8 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                     <div class="alert collapse fade" id="moderationAlert" data-dismiss="alert" role="alert">
                         This is a success alert—check it out!
                     </div>          
-                    <h5>Semesterplanung zurücksetzen</h5>         
-                    <button type="button" @click="modResetPlan()" class="btn btn-danger">Zurücksetzen</button> 
+                    <h5>Eingangsbefragung</h5>         
+                    <button type="button" @click="modResetPlan()" class="btn btn-danger">Löschen und noch einmal durchführen</button> 
                     <hr>                     
                     <h5>Meilensteine</h5>                        
                     <div class="col mb-4 px-0">
