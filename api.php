@@ -944,7 +944,7 @@ class format_ladtopics_external extends external_api {
             global $CFG, $DB;
             $data = array();
             $meta = get_meta($param["courseid"]);            
-            if(is_null($meta)) throw new Exception("Keine Meta-Daten erhalten");            
+            if(is_null($meta)) throw new Exception("No meta data received.");            
             if($meta->user->loggedin === true && ($meta->user->manager === true || $meta->user->coursecreator === true || $meta->user->siteadmin === true)){
                 $date = new DateTime();
                 $c = new stdClass();
@@ -971,7 +971,7 @@ class format_ladtopics_external extends external_api {
                         $data['success'] = true;                           
                     } else {
                         $data['success'] = false;
-                        $data['debug'] = "Unbekannter Fehler.";
+                        $data['debug'] = "Unknown error.";
                     }                         
                 } else {
                     $transaction = $DB->start_delegated_transaction();

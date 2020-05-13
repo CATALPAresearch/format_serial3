@@ -30,7 +30,8 @@ define([
 
     var Timeline = function (Vue, d3, dc, crossfilter, moment, Sortable, utils, introJs, logger, FilterChart, ActivityChart, InitialSurvey, ICalExport, ICalLib, vDP, vDPde, ErrorHandler) {
 
-        $(document).ready(function(){
+        $(document).ready(function () {
+            console.error("crazy2");
             let edit = $("a.milestone-element-edit");
             let filler = $("span.ms-edit-filler");
             filler.innerWidth(edit.innerWidth());
