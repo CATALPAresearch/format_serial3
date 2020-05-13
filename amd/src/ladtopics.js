@@ -118,6 +118,7 @@ define([
 
                 ErrorHandler.logger = logger;
                 ErrorHandler.logWindowErrors();
+                ErrorHandler.logConsoleErrors();
 
                 new Timeline(
                     vue,

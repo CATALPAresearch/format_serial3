@@ -26,8 +26,7 @@ define([
 
     /**
      * Plot a timeline
-     */
-
+     */  
 
     var Timeline = function (Vue, d3, dc, crossfilter, moment, Sortable, utils, introJs, logger, FilterChart, ActivityChart, InitialSurvey, ICalExport, ICalLib, vDP, vDPde, ErrorHandler) {
 
@@ -36,8 +35,7 @@ define([
             let filler = $("span.ms-edit-filler");
             filler.innerWidth(edit.innerWidth());
             filler.css('display','inline-block');            
-        });
-
+        });      
 
         var width = document.getElementById('ladtopic-container-0').offsetWidth;
         var margins = { top: 15, right: 10, bottom: 20, left: 10 };
@@ -339,7 +337,7 @@ define([
                                 return f.status !== "missed" && f.status !== "reflected";
                             }
                         );
-                    },
+                    },                    
                     dayOfSelectedMilestone: {
                         get: function () {
                             return this.getSelectedMilestone().end.getDate();
@@ -746,8 +744,8 @@ define([
                             logger.add('milestone_edit_dialog_open', {
                                 milestoneId: this.getSelectedMilestone().id,
                                 name: this.getSelectedMilestone().name,
-                                start: this.getSelectedMilestone().start.getTime(),
-                                end: this.getSelectedMilestone().end.getTime(),
+                                start: new Date(this.getSelectedMilestone().start).getTime(),
+                                end: new Date(this.getSelectedMilestone().end).getTime(),
                                 status: this.getSelectedMilestone().status,
                                 objective: this.getSelectedMilestone().objective,
                                 resources: this.getSelectedMilestone().resources.map(function (resource) { return { name: resource.instance_title, section: resource.section, type: resource.instance_type, done: resource.checked !== undefined ? true : false }; }),
@@ -755,8 +753,9 @@ define([
                             });
                         }
                     },
-                    closeModal: function (e) {                       
+                    closeModal: function (update = true) {                       
                         this.modalVisible = false;
+                        if(update === false) return;
                         this.updateMilestoneStatus();
                         this.updateChart(this.range);
                         logger.add('milestone_dialog_close', { dialogOpen: false });
@@ -768,8 +767,8 @@ define([
                         logger.add('milestone_reflection_dialog_open', {
                             milestoneId: this.getSelectedMilestone().id,
                             name: this.getSelectedMilestone().name,
-                            start: this.getSelectedMilestone().start.getTime(),
-                            end: this.getSelectedMilestone().end.getTime(),
+                            start: new Date(this.getSelectedMilestone().start).getTime(),
+                            end: new Date(this.getSelectedMilestone().end).getTime(),
                             status: this.getSelectedMilestone().status,
                             objective: this.getSelectedMilestone().objective,
                             resources: this.getSelectedMilestone().resources.map(function (resource) { return { name: resource.instance_title, section: resource.section, type: resource.instance_type, done: resource.checked !== undefined ? true : false }; }),
@@ -854,8 +853,8 @@ define([
                                 logger.add('milestone_updated', {
                                     milestoneId: this.getSelectedMilestone().id,
                                     name: this.getSelectedMilestone().name,
-                                    start: this.getSelectedMilestone().start.getTime(),
-                                    end: this.getSelectedMilestone().end.getTime(),
+                                    start: new Date(this.getSelectedMilestone().start).getTime(),
+                                    end: new Date(this.getSelectedMilestone().end).getTime(),
                                     status: this.getSelectedMilestone().status,
                                     objective: this.getSelectedMilestone().objective,
                                     resources: this.getSelectedMilestone().resources.map(function (resource) { return { name: resource.instance_title, section: resource.section, type: resource.instance_type, done: resource.checked !== undefined ? true : false }; }),
@@ -882,8 +881,8 @@ define([
                         logger.add('milestone_created', {
                             milestoneId: this.emptyMilestone.id,
                             name: this.emptyMilestone.name,
-                            start: this.emptyMilestone.start.getTime(),
-                            end: this.emptyMilestone.end.getTime(),
+                            start: new Date(this.emptyMilestone.start).getTime(),
+                            end: new Date(this.emptyMilestone.end).getTime(),
                             status: this.emptyMilestone.status,
                             objective: this.emptyMilestone.objective,
                             resources: this.emptyMilestone.resources.map(function (resource) { return { name: resource.instance_title, section: resource.section, type: resource.instance_type, done: resource.checked !== undefined ? true : false }; }),
@@ -925,25 +924,27 @@ define([
                         this.updateChart(this.range);
                     },
                     removeMilestone: function () {
-                        this.closeModal();
-                        $('div.modal-backdrop.show').remove();
+                        this.closeModal(false);
+                        $('div.modal-backdrop.show').remove();                       
                         logger.add('milestone_removed', {
                             milestoneId: this.getSelectedMilestone().id,
                             name: this.getSelectedMilestone().name,
-                            start: this.getSelectedMilestone().start.getTime(),
-                            end: this.getSelectedMilestone().end.getTime(),
+                            start: new Date(this.getSelectedMilestone().start).getTime(),
+                            end: new Date(this.getSelectedMilestone().end).getTime(),
                             status: this.getSelectedMilestone().status,
                             objective: this.getSelectedMilestone().objective,
                             resources: this.getSelectedMilestone().resources.map(function (resource) { return { name: resource.instance_title, section: resource.section, type: resource.instance_type, done: resource.checked !== undefined ? true : false }; }),
                             strategies: this.getSelectedMilestone().strategies.map(function (strategy) { return { name: strategy.id, done: strategy.checked !== undefined ? true : false }; })
                         });
                         for (var s = 0; s < this.milestones.length; s++) {
-                            if (this.milestones[s].id === this.getSelectedMilestone().id) {
+                            if (this.milestones[s].id === this.getSelectedMilestone().id) {                               
                                 this.milestones.splice(s, 1);
                                 this.selectedMilestone = -1;
                             }
-                        }
+                        }                        
                         this.updateMilestones();
+                        this.$forceUpdate(); // We want the create new ms button back!
+                        return;
                     },
                     // <s> datepicker                   
                     getSemesterRange: function () {
@@ -1208,7 +1209,7 @@ define([
                                 if (typeof element.mod === "undefined") element.mod = false;
                                 return false;
                             }
-                        )
+                        );                        
                         utils.get_ws('setmilestones', {
                             data: {
                                 'courseid': parseInt(course.id, 10),

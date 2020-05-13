@@ -70,10 +70,15 @@ class format_ladtopics_renderer extends format_section_renderer_base {
             $loggedIn = isloggedin();
             $roles = get_user_roles($context, $USER->id);                 
             $found = false;
+            if(is_siteadmin($USER->id)){
+                return true;
+            }
             foreach($roles as $key => $value){
-                if(isset($value->shortname) && $value->shortname === "manager"){
-                    $found = true;
-                    break;
+                if(isset($value->shortname)){
+                    if($value->shortname === "manager" || $value->shortname === "coursecreator"){
+                        $found = true;
+                        break;
+                    }                    
                 }
             }    
             $this->courseid = $COURSE->id;
@@ -710,7 +715,7 @@ $milestoneArchiveList = '
 $milestoneList = '
 <!-- Milestone list -->
 <ul>
-    <li v-if="remainingMilestones.length === 0 && archivedMilestones.length === 0">
+    <li v-if="milestones.length <= 0">
         <span data-toggle="modal" data-target="#theMilestoneModal">
             <button @click="showEmptyMilestone()" class="btn btn-sm right btn-primary ms-btn ms-coldstart-btn"
                 data-toggle="tooltip" data-placement="bottom" title="Neuen Meilenstein hinzufügen"><i

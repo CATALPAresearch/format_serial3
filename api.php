@@ -68,7 +68,7 @@ class format_ladtopics_external extends external_api {
         try{
             if(is_null($courseid)) throw new Exception("No course specified");            
             $context = get_meta($courseid);
-            if($context->user->loggedin === false || $context->user->manager === false) throw new Exception("No Admin");
+            if($context->user->loggedin === false || ($context->user->manager === false && $context->user->siteadmin === false && $context->user->coursecreator === false)) throw new Exception("No Admin");
             $users = get_enrolled_users($context->course->context);
             $num_users = count_enrolled_users($context->course->context);
             $out['users'] = array();  
@@ -248,7 +248,7 @@ class format_ladtopics_external extends external_api {
         try{
             if(is_null($param)) throw new Exception("No courseid");
             $context = get_meta((int)$param);
-            if($context->user->loggedin === false || $context->user->manager === false) throw new Exception("No Admin");
+            if($context->user->loggedin === false || ($context->user->manager === false && $context->user->siteadmin === false && $context->user->coursecreator === false)) throw new Exception("No Admin");
             $enrolled = get_enrolled_users($context->course->context);
             $array = array();
             foreach($enrolled as $key=>$value){
@@ -344,7 +344,7 @@ class format_ladtopics_external extends external_api {
             $userid = $meta->user->id;        
             $meta = get_meta($data->courseid);            
             if(is_null($meta)) throw new Exception("Keine Meta-Daten erhalten");            
-            if($meta->user->loggedin === true && $meta->user->manager === true){
+            if($meta->user->loggedin === true && ($meta->user->manager === true || $meta->user->siteadmin === true || $meta->user->coursecreator === true)){
                 if(is_int($data->userid)) $userid = $data->userid;
             }
             $out['data'] = $data;
@@ -945,7 +945,7 @@ class format_ladtopics_external extends external_api {
             $data = array();
             $meta = get_meta($param["courseid"]);            
             if(is_null($meta)) throw new Exception("Keine Meta-Daten erhalten");            
-            if($meta->user->loggedin === true && $meta->user->manager === true){
+            if($meta->user->loggedin === true && ($meta->user->manager === true || $meta->user->coursecreator === true || $meta->user->siteadmin === true)){
                 $date = new DateTime();
                 $c = new stdClass();
                 $c->course = (int)$meta->course->id;   
