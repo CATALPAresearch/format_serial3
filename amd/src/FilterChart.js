@@ -15,11 +15,8 @@
 
 define(['jquery'], function ($) {
     var timeFilterChart = '';
-    var filterChart = function (d3, dc, crossfilter, facts, xRange, milestoneApp, utils, log) {
-        const courseSettings = {
-            start: 1569880800, // 1.08.19
-            end: 1585691999
-        }; 
+    var filterChart = function (d3, dc, crossfilter, facts, xRange, milestoneApp, utils, log, courseSettings) {
+         
         timeFilterChart = dc.compositeChart("#filter-chart");
         this.xRange = xRange;
         this.milestoneApp = milestoneApp;
@@ -29,7 +26,7 @@ define(['jquery'], function ($) {
 
 
         // FILTER CHART
-        var semesterLimit = crossfilter([{ date: new Date(2019, 9, 1), y: 1 }, { date: new Date(2020, 2, 31), y: 1 }]);
+        var semesterLimit = crossfilter([{ date: courseSettings.startDate, y: 1 }, { date: courseSettings.endDate, y: 1 }]);
         var timeFilterLimitDim = semesterLimit.dimension(function (d) { return d.date; });
         var timeFilterLimitGroup = timeFilterLimitDim.group().reduceCount(function (d) { return [0, d.date, 1]; });
 

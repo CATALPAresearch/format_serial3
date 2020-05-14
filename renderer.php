@@ -1324,7 +1324,7 @@ $modalMilestone = '
                                                         Woche</button>
                                                     <button @click="setFilterPreset(\'last-month\')" :style="filterPreset === \'last-month\' ? \'text-decoration: underline;\' : \'text-decoration:none;\'" class="btn btn-sm btn-link ms-btn right">letzten 4
                                                         Wochen</button>
-                                                    <button @click="setFilterPreset(\'semester\')" :style="filterPreset === \'semester\' ? \'text-decoration: underline;\' : \'text-decoration:none;\'" class="btn btn-link btn-sm right">WS 19/20</button>
+                                                    <button @click="setFilterPreset(\'semester\')" :style="filterPreset === \'semester\' ? \'text-decoration: underline;\' : \'text-decoration:none;\'" class="btn btn-link btn-sm right">{{ getSemesterShortName() }}</button>
                                                 </div>
                                             </div>
                                         </div>
