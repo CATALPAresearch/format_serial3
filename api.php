@@ -630,9 +630,11 @@ class format_ladtopics_external extends external_api {
                         if(gettype($entry->section_sequence) === "string" && sizeof($entry->section_sequence) > 0){
                             $sequence = explode(",", preg_replace("/[^0-9,]/", "", $entry->section_sequence));                            
                             $pos = array_search(strval($entry->instance_url_id), $sequence);                                              
-                        }                  
+                        }           
+                        $activityId++;
+
                         $out = array(
-                            'id' => $activityId++,
+                            'id' =>  $entry->instance_id + 100000 * $entry->module_id, // simple hash to make unique IDs
                             'course_id' => $entry->course_id,
                             'module_id' => $entry->module_id, 
                             'section_id' => $entry->section_id, 
