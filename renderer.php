@@ -863,8 +863,8 @@ $milestoneTimeline = '
         </g>
         <g class="today"
             :transform="\'translate(\'+( margins.left  ) +\',\'+ margins.top +\')\'">
-            <line class="today-line" :x1="xx(new Date())" y1="0" :x2="xx(new Date())" :y2="height"></line>
-            <text class="today-label" y="10" :x="xx(new Date()) + 4">heute</text>                                               
+            <line class="today-line" :x1="xx(new Date(Date.now()))" y1="0" :x2="xx(new Date(Date.now()))" :y2="height"></line>
+            <text class="today-label" y="10" :x="xx(new Date(Date.now())) + 4">heute</text>                                               
         </g>
         <!--<g id="title-label">
         <text :transform="\'translate(\'+( margins.left  ) +\',\'+ margins.top+100 +\')\'"
