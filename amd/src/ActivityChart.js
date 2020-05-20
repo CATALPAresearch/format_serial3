@@ -123,7 +123,7 @@ define(['jquery'
             .dimension(mainDimension)
             .group(mainGroup)
             .renderHorizontalGridLines(true)
-            .keyAccessor(function (p) {
+            .keyAccessor(function (p) { 
                 return p.value.date;
             })
             .valueAccessor(function (p) {

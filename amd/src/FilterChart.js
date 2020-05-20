@@ -8,7 +8,7 @@
  * @module     format/ladtopics
  * @package    format_ladtopics
  * @class      Timeline
- * @copyright  2019 Niels Seidel, niels.seidel@fernuni-hagen.de
+ * @copyright  2020 Niels Seidel, niels.seidel@fernuni-hagen.de
  * @license    MIT
  * @since      3.1
  */
@@ -33,7 +33,8 @@ define(['jquery'], function ($) {
         var timeFilterDim = facts.dimension(function (d) { return d.date; });
         var timeFilterGroup = timeFilterDim.group().reduceCount(function (d) { return d.date; });
 
-        var milestoneData = milestoneApp.getMilestones();
+        // include Milestone data
+        var milestoneData = milestoneApp.getMilestones(); 
         for (var i = 0; i < milestoneData.length; i++) {
             milestoneData[i].y = i % 3 + 1;
         }
@@ -61,20 +62,21 @@ define(['jquery'], function ($) {
                     .dimension(msFilterDim)
                     .group(msFilterGroup)
                     .keyAccessor(function (p) {
-                        return p.key[1];
+                        return new Date(p.key[1]); // date
                     })
                     .valueAccessor(function (p) {
-                        return p.key[2];
+                        return p.key[2]; // size
                     })
                     .radiusValueAccessor(function () {
-                        return 0.4;
+                        return 1.4;
                     })
                     .colors(
                         d3.scaleOrdinal()
                             .domain(["urgent", "missed", "progress", "ready", "refelcted"])
-                            // ["#ffa500","ff420e","#80bd9e", "#89da59", "#004C97"]
                             .range(color_ms_status_range))
-                    .colorAccessor(function (d) { return d.key[0]; })
+                    .colorAccessor(function (d) { 
+                        return d.key[0]; 
+                    })
                     .renderLabel(false)
                     .renderTitle(false)
             ])

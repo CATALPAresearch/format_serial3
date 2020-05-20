@@ -109,8 +109,8 @@ define([
                 data: function () {
                     return {
                         // <s> datepicker
-                        startDate: new Date(2019, 5, 10),
-                        endDate: new Date(2019, 5, 10),
+                        startDate: new Date(),
+                        endDate: new Date(),
                         semesterRange: null,
                         dpRange: null,
                         daysOffset: 20,
@@ -1108,7 +1108,7 @@ define([
                         return utils.monthRange;
                     },
                     yearRange: function () {
-                        return [course.startDate.getFullYear, course.endDate.getFullYear]; // xxx should become a plugin setting
+                        return [course.startDate.getFullYear(), course.endDate.getFullYear()]; // xxx should become a plugin setting
                     },
                     fromNow: function (date) {
                         return moment(date).fromNow();
