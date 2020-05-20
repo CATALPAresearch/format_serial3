@@ -673,15 +673,32 @@ define([
                         });
                     },
                     xx: function (x) {
-                        console.log(x);
-                        var x = d3.scaleTime().domain(this.range).range([0, this.width - this.padding])(x);   
-                        return typeof(x) === 'number' ? x : 0;
+                        x = new Date(x);
+                        var xpos = d3.scaleTime().domain(this.range).range([0, this.width - this.padding])(x);   
+                        /* 
+                        if(typeof(xpos) !== 'Number'){
+                            var timeFormat = d3.timeParse("%Y-%m-%dT%H:%M:%SZ"); // 2020-05-20T19:10:45.416Z
+                            x = new Date(x);
+                            xpos = d3.scaleTime().domain(this.range).range([0, this.width - this.padding])(x);
+                        }
+                        */
+                        return xpos;
 
                     },
                     duration: function (start, end) {
+                        start = new Date(start);
+                        end = new Date(end);
                         var x_start = d3.scaleTime().domain(this.range).range([0, this.width - this.padding])(start);
                         var x_end = d3.scaleTime().domain(this.range).range([0, this.width - this.padding])(end);
-                        return x_end - x_start;
+                        
+                        /*if (typeof (x_start) !== 'Number') {
+                            start = new Date(start);
+                            end = new Date(end);
+                            x_start = d3.scaleTime().domain(this.range).range([0, this.width - this.padding])(start);
+                            x_end = d3.scaleTime().domain(this.range).range([0, this.width - this.padding])(end);
+                        }*/
+                        var duration = x_end - x_start;
+                        return duration < 10 ? 10 : duration;
                     },
                     z: function () {
                         return d3.scaleOrdinal()
