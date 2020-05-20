@@ -155,7 +155,7 @@ define(['jquery'], function ($) {
                     return utils.monthRange;
                 },
                 yearRange: function () {
-                    return [2019, 2020, 2021, 2022]; // xxx should become a plugin setting
+                    return [2020, 2021, 2022, 2023]; // xxx should become a plugin setting
                 },
                 monthSelected: function (event) {
                     this.selectedMonth = event.target.value;

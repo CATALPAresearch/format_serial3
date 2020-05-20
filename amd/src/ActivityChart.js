@@ -8,7 +8,7 @@
  * @module     format/ladtopics
  * @package    format_ladtopics
  * @class      ActivityChart
- * @copyright  2019 Niels Seidel, niels.seidel@fernuni-hagen.de
+ * @copyright  2020 Niels Seidel, niels.seidel@fernuni-hagen.de
  * @license    MIT
  * @since      3.1
  */
@@ -36,12 +36,8 @@ define(['jquery'
      * @param dc (Object) Dimensional Javascript Charting Library
      * @param utils (Object) Custome util class
      */
-    var activityChart = function (d3, dc, crossfilter, moment, data, utils) {
+    var activityChart = function (d3, dc, crossfilter, moment, data, utils, courseSettings) {
 
-        const courseSettings = {
-            start: 1569880800, // 1.08.19
-            end: 1585691999
-        };
         data = data.filter(function (d) {
             return d.utc >= courseSettings.start && d.utc < courseSettings.end ? true : false;
         });
@@ -127,7 +123,7 @@ define(['jquery'
             .dimension(mainDimension)
             .group(mainGroup)
             .renderHorizontalGridLines(true)
-            .keyAccessor(function (p) {
+            .keyAccessor(function (p) { 
                 return p.value.date;
             })
             .valueAccessor(function (p) {
@@ -197,15 +193,6 @@ define(['jquery'
 
         });
     };
-
-    // bug! local storage is not used anymore
-    /*if (localStorage.surveyDone) {
-        $('.activity-chart-container').show();
-        $('.filter-chart-container').show();
-    } else {
-        $('.activity-chart-container').hide();
-        $('.filter-chart-container').hide();
-    }*/
 
     /**
      * Resize chart if window sizes change

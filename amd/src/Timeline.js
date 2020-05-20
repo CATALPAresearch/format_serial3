@@ -41,8 +41,14 @@ define([
         var width = document.getElementById('ladtopic-container-0').offsetWidth;
         var margins = { top: 15, right: 10, bottom: 20, left: 10 };
         var course = {
-            id: parseInt($('#courseid').text(), 10)
-            // module: parseInt($('#moduleid').html()) 
+            courseType: 'Kurs', // or 'Modul'
+            semesterShortName: 'SoSe 2020',
+            id: parseInt($('#courseid').text(), 10),
+            // module: parseInt($('#moduleid').html())
+            startDate: new Date(2020, 3, 1, 0, 0, 0),
+            endDate: new Date(2020, 8, 30, 23, 59, 59),
+            start: (new Date(2020,3,1,0,0,0)).getTime()/1000,
+            end: (new Date(2020, 8, 30, 23, 59, 59)).getTime()/1000
         };
 
         utils.get_ws('logstore', {
@@ -63,8 +69,10 @@ define([
          */
         var draw = function (activityData, logger) {
 
-            var xRange = [new Date(2019, 4, 28), new Date(2020, 231)];
-
+            var xRange = [
+                course.startDate,
+                course.endDate
+            ];
             /*
             http://computationallyendowed.com/blog/2013/01/21/bounded-panning-in-d3.html
             var zoom = d3.behavior.zoom().scaleExtent([1, 1]);
@@ -101,8 +109,8 @@ define([
                 data: function () {
                     return {
                         // <s> datepicker
-                        startDate: new Date(2019, 5, 10),
-                        endDate: new Date(2019, 5, 10),
+                        startDate: new Date(),
+                        endDate: new Date(),
                         semesterRange: null,
                         dpRange: null,
                         daysOffset: 20,
@@ -156,11 +164,11 @@ define([
                         invalidReflections: [],
                         selectedDay: 1,
                         selectedMonth: 1,
-                        selectedYear: 2019,
+                        selectedYear: course.startDate.getFullYear(),
                         invalidDay: false,
                         selectedStartDay: 1,
                         selectedStartMonth: 1,
-                        selectedStartYear: 2019,
+                        selectedStartYear: course.startDate.getFullYear(),
                         invalidEndDay: false,
                         invalidStartDay: false,
                         filterPreset: '',
@@ -245,10 +253,10 @@ define([
                                     _this.updateMilestoneStatus();                              
     
                                     var facts = crossfilter(activityData);
-                                    _this.timeFilterChart = new FilterChart(d3, dc, crossfilter, facts, xRange, _this, utils, logger);
+                                    _this.timeFilterChart = new FilterChart(d3, dc, crossfilter, facts, xRange, _this, utils, logger, course);
     
                                     _this.setFilterPreset('last-month');
-                                    var activityChart = new ActivityChart(d3, dc, crossfilter, moment, activityData, utils);
+                                    var activityChart = new ActivityChart(d3, dc, crossfilter, moment, activityData, utils, course);
                                     xRange = activityChart.getXRange();
                                     _this.timeFilterChart.registerChart(activityChart);
     
@@ -389,6 +397,9 @@ define([
                     }
                 },
                 methods: {
+                    getSemesterShortName : function(){
+                        return course.semesterShortName;
+                    },
                     startIntroJs: function () {
                         introJs()
                             .setOptions({
@@ -535,7 +546,7 @@ define([
                         this.range = xRange;
                         this.selectedDay = 1; // (new Date()).getDate();
                         this.selectedMonth = 1; // (new Date()).getMonth() + 1;
-                        this.selectedYear = 2019; // (new Date()).getFullYear();
+                        this.selectedYear = (new Date()).getFullYear();
                         // obtain course structure form DB
                         var t1 = new Date().getTime();
                         utils.get_ws('coursestructure', {
@@ -1097,7 +1108,7 @@ define([
                         return utils.monthRange;
                     },
                     yearRange: function () {
-                        return [2019, 2020]; // xxx should become a plugin setting
+                        return [course.startDate.getFullYear(), course.endDate.getFullYear()]; // xxx should become a plugin setting
                     },
                     fromNow: function (date) {
                         return moment(date).fromNow();
@@ -1386,7 +1397,7 @@ define([
                                 range = [new Date(now.getTime() - 1000 * 3600 * 24 * 30), new Date(now.getTime() + 1000 * 3600 * 24 * 1)];
                                 break;
                             case "semester":
-                                range = [new Date(2019, 9, 1, 0, 0, 0, 0), new Date(2020, 2, 31, 23, 59, 59, 0)];
+                                range = [course.startDate, course.endDate];
                         }
                         this.timeFilterChart.replaceFilter(dc.filters.RangedFilter(range[0], range[1]));
                         this.timeFilterChart.filterTime();
@@ -1771,9 +1782,11 @@ define([
                             );
                             Promise.all(promises).then(
                                 (resove) => {
-                                    $('html, body').animate({
-                                        scrollTop: $("#milestone-entry-archive-" + mID).parent().offset().top - $("nav.navbar").outerHeight()
-                                    }, 1000);
+                                    if ($("#milestone-entry-archive-" + mID).length){
+                                        $('html, body').animate({
+                                            scrollTop: $("#milestone-entry-archive-" + mID).parent().offset().top - $("nav.navbar").outerHeight()
+                                        }, 1000);
+                                    }
                                 }
                             )
                         } catch (error) { }
@@ -1826,9 +1839,11 @@ define([
                             );
                             Promise.all(promises).then(
                                 (resove) => {
-                                    $('html, body').animate({
-                                        scrollTop: $("#milestone-entry-" + mID).parent().offset().top - $("nav.navbar").outerHeight()
-                                    }, 1000);
+                                    if ($("#milestone-entry-" + mID).length) {
+                                        $('html, body').animate({
+                                            scrollTop: $("#milestone-entry-" + mID).parent().offset().top - $("nav.navbar").outerHeight()
+                                        }, 1000);
+                                    }
                                 }
                             )
                         } catch (error) { }
