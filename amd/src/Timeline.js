@@ -673,9 +673,9 @@ define([
                         });
                     },
                     xx: function (x) {
-                        return d3.scaleTime()
-                            .domain(this.range)
-                            .range([0, this.width - this.padding])(x);
+                        console.log(x);
+                        var x = d3.scaleTime().domain(this.range).range([0, this.width - this.padding])(x);   
+                        return typeof(x) === 'number' ? x : 0;
 
                     },
                     duration: function (start, end) {
@@ -1945,13 +1945,13 @@ define([
                         if (ms.length <= 0) {
                             this.modAlert("warning", "Keine Meilensteine vorhanden.");
                             return;
-                        }                        
+                        }       
                         if ($("#modSaveInterest").is(":checked")) {
-                            this.modSaveMilestones("interest", ms);
+                            this.modSaveMilestones("interest", ms, false);
                         } else if ($("#modSaveOrientation").is(":checked")) {
-                            this.modSaveMilestones("orientation", ms);
+                            this.modSaveMilestones("orientation", ms, false);
                         } else if ($("#modSaveExam").is(":checked")) {
-                            this.modSaveMilestones("exam", ms);
+                            this.modSaveMilestones("exam", ms, false);
                         } else if ($("#modSaveLocal").is(":checked")) {
                             this.exportMilestones(ms);
                         } else {                                                      
@@ -2601,6 +2601,7 @@ define([
                                 if(typeof u !== "string" || u.length <= 0) return;
                                 let survey = JSON.parse(u.response);
                                 let result = JSON.parse(survey.shift()["value"]);
+                                console.log('PLAN xxx ',result);
                                 let plan = result.objectives.toLowerCase();
                                 let ps = result.planingStyle.toLowerCase();
                                 let sr = _this.semesterRange;
