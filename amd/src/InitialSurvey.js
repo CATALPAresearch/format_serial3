@@ -80,11 +80,9 @@ define(['jquery'], function ($) {
                             "wiki"
                         ])
                     }
-                    // eslint-disable-next-line space-before-function-paren
                 }, function (e) {
-                    var _this = this;
                     try {
-                        var data = JSON.parse(e.data);
+                        let data = JSON.parse(e.data);
                         // Sort Ressources
                         let obj = new Array(data.length);
                         for (let i in data) {
@@ -119,7 +117,7 @@ define(['jquery'], function ($) {
                         'courseid': parseInt(course.id, 10)
                     }
                 }, function (e) {
-                    try {                        
+                    try {
                         e = JSON.parse(e.response);
                         if (e[0]) {
                             if (parseInt(e[0].value, 10)) {
@@ -244,7 +242,7 @@ define(['jquery'], function ($) {
                 },
                 isAvailableTimeSufficient: function () {
                     var availablaTimeMinimum = 6; // xxx needs to be part of teh course setup
-                    var availablaTimeMaximum = 30;                             
+                    var availablaTimeMaximum = 30;
                     if (this.availableTime <= 0) {
                         return "";
                     } else if (this.objectives === "f1a" && +this.availableTime === 1) {
@@ -260,20 +258,32 @@ define(['jquery'], function ($) {
                     }
                 },
                 buttonText: function () {
-                    var text = '';
+                    var text = 'Ohne Planung fortfahren';
+
+                    var reason = {
+                        'f1a': ', damit ich mich gut auf die Prüfung vorbereiten kann.',
+                        'f1b': ', damit ich mich im Kurs orientieren kann.',
+                        'f1c': '.',
+                        'f1d': '.'
+                    };
+
                     var takt = {
-                        'planing-style-a': 'Wochentakt',
-                        'planing-style-b': '2-Wochentakt',
-                        'planing-style-c': '4-Wochentakt',
-                        'planing-style-d': '',
-                        'planing-style-e': '',
+                        'planing-style-a': 'im Wochentakt',
+                        'planing-style-b': 'im 4-Wochentakt',
+                        'planing-style-c': 'im Wochentakt',
+                        'planing-style-d': 'im 2-Wochentakt',
+                        'planing-style-e': 'im Monatstakt',
                         'planing-style-f': ''
                     };
-                    var reason = {
-                        'f1a': 'um mich gut auf die Prüfung vorbereiten zu können.',
-                        'f1b': 'um mich im Kurs orientieren zu können.'
-                    };
-                    text = 'Semesterplanung im ' + takt[this.planingStyle] + ' vorschlagen, ' + reason[this.objectives];
+
+                    if (this.objectives !== '' || this.planingStyle !== '') {
+                        text = [
+                            'Semesterplanung ',
+                            takt[this.planingStyle] === undefined ? '' : takt[this.planingStyle],
+                            ' vorschlagen',
+                            reason[this.objectives]
+                        ].join('');
+                    }
                     return text;
                 },
                 saveSurvey: function () {
@@ -332,7 +342,7 @@ define(['jquery'], function ($) {
                                         //availableResources: _this.availableResources
                                     })
                                 }
-                            }, function (e) {                                
+                            }, function (e) {
                                 // console.log('saved survey ', e);
                             });
 
