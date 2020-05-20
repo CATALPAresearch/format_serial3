@@ -38,6 +38,7 @@ define([
             window.addEventListener('error', function (event) {
                 try {
                     var obj = {
+                        type: "thrown_error",
                         message: event.message ? event.message : undefined,
                         filename: event.filename ? event.filename : undefined,
                         lineno: event.lineno ? event.lineno : undefined,
@@ -48,8 +49,31 @@ define([
                 }
                 catch (error) { }
             });
-            console.log("ErrorHandler initialized");
             return;
+        };
+        EH.logConsoleErrors = function () {
+            console.error = function () {
+                try {
+                    var obj = {
+                        type: "console_error",
+                        arguments: arguments
+                    };
+                    obj = JSON.stringify(obj);
+                    new EH(obj);
+                }
+                catch (error) { }
+            };
+            console.warn = function () {
+                try {
+                    var obj = {
+                        type: "console_warn",
+                        arguments: arguments
+                    };
+                    obj = JSON.stringify(obj);
+                    new EH(obj);
+                }
+                catch (error) { }
+            };
         };
         EH.prototype._send = function (message) {
             try {
@@ -102,7 +126,7 @@ define([
         };
         EH._hashes = [];
         EH._send = true;
-        EH._console = true;
+        EH._console = false;
         EH._alert = false;
         return EH;
     }());

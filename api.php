@@ -68,7 +68,7 @@ class format_ladtopics_external extends external_api {
         try{
             if(is_null($courseid)) throw new Exception("No course specified");            
             $context = get_meta($courseid);
-            if($context->user->loggedin === false || $context->user->manager === false) throw new Exception("No Admin");
+            if($context->user->loggedin === false || ($context->user->manager === false && $context->user->siteadmin === false && $context->user->coursecreator === false)) throw new Exception("No Admin");
             $users = get_enrolled_users($context->course->context);
             $num_users = count_enrolled_users($context->course->context);
             $out['users'] = array();  
@@ -248,7 +248,7 @@ class format_ladtopics_external extends external_api {
         try{
             if(is_null($param)) throw new Exception("No courseid");
             $context = get_meta((int)$param);
-            if($context->user->loggedin === false || $context->user->manager === false) throw new Exception("No Admin");
+            if($context->user->loggedin === false || ($context->user->manager === false && $context->user->siteadmin === false && $context->user->coursecreator === false)) throw new Exception("No Admin");
             $enrolled = get_enrolled_users($context->course->context);
             $array = array();
             foreach($enrolled as $key=>$value){
@@ -344,7 +344,7 @@ class format_ladtopics_external extends external_api {
             $userid = $meta->user->id;        
             $meta = get_meta($data->courseid);            
             if(is_null($meta)) throw new Exception("Keine Meta-Daten erhalten");            
-            if($meta->user->loggedin === true && $meta->user->manager === true){
+            if($meta->user->loggedin === true && ($meta->user->manager === true || $meta->user->siteadmin === true || $meta->user->coursecreator === true)){
                 if(is_int($data->userid)) $userid = $data->userid;
             }
             $out['data'] = $data;
@@ -630,9 +630,11 @@ class format_ladtopics_external extends external_api {
                         if(gettype($entry->section_sequence) === "string" && sizeof($entry->section_sequence) > 0){
                             $sequence = explode(",", preg_replace("/[^0-9,]/", "", $entry->section_sequence));                            
                             $pos = array_search(strval($entry->instance_url_id), $sequence);                                              
-                        }                  
+                        }           
+                        $activityId++;
+
                         $out = array(
-                            'id' => $activityId++,
+                            'id' =>  $entry->instance_id + 100000 * $entry->module_id, // simple hash to make unique IDs
                             'course_id' => $entry->course_id,
                             'module_id' => $entry->module_id, 
                             'section_id' => $entry->section_id, 
@@ -944,8 +946,8 @@ class format_ladtopics_external extends external_api {
             global $CFG, $DB;
             $data = array();
             $meta = get_meta($param["courseid"]);            
-            if(is_null($meta)) throw new Exception("Keine Meta-Daten erhalten");            
-            if($meta->user->loggedin === true && $meta->user->manager === true){
+            if(is_null($meta)) throw new Exception("No meta data received.");            
+            if($meta->user->loggedin === true && ($meta->user->manager === true || $meta->user->coursecreator === true || $meta->user->siteadmin === true)){
                 $date = new DateTime();
                 $c = new stdClass();
                 $c->course = (int)$meta->course->id;   
@@ -971,7 +973,7 @@ class format_ladtopics_external extends external_api {
                         $data['success'] = true;                           
                     } else {
                         $data['success'] = false;
-                        $data['debug'] = "Unbekannter Fehler.";
+                        $data['debug'] = "Unknown error.";
                     }                         
                 } else {
                     $transaction = $DB->start_delegated_transaction();

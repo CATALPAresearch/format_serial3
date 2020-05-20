@@ -17,7 +17,7 @@ define([
         private _options?:EHOptions;
         private static _hashes:number[] = [];
         private static readonly _send:boolean = true;
-        private static readonly _console:boolean = true;
+        private static readonly _console:boolean = false;
         private static readonly _alert:boolean = false;
         public static logger:any;
 
@@ -48,6 +48,7 @@ define([
                 function(event) { 
                     try{                        
                         let obj:any = {
+                            type: "thrown_error",
                             message: event.message?event.message:undefined,
                             filename: event.filename?event.filename:undefined,
                             lineno: event.lineno?event.lineno:undefined,
@@ -57,9 +58,31 @@ define([
                         new EH(obj);
                     } catch(error){}           
                 }
-            );      
-            console.log("ErrorHandler initialized");      
+            );         
             return;
+        }
+
+        public static logConsoleErrors(){
+            console.error = function(){
+                try{
+                    let obj:any = {
+                        type: "console_error",
+                        arguments: arguments
+                    }
+                    obj = JSON.stringify(obj);
+                    new EH(obj);
+                } catch(error){}               
+            }
+            console.warn = function(){
+                try{
+                    let obj:any = {
+                        type: "console_warn",
+                        arguments: arguments
+                    }
+                    obj = JSON.stringify(obj);
+                    new EH(obj);
+                } catch(error){}               
+            }
         }
 
         private _send(message):boolean{
