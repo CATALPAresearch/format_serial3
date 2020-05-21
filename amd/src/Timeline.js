@@ -31,7 +31,6 @@ define([
     var Timeline = function (Vue, d3, dc, crossfilter, moment, Sortable, utils, introJs, logger, FilterChart, ActivityChart, InitialSurvey, ICalExport, ICalLib, vDP, vDPde, ErrorHandler) {
 
         $(document).ready(function () {
-            console.error("crazy2");
             let edit = $("a.milestone-element-edit");
             let filler = $("span.ms-edit-filler");
             filler.innerWidth(edit.innerWidth());
@@ -913,7 +912,7 @@ define([
                         this.emptyMilestone.end.setHours(23,59,59);
                         
                         this.milestones.push(this.emptyMilestone);
-                        
+
                         logger.add('milestone_created', {
                             milestoneId: this.emptyMilestone.id,
                             name: this.emptyMilestone.name,
@@ -2519,9 +2518,9 @@ define([
                                         }, function (u) {
                                             for (let i in _this.modUsers) {
                                                 if (_this.modUsers[i]['id'] === val) {
-                                                    console.log(_this.modUsers[i]['id'])
+                                                    //console.log(_this.modUsers[i]['id'])
                                                     if (_this.modUsers[i]['self'] === true) {
-                                                        console.log(_this.modUsers[i]['self']);
+                                                        //console.log(_this.modUsers[i]['self']);
                                                         return resolve(true);
                                                     } else {
                                                         return resolve(false);
@@ -2605,7 +2604,6 @@ define([
                         }
                     },
                     getMilestonePlan: function () {
-                        console.log('run getMilestonePlan')
                         try {
                             let _this = this;
                             utils.get_ws("userpreferences", {
@@ -2720,14 +2718,12 @@ define([
                                         }
                                     } catch (error) {
                                         new ErrorHandler(error);
-                                        console.log('eRR', error)
                                     }
                                 });
                             }
                             );
                         } catch (error) {
                             new ErrorHandler(error);
-                            console.log('eRR', error)
                         }
                     }
                 }
