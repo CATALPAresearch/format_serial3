@@ -714,14 +714,8 @@ $milestoneArchiveList = '
 
 $milestoneList = '
 <!-- Milestone list -->
+
 <ul>
-    <li v-if="milestones.length <= 0">
-        <span data-toggle="modal" data-target="#theMilestoneModal">
-            <button @click="showEmptyMilestone()" class="btn btn-sm right btn-primary ms-btn ms-coldstart-btn"
-                data-toggle="tooltip" data-placement="bottom" title="Neuen Meilenstein hinzufügen"><i
-                    class="fa fa-plus"></i> Legen Sie einen neuen Meilenstein an!</button>
-        </span>
-    </li>
     <li v-if="remainingMilestones.length > 0">
         <div class="milestone-element-header">
             <div class="milestone-element-table-head name">Meilenstein</div><div class="milestone-element-table-head due">Termin</div><div class="milestone-element-table-head">Fortschritt</div>
@@ -1140,7 +1134,7 @@ $modalMilestone = '
                             <select @change="resourceSelected" id="modal_strategy-select">
                                 <option :selected="true" disabled value="default">Wählen Sie Themen, Materialien und Aktivitäten</option>
                                 <optgroup v-for="section in resourceSections()" :label="section.name">
-                                    <option v-for="s in resourcesBySection(section.id)" :value="s.id">{{ s.instance_type }}: {{ s.name }}</option>
+                                    <option v-for="s in resourcesBySection(section.id)" :value="s.id">{{ getInstanceTypeTitel(s.instance_type) }}: {{ s.name }} &FilledSmallSquare; &EmptySmallSquare; &EmptySmallSquare;</option>
                                 </optgroup>
                             </select>
                         </div>
@@ -1330,6 +1324,13 @@ $modalMilestone = '
                                         </div>
                                     </div>
 
+                                    <div v-if="milestones.length <= 0">
+                                        <span data-toggle="modal" data-target="#theMilestoneModal">
+                                            <button @click="showEmptyMilestone()" class="btn btn-sm right btn-primary ms-btn ms-coldstart-btn"
+                                                data-toggle="tooltip" data-placement="bottom" title="Neuen Meilenstein hinzufügen"><i
+                                                    class="fa fa-plus"></i> Legen Sie einen neuen Meilenstein an!</button>
+                                        </span>
+                                    </div>
                                     <!-- Pill content -->
                                     <div class="tab-content" id="pills-tabContent">
                                         <div class="tab-pane col-12 fade" id="view-timeline" role="tabpanel" aria-labelledby="view-timeline">
