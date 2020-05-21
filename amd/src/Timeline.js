@@ -26,7 +26,7 @@ define([
 
     /**
      * Plot a timeline
-     */  
+     */
 
     var Timeline = function (Vue, d3, dc, crossfilter, moment, Sortable, utils, introJs, logger, FilterChart, ActivityChart, InitialSurvey, ICalExport, ICalLib, vDP, vDPde, ErrorHandler) {
 
@@ -35,8 +35,8 @@ define([
             let edit = $("a.milestone-element-edit");
             let filler = $("span.ms-edit-filler");
             filler.innerWidth(edit.innerWidth());
-            filler.css('display','inline-block');            
-        });      
+            filler.css('display', 'inline-block');
+        });
 
         var width = document.getElementById('ladtopic-container-0').offsetWidth;
         var margins = { top: 15, right: 10, bottom: 20, left: 10 };
@@ -47,8 +47,10 @@ define([
             // module: parseInt($('#moduleid').html())
             startDate: new Date(2020, 3, 1, 0, 0, 0),
             endDate: new Date(2020, 8, 30, 23, 59, 59),
-            start: (new Date(2020,3,1,0,0,0)).getTime()/1000,
-            end: (new Date(2020, 8, 30, 23, 59, 59)).getTime()/1000
+            start: (new Date(2020, 3, 1, 0, 0, 0)).getTime() / 1000,
+            end: (new Date(2020, 8, 30, 23, 59, 59)).getTime() / 1000,
+            minimumWeeklyWorkload: 6,
+            maximumWeeklyWorkload: 30
         };
 
         utils.get_ws('logstore', {
@@ -176,7 +178,7 @@ define([
                         modalVisible: false,
                         modalReflectionVisible: false,
                         reflectionsFormVisisble: false,
-                        modUsers: [],        
+                        modUsers: [],
                         modStatistics: {
                             users: 0,
                             surveys: 0,
@@ -184,7 +186,7 @@ define([
                             msProgessed: 0,
                             msReady: 0,
                             msUrgent: 0,
-                            msMissed: 0,                            
+                            msMissed: 0,
                             msReflected: 0,
                             ptExam: 0,
                             ptOrientation: 0,
@@ -195,8 +197,8 @@ define([
                             ptWA: 0,
                             ptWA2: 0,
                             ptWA4: 0,
-                            ptWANA: 0                      
-                        },             
+                            ptWANA: 0
+                        },
                         strategyCategories: [
                             { id: 'organization', name: 'Organisation' },
                             { id: 'elaboration', name: 'Elaborationsstrategien' },
@@ -205,7 +207,7 @@ define([
 
                         ],
                         strategies: [ // Übertrage Ansätze auf Kontexte ?? #86
-                            { id: 'reading', name: 'Überblick durch Lesen/Querlesen', desc: 'Durch schnelles Querlesen verschaffen Sie sich einen Überblick über das Themengebiet. Schauen Sie sich doch auch einmal die PQ4R-Methode an.', url: "", category: 'organization' },
+                            { id: 'reading', name: 'Überblick durch Lesen/Querlesen', desc: '<div>Durch schnelles Querlesen verschaffen Sie sich einen Überblick über das Themengebiet. Schauen Sie sich doch auch einmal die PQ4R-Methode an. <a href="https://www.example.com/">Details</a></div>', url: "", category: 'organization' },
                             { id: 'mindmap', name: 'Erzeuge Mindmap', desc: 'Eine Mindmap hilft dabei, Zusammenhänge darzustellen.', url: "", category: 'organization' },
                             { id: 'exzerpte', name: 'Fertige Exzerpt an', desc: 'Ein Exzerpt ist mehr als nur eine einfache Zusammenfassung der wichtigsten Inhalte.', url: "", category: 'organization' },
                             { id: 'gliederung', name: 'Erstelle Gliederung', desc: 'Themenfelder lassen sich mit einer Gliederung übersichtlich strukturieren.', url: "", category: 'organization' },
@@ -232,7 +234,7 @@ define([
                 mounted: function () {
                     moment.locale('de');
                     var _this = this;
-                    this.range = xRange;                    
+                    this.range = xRange;
                     // load milestone data from database via webservice
                     utils.get_ws('getmilestones', {
                         data: {
@@ -241,32 +243,32 @@ define([
                     }, function (e) {
                         _this.emptyMilestone.end = new Date();
                         _this.emptyMilestone.start = new Date();
-                        _this.initializeChart();    
-                        try{
+                        _this.initializeChart();
+                        try {
                             if (e !== null) {
                                 var data = JSON.parse(e.milestones);
                                 if (!data || !data.milestones) {
                                     _this.milestones = [];
                                 } else {
                                     // todo: A validation of the JSON should be feasible
-                                    _this.milestones = JSON.parse(data.milestones);                                              
-                                    _this.updateMilestoneStatus();                              
-    
+                                    _this.milestones = JSON.parse(data.milestones);
+                                    _this.updateMilestoneStatus();
+
                                     var facts = crossfilter(activityData);
                                     _this.timeFilterChart = new FilterChart(d3, dc, crossfilter, facts, xRange, _this, utils, logger, course);
-    
+
                                     _this.setFilterPreset('last-month');
                                     var activityChart = new ActivityChart(d3, dc, crossfilter, moment, activityData, utils, course);
                                     xRange = activityChart.getXRange();
                                     _this.timeFilterChart.registerChart(activityChart);
-    
+
                                     logger.add('planing_tool_open', { pageLoaded: true });
                                 }
                             }
-                        } catch(error){
+                        } catch (error) {
                             _this.milestones = [];
-                        }                 
-                        
+                        }
+
                     });
 
                     this.getMilestonePlan();
@@ -283,21 +285,21 @@ define([
                     }, function (e) {
                         try {
                             if (typeof e.data === "string" && e.data.length > 0) {
-                                _this.calendar = JSON.parse(e.data);                               
+                                _this.calendar = JSON.parse(e.data);
                             }
                         } catch (error) {
                             new ErrorHandler(error);
                         }
-                    });           
+                    });
 
-                    $(document).ready(function(){
-                        if($('#reportModal').length > 0){
-                            $('#reportModal').on('shown.bs.modal', function(){                                
+                    $(document).ready(function () {
+                        if ($('#reportModal').length > 0) {
+                            $('#reportModal').on('shown.bs.modal', function () {
                                 _this.modGetStatisticData(_this);
                             });
                         }
                     });
-                   
+
                 },
                 created: function () {
                     var _this = this;
@@ -346,7 +348,7 @@ define([
                                 return f.status !== "missed" && f.status !== "reflected";
                             }
                         );
-                    },                    
+                    },
                     dayOfSelectedMilestone: {
                         get: function () {
                             return this.getSelectedMilestone().end.getDate();
@@ -397,7 +399,7 @@ define([
                     }
                 },
                 methods: {
-                    getSemesterShortName : function(){
+                    getSemesterShortName: function () {
                         return course.semesterShortName;
                     },
                     startIntroJs: function () {
@@ -569,7 +571,7 @@ define([
                                 ])
                             }
                         }, function (e) {
-                            try {                                
+                            try {
                                 let data = JSON.parse(e.data);
                                 // Sort Ressources
                                 let obj = new Array(data.length);
@@ -590,11 +592,11 @@ define([
                                         pos++;
                                     }
                                     obj[pos] = data[i];
-                                }                                
-                                _this.resources = obj;                                
+                                }
+                                _this.resources = obj;
                                 for (let i in _this.calendar) {
                                     let element = _this.calendar[i];
-                                    if (element.eventtype !== "course" && element.eventtype !== "group") continue;                                  
+                                    if (element.eventtype !== "course" && element.eventtype !== "group") continue;
                                     let date = moment.unix(+element.timestart).format("DD.MM.YYYY");
                                     let out = {
                                         course_id: course.id,
@@ -604,7 +606,7 @@ define([
                                         instance_type: element.eventtype === "course" ? "kurstermin" : "gruppentermin",
                                         instance_url_id: null,
                                         module_id: null,
-                                        name: element.name+" ["+date+"]",
+                                        name: element.name + " [" + date + "]",
                                         pos_module: null,
                                         pos_section: null,
                                         section: null,
@@ -674,7 +676,7 @@ define([
                     },
                     xx: function (x) {
                         x = new Date(x);
-                        var xpos = d3.scaleTime().domain(this.range).range([0, this.width - this.padding])(x);   
+                        var xpos = d3.scaleTime().domain(this.range).range([0, this.width - this.padding])(x);
                         /* 
                         if(typeof(xpos) !== 'Number'){
                             var timeFormat = d3.timeParse("%Y-%m-%dT%H:%M:%SZ"); // 2020-05-20T19:10:45.416Z
@@ -690,7 +692,7 @@ define([
                         end = new Date(end);
                         var x_start = d3.scaleTime().domain(this.range).range([0, this.width - this.padding])(start);
                         var x_end = d3.scaleTime().domain(this.range).range([0, this.width - this.padding])(end);
-                        
+
                         /*if (typeof (x_start) !== 'Number') {
                             start = new Date(start);
                             end = new Date(end);
@@ -762,7 +764,7 @@ define([
 
                         this.height = this.maxLanes * 24;
                     },
-                    showModal: function (milestoneID) {                        
+                    showModal: function (milestoneID) {
                         this.selectedMilestone = milestoneID;
                         this.startDate = this.getSelectedMilestone().start;
                         this.endDate = this.getSelectedMilestone().end;
@@ -782,9 +784,9 @@ define([
                             });
                         }
                     },
-                    closeModal: function (update = true) {                       
+                    closeModal: function (update = true) {
                         this.modalVisible = false;
-                        if(update === false) return;
+                        if (update === false) return;
                         this.updateMilestoneStatus();
                         this.updateChart(this.range);
                         logger.add('milestone_dialog_close', { dialogOpen: false });
@@ -891,10 +893,10 @@ define([
                                 });
                                 if ($("#milestone-list-tab").hasClass("active") || $("#milestone-archive-list-tab").hasClass("active")) {
                                     if (this.getSelectedMilestone().status === "missed" || this.getSelectedMilestone().status === "reflected") {
-                                        
+
                                         this.moveToMilestoneArchiveListEntry(this.getSelectedMilestone().id, true);
                                     } else {
-                                       
+
                                         this.moveToMilestoneListEntry(this.getSelectedMilestone().id, true);
                                     }
                                 } else if ($("#milestone-timeline-tab").hasClass("active")) {
@@ -954,7 +956,7 @@ define([
                     },
                     removeMilestone: function () {
                         this.closeModal(false);
-                        $('div.modal-backdrop.show').remove();                       
+                        $('div.modal-backdrop.show').remove();
                         logger.add('milestone_removed', {
                             milestoneId: this.getSelectedMilestone().id,
                             name: this.getSelectedMilestone().name,
@@ -966,11 +968,11 @@ define([
                             strategies: this.getSelectedMilestone().strategies.map(function (strategy) { return { name: strategy.id, done: strategy.checked !== undefined ? true : false }; })
                         });
                         for (var s = 0; s < this.milestones.length; s++) {
-                            if (this.milestones[s].id === this.getSelectedMilestone().id) {                               
+                            if (this.milestones[s].id === this.getSelectedMilestone().id) {
                                 this.milestones.splice(s, 1);
                                 this.selectedMilestone = -1;
                             }
-                        }                        
+                        }
                         this.updateMilestones();
                         this.$forceUpdate(); // We want the create new ms button back!
                         return;
@@ -1169,6 +1171,25 @@ define([
                             return parseInt(s.id, 10) === parseInt(id, 10) ? true : false;
                         })[0]));
                     },
+                    getInstanceTypeTitel: function (instance_type) {
+                        switch (instance_type) {
+                            case 'forum': return 'Forum';
+                            case 'assign': return 'Einsendeaufgabe';
+                            case 'quiz': return 'Selbsttest';
+                            case 'studentquiz': return 'Selbsttest';
+                            case 'page': return 'Text';
+                            case 'kurstermin': return 'Termin';
+                            case 'data': return 'Text';
+                            case 'hvp': return '';
+                            case 'checklist': return '';
+                            case 'url': return 'Link';
+                            case 'feedback': return 'Feedback';
+                            case 'resource': return 'Material';
+                            case 'glossary': return 'Glossar';
+                            case 'wiki': return 'Wiki';
+                            default: return instance_type;
+                        }
+                    },
                     strategySelected: function (id) {
                         var el = this.strategyById(id);
                         if (this.getSelectedMilestone().strategies.indexOf(el) === -1) {
@@ -1232,13 +1253,13 @@ define([
                         var _this = this;
                         let ms = _this.milestones.filter(
                             function (element) {
-                                if (element.mod !== true) {                                    
+                                if (element.mod !== true) {
                                     return true;
                                 }
                                 if (typeof element.mod === "undefined") element.mod = false;
                                 return false;
                             }
-                        );                        
+                        );
                         utils.get_ws('setmilestones', {
                             data: {
                                 'courseid': parseInt(course.id, 10),
@@ -1293,7 +1314,7 @@ define([
                         let c = this;
                         for (var j = 0; j < this.milestones.length; j++) {
                             let pos = this.milestones[j].id;
-                            let obj = this.milestones[j];                            
+                            let obj = this.milestones[j];
                             for (var i = 0; i < this.milestones[j].resources.length; i++) {
                                 badge = $('<span></span>')
                                     .addClass('badge badge-secondary badge-ms')
@@ -1581,7 +1602,7 @@ define([
                                 let list = "";
                                 _this.milestones.forEach(
                                     (element) => {
-                                        if(element.status === "reflected" || (element.status === "missed" &&  new Date() > moment(element.end).add(1, 'w').toDate())) return;
+                                        if (element.status === "reflected" || (element.status === "missed" && new Date() > moment(element.end).add(1, 'w').toDate())) return;
                                         let icon = "fa-square";
                                         if (typeof element.resources === "object") {
                                             element.resources.forEach(
@@ -1589,11 +1610,11 @@ define([
                                                     if (+res.instance_url_id === id) icon = "fa-check-square";
                                                 }
                                             )
-                                        }                                        
+                                        }
                                         list += "<a class=\"dropdown-item\" href=\"#\" id=\"" + element.id + "\"><i class=\"icon fa " + icon + "\"></i>" + element.name + "</a>";
                                     }
                                 );
-                                return list.length <= 0?"<span class=\"px-2\" style=\"user-select:none;\">Kein Meilenstein</span>":list;
+                                return list.length <= 0 ? "<span class=\"px-2\" style=\"user-select:none;\">Kein Meilenstein</span>" : list;
                             } catch (error) {
                                 return "<div class=\"dropdown-item\">Meilensteine konnten nicht geladen werden.</div>";
                             }
@@ -1663,7 +1684,7 @@ define([
                                                             e.preventDefault();
                                                             if (typeof _this.milestones === "object" && typeof _this.resources === "object") {
                                                                 for (let i in _this.milestones) {
-                                                                    if (_this.milestones[i]["id"] === entryID) {                                                                        
+                                                                    if (_this.milestones[i]["id"] === entryID) {
                                                                         for (let u in _this.resources) {
                                                                             if (+_this.resources[u]["instance_url_id"] === id) {
                                                                                 if (typeof _this.milestones[i]["resources"] === "object") {
@@ -1677,7 +1698,7 @@ define([
                                                                                         if (found !== null) {
                                                                                             _this.milestones[i]["resources"].splice(found, 1);
                                                                                             icon.removeClass("fa-check-square");
-                                                                                            icon.addClass("fa-square");                                                                                   
+                                                                                            icon.addClass("fa-square");
                                                                                         } else {
                                                                                             _this.milestones[i]["resources"].push(_this.resources[u]);
                                                                                             icon.addClass("fa-check-square");
@@ -1686,13 +1707,13 @@ define([
                                                                                     } else {
                                                                                         _this.milestones[i]["resources"].push(_this.resources[u]);
                                                                                         icon.addClass("fa-check-square");
-                                                                                        icon.removeClass("fa-square");                                                                                        
+                                                                                        icon.removeClass("fa-square");
                                                                                     }
                                                                                 } else {
                                                                                     _this.milestones[i]["resources"] = array(_this.resources[u]);
                                                                                     icon.addClass("fa-check-square");
                                                                                     icon.removeClass("fa-square");
-                                                                                }                                                                               
+                                                                                }
                                                                                 _this.updateMilestoneStatus();
                                                                             }
                                                                         }
@@ -1799,7 +1820,7 @@ define([
                             );
                             Promise.all(promises).then(
                                 (resove) => {
-                                    if ($("#milestone-entry-archive-" + mID).length){
+                                    if ($("#milestone-entry-archive-" + mID).length) {
                                         $('html, body').animate({
                                             scrollTop: $("#milestone-entry-archive-" + mID).parent().offset().top - $("nav.navbar").outerHeight()
                                         }, 1000);
@@ -1950,19 +1971,19 @@ define([
                             new ErrorHandler(error);
                         }
                     },
-                    modSaveSelect: function () {                                              
+                    modSaveSelect: function () {
                         let ms = this.milestones.filter(
                             function (element) {
-                                if (element.mod !== true) {                                   
+                                if (element.mod !== true) {
                                     return true;
                                 }
                                 return false;
                             }
-                        );                
+                        );
                         if (ms.length <= 0) {
                             this.modAlert("warning", "Keine Meilensteine vorhanden.");
                             return;
-                        }       
+                        }
                         if ($("#modSaveInterest").is(":checked")) {
                             this.modSaveMilestones("interest", ms, false);
                         } else if ($("#modSaveOrientation").is(":checked")) {
@@ -1971,7 +1992,7 @@ define([
                             this.modSaveMilestones("exam", ms, false);
                         } else if ($("#modSaveLocal").is(":checked")) {
                             this.exportMilestones(ms);
-                        } else {                                                      
+                        } else {
                             this.exportMilestones(ms);
                         }
                         return;
@@ -1994,9 +2015,9 @@ define([
                         return;
 
                     },
-                    modResetPlan: function(){
+                    modResetPlan: function () {
                         var check = confirm('Wollen Sie wirklich ihren Semesterplan zurücksetzen?');
-                        if (check === true) {                               
+                        if (check === true) {
                             let todo = [];
                             todo.push(new Promise(
                                 (resolve, reject) => {
@@ -2008,7 +2029,7 @@ define([
                                             'value': 0
                                         }
                                     }, function (e) {
-                                       return resolve();
+                                        return resolve();
                                     });
                                 }
                             ));
@@ -2022,13 +2043,13 @@ define([
                                             'value': ""
                                         }
                                     }, function (e) {
-                                       return resolve();
+                                        return resolve();
                                     });
                                 }
-                            ));                  
+                            ));
                             Promise.all(todo).then(
                                 (resolve) => {
-                                    location.reload(); 
+                                    location.reload();
                                 },
                                 (reject) => {
                                     console.log(reject);
@@ -2049,16 +2070,16 @@ define([
                             }, function (e) {
                                 let out = JSON.parse(e.data);
                                 if (out.success === true) {
-                                    if(reset){
+                                    if (reset) {
                                         _this.milestones = [];
                                         _this.updateMilestones();
                                     } else {
                                         let ms = [];
-                                        for(let u in _this.milestones){
-                                            if(_this.milestones[u].mod !== true) ms.push(_this.milestones[u]);
+                                        for (let u in _this.milestones) {
+                                            if (_this.milestones[u].mod !== true) ms.push(_this.milestones[u]);
                                         }
                                         _this.milestones = ms;
-                                    }                               
+                                    }
                                     _this.getMilestonePlan();
                                     _this.modAlert("success", "Meilensteine wurden aktualisiert.");
                                 } else {
@@ -2074,11 +2095,11 @@ define([
                         }
                     },
                     resetMilestones: function () {
-                        try {                           
+                        try {
                             this.milestones = [];
-                            this.updateMilestones();                           
-                            this.modAlert("success", "Meilensteine wurden zurückgesetzt.");                            
-                        } catch (error) {                            
+                            this.updateMilestones();
+                            this.modAlert("success", "Meilensteine wurden zurückgesetzt.");
+                        } catch (error) {
                             this.modAlert("danger", "Konnte die Meilensteine nicht zurücksetzen.");
                             new ErrorHandler(error);
                         }
@@ -2100,45 +2121,45 @@ define([
                         } catch (error) {
                             new ErrorHandler(error);
                         }
-                    },      
-                    sendMail: function(subject, text){
-                        try{    
+                    },
+                    sendMail: function (subject, text) {
+                        try {
                             utils.get_ws("sendmail", {
                                 'courseid': parseInt(course.id, 10),
                                 'subject': "hello",
                                 'text': "jo"
-                            }, function (u) {                                            
-                             
+                            }, function (u) {
+
                             });
-                        } catch(error){
+                        } catch (error) {
                             console.log(error);
                         }
-                    }, 
-                    modGetStatisticData: function(parent){
-                        try{    
-                            let _this = parent;                                              
+                    },
+                    modGetStatisticData: function (parent) {
+                        try {
+                            let _this = parent;
                             new Promise(
                                 (resolve, reject) => {
                                     utils.get_ws("statistics", {
-                                        'courseid': parseInt(course.id, 10)                               
-                                    }, function (u) {                                            
-                                       let obj = JSON.parse(u.data);
-                                       return resolve(obj);                                       
+                                        'courseid': parseInt(course.id, 10)
+                                    }, function (u) {
+                                        let obj = JSON.parse(u.data);
+                                        return resolve(obj);
                                     });
                                 }
                             ).then(
-                                (resolve) => {                                
-                                    if($('#stUserList').length > 0){
-                                        $('#stUserList tr:gt(1)').remove();                                        
-                                    }   
-                                    $('#modWorkload tr').not(':first').not(':last').remove();       
-                                    _this.modStatistics.users = resolve.num_users?+resolve.num_users:0;
-                                    _this.modStatistics.surveys = resolve.num_survey?+resolve.num_survey:0;      
+                                (resolve) => {
+                                    if ($('#stUserList').length > 0) {
+                                        $('#stUserList tr:gt(1)').remove();
+                                    }
+                                    $('#modWorkload tr').not(':first').not(':last').remove();
+                                    _this.modStatistics.users = resolve.num_users ? +resolve.num_users : 0;
+                                    _this.modStatistics.surveys = resolve.num_survey ? +resolve.num_survey : 0;
                                     _this.modStatistics.msProgessed = 0,
-                                    _this.modStatistics.msReady = 0,
-                                    _this.modStatistics.msUrgent = 0,
-                                    _this.modStatistics.msMissed = 0,                            
-                                    _this.modStatistics.msReflected = 0
+                                        _this.modStatistics.msReady = 0,
+                                        _this.modStatistics.msUrgent = 0,
+                                        _this.modStatistics.msMissed = 0,
+                                        _this.modStatistics.msReflected = 0
                                     _this.modStatistics.ptExam = 0;
                                     _this.modStatistics.ptOrientation = 0;
                                     _this.modStatistics.ptInterest = 0;
@@ -2148,37 +2169,37 @@ define([
                                     _this.modStatistics.ptWA = 0;
                                     _this.modStatistics.ptWA2 = 0;
                                     _this.modStatistics.ptWA4 = 0;
-                                    _this.modStatistics.ptWANA = 0;  
+                                    _this.modStatistics.ptWANA = 0;
                                     _this.modStatistics.ptSum = 0;
                                     _this.modStatistics.ptMS = 0;
                                     _this.modStatistics.ptUser = 0;
-                                    _this.modStatistics.milestones = 0;                              
-                                   
-                                    let createPie = function(parent, data, color){                                        
-                                        for(let i in data){
-                                            if(data[i] <= 0){
-                                                delete(data[i]);
+                                    _this.modStatistics.milestones = 0;
+
+                                    let createPie = function (parent, data, color) {
+                                        for (let i in data) {
+                                            if (data[i] <= 0) {
+                                                delete (data[i]);
                                             }
                                         }
-                                        if(Object.keys(data).length <= 0) return;                                       
+                                        if (Object.keys(data).length <= 0) return;
                                         let jqp = $(parent);
-                                        if(jqp.length > 0){
+                                        if (jqp.length > 0) {
                                             jqp.empty();
-                                            let width = jqp.width()/2;
+                                            let width = jqp.width() / 2;
                                             let radius = width / 2 - 20;
                                             let chart = d3.select(parent)
-                                                            .append("svg")
-                                                            .attr("width", width)
-                                                            .attr("height", width)                                                               
+                                                .append("svg")
+                                                .attr("width", width)
+                                                .attr("height", width)
                                             chart.append("g").attr("class", "slices").attr("transform", "translate(" + width / 2 + "," + width / 2 + ")");
                                             chart.append("g").attr("class", "labels").attr("transform", "translate(" + width / 2 + "," + width / 2 + ")");
                                             var color = d3.scaleOrdinal()
-                                                            .domain(data)
-                                                            .range(color);
-                                            var pie = d3.pie().value(function(d) {return d.value; });
+                                                .domain(data)
+                                                .range(color);
+                                            var pie = d3.pie().value(function (d) { return d.value; });
                                             var data_ready = pie(d3.entries(data));
 
-                                            $(parent+" svg").css({
+                                            $(parent + " svg").css({
                                                 "margin": "auto",
                                                 "display": "block"
                                             });
@@ -2194,7 +2215,7 @@ define([
                                                 .enter()
                                                 .append('path')
                                                 .attr('d', arcGenerator)
-                                                .attr('fill', function(d){ return(color(d.data.key)) })
+                                                .attr('fill', function (d) { return (color(d.data.key)) })
                                                 .attr("stroke", "black")
                                                 .style("stroke-width", "2px")
                                                 .style("opacity", 0.7);
@@ -2204,74 +2225,74 @@ define([
                                                 .data(data_ready)
                                                 .enter()
                                                 .append('text')
-                                                .text(function(d){ return d.data.key+" ("+d.data.value+")"})
-                                                .attr("transform", function(d) { return "translate(" + arcGenerator.centroid(d) + ")";  })
+                                                .text(function (d) { return d.data.key + " (" + d.data.value + ")" })
+                                                .attr("transform", function (d) { return "translate(" + arcGenerator.centroid(d) + ")"; })
                                                 .style("text-anchor", "middle")
                                                 .style("font-size", 17);
-                                        }                                        
-                                    }   
-                                    
-                                    let createBarChart = function(parent, data, color){
-                                        
-                                        for(let i in data){
-                                            if(data[i] <= 0){
-                                                delete(data[i]);
+                                        }
+                                    }
+
+                                    let createBarChart = function (parent, data, color) {
+
+                                        for (let i in data) {
+                                            if (data[i] <= 0) {
+                                                delete (data[i]);
                                             }
                                         }
 
-                                        if(Object.keys(data).length <= 0) return;   
+                                        if (Object.keys(data).length <= 0) return;
 
                                         let jqp = $(parent);
 
-                                        if(jqp.length > 0){
-                                            
+                                        if (jqp.length > 0) {
+
                                             jqp.empty();
 
                                             let margin = 30;
                                             let width = jqp.width() - 8;
                                             let height = (width / 2) - 2 * margin;
-                                            width = width - 2 * margin;                                           
+                                            width = width - 2 * margin;
 
                                             let chart = d3
                                                 .select(parent)
                                                 .append("svg")
                                                 .attr("width", width + 2 * margin)
-                                                .attr("height", height + 2 * margin)                                                
+                                                .attr("height", height + 2 * margin)
 
                                             let maxY = 0;
                                             let maxX = 0;
 
-                                            for(let t in data){
+                                            for (let t in data) {
                                                 let obj = data[t];
-                                                if(+obj['numb'] > maxX) maxX = obj['numb'];
-                                                if(+obj['count'] > maxY) maxY = obj['count'];
-                                            }                                            
-                                         
+                                                if (+obj['numb'] > maxX) maxX = obj['numb'];
+                                                if (+obj['count'] > maxY) maxY = obj['count'];
+                                            }
+
                                             let yScale = d3
                                                 .scaleLinear()
                                                 .range([height, 0])
-                                                .domain([0, maxY + 1])                                                
+                                                .domain([0, maxY + 1])
                                                 .nice();
 
                                             chart
                                                 .append("g")
                                                 .attr('transform', `translate(${margin}, ${margin})`)
-                                                .attr("class", "Yaxis")                           
+                                                .attr("class", "Yaxis")
                                                 .call(
                                                     d3
                                                         .axisLeft(yScale)
                                                         .tickFormat(d3.format('.0f'))
                                                         .ticks(maxY + 1)
                                                 );
-                                       
+
                                             let xScale = d3
                                                 .scaleLinear()
                                                 .range([0, width])
                                                 .domain([0, maxX + 1])
                                                 .nice();
-                                                
+
                                             chart
-                                                .append("g")                                                
+                                                .append("g")
                                                 .attr("class", "Xaxis")
                                                 .attr('transform', `translate(${margin}, ${height + margin})`)
                                                 .call(
@@ -2280,7 +2301,7 @@ define([
                                                         .tickFormat(d3.format('.0f'))
                                                         .ticks(maxX + 1)
                                                 );
-                                        
+
                                             let barWidth = (width / maxX) / 2;
 
                                             chart
@@ -2295,113 +2316,113 @@ define([
                                                 .attr('x', (s) => xScale(s.numb))
                                                 .attr('y', (s) => yScale(s.count))
                                                 .attr('height', (s) => height - yScale(s.count))
-                                                .attr('width', barWidth);                                            
-                                         
+                                                .attr('width', barWidth);
+
                                         }
-                                        return;                               
+                                        return;
                                     }
-                                    
-                                    let availTime = {};                                   
+
+                                    let availTime = {};
 
                                     // get all milestones
-                                    if(resolve.users){                                                                            
-                                        for(let i in resolve.users){                                           
-                                            _this.modStatistics.ptUser++;                                               
-                                            
+                                    if (resolve.users) {
+                                        for (let i in resolve.users) {
+                                            _this.modStatistics.ptUser++;
+
                                             let surveyDone = 0;
-                                            if(resolve.users[i]['surveyDone'] && +resolve.users[i]['surveyDone']['value'] > 0){
+                                            if (resolve.users[i]['surveyDone'] && +resolve.users[i]['surveyDone']['value'] > 0) {
                                                 surveyDone = 1;
                                             }
 
-                                            if(resolve.users[i]['survey']){
-                                                _this.modStatistics.ptSum++;   
-                                                if(resolve.users[i]['survey']['value']){
+                                            if (resolve.users[i]['survey']) {
+                                                _this.modStatistics.ptSum++;
+                                                if (resolve.users[i]['survey']['value']) {
                                                     resolve.users[i]['survey'] = JSON.parse(resolve.users[i]['survey']['value']);
                                                     let surv = resolve.users[i]['survey'];
-                                                    switch(surv.objectives){
+                                                    switch (surv.objectives) {
                                                         case 'f1a': _this.modStatistics.ptExam++;
-                                                                    break;
+                                                            break;
                                                         case 'f1b': _this.modStatistics.ptOrientation++;
-                                                                    break;
+                                                            break;
                                                         case 'f1c': _this.modStatistics.ptInterest++;
-                                                                    break;
+                                                            break;
                                                         case 'f1d': _this.modStatistics.ptNoAnswer++;
-                                                                    break;
+                                                            break;
                                                     }
                                                 }
-                                                if(resolve.users[i]['survey']['availableTime']){
-                                                    let time = resolve.users[i]['survey']['availableTime'];                                                
-                                                    if(availTime[time]){
+                                                if (resolve.users[i]['survey']['availableTime']) {
+                                                    let time = resolve.users[i]['survey']['availableTime'];
+                                                    if (availTime[time]) {
                                                         availTime[time]++;
                                                     } else {
                                                         availTime[time] = 1;
                                                     }
-                                                }  
-                                                if(resolve.users[i]['survey']['planingStyle']){
+                                                }
+                                                if (resolve.users[i]['survey']['planingStyle']) {
                                                     let ps = resolve.users[i]['survey']['planingStyle'];
-                                                    switch(ps){
+                                                    switch (ps) {
                                                         case 'planing-style-a': _this.modStatistics.ptW1++;
-                                                                                break;
+                                                            break;
                                                         case 'planing-style-b': _this.modStatistics.ptW4++;
-                                                                                break;
+                                                            break;
                                                         case 'planing-style-c': _this.modStatistics.ptWA++;
-                                                                                break;
+                                                            break;
                                                         case 'planing-style-d': _this.modStatistics.ptWA2++;
-                                                                                break;
+                                                            break;
                                                         case 'planing-style-e': _this.modStatistics.ptWA4++;
-                                                                                break;
+                                                            break;
                                                         case 'planing-style-f': _this.modStatistics.ptWANA++;
-                                                                                break;
+                                                            break;
                                                     }
-                                                }                                                       
-                                            }   
-                                            let milestones = 0;  
-                                            let msDone = 0;  
+                                                }
+                                            }
+                                            let milestones = 0;
+                                            let msDone = 0;
                                             let msReady = 0;
-                                            let msFailed = 0;                                                                     
-                                            if(resolve.users[i]["milestones"] && resolve.users[i]["milestones"]["milestones"]){
+                                            let msFailed = 0;
+                                            if (resolve.users[i]["milestones"] && resolve.users[i]["milestones"]["milestones"]) {
                                                 _this.modStatistics.ptMS++;
                                                 resolve.users[i]["milestones"] = JSON.parse(resolve.users[i]["milestones"]["milestones"]);
                                                 let msCount = resolve.users[i]["milestones"].length;
-                                                for(let t in resolve.users[i]["milestones"]){
+                                                for (let t in resolve.users[i]["milestones"]) {
                                                     milestones++;
                                                     let ms = resolve.users[i]["milestones"][t];
-                                                    switch(ms.status){
-                                                        case 'progress':    _this.modStatistics.msProgessed++;
-                                                                            break;
-                                                        case 'ready':       _this.modStatistics.msReady++;
-                                                                            msReady++;
-                                                                            break;
-                                                        case 'urgent':      _this.modStatistics.msUrgent++;
-                                                                            break;
-                                                        case 'missed':      _this.modStatistics.msMissed++;
-                                                                            msFailed++;
-                                                                            break;
-                                                        case 'reflected':   _this.modStatistics.msReflected++;
-                                                                            _this.modStatistics.msReady++;
-                                                                            msDone++;
-                                                                            break;
-                                                    }                                                    
-                                                } 
-                                                _this.modStatistics.milestones += msCount;                                               
+                                                    switch (ms.status) {
+                                                        case 'progress': _this.modStatistics.msProgessed++;
+                                                            break;
+                                                        case 'ready': _this.modStatistics.msReady++;
+                                                            msReady++;
+                                                            break;
+                                                        case 'urgent': _this.modStatistics.msUrgent++;
+                                                            break;
+                                                        case 'missed': _this.modStatistics.msMissed++;
+                                                            msFailed++;
+                                                            break;
+                                                        case 'reflected': _this.modStatistics.msReflected++;
+                                                            _this.modStatistics.msReady++;
+                                                            msDone++;
+                                                            break;
+                                                    }
+                                                }
+                                                _this.modStatistics.milestones += msCount;
                                             }
-                                            
-                                            if($('#stUserList').length > 0){
+
+                                            if ($('#stUserList').length > 0) {
                                                 $('#stUserList tr:last').after(`<tr><td>${resolve.users[i]['firstname']}</td><td>${resolve.users[i]['lastname']}</td><td>${resolve.users[i]['email']}</td><td>${surveyDone}</td><td>${milestones}</td><td>${msFailed}</td><td>${msReady}</td><td>${msDone}</td></tr>`);
-                                            }                                       
+                                            }
                                             //console.log(JSON.parse(resolve.users[i]["milestones"]["milestones"]));
                                             /*
                                             resolve.users[i]["milestones"] = JSON.parse(resolve.users[i]["milestones"]["milestones"]);*/
-                                        }                                      
-                                      
-                                        let timeArray = [];    
-                                        
+                                        }
+
+                                        let timeArray = [];
+
                                         let table = "";
 
-                                        for(let u in availTime){
+                                        for (let u in availTime) {
 
                                             table += `<tr><td>${u} SWS</td><td style="padding-right: 30px; text-align: right;">${availTime[u]}</td></tr>`;
-                                            
+
                                             timeArray.push(
                                                 {
                                                     numb: parseInt(u),
@@ -2412,26 +2433,26 @@ define([
 
                                         $('#modWorkload tr:first').after(table);
 
-                                        createBarChart("#stChartHR", timeArray, "#003f5c");                                        
+                                        createBarChart("#stChartHR", timeArray, "#003f5c");
 
                                         let data = {
                                             "Bearbeitung": _this.modStatistics.msProgessed,
-                                            "Dringend": _this.modStatistics.msUrgent, 
-                                            "Abgeschlossen": _this.modStatistics.msReady, 
+                                            "Dringend": _this.modStatistics.msUrgent,
+                                            "Abgeschlossen": _this.modStatistics.msReady,
                                             "Reflektiert": _this.modStatistics.msReflected,
                                             "Abgelaufen": _this.modStatistics.msMissed
-                                        };                                   
-                                        
+                                        };
+
                                         var color = ["#003f5c", "#ffa600", "#bc5090", "#58508d", "#ff6361"];
                                         createPie("#stChartMS", data, color);
 
                                         data = {
-                                            "Prüfung": _this.modStatistics.ptExam,                                     
-                                            "Orientierung": _this.modStatistics.ptOrientation,                                                              
-                                            "Interesse": _this.modStatistics.ptInterest,                                                             
+                                            "Prüfung": _this.modStatistics.ptExam,
+                                            "Orientierung": _this.modStatistics.ptOrientation,
+                                            "Interesse": _this.modStatistics.ptInterest,
                                             "Keine Angabe": _this.modStatistics.ptNoAnswer
                                         }
-                                        createPie("#stChartTA", data, color);                                
+                                        createPie("#stChartTA", data, color);
 
                                         data = {
                                             "Nur eine Woche": _this.modStatistics.ptW1,
@@ -2444,18 +2465,18 @@ define([
                                         createPie("#stChartPS", data, color);
 
                                         //console.log(resolve.users);
-                                    }                        
+                                    }
                                 },
                                 (reject) => {
                                     console.log(reject);
                                 }
                             )
-                            
-                        } catch(error){
+
+                        } catch (error) {
                             console.log(error);
                         }
                     },
-                    sendNotification: function(subject, text){
+                    sendNotification: function (subject, text) {
                         /*require(['core/notification'], function(notification) {
                             notification.addNotification({
                               message: "Your message here",
@@ -2463,16 +2484,16 @@ define([
                             });
                         });*/
 
-                        try{    
+                        try {
                             utils.get_ws("notification", {
                                 'courseid': parseInt(course.id, 10),
                                 'subject': "hello",
                                 'short': "ss",
                                 'text': "Hier steht deine Werbung"
-                            }, function (u) {                                            
-                               console.log(u);
+                            }, function (u) {
+                                console.log(u);
                             });
-                        } catch(error){
+                        } catch (error) {
                             console.log(error);
                         }
 
@@ -2486,126 +2507,127 @@ define([
                                 });
                                 console.log(typeof notification.fetchNotifications);                                
                             });*/
-                    },         
-                    modUpdateUser: function(){
+                    },
+                    modUpdateUser: function () {
                         let _this = this;
                         let items = $("input.mru:checked");
-                        if(items.length <= 0){
+                        if (items.length <= 0) {
                             this.modAlert("warning", "Bitte wählen Sie einen Benutzer aus.");
                             return;
                         }
                         let resetMS = $("#modResetUserMS").is(":checked");
                         let resetPlan = $("#modResetUserPlan").is(":checked");
-                        if(!resetMS && !resetPlan){
+                        if (!resetMS && !resetPlan) {
                             this.modAlert("warning", "Bitte wählen Sie aus, was zurück gesetzt werden soll.");
                             return;
-                        }                                                
+                        }
                         let update = [];
                         items.each(
-                            function(){
+                            function () {
                                 let item = $(this);
                                 let val = +item.val();
-                                if(typeof val !== "number" && val <= 0) return;
+                                if (typeof val !== "number" && val <= 0) return;
                                 let prom = new Promise(
                                     (resolve, reject) => {
                                         let data = {
                                             courseid: parseInt(course.id, 10),
                                             userid: parseInt(val, 10)
-                                        };                                       
-                                        if(resetMS) data['milestones'] = [];
-                                        if(resetPlan) data['plan'] = [];
-                                        data = JSON.stringify(data);                                      
-                                        utils.get_ws("updateuser", {                                            
+                                        };
+                                        if (resetMS) data['milestones'] = [];
+                                        if (resetPlan) data['plan'] = [];
+                                        data = JSON.stringify(data);
+                                        utils.get_ws("updateuser", {
                                             'data': data
-                                        }, function (u) {    
-                                            for(let i in _this.modUsers){
-                                                if(_this.modUsers[i]['id'] === val){
+                                        }, function (u) {
+                                            for (let i in _this.modUsers) {
+                                                if (_this.modUsers[i]['id'] === val) {
                                                     console.log(_this.modUsers[i]['id'])
-                                                    if(_this.modUsers[i]['self'] === true){
+                                                    if (_this.modUsers[i]['self'] === true) {
                                                         console.log(_this.modUsers[i]['self']);
                                                         return resolve(true);
                                                     } else {
                                                         return resolve(false);
                                                     }
                                                 }
-                                            }                                     
-                                        });                                        
+                                            }
+                                        });
                                     }
                                 );
                                 update.push(prom);
                             }
-                        );              
+                        );
                         Promise.all(update).then(
                             (resolve) => {
-                                for(let i in resolve){
-                                    if(resolve[i] === true) location.reload();
-                                }                              
+                                for (let i in resolve) {
+                                    if (resolve[i] === true) location.reload();
+                                }
                                 this.modAlert("success", "Benutzerplanung zurückgesetzt");
                             },
                             (reject) => {
                                 this.modAlert("danger", reject);
                             }
-                        )   
-                        return;       
+                        )
+                        return;
                     },
-                    userAutocomplete: async function(target, value){
-                        try{
+                    userAutocomplete: async function (target, value) {
+                        try {
                             $("input.mru:not(:checked)").parent().remove();
-                            let list = $('div.userAutocomplete');  
-                            if(list.children().length <= 0) {
+                            let list = $('div.userAutocomplete');
+                            if (list.children().length <= 0) {
                                 list.removeClass("bg-secondary");
-                                list.removeClass("mb-3");                                 
+                                list.removeClass("mb-3");
                             }
-                            if(typeof value !== "string" || value.length <= 0) return;                                                           
-                            if(typeof this.modUsers !== "object" || this.modUsers.length < 1){
+                            if (typeof value !== "string" || value.length <= 0) return;
+                            if (typeof this.modUsers !== "object" || this.modUsers.length < 1) {
                                 let result = await new Promise(
                                     (resolve, reject) => {
                                         utils.get_ws("getalluser", {
                                             'courseid': parseInt(course.id, 10)
-                                        }, function (u) {                                            
+                                        }, function (u) {
                                             let obj = JSON.parse(u.data);
-                                            if(!obj.user) throw new Error("Invalid Return");
+                                            if (!obj.user) throw new Error("Invalid Return");
                                             return resolve(obj.user);
                                         });
                                     }
-                                );         
-                                this.modUsers = result;                       
-                            }                            
-                            value = value.toLowerCase();                            
-                            for(let i in this.modUsers){
+                                );
+                                this.modUsers = result;
+                            }
+                            value = value.toLowerCase();
+                            for (let i in this.modUsers) {
                                 let element = this.modUsers[i];
                                 element.id = +element.id;
-                                if(typeof element.id !== "number" || element.id < 0) continue;                                
-                                if($("#mru-"+element.id).length > 0) continue;                 
-                                let ident = "";         
-                                let found = false;                   
-                                if(element.username){       
-                                    if(element.username.toLowerCase().indexOf(value) !== -1) found = true;
-                                    ident += ident.length > 0 ? " - "+element.username:element.username;
+                                if (typeof element.id !== "number" || element.id < 0) continue;
+                                if ($("#mru-" + element.id).length > 0) continue;
+                                let ident = "";
+                                let found = false;
+                                if (element.username) {
+                                    if (element.username.toLowerCase().indexOf(value) !== -1) found = true;
+                                    ident += ident.length > 0 ? " - " + element.username : element.username;
                                 }
-                                if(element.name){                                     
-                                    if(element.name.toLowerCase().indexOf(value) !== -1) found = true;
-                                    ident += ident.length > 0 ? " - "+element.name:element.name;
+                                if (element.name) {
+                                    if (element.name.toLowerCase().indexOf(value) !== -1) found = true;
+                                    ident += ident.length > 0 ? " - " + element.name : element.name;
                                 }
-                                if(element.email){                                     
-                                    if(element.email.toLowerCase().indexOf(value) !== -1) found = true;
-                                    ident += ident.length > 0 ? " - "+element.email:element.email;                                  
-                                }                                
-                                if(found){
-                                    if(list.children().length <= 0){
+                                if (element.email) {
+                                    if (element.email.toLowerCase().indexOf(value) !== -1) found = true;
+                                    ident += ident.length > 0 ? " - " + element.email : element.email;
+                                }
+                                if (found) {
+                                    if (list.children().length <= 0) {
                                         list.addClass("bg-secondary");
                                         list.addClass("mb-3");
                                     }
-                                    let divElem = $("<div class=\"form-check\"></div>").appendTo(list);                                     
-                                    $("<input class=\"mru form-check-input\" type=\"checkbox\" value=\""+element.id+"\" id=\"mru-"+element.id+"\" />").appendTo(divElem);
+                                    let divElem = $("<div class=\"form-check\"></div>").appendTo(list);
+                                    $("<input class=\"mru form-check-input\" type=\"checkbox\" value=\"" + element.id + "\" id=\"mru-" + element.id + "\" />").appendTo(divElem);
                                     $("<label class=\"form-check-label\" for=\"modResetUsers\" />").text(ident).appendTo(divElem);
-                                }                          
+                                }
                             }
-                        } catch(error){
+                        } catch (error) {
                             console.log(error);
                         }
                     },
                     getMilestonePlan: function () {
+                        console.log('run getMilestonePlan')
                         try {
                             let _this = this;
                             utils.get_ws("userpreferences", {
@@ -2615,10 +2637,9 @@ define([
                                     'fieldname': 'ladtopics_survey_results',
                                 }
                             }, function (u) {
-                                if(typeof u !== "string" || u.length <= 0) return;
+                                if (typeof u.response !== "string" || u.response.length <= 0) return;
                                 let survey = JSON.parse(u.response);
                                 let result = JSON.parse(survey.shift()["value"]);
-                                console.log('PLAN xxx ',result);
                                 let plan = result.objectives.toLowerCase();
                                 let ps = result.planingStyle.toLowerCase();
                                 let sr = _this.semesterRange;
@@ -2688,13 +2709,13 @@ define([
                                                             }
                                                         }
                                                         let found = false;
-                                                        for(let u in _this.milestones){                                                            
-                                                            if(_this.milestones[u].id === element.id){
-                                                                found = true;                                                              
+                                                        for (let u in _this.milestones) {
+                                                            if (_this.milestones[u].id === element.id) {
+                                                                found = true;
                                                                 break;
                                                             }
                                                         }
-                                                        if(!found) _this.milestones.push(element);                                                        
+                                                        if (!found) _this.milestones.push(element);
                                                     }
                                                 );
                                             } else {
@@ -2705,25 +2726,27 @@ define([
                                                         element.mod = true;
 
                                                         let found = false;
-                                                        for(let u in _this.milestones){                                                            
-                                                            if(_this.milestones[u].id === element.id){
-                                                                found = true;                                                              
+                                                        for (let u in _this.milestones) {
+                                                            if (_this.milestones[u].id === element.id) {
+                                                                found = true;
                                                                 break;
                                                             }
                                                         }
-                                                        if(!found) _this.milestones.push(element);
+                                                        if (!found) _this.milestones.push(element);
                                                     }
                                                 );
                                             }
                                         }
                                     } catch (error) {
                                         new ErrorHandler(error);
+                                        console.log('eRR', error)
                                     }
                                 });
                             }
                             );
                         } catch (error) {
                             new ErrorHandler(error);
+                            console.log('eRR', error)
                         }
                     }
                 }
