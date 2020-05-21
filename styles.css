@@ -539,6 +539,10 @@ svg {
     padding-left: 0;
 }
 
+.likert-row {
+    margin: 4px 6px !important;
+}
+
 .ms-reflection h5 {
     color: #777;
     font-size: 1.2em;
@@ -731,7 +735,7 @@ svg {
     left: 0;
     height: 58px;
     width: 20px;
-    background-image: url('https://aple.fernuni-hagen.de/course/format/ladtopics/img/label-semester.png');
+    background-image: url('https://aple.fernuni-hagen.de/course/format/ladtopics/img/label-filter.png');
     background-repeat: no-repeat;
     background-position: center;
     /* Center the image */
