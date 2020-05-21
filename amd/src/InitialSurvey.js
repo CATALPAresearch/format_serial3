@@ -210,7 +210,7 @@ define(['jquery'], function ($) {
                 },
                 updateAvailableTime: function () {
                     this.invalidAvailableTime = this.availableTime <= 0 ? true : false;
-                    this.invalidAvailableTimeNotEnough = this.availableTime <= 10 ? true : false;
+                    this.invalidAvailableTimeNotEnough = this.availableTime <= course.minimumWeeklyWorkload ? true : false;
                 },
                 updatePlaningStyle: function (e) {
                     this.invalidPlaningStyle = this.planingStyle === '' ? true : false;
@@ -241,19 +241,17 @@ define(['jquery'], function ($) {
                     //return ! isValid;
                 },
                 isAvailableTimeSufficient: function () {
-                    var availablaTimeMinimum = 6; // xxx needs to be part of teh course setup
-                    var availablaTimeMaximum = 30;
                     if (this.availableTime <= 0) {
                         return "";
                     } else if (this.objectives === "f1a" && +this.availableTime === 1) {
                         return "Eine Stunde pro Woche ist zu wenig Zeit, um sich auf die Prüfung vorzubereiten. Der Arbeitsaufwand für ein Modul beträgt 19h pro Woche.";
-                    } else if (this.objectives === "f1a" && this.availableTime > 1 && this.availableTime <= availablaTimeMinimum) {
+                    } else if (this.objectives === "f1a" && this.availableTime > 1 && this.availableTime <= course.minimumWeeklyWorkload) {
                         return this.availableTime + " Stunden pro Woche sind zu wenig Zeit, um sich auf die Prüfung vorzubereiten. Der Arbeitsaufwand für ein Modul beträgt 19h pro Woche.";
                     } else if (this.objectives !== "f1a" && this.availableTime === 1) {
                         return "Eine Stunde pro Woche ist zu wenig Zeit, um das Modul in einem Semester durchzuarbeiten. Der Arbeitsaufwand für ein Modul beträgt 19h pro Woche.";
-                    } else if (this.objectives !== "f1a" && this.availableTime > 1 && this.availableTime <= availablaTimeMinimum) {
+                    } else if (this.objectives !== "f1a" && this.availableTime > 1 && this.availableTime <= course.minimumWeeklyWorkload) {
                         return this.availableTime + " Stunden pro Woche sind zu wenig Zeit, um das Modul in einem Semester durchzuarbeiten. Der Arbeitsaufwand für ein Modul beträgt 19h pro Woche.";
-                    } else if (this.availableTime >= availablaTimeMaximum) {
+                    } else if (this.availableTime >= course.maximumWeeklyWorkload) {
                         return "Wollen Sie wirklich " + this.availableTime + " Stunden pro Woche aufwenden? Normalerweise benötigt man ca. 20 h/Woche für eine gute Vorbereitung.";
                     }
                 },
