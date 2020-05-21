@@ -885,7 +885,7 @@ $modalReflection = '
     <div v-if="modalReflectionVisible" class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="MilestoneModalLabel">Reflektion Meilensteins
+                <h5 class="modal-title" id="MilestoneModalLabel">Reflexion des Meilensteins
                     "{{ getSelectedMilestone().name }}"</h5>
                 <button @click="closeReflectionModal()" type="button" class="close" data-dismiss="modal"
                     aria-label="Close">
@@ -899,7 +899,7 @@ $modalReflection = '
                             Frage 1: Wie gut hat mir die Planung dieses Meilensteins bei der Erarbeitung meines Lernziels geholfen?
                         </label>
                         <div class="col-sm-12">
-                            <div class="row">
+                            <div class="row likert-row">
                                 <div class="col">
                                     <input class="form-check-input" type="radio" name="refquestion1" id="ref1a" value="1" v-model="getSelectedMilestone().reflections[0]">
                                     <label class="form-check-label" for="ref1a">1 (sehr gut)</label>
@@ -928,7 +928,7 @@ $modalReflection = '
                             Frage 2: Wie gut passten die ausgewählten Lernstrategien zu den Arbeitsmaterialien, um mein Lernziel zu erreichen?
                         </label>
                         <div class="col-sm-12">
-                            <div class="row">
+                            <div class="row likert-row">
                                 <div class="col">
                                     <input class="form-check-input" type="radio" name="refquestion2" id="ref2a" value="1" v-model="getSelectedMilestone().reflections[1]">
                                     <label class="form-check-label" for="ref1a">1 (sehr gut)</label>
@@ -957,7 +957,7 @@ $modalReflection = '
                             Frage 3: Wie gut konnte ich meinen Zeitplan einhalten?
                         </label>
                         <div class="col-sm-12">
-                            <div class="row">
+                            <div class="row likert-row">
                                 <div class="col">
                                     <input class="form-check-input" type="radio" name="refquestion3" id="ref3a" value="1" v-model="getSelectedMilestone().reflections[2]">
                                     <label class="form-check-label" for="ref1a">1 (sehr gut)</label>
@@ -985,7 +985,7 @@ $modalReflection = '
                         <label class="col-sm-12 col-form-label question-label" for="ref4">
                             Frage 4: Wie möchte ich meine Arbeitsweise verbessern? Das sind meine Lernhinweise für die Zukunft:
                         </label>
-                        <div class="col-sm-12">
+                        <div class="">
                             <textarea v-model="getSelectedMilestone().reflections[3]"
                                 cass="form-control" id="ref4" rows="2"></textarea>
                         </div>
