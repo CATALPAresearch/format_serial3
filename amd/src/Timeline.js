@@ -50,7 +50,8 @@ define([
             start: (new Date(2020, 3, 1, 0, 0, 0)).getTime() / 1000,
             end: (new Date(2020, 8, 30, 23, 59, 59)).getTime() / 1000,
             minimumWeeklyWorkload: 6,
-            maximumWeeklyWorkload: 30
+            maximumWeeklyWorkload: 30,
+            maxPlaningPeriod: 12 // months
         };
 
         utils.get_ws('logstore', {
@@ -314,12 +315,10 @@ define([
                     $('#additionalCharts').hide();
                     $('#filter-presets').hide();
                     // initialize the semester range and the datepicker range
-                    this.semesterRange = this.getSemesterRange();
-                    let start = new Date(this.semesterRange.from);
-                    let end = new Date(this.semesterRange.to);
+                    
                     this.dpRange = {
-                        to: start,
-                        from: new Date(end.setDate(end.getDate() + 1 + this.daysOffset)) // had to create new date otherwise it will throw a parse error 
+                        to: course.startDate,
+                        from: moment(course.endDate).add(course.maxPlaningPeriod, 'months').toDate()//new Date(end.setDate(end.getDate() + 1 + this.daysOffset)) // had to create new date otherwise it will throw a parse error 
                     };
                 },
                 watch: {
@@ -906,9 +905,15 @@ define([
                         }
                     },
                     createMilestone: function (e) {
-                        this.emptyMilestone.id = Math.ceil(Math.random() * 1000);
+                        this.emptyMilestone.id = Math.ceil(Math.random() * 100000);
                         let id = this.emptyMilestone.id;
+
+                        // Change hourse, minutes and seconds of the begin and end of an milestone.
+                        this.emptyMilestone.start.setHours(0,0,0); 
+                        this.emptyMilestone.end.setHours(23,59,59);
+                        
                         this.milestones.push(this.emptyMilestone);
+                        
                         logger.add('milestone_created', {
                             milestoneId: this.emptyMilestone.id,
                             name: this.emptyMilestone.name,
@@ -943,6 +948,7 @@ define([
                         return id;
                     },
                     addMilestones: function (milestones) {
+                        console.log('Is this function used anymore?')
                         // add multiple milestones to the data
                         for (var i = 0; i < milestones.length; i++) {
                             milestones[i].start = new Date(milestones[i].start.split('T')[0]);
@@ -977,38 +983,11 @@ define([
                         this.$forceUpdate(); // We want the create new ms button back!
                         return;
                     },
-                    // <s> datepicker                   
-                    getSemesterRange: function () {
-                        let now = new Date();
-                        let month = now.getMonth();
-                        let year = now.getFullYear();
-                        if (month > 8 || month < 3) {
-                            if (month < 3) {
-                                return {
-                                    from: new Date(year - 1, 9, 1), // 01.10.(Y - 1)
-                                    to: new Date(year, 2, 31),      // 31.03.Y
-                                    sem: 0
-                                }
-                            } else {
-                                return {
-                                    from: new Date(year, 9, 1),     // 01.10.Y
-                                    to: new Date(year + 1, 2, 31),  // 31.03.(Y + 1)
-                                    sem: 0
-                                }
-                            }
-                        } else {
-                            return {
-                                from: new Date(year, 3, 1),         // 01.04.Y
-                                to: new Date(year, 8, 30),          // 30.09.Y
-                                sem: 1
-                            }
-                        }
-                    },
+                    
                     validateStartDate: function (date) {
                         if (date <= this.dpRange.to || date >= this.dpRange.from) {
                             this.invalidStartDate = true;
                             return;
-
                         }
                         if (date > this.endDate) {
                             this.invalidEndDate = true;
@@ -1020,7 +999,6 @@ define([
                     validateEndDate: function (date) {
                         if (date <= this.dpRange.to || date < this.getSelectedMilestone().start || date >= this.dpRange.from) {
                             this.invalidEndDate = true;
-
                             return;
                         }
                         this.invalidEndDate = false;
@@ -1063,11 +1041,11 @@ define([
                         this.setEndDateFromSelectedValues();
                     },
                     setEndDateFromSelectedValues: function () {
-                        var endDate = new Date(this.selectedYear, this.selectedMonth - 1, this.selectedDay);
-                        // Prohobit end dates before the semester start
+                        var endDate = new Date(this.selectedYear, this.selectedMonth - 1, this.selectedDay, 23, 59, 59);
+                        // Prohibit end dates before the semester start
                         if (
-                            moment(endDate).diff(moment(new Date(2019, 8, 30, 23, 59)), 'minutes') > 0 &&
-                            moment(endDate).diff(moment(new Date()), 'years') < 1
+                            moment(endDate).diff(moment(course.startDate), 'minutes') > 0 &&
+                            moment(endDate).diff(moment(new Date()), 'months') < course.maxPlaningPeriod
                         ) {
                             this.invalidEndDate = false;
                             this.getSelectedMilestone().end = endDate;
@@ -1108,11 +1086,11 @@ define([
                         this.setStartDateFromSelectedValues();
                     },
                     setStartDateFromSelectedValues: function () {
-                        var startDate = new Date(this.selectedStartYear, this.selectedStartMonth - 1, this.selectedStartDay);
+                        var startDate = new Date(this.selectedStartYear, this.selectedStartMonth - 1, this.selectedStartDay, 0, 0, 0);
                         // Prohobit start dates before the semester start
                         if (
-                            moment(startDate).diff(moment(new Date(2019, 8, 30, 23, 59)), 'minutes') > 0 &&
-                            moment(startDate).diff(moment(new Date()), 'years') < 1
+                            moment(startDate).diff(moment(course.startDate), 'minutes') > 0 &&
+                            moment(startDate).diff(moment(new Date()), 'months') < course.maxPlaningPeriod
                         ) {
                             this.invalidStartDate = false;
                             this.getSelectedMilestone().start = startDate;
@@ -2642,7 +2620,10 @@ define([
                                 let result = JSON.parse(survey.shift()["value"]);
                                 let plan = result.objectives.toLowerCase();
                                 let ps = result.planingStyle.toLowerCase();
-                                let sr = _this.semesterRange;
+                                let sr = {
+                                    from: course.startDate,
+                                    to: course.endDate//new Date(end.setDate(end.getDate() + 1 + this.daysOffset)) // had to create new date otherwise it will throw a parse error 
+                                };
                                 let diff = Math.round((sr.to - sr.from) / (7 * 24 * 60 * 60 * 1000));
                                 switch (plan) {
                                     case 'f1a': plan = "exam";
