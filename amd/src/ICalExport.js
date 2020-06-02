@@ -1,14 +1,6 @@
-/**
-* @author Marc Burchart
-* @email marc.burchart@fernuni-hagen.de
-* @description Export all important calendar events using the ical format.
-* @version 1.0.0
-*/
-// @ts-ignore
 define([
     'jquery',
     'core/ajax'
-    // @ts-ignore
 ], function ($, ajax) {
     var Messages = {
         InvalidConfigData: "ICalExport: Falsche Konfiguration des Kalenders",
@@ -20,12 +12,7 @@ define([
         EAlarmType[EAlarmType["DISPLAY"] = 0] = "DISPLAY";
         EAlarmType[EAlarmType["EMAIL"] = 1] = "EMAIL";
     })(EAlarmType || (EAlarmType = {}));
-    return /** @class */ (function () {
-        /**
-         * The Constructor of the class.
-         * @param ICalLib The Library for ICal exports.
-         * @param config The config object of the Calendar.
-         */
+    return (function () {
         function class_1(ICalLib, config) {
             if (!this.valConfigData(config))
                 throw new Error(Messages.InvalidConfigData);
@@ -38,7 +25,6 @@ define([
                 tzid: config.tzid
             });
             vtimezone.updatePropertyWithValue("tzid", timezone.toString());
-            // daylight
             var daylight = new ICalLib.Component("daylight");
             daylight.addPropertyWithValue("dtstart", new ICalLib.Time({
                 year: 1996,
@@ -55,7 +41,6 @@ define([
                 byday: '-1SU'
             }));
             vtimezone.addSubcomponent(daylight);
-            // standard
             var standard = new ICalLib.Component('standard');
             standard.addPropertyWithValue('dtstart', new ICalLib.Time({
                 year: 1996,
@@ -77,16 +62,9 @@ define([
             this._cal.updatePropertyWithValue("version", config.version);
             this._cal.calscale = config.type.toUpperCase();
         }
-        /**
-         * Print the result.
-         */
         class_1.prototype.print = function () {
             return this._cal.toString();
         };
-        /**
-         * Validate the given config object.
-         * @param data The config object.
-         */
         class_1.prototype.valConfigData = function (data) {
             if (typeof data !== "object")
                 return false;
@@ -102,18 +80,6 @@ define([
                 return false;
             return true;
         };
-        /**
-         * Add an event to the calendar.
-         * @param event {
-         *                  uid: number|string;
-         *                  title: string;
-         *                  start: Date;
-         *                  end?: Date;
-         *                  description: any;
-         *                  location?: string;
-         *              }
-         * @returns The event object.
-         */
         class_1.prototype.addEvent = function (data) {
             if (!this.valEventData(data))
                 throw new Error(Messages.InvalidEventData);
@@ -131,10 +97,6 @@ define([
             this._cal.addSubcomponent(vevent);
             return vevent;
         };
-        /**
-         * A Method to validate the given event data.
-         * @param data The event data object.
-         */
         class_1.prototype.valEventData = function (data) {
             if (typeof data !== "object")
                 return false;
@@ -154,18 +116,6 @@ define([
                 return false;
             return true;
         };
-        /**
-         * Add an alarm to an event.
-         * @param event The event object where the alarm should be added.
-         * @param data {
-         *                  type: EAlarmType;
-         *                  attendee?: string|string[];
-         *                  title?: string;
-         *                  description: string;
-         *                  date: Date
-         *              }
-         * @return The alarm object.
-         */
         class_1.prototype.addAlarm = function (event, data) {
             if (!this.valAlarmData(data))
                 throw new Error(Messages.InvalidAlarmData);
@@ -189,11 +139,6 @@ define([
             event.addSubcomponent(valarm);
             return valarm;
         };
-        /**
-         * A Method to validate the given alarm data.
-         * @param data The alarm data object.
-         * @return true/false
-         */
         class_1.prototype.valAlarmData = function (data) {
             if (typeof data !== "object")
                 return false;
@@ -211,14 +156,10 @@ define([
                 return false;
             return true;
         };
-        /**
-         * Encode to utf-8.
-         * @param data The string to encode.
-         * @return The encoded string.
-         */
         class_1.prototype._encode_utf8 = function (data) {
             return unescape(encodeURIComponent(data.replace(/  +/g, '')));
         };
         return class_1;
     }());
 });
+//# sourceMappingURL=ICalExport.js.map

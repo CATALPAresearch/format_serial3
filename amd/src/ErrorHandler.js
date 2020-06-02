@@ -1,16 +1,8 @@
-/**
-* @author Marc Burchart
-* @email marc.burchart@fernuni-hagen.de
-* @description
-* @version 1.0.0
-*/
-// @ts-ignore
 define([
     'jquery',
     'core/ajax'
-    // @ts-ignore
 ], function ($, ajax) {
-    var EH = /** @class */ (function () {
+    var EH = (function () {
         function EH(message, options) {
             this._options = options;
             message = EH._validate(message);
@@ -132,3 +124,4 @@ define([
     }());
     return EH;
 });
+//# sourceMappingURL=ErrorHandler.js.map

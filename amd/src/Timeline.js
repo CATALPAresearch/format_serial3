@@ -22,13 +22,14 @@
 define([
     'jquery',
     'core/ajax'
-], function ($, ajax) {
+    M.cfg.wwwroot + "/course/format/ladtopics/lib/build/vue.min",
+], function ($, Vue, ajax) {
 
     /**
      * Plot a timeline
      */
 
-    var Timeline = function (Vue, d3, dc, crossfilter, moment, Sortable, utils, introJs, logger, FilterChart, ActivityChart, InitialSurvey, ICalExport, ICalLib, vDP, vDPde, ErrorHandler) {
+    var Timeline = function (d3, dc, crossfilter, moment, utils, introJs, logger, FilterChart, ActivityChart, InitialSurvey, ICalExport, ICalLib, vDP, vDPde, ErrorHandler) {
 
         $(document).ready(function () {
             let edit = $("a.milestone-element-edit");
@@ -2731,7 +2732,7 @@ define([
 
 
 
-            var survey = new InitialSurvey(Vue, Sortable, milestoneApp, utils, course);
+            var survey = new InitialSurvey(milestoneApp, utils, course);
 
             /**
              * Resize charte if window sizes change

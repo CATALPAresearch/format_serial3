@@ -28,33 +28,25 @@ define([
 
         require.config({
             enforceDefine: false,
-            baseUrl: M.cfg.wwwroot + "/course/format/ladtopics/lib/",
+            baseUrl: M.cfg.wwwroot + "/course/format/ladtopics/lib/build",
             paths: {
-                "vue259": ["https://cdn.jsdelivr.net/npm/vue@2.5.9/dist/vue", "vue"],
-                "crossfilter": ["crossfilter"],
-                "d3": ["d3.v4.min"],
-                "dc": ["dc.v3"],
-                "moment224": ["moment-with-locales-gz.min"], // ["moment.min"],
-                "intro293": ["intro"],
-                "sortable110": ["sortable.min"],
+                "crossfilter": ["crossfilter.min"],
+                "d3v4": ["d3.v4.min"], // upgrade to v5!
+                "dc": ["dc.v3.min"],
+                "moment226": ["moment-with-locales.min"], // ["moment.min"],
+                "intro293": ["intro.min"],
                 "ICAL": ["ical.min"],
-                "vDP": ["vDP"],
-                "vDPde": ["vDPde"]
+                "vDP": ["vDP.min"],
+                "vDPde": ["vDPde.min"]
             },
             shim: {
-                'vue259': {
-                    exports: 'Vue'
-                },
-                "moment224": {
+                "moment226": {
                     exports: 'moment'
                 },
                 "intro293": {
                     export: 'introJs'
                 },
-                "sortable110": {
-                    exports: 'Sortable'
-                },
-                'crossfilter': {
+               'crossfilter': {
                     exports: 'crossfilter'
                 },
                 'ICAL': {
@@ -99,17 +91,15 @@ define([
             // $('#accordion').tab();
 
             require([
-                'vue259',
                 'crossfilter',
-                'd3',
+                'd3v4',
                 'dc',
-                'moment224',
+                'moment226',
                 'intro293',
-                'sortable110',
                 'ICAL',
                 "vDP",
                 "vDPde"
-            ], function (vue, crossfilter, d3, dc, moment, intro, sortable, ICalLib, vDP, vDPde) {
+            ], function (crossfilter, d3, dc, moment, intro, ICalLib, vDP, vDPde) {
                 var utils = new Utils(dc, d3);
                 var logger = new Log(utils, courseid, {
                     context: 'format_ladtopics',
@@ -121,12 +111,10 @@ define([
                 ErrorHandler.logConsoleErrors();
 
                 new Timeline(
-                    vue,
                     d3,
                     dc,
                     crossfilter,
                     moment,
-                    sortable,
                     utils,
                     intro,
                     logger,

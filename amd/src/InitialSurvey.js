@@ -16,14 +16,18 @@
  * @since      3.1
  */
 
-define(['jquery'], function ($) {
+define([
+    'jquery',
+    M.cfg.wwwroot + "/course/format/ladtopics/lib/build/vue.min",
+    M.cfg.wwwroot + "/course/format/ladtopics/lib/build/Sortable.min"
+], function ($, Vue, Sortable) {
 
     /**
      * Render a survey form
      * @param milestoneApp (Object) Data Driven Documents
      * @param utils (Object) Custome util class
      */
-    var survey = function (Vue, Sortable, milestoneApp, utils, course) {
+    var survey = function (milestoneApp, utils, course) {
         var biwiCourse = 2;// 3
         var csCourse = 3;// 2
         var courseid = parseInt($('#courseid').text(), 10);
@@ -82,12 +86,12 @@ define(['jquery'], function ($) {
                     }
                 }, function (e) {
                     try {
-                        let data = JSON.parse(e.data);
+                        var data = JSON.parse(e.data);
                         // Sort Ressources
-                        let obj = new Array(data.length);
-                        for (let i in data) {
-                            let pos = 0;
-                            for (let x in data) {
+                        var obj = new Array(data.length);
+                        for (var i in data) {
+                            var pos = 0;
+                            for (var x in data) {
                                 if (data[i] === data[x]) continue;
                                 if (+data[x].pos_section < +data[i].pos_section) {
                                     pos++;
