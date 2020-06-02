@@ -837,7 +837,7 @@ $milestoneTimeline = '
     <svg style="border: none;" :width="width" :height="height+margins.top">
         <g :transform="\'translate(\'+( margins.left  ) +\',\'+ margins.top +\')\'">
             <rect v-for="m in milestones" @click="showModal(m.id)" class="milestone-learning-progress"
-                :x="xx(m.start)" :y="m.yLane" * (barheight + bardist)" :height="barheight"
+                :x="xx(m.start)" :y="m.yLane * (barheight + bardist)" :height="barheight"
                 :width="duration(m.start, m.end) * m.progress" data-toggle="modal" data-target="#theMilestoneModal">
             </rect>
             <rect v-for="m in milestones" @click="showModal(m.id)"
