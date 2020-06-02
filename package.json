@@ -1,7 +1,7 @@
 {
   "name": "ladtopics",
   "version": "1.0.0",
-  "description": "# Dependencies D3, DC,",
+  "description": "Semester planing tool for Moodle",
   "main": "format.js",
   "directories": {
     "lib": "lib",
@@ -18,9 +18,16 @@
     "dc": "^3.0.12"
   },
   "eslintConfig": {
-		"env": {
-			"browser": true,
-			"es6": true
+    "env": {
+      "browser": true,
+      "es6": true
     }
+  },
+  "devDependencies": {
+    "grunt-contrib-uglify": "^4.0.1",
+    "typescript": "^3.9.3",
+    "grunt-contrib-jshint": "^2.1.0",
+    "grunt-terser": "^1.0.0",
+    "grunt-ts": "^6.0.0-beta.22"
   }
 }
