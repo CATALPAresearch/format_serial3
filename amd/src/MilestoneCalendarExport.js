@@ -35,7 +35,6 @@ define([
             }
         }
     });
-
     return Vue.component('MilestoneCalendarExport', {
 
         props: ['milestones', 'calendar'],

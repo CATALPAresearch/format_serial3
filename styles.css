@@ -470,14 +470,15 @@ select#select_day, select#select_month, select#select_year {
     padding: 4px !important;
 }
 
-.ms-add-btn {
+.ms-add {
     margin: 0 6px 0 6px !important;
     padding: 1px 5px !important;
     background-color: #008fac !important;
 }
 
-.ms-add-btn:hover {
-    background-color: #004C97 !important;
+.ms-add:hover {
+    background-color: #004C97;
+    color: #fff;
 }
 
 #planningsurvey {
