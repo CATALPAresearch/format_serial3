@@ -890,7 +890,7 @@ class format_ladtopics_external extends external_api {
     }
     public static function getmilestoneplan_returns() {
         return new external_single_structure(
-                array('data' => new external_value(PARAM_TEXT, 'Server respons to the incomming log'))
+                array('data' => new external_value(PARAM_RAW, 'Server respons to the incomming log'))
         );
     }
     

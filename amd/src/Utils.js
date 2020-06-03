@@ -10,7 +10,7 @@
  */
 define(['jquery', 'core/ajax'], function ($, ajax) {
 
-    const Utils = function (dc, d3) {
+    const Utils = function (dc, d3, ErrorHandler) {
         this.d3 = d3;
         this.dc = dc;
         this.get_ws = function (ws, params, cb, external) {
@@ -29,8 +29,8 @@ define(['jquery', 'core/ajax'], function ($, ajax) {
                 },
                 fail: function (e) {
                     // eslint-disable-next-line no-console 
-                    console.log(ws);                  
-                    console.error(e);
+                    new ErrorHandler(e);
+
                 }
             }]);
         };

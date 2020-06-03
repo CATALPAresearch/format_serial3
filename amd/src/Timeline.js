@@ -21,8 +21,8 @@
 
 define([
     'jquery',
-    'core/ajax'
-    M.cfg.wwwroot + "/course/format/ladtopics/lib/build/vue.min",
+    'core/ajax',
+    M.cfg.wwwroot + "/course/format/ladtopics/lib/build/vue.min.js"
 ], function ($, Vue, ajax) {
 
     /**

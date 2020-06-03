@@ -100,15 +100,17 @@ define([
                 "vDP",
                 "vDPde"
             ], function (crossfilter, d3, dc, moment, intro, ICalLib, vDP, vDPde) {
-                var utils = new Utils(dc, d3);
-                var logger = new Log(utils, courseid, {
-                    context: 'format_ladtopics',
-                    outputType: 1 // 0: console, 1: logstore_standard_log
-                });
+                    
 
                 ErrorHandler.logger = logger;
                 ErrorHandler.logWindowErrors();
                 ErrorHandler.logConsoleErrors();
+
+                    var utils = new Utils(dc, d3, ErrorHandler);
+                    var logger = new Log(utils, courseid, {
+                        context: 'format_ladtopics',
+                        outputType: 1 // 0: console, 1: logstore_standard_log
+                    });
 
                 new Timeline(
                     d3,

@@ -18,8 +18,8 @@
 
 define([
     'jquery',
-    M.cfg.wwwroot + "/course/format/ladtopics/lib/build/vue.min",
-    M.cfg.wwwroot + "/course/format/ladtopics/lib/build/Sortable.min"
+    M.cfg.wwwroot + "/course/format/ladtopics/lib/build/vue.min.js",
+    M.cfg.wwwroot + "/course/format/ladtopics/lib/build/Sortable.min.js"
 ], function ($, Vue, Sortable) {
 
     /**
