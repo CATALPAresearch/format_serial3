@@ -23,8 +23,9 @@ define([
     'jquery',
     'core/ajax',
     M.cfg.wwwroot + "/course/format/ladtopics/lib/build/vue.min.js",
-    M.cfg.wwwroot + "/course/format/ladtopics/amd/src/MilestoneCalendarExport.js"
-], function ($, ajax, Vue, MilestoneCalendarExport) {
+    M.cfg.wwwroot + "/course/format/ladtopics/amd/src/MilestoneCalendarExport.js",
+    M.cfg.wwwroot + "/course/format/ladtopics/amd/src/DashboardCompletion.js"
+], function ($, ajax, Vue, MilestoneCalendarExport, DashboardCompletion) {
 
     var Timeline = function (d3, dc, crossfilter, moment, utils, introJs, logger, FilterChart, ActivityChart, InitialSurvey, vDP, vDPde, ErrorHandler) {
 
@@ -50,7 +51,7 @@ define([
             maximumWeeklyWorkload: 30,
             maxPlaningPeriod: 12 // months
         };
-
+        
         utils.get_ws('logstore', {
             'courseid': parseInt(course.id, 10)
         }, function (e) {
@@ -104,7 +105,8 @@ define([
                 el: '#planing-component',
                 components: {
                     'datepicker': vDP,
-                    'milestone-calendar-export': MilestoneCalendarExport
+                    'milestone-calendar-export': MilestoneCalendarExport,
+                    'dashboard-completion': DashboardCompletion
                     // 'survey': surveyForm
                 },
                 data: function () {
@@ -117,6 +119,7 @@ define([
                         daysOffset: 20,
                         DPde: vDPde,
                         // <e> datepicker
+                        course: course,
                         surveyDone: 0,
                         chart: '',
                         timeFilterChart: '',

@@ -1365,30 +1365,39 @@ $modalMilestone = '
                                 </div>
                                 
                                 <textarea style="display:none;">{{ milestones }}</textarea>
-                            </div>    
+                            </div>
+
+
+                            <!-- Begin dashboard -->
+                            <div class="container" style="display:block;">
+                                <div class="col-md-12">
+                                    <ul class="nav">
+                                        <li class="nav-item active"><a class="nav-link active" data-toggle="tab" href="#timemanagement"
+                                                role="tab">Zeitmanagement</a></li>
+                                        <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#strategy" role="tab">Strategie</a>
+                                        </li>
+                                        <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#quiz" role="tab">Quiz</a></li>
+                                        <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#learningstatus"
+                                                role="tab">Lernstand</a></li>
+                                    </ul>
+                                    <br>
+                                    <div class="tab-content" style="display:block;">
+                                        <div class="tab-pane fade active" id="timemanagement" role="tabpanel">Zeitmanagement</div>
+                                        <div class="tab-pane fade" id="strategy" role="tabpanel">Strategie</div>
+                                        <div class="tab-pane fade" id="quiz" role="tabpanel">Quiz</div>
+                                        <div class="tab-pane fade" id="learningstatus" role="tabpanel">
+                                            <dashboard-completion v-bind:course="course"></dashboard-completion>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- End dashboard -->
+
+                            
                         </div>
                         <!-- End .planing-component -->
 
-                        <div class="container row" style="display:none;">
-                            <div class="col-md-12">
-                                <ul class="nav">
-                                    <li class="nav-item active"><a class="nav-link active" data-toggle="tab" href="#timemanagement"
-                                            role="tab">Zeitmanagement</a></li>
-                                    <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#strategy" role="tab">Strategie</a>
-                                    </li>
-                                    <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#quiz" role="tab">Quiz</a></li>
-                                    <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#learningstatus"
-                                            role="tab">Lernstand</a></li>
-                                </ul>
-                                <br>
-                                <div class="tab-content" style="display:block;">
-                                    <div class="tab-pane fade active" id="timemanagement" role="tabpanel">Zeitmanagement</div>
-                                    <div class="tab-pane fade" id="strategy" role="tabpanel">Strategie</div>
-                                    <div class="tab-pane fade" id="quiz" role="tabpanel">Quiz</div>
-                                    <div class="tab-pane fade" id="learningstatus" role="tabpanel">Status</div>
-                                </div>
-                            </div>
-                        </div>
+                        
                     </div>
                     <!-- End .ladtopic-container-0 -->
                 </div>

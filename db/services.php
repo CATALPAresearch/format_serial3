@@ -9,7 +9,15 @@
  */
 
 
-$functions = array(
+$functions = array( // completionProgress
+        'format_ladtopics_completionprogress' => array(
+                'classname'   => 'format_ladtopics_external',
+                'methodname'  => 'completionProgress',
+                'classpath'   => 'course/format/ladtopics/api.php',
+                'description' => 'Obtain the plugin name',
+                'type'        => 'read',
+                'ajax'        => true 
+        ),
         'format_ladtopics_statistics' => array(
                 'classname'   => 'format_ladtopics_external',
                 'methodname'  => 'statistics',

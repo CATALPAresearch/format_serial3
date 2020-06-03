@@ -28,10 +28,10 @@ require.config({
 });
 
 define([
-    'jquery', 
-    'core/ajax', 
-    'd3v4', 
-    'dc', 
+    'jquery',
+    'core/ajax',
+    'd3v4',
+    'dc',
     M.cfg.wwwroot + '/course/format/ladtopics/amd/src/ErrorHandler.js'
 ], function ($, ajax, d3, dc, ErrorHandler) {
 

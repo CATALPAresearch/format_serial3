@@ -1,7 +1,7 @@
 /* eslint-disable valid-jsdoc */
 /**
  * name: Logging
- * author: 2019 Niels Seidel, niels.seidel@fernuni-hagen.de
+ * author: 2020 Niels Seidel <niels.seidel@fernuni-hagen.de>
  * license: MIT License
  * description: Logs user behavior data inclunding informations about the client system, browser, and time.
  * todo:

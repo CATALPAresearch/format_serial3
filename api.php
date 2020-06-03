@@ -1069,6 +1069,121 @@ class format_ladtopics_external extends external_api {
     } 
     public static function userpreferences_is_allowed_from_ajax() { return true; }
 
+
+
+
+    /**
+     * Interface to obtain all completed activities 
+     */
+     public static function completionprogress_parameters() {
+        //  VALUE_REQUIRED, VALUE_OPTIONAL, or VALUE_DEFAULT. If not mentioned, a value is VALUE_REQUIRED 
+        return new external_function_parameters(
+            array(
+                'courseid' => new external_value(PARAM_INT, 'course id')
+            )
+        );
+    }
+    
+    public static function completionprogress_is_allowed_from_ajax() { return true; }
+
+    public static function completionprogress_returns() {
+        return new external_single_structure(
+                array(
+                    'activities' => new external_value(PARAM_RAW, 'Plugin name'),
+                    'completions' => new external_value(PARAM_RAW, 'Plugin name')
+                )
+        );
+    }
+    public static function completionprogress($data) {
+        global $CFG, $DB, $USER, $COURSE;
+        $userid = (int)$USER->id;
+        $courseid = 2;//$data;//['courseid'];
+        //require_login(courseid);
+        $meta = get_meta($courseid);
+        // obtain all course activities
+        $modinfo = get_fast_modinfo($courseid, -1);
+        $sections = $modinfo->get_sections();
+        $activities = array();
+        foreach ($modinfo->instances as $module => $instances) {
+            $modulename = get_string('pluginname', $module);
+            foreach ($instances as $index => $cm) {
+                $activities[] = array (
+                        'type'       => $module,
+                        'modulename' => $modulename,
+                        'id'         => $cm->id,
+                        'instance'   => $cm->instance,
+                        'name'       => format_string($cm->name),
+                        'expected'   => $cm->completionexpected,
+                        'section'    => $cm->sectionnum,
+                        'position'   => array_search($cm->id, $sections[$cm->sectionnum]),
+                        'url'        => method_exists($cm->url, 'out') ? $cm->url->out() : '',
+                        'context'    => $cm->context,
+                        'icon'       => $cm->get_icon_url(),
+                        'available'  => $cm->available,
+                        'completion' => 0,
+                    );
+                
+            }
+        }
+
+        // get all submissions of an user in a course
+        $submissions = array();
+        $params = array('courseid' => $courseid, 'userid' => $userid);
+
+        // Queries to deliver instance IDs of activities with submissions by user.
+        $queries = array (
+            'assign' => "SELECT c.id
+                        FROM {assign_submission} s, {assign} a, {modules} m, {course_modules} c
+                        WHERE s.userid = :userid
+                            AND s.latest = 1
+                            AND s.status = 'submitted'
+                            AND s.assignment = a.id
+                            AND a.course = :courseid
+                            AND m.name = 'assign'
+                            AND m.id = c.module
+                            AND c.instance = a.id",
+            'workshop' => "SELECT DISTINCT c.id
+                            FROM {workshop_submissions} s, {workshop} w, {modules} m, {course_modules} c
+                            WHERE s.authorid = :userid
+                            AND s.workshopid = w.id
+                            AND w.course = :courseid
+                            AND m.name = 'workshop'
+                            AND m.id = c.module
+                            AND c.instance = w.id",
+        );
+
+        foreach ($queries as $moduletype => $query) {
+            $results = $DB->get_records_sql($query, $params);
+            foreach ($results as $cmid => $obj) {
+                $submissions[] = $cmid;
+            }
+        }
+
+        // => $submissions
+
+        // get completions
+        $completions = array();
+        $completion = new completion_info($COURSE);
+        $cm = new stdClass();
+
+        foreach ($activities as $activity) {
+            $cm->id = $activity['id'];
+            $activitycompletion = $completion->get_data($cm, true, $userid);
+            //$completions[$activity['id']] = $activitycompletion->completionstate;
+            $activity['completion'] = $activitycompletion->completionstate;
+            $completions[$activity['id']] = $activity;
+            if ($completions[$activity['id']] === COMPLETION_INCOMPLETE && in_array($activity['id'], $submissions)) {
+                $completions[$activity['id']] = 'submitted';
+            }
+        }
+
+        return array(
+            'activities' => json_encode($activities),
+            'completions' => json_encode($completions)
+        );
+    }
+
+    
 }// end class
 
 
