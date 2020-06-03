@@ -23,7 +23,7 @@ define([
     'jquery',
     'core/ajax',
     M.cfg.wwwroot + "/course/format/ladtopics/lib/build/vue.min.js"
-], function ($, Vue, ajax) {
+], function ($, ajax, Vue) {
 
     /**
      * Plot a timeline
@@ -2616,7 +2616,8 @@ define([
                             }, function (u) {
                                 if (typeof u.response !== "string" || u.response.length <= 0) return;
                                 let survey = JSON.parse(u.response);
-                                let result = JSON.parse(survey.shift()["value"]);
+                                    if (survey[0]["value"] === '0') return;
+                                let result = JSON.parse(survey[0]["value"]);
                                 let plan = result.objectives.toLowerCase();
                                 let ps = result.planingStyle.toLowerCase();
                                 let sr = {

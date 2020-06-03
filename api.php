@@ -1065,7 +1065,7 @@ class format_ladtopics_external extends external_api {
             }     
         
 
-        return array('response'=> json_encode( array($res, $data['setget']) ));
+        return array('response'=> json_encode( array($res) ));
     } 
     public static function userpreferences_is_allowed_from_ajax() { return true; }
 

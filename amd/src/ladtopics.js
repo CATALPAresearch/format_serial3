@@ -13,18 +13,17 @@
 
 define([
     'jquery',
-    'jqueryui',
     M.cfg.wwwroot + '/course/format/ladtopics/amd/src/Timeline.js',
     M.cfg.wwwroot + '/course/format/ladtopics/amd/src/Utils.js',
     M.cfg.wwwroot + '/course/format/ladtopics/amd/src/FilterChart.js',
     M.cfg.wwwroot + '/course/format/ladtopics/amd/src/ActivityChart.js',
     M.cfg.wwwroot + '/course/format/ladtopics/amd/src/InitialSurvey.js',
-    M.cfg.wwwroot + '/course/format/ladtopics/amd/src/Assessment.js',
+    //M.cfg.wwwroot + '/course/format/ladtopics/amd/src/Assessment.js',
     M.cfg.wwwroot + '/course/format/ladtopics/amd/src/Logging.js',
     M.cfg.wwwroot + '/course/format/ladtopics/amd/src/ICalExport.js',
     M.cfg.wwwroot + '/course/format/ladtopics/amd/src/ErrorHandler.js'
 ],
-    function ($, jqueryui, Timeline, Utils, filterChart, activityChart, initialSurvey, Assessment, Log, ICalExport, ErrorHandler) {
+    function ($, Timeline, Utils, filterChart, activityChart, initialSurvey, Log, ICalExport, ErrorHandler) {
 
         require.config({
             enforceDefine: false,
