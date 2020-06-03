@@ -8,11 +8,41 @@
  * @license    MIT
  * @since      3.1
  */
-define(['jquery', 'core/ajax'], function ($, ajax) {
 
-    const Utils = function (dc, d3, ErrorHandler) {
+require.config({
+    enforceDefine: false,
+    baseUrl: M.cfg.wwwroot + "/course/format/ladtopics/lib/build",
+    paths: {
+        "crossfilter": ["crossfilter.min"],
+        "d3v4": ["d3.v4.min"], // upgrade to v5!
+        "dc": ["dc.v3.min"]
+    },
+    shim: {
+        'crossfilter': {
+            exports: 'crossfilter'
+        },
+        'dc': {
+            deps: ['d3v4', 'crossfilter']
+        }
+    }
+});
+
+define([
+    'jquery', 
+    'core/ajax', 
+    'd3v4', 
+    'dc', 
+    M.cfg.wwwroot + '/course/format/ladtopics/amd/src/ErrorHandler.js'
+], function ($, ajax, d3, dc, ErrorHandler) {
+
+    const Utils = function () {
+        this.namex = 'utils';
         this.d3 = d3;
         this.dc = dc;
+
+        ErrorHandler.logWindowErrors();
+        ErrorHandler.logConsoleErrors();
+
         this.get_ws = function (ws, params, cb, external) {
             external = external === undefined ? false : external;
             ajax.call([{

@@ -56,6 +56,9 @@ define([
                 },
                 "vDPde": {
                     exports: "vDPde"
+                },
+                'dc':{
+                    deps:['d3v4']
                 }
             }
         });
@@ -104,8 +107,8 @@ define([
                 ErrorHandler.logWindowErrors();
                 ErrorHandler.logConsoleErrors();
 
-                    var utils = new Utils(dc, d3, ErrorHandler);
-                    var logger = new Log(utils, courseid, {
+                    var utils = new Utils();
+                    var logger = new Log(courseid, {
                         context: 'format_ladtopics',
                         outputType: 1 // 0: console, 1: logstore_standard_log
                     });
@@ -121,7 +124,6 @@ define([
                     filterChart,
                     activityChart,
                     initialSurvey,
-                    
                     vDP,
                     vDPde,
                     ErrorHandler

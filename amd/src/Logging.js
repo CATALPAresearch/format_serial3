@@ -8,13 +8,19 @@
  */
 
 
-define(['jquery', 'core/ajax'], function($, ajax) {
-
-    var Log = function(utils, courseid, options) {
+define([
+    'jquery', 
+    'core/ajax', 
+    M.cfg.wwwroot + "/course/format/ladtopics/amd/src/Utils.js"
+], function ($, ajax, utils) {
+    
+    utils = new utils();
+    
+    var Log = function(courseid, options) {
         this.utils = utils;
         this.courseid = courseid;
         this.name = 'log_ladtopics';
-        this.options = utils.mergeObjects({
+        this.options = this.utils.mergeObjects({
             outputType: 0, // -1: no logging, 0: console.log(), 1: server log, 
             prefix: '',
             loggerServiceUrl: null,
