@@ -22,14 +22,11 @@
 define([
     'jquery',
     'core/ajax',
-    M.cfg.wwwroot + "/course/format/ladtopics/lib/build/vue.min.js"
-], function ($, ajax, Vue) {
+    M.cfg.wwwroot + "/course/format/ladtopics/lib/build/vue.min.js",
+    M.cfg.wwwroot + "/course/format/ladtopics/amd/src/MilestoneCalendarExport.js"
+], function ($, ajax, Vue, MilestoneCalendarExport) {
 
-    /**
-     * Plot a timeline
-     */
-
-    var Timeline = function (d3, dc, crossfilter, moment, utils, introJs, logger, FilterChart, ActivityChart, InitialSurvey, ICalExport, ICalLib, vDP, vDPde, ErrorHandler) {
+    var Timeline = function (d3, dc, crossfilter, moment, utils, introJs, logger, FilterChart, ActivityChart, InitialSurvey, vDP, vDPde, ErrorHandler) {
 
         $(document).ready(function () {
             let edit = $("a.milestone-element-edit");
@@ -106,7 +103,8 @@ define([
             var milestoneApp = new Vue({
                 el: '#planing-component',
                 components: {
-                    "datepicker": vDP
+                    'datepicker': vDP,
+                    'milestone-calendar-export': MilestoneCalendarExport
                     // 'survey': surveyForm
                 },
                 data: function () {
@@ -1439,6 +1437,11 @@ define([
                             }
                         );
                     },
+                    /* exportToICal: function (link) {
+                        
+                        this.$refs.MilestoneCalendarExport.exportToICal(link);
+                    },
+                   
                     exportToICal: function (link) {
                         try {
                             // Initialize the calendar
@@ -1572,7 +1575,7 @@ define([
                         } catch (error) {
                             new ErrorHandler(error);
                         }
-                    },
+                    },*/
                     createMilestonePicker: function () {
                         let _this = this;
                         let updateMilestoneList = function (id) {

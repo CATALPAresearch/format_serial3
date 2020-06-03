@@ -1303,9 +1303,7 @@ $modalMilestone = '
                                                             '<a class="dropdown-item" data-toggle="modal" data-target="#moderationModal" href="#">
                                                                 <i class="fa fa-clock"></i>Einstellungen
                                                             </a>').'                                                            
-                                                            <a class="dropdown-item" @click="exportToICal()" href="#">
-                                                                <i class="fa fa-clock"></i>Exportieren (iCal)
-                                                            </a>                                                            
+                                                            <milestone-calendar-export v-bind:milestones="milestones" v-bind:calendar="calendar"></milestone-calendar-export>                                                         
                                                         </div>
                                                     </div>
                                                     

@@ -20,10 +20,10 @@ define([
     M.cfg.wwwroot + '/course/format/ladtopics/amd/src/InitialSurvey.js',
     //M.cfg.wwwroot + '/course/format/ladtopics/amd/src/Assessment.js',
     M.cfg.wwwroot + '/course/format/ladtopics/amd/src/Logging.js',
-    M.cfg.wwwroot + '/course/format/ladtopics/amd/src/ICalExport.js',
+    //M.cfg.wwwroot + '/course/format/ladtopics/amd/src/ICalExport.js',
     M.cfg.wwwroot + '/course/format/ladtopics/amd/src/ErrorHandler.js'
 ],
-    function ($, Timeline, Utils, filterChart, activityChart, initialSurvey, Log, ICalExport, ErrorHandler) {
+    function ($, Timeline, Utils, filterChart, activityChart, initialSurvey, Log, ErrorHandler) {
 
         require.config({
             enforceDefine: false,
@@ -95,10 +95,9 @@ define([
                 'dc',
                 'moment226',
                 'intro293',
-                'ICAL',
                 "vDP",
                 "vDPde"
-            ], function (crossfilter, d3, dc, moment, intro, ICalLib, vDP, vDPde) {
+            ], function (crossfilter, d3, dc, moment, intro, vDP, vDPde) {
                     
 
                 ErrorHandler.logger = logger;
@@ -122,8 +121,7 @@ define([
                     filterChart,
                     activityChart,
                     initialSurvey,
-                    ICalExport,
-                    ICalLib,
+                    
                     vDP,
                     vDPde,
                     ErrorHandler
