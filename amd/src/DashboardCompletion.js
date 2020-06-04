@@ -15,7 +15,7 @@ define([
     M.cfg.wwwroot + "/course/format/ladtopics/amd/src/Utils.js",
     M.cfg.wwwroot + '/course/format/ladtopics/amd/src/ErrorHandler.js'
 ], function ($, Vue, d3, Utils, ErrorHandler) {
-        
+    Utils = new Utils();
     return Vue.component('dashboard-completion',
         {
             props: ['course'],
@@ -32,8 +32,9 @@ define([
                 Utils.get_ws('completionprogress', {
                     'courseid': parseInt(this.course.id, 10)
                 }, function (e) {
+
                     try {
-                        console.log(JSON.parse(e.activities));
+                        //console.log(JSON.parse(e.activities));
                         //console.log(JSON.parse(e.completions));
                         _this.draw(JSON.parse(e.completions));
                     } catch (e) {
@@ -44,17 +45,27 @@ define([
             },
 
             methods: {
-                draw: function (data) { console.log('draw')
+                draw: function (data) {
                     var svgContainer = d3.select("#completion-chart").append("svg")
                         .attr("width", 200)
                         .attr("height", 200);
+                    // group by section
+                    let group = data.reduce((r, a) => {
+                        r[a.section] = [...r[a.section] || [], a];
+                        return r;
+                    }, {});
+                    /*
+                    //alert(group);
+                    group.foreach(function (val) {
+                        svgContainer.append("rect")
+                            .attr("x", 10)
+                            .attr("y", 10)
+                            .attr("width", 50)
+                            .attr("height", 100);
 
-                    //Draw the Rectangle
-                    var rectangle = svgContainer.append("rect")
-                        .attr("x", 10)
-                        .attr("y", 10)
-                        .attr("width", 50)
-                        .attr("height", 100);
+                    });
+                    */
+
                 }
             },
 
