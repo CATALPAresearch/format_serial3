@@ -1969,11 +1969,11 @@ define([
                             return;
                         }
                         if ($("#modSaveInterest").is(":checked")) {
-                            this.modSaveMilestones("interest", ms, false);
+                            this.modSaveMilestones("interest", ms, true);
                         } else if ($("#modSaveOrientation").is(":checked")) {
-                            this.modSaveMilestones("orientation", ms, false);
+                            this.modSaveMilestones("orientation", ms, true);
                         } else if ($("#modSaveExam").is(":checked")) {
-                            this.modSaveMilestones("exam", ms, false);
+                            this.modSaveMilestones("exam", ms, true);
                         } else if ($("#modSaveLocal").is(":checked")) {
                             this.exportMilestones(ms);
                         } else {
@@ -1993,7 +1993,7 @@ define([
                             } else if ($("#modSaveLocal").is(":checked")) {
                                 this.resetMilestones();
                             } else {
-                                this.resetMilestones();
+                                _this.modAlert("danger", "Unbekannte Auswahl");
                             }
                         }
                         return;
@@ -2054,7 +2054,9 @@ define([
                             }, function (e) {
                                 let out = JSON.parse(e.data);
                                 if (out.success === true) {
+                                    console.log("success");
                                     if (reset) {
+                                        console.log("reset");
                                         _this.milestones = [];
                                         _this.updateMilestones();
                                     } else {

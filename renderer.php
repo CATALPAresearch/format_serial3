@@ -1324,9 +1324,9 @@ $modalMilestone = '
 
                                     <div v-if="milestones.length <= 0">
                                         <span data-toggle="modal" data-target="#theMilestoneModal">
-                                            <button @click="showEmptyMilestone()" class="btn btn-sm right btn-primary ms-btn ms-coldstart-btn"
+                                            <div class="col-12"><button @click="showEmptyMilestone()" class="btn btn-sm right btn-primary ms-btn ms-coldstart-btn"
                                                 data-toggle="tooltip" data-placement="bottom" title="Neuen Meilenstein hinzufügen"><i
-                                                    class="fa fa-plus"></i> Legen Sie einen neuen Meilenstein an!</button>
+                                                    class="fa fa-plus"></i> Legen Sie einen neuen Meilenstein an!</button></div>
                                         </span>
                                     </div>
                                     <!-- Pill content -->
