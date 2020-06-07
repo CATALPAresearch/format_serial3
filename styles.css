@@ -1180,3 +1180,17 @@ span.autocompletion, .tooglecompletion {
 .togglecompletion {
     display: none !important;
 }
+
+/* Dashboard */
+
+.completion-rect {
+    stroke-width: 3px;
+    stroke: white;
+    opacity: 0.7;
+}
+
+.completion-rect:hover {
+    stroke-width: 3px;
+    stroke: white;
+    opacity: 1;
+}

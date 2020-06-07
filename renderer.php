@@ -1372,20 +1372,21 @@ $modalMilestone = '
                             <div class="container" style="display:block;">
                                 <div class="col-md-12">
                                     <ul class="nav">
-                                        <li class="nav-item active"><a class="nav-link active" data-toggle="tab" href="#timemanagement"
+                                        <li class="nav-item active"><a class="nav-link active" data-toggle="tab" href="#learningstatus"
+                                                role="tab">Lernstand</a></li>    
+                                        <li class="nav-item "><a class="nav-link" data-toggle="tab" href="#timemanagement"
                                                 role="tab">Zeitmanagement</a></li>
                                         <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#strategy" role="tab">Strategie</a>
                                         </li>
                                         <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#quiz" role="tab">Quiz</a></li>
-                                        <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#learningstatus"
-                                                role="tab">Lernstand</a></li>
+                                        
                                     </ul>
                                     <br>
                                     <div class="tab-content" style="display:block;">
-                                        <div class="tab-pane fade active" id="timemanagement" role="tabpanel">Zeitmanagement</div>
+                                        <div class="tab-pane fade" id="timemanagement" role="tabpanel">Zeitmanagement</div>
                                         <div class="tab-pane fade" id="strategy" role="tabpanel">Strategie</div>
                                         <div class="tab-pane fade" id="quiz" role="tabpanel">Quiz</div>
-                                        <div class="tab-pane fade" id="learningstatus" role="tabpanel">
+                                        <div class="tab-pane fade active" id="learningstatus" role="tabpanel">
                                             <dashboard-completion v-bind:course="course"></dashboard-completion>
                                         </div>
                                     </div>
