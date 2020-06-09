@@ -1195,6 +1195,14 @@ span.autocompletion, .tooglecompletion {
   opacity: 1;
 }
 
+.completion-section-name {
+  font-weight: 500;
+}
+
+.completion-icon {
+  font-family: 'FontAwesome';
+}
+
 #page a {
   color: black !important;
 }

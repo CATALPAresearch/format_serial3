@@ -57,14 +57,16 @@ define([
                             arr[data[val][key]] = arr[data[val][key]] || [];
                             arr[data[val][key]].push(data[val]);
                         }
-                        return arr;
+                        return arr.filter(function (el) {
+                            return el !== null;
+                        });
                     };
                     this.sections = groupBy(data, 'section');
-                    $(document).ready(function () {
-                        //$('[data-toggle="tooltip"]').tooltip();
-                        //$('[data-toggle="popover"]').popover();
-                    });
-                    console.log(this.sections[0]);
+                    //$(document).ready(function () {
+                    //$('[data-toggle="tooltip"]').tooltip();
+                    //$('[data-toggle="popover"]').popover();
+                    //});
+                    console.log(this.sections);
                 },
                 setCurrent: function (id, section) {
                     this.current = { id: id, section: section };
@@ -78,18 +80,20 @@ define([
                 },
                 getStatus: function (instance) {
                     instance = instance == undefined ? this.getCurrent() : instance;
-                    return instance.completion == 0 ? 'Nicht abgeschlossen' : 'Abgeschlossen';
+                    return instance.completion === 0 ? '<i class="fa fa-times-square"></i>Nicht abgeschlossen' : '<i class="fa fa-check"></i> Abgeschlossen';
                 }
-
             },
 
             template: `
                 <div id="dashboard-completion">
                     <div id="completion-chart">
-                        <svg style="border: none;" :width="600" :height="300">
-                            <g transform="translate(20,20)" id="dashboard-completion">
+                        <svg style="border: none;">
+                            <g transform="translate(0,10)" id="dashboard-completion">
                                 <g v-for="(section, sIndex) in sections">
-                                    <g v-for="(m, index) in section" >
+                                    <g :transform="'translate(0,' + (30*sIndex+14) +')'">
+                                        <text class="completion-section-name">{{ section[0].sectionname }}</text>
+                                    </g>
+                                    <g v-for="(m, index) in section" :transform="'translate(70,' + (1*sIndex) +')'">
                                     <a
                                         data-toggle="tooltip" 
                                         data-container="body" 
@@ -112,12 +116,17 @@ define([
                                         </g>
                                     </rect>
                                 </g>
-                                <g transform="translate(20,50)" class="completion-info">
-                                    <a v-bind:href="getLink()">
-                                        <text> {{ getCurrent().name }}, {{ getStatus() }} </text>
-                                    </a>
+                                <g transform="translate(20,100)" class="completion-info">
+                                    
                                 </g>
                             </g>
+                        </svg>
+                        <div>
+                            <a v-bind:href="getLink()">
+                                <span v-if="getCurrent().completion === 0"><i class="fa fa-times-rectangle"></i> {{ getCurrent().name }}, nicht abgeschlossen</span>
+                                <span v-if="getCurrent().completion !== 0"><i class="fa fa-check"></i> {{ getCurrent().name }}, abgeschlossen</span>
+                            </a>
+                        </div>
                     </div>
                 </div>`
         });

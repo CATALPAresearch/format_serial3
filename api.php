@@ -1115,6 +1115,7 @@ class format_ladtopics_external extends external_api {
                         'name'       => format_string($cm->name),
                         'expected'   => $cm->completionexpected,
                         'section'    => $cm->sectionnum,
+                        'sectionname'=> get_section_name($courseid, $cm->sectionnum),
                         'position'   => array_search($cm->id, $sections[$cm->sectionnum]),
                         'url'        => method_exists($cm->url, 'out') ? $cm->url->out() : '',
                         'context'    => $cm->context,
@@ -1122,7 +1123,6 @@ class format_ladtopics_external extends external_api {
                         'available'  => $cm->available,
                         'completion' => 0,
                     );
-                
             }
         }
 
@@ -1178,7 +1178,7 @@ class format_ladtopics_external extends external_api {
         }
 
         return array(
-            'activities' => json_encode($activities),
+            'activities' => json_encode(), // $activities
             'completions' => json_encode($completions)
         );
     }
