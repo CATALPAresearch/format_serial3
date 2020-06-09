@@ -120,8 +120,11 @@ module.exports = function (grunt) { // jshint ignore:line
     grunt.loadNpmTasks("grunt-ts");
     grunt.loadNpmTasks('grunt-terser');
     grunt.loadNpmTasks('grunt-contrib-jshint');
+    grunt.loadNpmTasks('grunt-contrib-cssmin');
 
     grunt.registerTask("build-plugin", ["ts", "terser"]);
     grunt.registerTask("check", ["jshint"]);
-    grunt.registerTask("build-css", ["cssmin"]);
+    grunt.registerTask("css-plugin", ["cssmin"]);
+    grunt.registerTask("all-plugin", ["ts", "terser", "csmin"]);
+
 };
