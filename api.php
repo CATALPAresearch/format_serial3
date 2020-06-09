@@ -1097,7 +1097,7 @@ class format_ladtopics_external extends external_api {
     public static function completionprogress($data) {
         global $CFG, $DB, $USER, $COURSE;
         $userid = (int)$USER->id;
-        $courseid = 2;//$data;//['courseid'];
+        $courseid = $data;//['courseid'];
         //require_login(courseid);
         $meta = get_meta($courseid);
         // obtain all course activities
