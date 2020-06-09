@@ -72,23 +72,7 @@ define([
         box.hide();
 
         function start(courseid) {
-            // Add style sheets        
-           /* var css = [
-                M.cfg.wwwroot + "/course/format/ladtopics/css/ladtopics.css",
-                M.cfg.wwwroot + "/course/format/ladtopics/css/dc.css",
-                M.cfg.wwwroot + "/course/format/ladtopics/css/introjs.css"
-            ];
-            var link = '';
-            for (var i = 0; i < css.length; i++) {
-                link = document.createElement("link");
-                link.rel = "stylesheet";
-                link.type = "text/css";
-                link.href = css[i];
-                document.getElementsByTagName("head")[0].appendChild(link);
-            }
-*/
-            // $('#accordion').tab();
-
+        
             require([
                 'crossfilter',
                 'd3v4',
@@ -125,7 +109,6 @@ define([
                     vDPde,
                     ErrorHandler
                 );
-                // var t = new Assessment(vue, d3, dc, crossfilter, moment);
             });
         }
 
