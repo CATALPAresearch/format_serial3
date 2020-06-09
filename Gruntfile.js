@@ -125,6 +125,6 @@ module.exports = function (grunt) { // jshint ignore:line
     grunt.registerTask("build-plugin", ["ts", "terser"]);
     grunt.registerTask("check", ["jshint"]);
     grunt.registerTask("css-plugin", ["cssmin"]);
-    grunt.registerTask("all-plugin", ["ts", "terser", "csmin"]);
+    grunt.registerTask("all-plugin", ["ts", "terser", "cssmin"]);
 
 };
