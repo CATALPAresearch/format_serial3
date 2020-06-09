@@ -93,6 +93,26 @@ module.exports = function (grunt) { // jshint ignore:line
                     }
                 }]
             }
+        },
+        cssmin: {
+            minify: {
+                files: [{
+                    expand: true,
+                    cwd: './css',
+                    src: ['**/*.css', '!**/*.min.css'],
+                    dest: './css/min',
+                    ext: '.min.css'
+                }]
+            },
+            options: {
+                shorthandCompacting: false,
+                roundingPrecision: -1
+            },
+            combine: {
+                files: {
+                    './styles.css': ['./css/min/*.css']
+                }
+            }
         }
     });
 
@@ -103,4 +123,5 @@ module.exports = function (grunt) { // jshint ignore:line
 
     grunt.registerTask("build-plugin", ["ts", "terser"]);
     grunt.registerTask("check", ["jshint"]);
+    grunt.registerTask("build-css", ["cssmin"]);
 };

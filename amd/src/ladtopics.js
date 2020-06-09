@@ -18,9 +18,7 @@ define([
     M.cfg.wwwroot + '/course/format/ladtopics/amd/src/FilterChart.js',
     M.cfg.wwwroot + '/course/format/ladtopics/amd/src/ActivityChart.js',
     M.cfg.wwwroot + '/course/format/ladtopics/amd/src/InitialSurvey.js',
-    //M.cfg.wwwroot + '/course/format/ladtopics/amd/src/Assessment.js',
     M.cfg.wwwroot + '/course/format/ladtopics/amd/src/Logging.js',
-    //M.cfg.wwwroot + '/course/format/ladtopics/amd/src/ICalExport.js',
     M.cfg.wwwroot + '/course/format/ladtopics/amd/src/ErrorHandler.js'
 ],
     function ($, Timeline, Utils, filterChart, activityChart, initialSurvey, Log, ErrorHandler) {
@@ -45,7 +43,7 @@ define([
                 "intro293": {
                     export: 'introJs'
                 },
-               'crossfilter': {
+                'crossfilter': {
                     exports: 'crossfilter'
                 },
                 'ICAL': {
@@ -57,8 +55,8 @@ define([
                 "vDPde": {
                     exports: "vDPde"
                 },
-                'dc':{
-                    deps:['d3v4']
+                'dc': {
+                    deps: ['d3v4']
                 }
             }
         });
@@ -75,10 +73,9 @@ define([
 
         function start(courseid) {
             // Add style sheets        
-            var css = [
+           /* var css = [
                 M.cfg.wwwroot + "/course/format/ladtopics/css/ladtopics.css",
                 M.cfg.wwwroot + "/course/format/ladtopics/css/dc.css",
-                M.cfg.wwwroot + "/course/format/ladtopics/css/bootstrap-select.min.css",
                 M.cfg.wwwroot + "/course/format/ladtopics/css/introjs.css"
             ];
             var link = '';
@@ -89,7 +86,7 @@ define([
                 link.href = css[i];
                 document.getElementsByTagName("head")[0].appendChild(link);
             }
-
+*/
             // $('#accordion').tab();
 
             require([
@@ -101,17 +98,17 @@ define([
                 "vDP",
                 "vDPde"
             ], function (crossfilter, d3, dc, moment, intro, vDP, vDPde) {
-                    
+
 
                 ErrorHandler.logger = logger;
                 ErrorHandler.logWindowErrors();
                 ErrorHandler.logConsoleErrors();
 
-                    var utils = new Utils();
-                    var logger = new Log(courseid, {
-                        context: 'format_ladtopics',
-                        outputType: 1 // 0: console, 1: logstore_standard_log
-                    });
+                var utils = new Utils();
+                var logger = new Log(courseid, {
+                    context: 'format_ladtopics',
+                    outputType: 1 // 0: console, 1: logstore_standard_log
+                });
 
                 new Timeline(
                     d3,
