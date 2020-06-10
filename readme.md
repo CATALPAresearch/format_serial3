@@ -20,9 +20,10 @@ LAD Topics is a *Learning Analytics Dashboard* for Moodle courses. The dashboard
 
 **Using grunt**
 
-* `grunt build-plugin` transpiles all js code
-* `grunt css-plugin` bundles and minifies css files
-* `grunt all-plugin` handles both tasks mentioned above
+* `grunt plugin-build` transpiles all js code
+* `grunt plugin-check` run js linter
+* `grunt plugin-css` bundles and minifies css files
+* `grunt plugin-all` handles both tasks mentioned above
 
 **Dependencies**
 * vue.js, vuex
