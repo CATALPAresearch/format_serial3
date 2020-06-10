@@ -62,11 +62,12 @@ define([
                         });
                     };
                     this.sections = groupBy(data, 'section');
-                    //$(document).ready(function () {
+                    $(document).ready(function () {
+                        $('a[href="#learningstatus"]').tab("show");
                     //$('[data-toggle="tooltip"]').tooltip();
                     //$('[data-toggle="popover"]').popover();
-                    //});
-                    console.log(this.sections);
+                    });
+                    
                 },
                 setCurrent: function (id, section) {
                     this.current = { id: id, section: section };
@@ -86,7 +87,24 @@ define([
 
             template: `
                 <div id="dashboard-completion">
-                    <div id="completion-chart">
+                    <div v-for="(section, sIndex) in sections" class="row">
+                        <div class="col-1">{{ section[0].sectionname }}</div>
+                        <div class="col-11">
+                            <div v-for="(m, index) in section" :class="m.completion==1 ? \'rect-green completion-rect\' : \'rect-blue completion-rect\'" @mouseover="setCurrent(index, sIndex)"></div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-1"></div>
+                        <div class="col-11">
+                            <a v-bind:href="getLink()">
+                                <span v-if="getCurrent().completion === 0"><i class="fa fa-times-rectangle"></i> {{ getCurrent().name }}, nicht abgeschlossen</span>
+                                <span v-if="getCurrent().completion !== 0"><i class="fa fa-check"></i> {{ getCurrent().name }}, abgeschlossen</span>
+                            </a>
+                        </div>
+                    </div>
+
+
+                    <div id="completion-chart" hidden>
                         <svg style="border: none;">
                             <g transform="translate(0,10)" id="dashboard-completion">
                                 <g v-for="(section, sIndex) in sections">
@@ -121,12 +139,7 @@ define([
                                 </g>
                             </g>
                         </svg>
-                        <div>
-                            <a v-bind:href="getLink()">
-                                <span v-if="getCurrent().completion === 0"><i class="fa fa-times-rectangle"></i> {{ getCurrent().name }}, nicht abgeschlossen</span>
-                                <span v-if="getCurrent().completion !== 0"><i class="fa fa-check"></i> {{ getCurrent().name }}, abgeschlossen</span>
-                            </a>
-                        </div>
+                        
                     </div>
                 </div>`
         });

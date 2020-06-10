@@ -1369,9 +1369,9 @@ $modalMilestone = '
 
 
                             <!-- Begin dashboard -->
-                            <div class="container" style="display:block;">
+                            <div class="dashboard" style="display:block;">
                                 <div class="col-md-12">
-                                    <ul class="nav">
+                                    <ul class="nav nav-tabs nav-fill dashboard-tab">
                                         <li class="nav-item active"><a class="nav-link active" data-toggle="tab" href="#learningstatus"
                                                 role="tab">Lernstand</a></li>    
                                         <li class="nav-item "><a class="nav-link" data-toggle="tab" href="#timemanagement"
@@ -1383,12 +1383,12 @@ $modalMilestone = '
                                     </ul>
                                     <br>
                                     <div class="tab-content" style="display:block;">
+                                        <div class="tab-pane fade show active" id="learningstatus" role="tabpanel">
+                                            <dashboard-completion v-bind:course="course"></dashboard-completion>
+                                        </div>    
                                         <div class="tab-pane fade" id="timemanagement" role="tabpanel">Zeitmanagement</div>
                                         <div class="tab-pane fade" id="strategy" role="tabpanel">Strategie</div>
                                         <div class="tab-pane fade" id="quiz" role="tabpanel">Quiz</div>
-                                        <div class="tab-pane fade active" id="learningstatus" role="tabpanel">
-                                            <dashboard-completion v-bind:course="course"></dashboard-completion>
-                                        </div>
                                     </div>
                                 </div>
                             </div>
