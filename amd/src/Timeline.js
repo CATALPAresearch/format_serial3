@@ -51,7 +51,7 @@ define([
             maximumWeeklyWorkload: 30,
             maxPlaningPeriod: 12 // months
         };
-        
+
         utils.get_ws('logstore', {
             'courseid': parseInt(course.id, 10)
         }, function (e) {
@@ -316,7 +316,7 @@ define([
                     $('#additionalCharts').hide();
                     $('#filter-presets').hide();
                     // initialize the semester range and the datepicker range
-                    
+
                     this.dpRange = {
                         to: course.startDate,
                         from: moment(course.endDate).add(course.maxPlaningPeriod, 'months').toDate()//new Date(end.setDate(end.getDate() + 1 + this.daysOffset)) // had to create new date otherwise it will throw a parse error 
@@ -910,9 +910,9 @@ define([
                         let id = this.emptyMilestone.id;
 
                         // Change hourse, minutes and seconds of the begin and end of an milestone.
-                        this.emptyMilestone.start.setHours(0,0,0); 
-                        this.emptyMilestone.end.setHours(23,59,59);
-                        
+                        this.emptyMilestone.start.setHours(0, 0, 0);
+                        this.emptyMilestone.end.setHours(23, 59, 59);
+
                         this.milestones.push(this.emptyMilestone);
 
                         logger.add('milestone_created', {
@@ -984,7 +984,7 @@ define([
                         this.$forceUpdate(); // We want the create new ms button back!
                         return;
                     },
-                    
+
                     validateStartDate: function (date) {
                         if (date <= this.dpRange.to || date >= this.dpRange.from) {
                             this.invalidStartDate = true;
@@ -1131,10 +1131,9 @@ define([
                     },
                     resourceSections: function () {
                         var sections = {};
-                        for (var i = 0; i < this.resources.length; i++) {
-                            /*if (this.resources[i].section_name === ' '){
-                             console.log(this.resources[i].section_id + '__' + this.resources[i].section_name + '__' + this.resources[i].name)
-                            }*/
+                        var keys = Object.keys(this.resources); // since ressources are not stored in a natuaral array we need to extract their keys
+                        for (var j = 0; j < keys.length; j++) {
+                            var i = keys[j];
                             if (this.resources[i] === undefined) {
                                 return 0;
                             }
@@ -2624,7 +2623,7 @@ define([
                             }, function (u) {
                                 if (typeof u.response !== "string" || u.response.length <= 0) return;
                                 let survey = JSON.parse(u.response);
-                                    if (survey[0]["value"] === '0') return;
+                                if (survey[0]["value"] === '0') return;
                                 let result = JSON.parse(survey[0]["value"]);
                                 let plan = result.objectives.toLowerCase();
                                 let ps = result.planingStyle.toLowerCase();
