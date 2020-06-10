@@ -2,7 +2,7 @@ require.config({
     enforceDefine: false,
     baseUrl: M.cfg.wwwroot + "/course/format/ladtopics/lib/build/",
     paths: {
-        //"d3v4": ["d3.v4.min"], // upgrade to v5!
+       // "d3v4": ["d3.v4.min"], // upgrade to v5!
         //"vue": ["vue.min"]
     },
     shim: {}
@@ -11,7 +11,7 @@ require.config({
 define([
     'jquery',
     M.cfg.wwwroot + "/course/format/ladtopics/lib/build/vue.min.js",
-    //'d3v4',
+   // 'd3v4',
     M.cfg.wwwroot + "/course/format/ladtopics/amd/src/Utils.js"//,
     //M.cfg.wwwroot + '/course/format/ladtopics/amd/src/ErrorHandler.js'
 ], function ($, Vue, Utils) {
@@ -62,11 +62,11 @@ define([
                         });
                     };
                     this.sections = groupBy(data, 'section');
-                    $(document).ready(function () {
-                        $('a[href="#learningstatus"]').tab("show");
+                    //$(document).ready(function () {
+                      //  $('a[href="#learningstatus"]').tab("show");
                     //$('[data-toggle="tooltip"]').tooltip();
                     //$('[data-toggle="popover"]').popover();
-                    });
+                    //});
                     
                 },
                 setCurrent: function (id, section) {
@@ -88,7 +88,7 @@ define([
             template: `
                 <div id="dashboard-completion">
                     <div v-for="(section, sIndex) in sections" class="row">
-                        <div class="col-3">{{ section[0].sectionname === '[Intro]' : section[0].sectionname }}</div>
+                        <div class="col-3">{{ section[0].sectionname }}</div>
                         <div class="col-9">
                             <div v-for="(m, index) in section" :class="m.completion==1 ? \'rect-green completion-rect\' : \'rect-blue completion-rect\'" @mouseover="setCurrent(index, sIndex)"></div>
                         </div>

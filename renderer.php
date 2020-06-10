@@ -1374,12 +1374,14 @@ $modalMilestone = '
                                     <ul class="nav nav-tabs nav-fill dashboard-tab">
                                         <li class="nav-item active"><a class="nav-link active" data-toggle="tab" href="#learningstatus"
                                                 role="tab">Lernstand</a></li>    
-                                        <li class="nav-item "><a class="nav-link" data-toggle="tab" href="#timemanagement"
-                                                role="tab">Zeitmanagement</a></li>
-                                        <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#strategy" role="tab">Strategie</a>
+                                        <li class="nav-item ">
+                                            <a class="nav-link" data-toggle="tab" href="#timemanagement" role="tab">Zeitmanagement</a></li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" data-toggle="tab" href="#strategy" role="tab">Strategie</a>
                                         </li>
-                                        <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#quiz" role="tab">Quiz</a></li>
-                                        
+                                        <li class="nav-item">
+                                            <a class="nav-link" data-toggle="tab" href="#quiz" role="tab">Quiz</a>
+                                        </li>
                                     </ul>
                                     <br>
                                     <div class="tab-content" style="display:block;">
