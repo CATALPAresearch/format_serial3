@@ -1,8 +1,25 @@
+/**
+ * DashboardCompletion
+ *
+ * @module     format/ladtopics
+ * @package    format_ladtopics
+ * @class      DashboardCompletion
+ * @copyright  2020 Niels Seidel, niels.seidel@fernuni-hagen.de
+ * @description Shows per course section a row of rectangles indicating the completion of assigned activities.
+ * @license    MIT
+ * @since      3.1
+ * 
+ * @todo
+ * - display repetition of activities
+ * - provide additional information for each activity using a popover or tooltip
+ * - fix empty section names
+ */
+
 require.config({
     enforceDefine: false,
     baseUrl: M.cfg.wwwroot + "/course/format/ladtopics/lib/build/",
     paths: {
-       // "d3v4": ["d3.v4.min"], // upgrade to v5!
+        // "d3v4": ["d3.v4.min"], // upgrade to v5!
         //"vue": ["vue.min"]
     },
     shim: {}
@@ -11,7 +28,7 @@ require.config({
 define([
     'jquery',
     M.cfg.wwwroot + "/course/format/ladtopics/lib/build/vue.min.js",
-   // 'd3v4',
+    // 'd3v4',
     M.cfg.wwwroot + "/course/format/ladtopics/amd/src/Utils.js"//,
     //M.cfg.wwwroot + '/course/format/ladtopics/amd/src/ErrorHandler.js'
 ], function ($, Vue, Utils) {
@@ -48,9 +65,6 @@ define([
 
             methods: {
                 draw: function (data) {
-                    /*var svgContainer = d3.select("#completion-chart").append("svg")
-                        .attr("width", 200)
-                        .attr("height", 200);*/
                     var groupBy = function (data, key) {
                         var arr = [];
                         for (var val in data) {
@@ -63,11 +77,31 @@ define([
                     };
                     this.sections = groupBy(data, 'section');
                     //$(document).ready(function () {
-                      //  $('a[href="#learningstatus"]').tab("show");
+                    //  $('a[href="#learningstatus"]').tab("show");
                     //$('[data-toggle="tooltip"]').tooltip();
                     //$('[data-toggle="popover"]').popover();
                     //});
+                    /*
                     
+                     data-toggle="tooltip"
+                                        data-container="body"
+                                        :title="m.type"
+                                        data-content="m.name"
+                                        data-placement="top">
+                                            <rect @mouseover="setCurrent(index, sIndex)" class="completion-rect"
+                                                :x="index * 20"
+                                                :y="sIndex*30"
+                                                :height="20"
+                                                :width="20"
+                                                :fill="m.completion==1 ? \'green\' : \'blue\'"
+                                                data-toggle="popover"
+                                                data-container="body"
+                                                :title="m.type"
+                                                :data-content="m.name"
+                                                data-placement="bottom"
+
+                     */
+
                 },
                 setCurrent: function (id, section) {
                     this.current = { id: id, section: section };
@@ -102,47 +136,6 @@ define([
                             </a>
                         </div>
                     </div>
-
-
-                    <div id="completion-chart" hidden>
-                        <svg style="border: none;">
-                            <g transform="translate(0,10)" id="dashboard-completion">
-                                <g v-for="(section, sIndex) in sections">
-                                    <g :transform="'translate(0,' + (30*sIndex+14) +')'">
-                                        <text class="completion-section-name">{{ section[0].sectionname }}</text>
-                                    </g>
-                                    <g v-for="(m, index) in section" :transform="'translate(70,' + (1*sIndex) +')'">
-                                    <a
-                                        data-toggle="tooltip" 
-                                        data-container="body" 
-                                        :title="m.type" 
-                                        data-content="m.name" 
-                                        data-placement="top">
-                                            <rect @mouseover="setCurrent(index, sIndex)" class="completion-rect"
-                                                :x="index * 20" 
-                                                :y="sIndex*30" 
-                                                :height="20" 
-                                                :width="20"
-                                                :fill="m.completion==1 ? \'green\' : \'blue\'"
-                                                data-toggle="popover" 
-                                                data-container="body" 
-                                                :title="m.type" 
-                                                :data-content="m.name" 
-                                                data-placement="bottom"
-                                                >
-                                        </a>
-                                        </g>
-                                    </rect>
-                                </g>
-                                <g transform="translate(20,100)" class="completion-info">
-                                    
-                                </g>
-                            </g>
-                        </svg>
-                        
-                    </div>
                 </div>`
         });
 });
-
-// class="mod-icon-' + getCurrent().type + '" 
