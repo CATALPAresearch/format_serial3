@@ -2,7 +2,7 @@ require.config({
     enforceDefine: false,
     baseUrl: M.cfg.wwwroot + "/course/format/ladtopics/lib/build/",
     paths: {
-        "d3v4": ["d3.v4.min"], // upgrade to v5!
+        //"d3v4": ["d3.v4.min"], // upgrade to v5!
         //"vue": ["vue.min"]
     },
     shim: {}
@@ -11,10 +11,10 @@ require.config({
 define([
     'jquery',
     M.cfg.wwwroot + "/course/format/ladtopics/lib/build/vue.min.js",
-    'd3v4',
+    //'d3v4',
     M.cfg.wwwroot + "/course/format/ladtopics/amd/src/Utils.js"//,
     //M.cfg.wwwroot + '/course/format/ladtopics/amd/src/ErrorHandler.js'
-], function ($, Vue, d3, Utils) {
+], function ($, Vue, Utils) {
     Utils = new Utils();
     return Vue.component('dashboard-completion',
         {
@@ -88,14 +88,14 @@ define([
             template: `
                 <div id="dashboard-completion">
                     <div v-for="(section, sIndex) in sections" class="row">
-                        <div class="col-1">{{ section[0].sectionname }}</div>
-                        <div class="col-11">
+                        <div class="col-3">{{ section[0].sectionname === '[Intro]' : section[0].sectionname }}</div>
+                        <div class="col-9">
                             <div v-for="(m, index) in section" :class="m.completion==1 ? \'rect-green completion-rect\' : \'rect-blue completion-rect\'" @mouseover="setCurrent(index, sIndex)"></div>
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-1"></div>
-                        <div class="col-11">
+                        <div class="col-3"></div>
+                        <div class="col-9">
                             <a v-bind:href="getLink()">
                                 <span v-if="getCurrent().completion === 0"><i class="fa fa-times-rectangle"></i> {{ getCurrent().name }}, nicht abgeschlossen</span>
                                 <span v-if="getCurrent().completion !== 0"><i class="fa fa-check"></i> {{ getCurrent().name }}, abgeschlossen</span>
