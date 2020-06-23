@@ -50,8 +50,6 @@ module.exports = function (grunt) { // jshint ignore:line
     // Import modules.
     var path = require('path');
     var moodleroot = path.dirname(path.dirname(__dirname)); // jshint ignore:line
-    console.log(moodleroot);
-
     
     grunt.initConfig({
         ts: {
