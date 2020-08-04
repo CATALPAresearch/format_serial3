@@ -159,6 +159,16 @@ class format_ladtopics extends format_base {
             $records = $DB->get_records_sql('SELECT * FROM '.$CFG->prefix.'limesurvey_assigns WHERE course_id = ?', array($COURSE->id));                   
             foreach($records as $record){                
                 if($DB->record_exists_sql('SELECT * FROM '.$CFG->prefix.'limesurvey_submissions WHERE user_id = ? AND survey_id = ?', array($USER->id, $record->survey_id)) === false){
+                    if(isset($record->startdate) && !is_null($record->startdate)){
+                        if(time($record->startdate) > time()){
+                            continue;
+                        }
+                    }
+                    if(isset($record->stopdate) && !is_null($record->stopdate)){
+                        if(time($record->stopdate) < time()){
+                            continue;
+                        }
+                    }
                     $redirectToSurvey = new moodle_url('/course/format/ladtopics/survey.php', array('c' => $COURSE->id));
                     redirect($redirectToSurvey);
                 }
