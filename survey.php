@@ -81,7 +81,7 @@ if(isset($sess->c)){
     echo $OUTPUT->header();    
     echo '<p>'.get_string('surveyDescription', 'format_ladtopics').'</p>';   
     echo $list;
-    echo '<div class="pt-3 text-center"><button onClick="window.location.reload()" class="btn btn-primary center-block">Neu laden</button></div>';
+    echo '<div class="pt-3 text-center"><button onClick="window.location.reload()" class="btn btn-primary center-block">'.get_string('surveyButton', 'format_ladtopics').'</button></div>';
     echo $OUTPUT->footer();
 
 } else {    

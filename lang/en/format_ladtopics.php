@@ -39,4 +39,5 @@ $string['showfromothers'] = 'Show topic';
 // Survey
 $string['surveyTitle'] = 'Survey headline (see /lang/en/format_ladtopics.php)';
 $string['surveyHeadline'] = 'Survey headline (see /lang/en/format_ladtopics.php)';
-$string['surveyDescription'] = 'Survey description (see /lang/en/format_ladtopics.php)'
+$string['surveyDescription'] = 'Survey description (see /lang/en/format_ladtopics.php)';
+$string['surveyButton'] = 'Neu laden.';
