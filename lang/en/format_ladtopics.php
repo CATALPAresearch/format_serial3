@@ -36,3 +36,7 @@ $string['page-course-view-topics'] = 'Any course main page in topics format';
 $string['page-course-view-topics-x'] = 'Any course page in topics format';
 $string['hidefromothers'] = 'Hide topic';
 $string['showfromothers'] = 'Show topic';
+// Survey
+$string['surveyTitle'] = 'Survey headline (see /lang/en/format_ladtopics.php)';
+$string['surveyHeadline'] = 'Survey headline (see /lang/en/format_ladtopics.php)';
+$string['surveyDescription'] = 'Survey description (see /lang/en/format_ladtopics.php)'
