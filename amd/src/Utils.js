@@ -11,11 +11,10 @@
 
 require.config({
     enforceDefine: false,
-    baseUrl: M.cfg.wwwroot + "/course/format/ladtopics/lib/build",
     paths: {
-        "crossfilter": ["crossfilter.min"],
-        "d3v4": ["d3.v4.min"], // upgrade to v5!
-        "dc": ["dc.v3.min"]
+        "crossfilter": [M.cfg.wwwroot + "/course/format/ladtopics/lib/build/crossfilter.min"],
+        "d3v4": [M.cfg.wwwroot + "/course/format/ladtopics/lib/build/d3.v4.min"], // upgrade to v5!
+        "dc": [M.cfg.wwwroot + "/course/format/ladtopics/lib/build/dc.v3.min"]
     },
     shim: {
         'crossfilter': {
@@ -119,18 +118,18 @@ define([
         };
 
         this.monthRange = [
-            { num: 1, name: 'Januar'},
-            { num: 2, name: 'Feburar'},
-            { num: 3, name: 'März'},
-            { num: 4, name: 'April'},
-            { num: 5, name: 'Mai'},
-            { num: 6, name: 'Juni'},
-            { num: 7, name: 'Juli'},
-            { num: 8, name: 'August'},
-            { num: 9, name: 'September'},
-            { num: 10, name: 'Oktober'},
-            { num: 11, name: 'November'},
-            { num: 12, name: 'Dezember'}
+            { num: 1, name: 'Januar' },
+            { num: 2, name: 'Feburar' },
+            { num: 3, name: 'März' },
+            { num: 4, name: 'April' },
+            { num: 5, name: 'Mai' },
+            { num: 6, name: 'Juni' },
+            { num: 7, name: 'Juli' },
+            { num: 8, name: 'August' },
+            { num: 9, name: 'September' },
+            { num: 10, name: 'Oktober' },
+            { num: 11, name: 'November' },
+            { num: 12, name: 'Dezember' }
         ];
 
         this.numberToWord = function (num, postfix) {
@@ -257,7 +256,7 @@ define([
                 .dimension(dimension)
                 .group(group)
                 .colors(colors)
-                .title(function(p) {
+                .title(function (p) {
                     return [
                         obj.indepVar.charAt(0).toUpperCase(),
                         obj.indepVar.slice(1, obj.indepVar.length),
@@ -267,7 +266,7 @@ define([
                         'Value: ',
                         p.value].join('');
                 })
-                .label(function(d) {
+                .label(function (d) {
                     return obj.keys[d.key] || d.key;
                 })
                 ;

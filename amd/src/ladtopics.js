@@ -25,16 +25,15 @@ define([
 
         require.config({
             enforceDefine: false,
-            baseUrl: M.cfg.wwwroot + "/course/format/ladtopics/lib/build",
             paths: {
-                "crossfilter": ["crossfilter.min"],
-                "d3v4": ["d3.v4.min"], // upgrade to v5!
-                "dc": ["dc.v3.min"],
-                "moment226": ["moment-with-locales.min"], // ["moment.min"],
-                "intro293": ["intro.min"],
-                "ICAL": ["ical.min"],
-                "vDP": ["vDP.min"],
-                "vDPde": ["vDPde.min"]
+                "crossfilter": [M.cfg.wwwroot + "/course/format/ladtopics/lib/build/crossfilter.min"],
+                "d3v4": [M.cfg.wwwroot + "/course/format/ladtopics/lib/build/d3.v4.min"], // upgrade to v5!
+                "dc": [M.cfg.wwwroot + "/course/format/ladtopics/lib/build/dc.v4.min"],
+                "moment226": [M.cfg.wwwroot + "/course/format/ladtopics/lib/build/moment-with-locales.min"], // ["moment.min"],
+                "intro293": [M.cfg.wwwroot + "/course/format/ladtopics/lib/build/intro.min"],
+                "ICAL": [M.cfg.wwwroot + "/course/format/ladtopics/lib/build/ical.min"],
+                "vDP": [M.cfg.wwwroot + "/course/format/ladtopics/lib/build/vDP.min"],
+                "vDPde": [M.cfg.wwwroot + "/course/format/ladtopics/lib/build/vDPde.min"]
             },
             shim: {
                 "moment226": {
@@ -56,7 +55,7 @@ define([
                     exports: "vDPde"
                 },
                 'dc': {
-                    deps: ['d3v4']
+                    deps: ['d3v4', 'crossfilter']
                 }
             }
         });
@@ -72,7 +71,7 @@ define([
         box.hide();
 
         function start(courseid) {
-        
+
             require([
                 'crossfilter',
                 'd3v4',
@@ -82,8 +81,6 @@ define([
                 "vDP",
                 "vDPde"
             ], function (crossfilter, d3, dc, moment, intro, vDP, vDPde) {
-
-
                 ErrorHandler.logger = logger;
                 ErrorHandler.logWindowErrors();
                 ErrorHandler.logConsoleErrors();
@@ -115,7 +112,10 @@ define([
         return {
             init: function (courseid) {
                 courseid = courseid === undefined ? parseInt($('#courseid').text(), 10) : courseid;
-                start(courseid);
+                console.log('exit')
+                return;
+
+                //start(courseid);
             }
         };
     });

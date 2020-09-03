@@ -25,9 +25,8 @@ define([
 
     require.config({
         enforceDefine: false,
-        baseUrl: M.cfg.wwwroot + "/course/format/ladtopics/lib/build",
         paths: {
-            "ICAL": ["ical.min"]
+            "ICAL": [M.cfg.wwwroot + "/course/format/ladtopics/lib/build/ical.min"]
         },
         shim: {
             'ICAL': {
