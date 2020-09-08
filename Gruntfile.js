@@ -55,7 +55,7 @@ module.exports = function (grunt) { // jshint ignore:line
         ts: {
             amd: {
                 //tsconfig: moodleroot + '/format/ladtopics/amd/src/tsconfig.json',
-                src: ["amd/src/*.ts", "!node_modules/**"]
+                src: ["./amd/src/*.ts", "!node_modules/**"]
             }
         },
         jshint: {
@@ -70,8 +70,8 @@ module.exports = function (grunt) { // jshint ignore:line
                 files: [{
                     expand: true,
                     src: ['*.js', '!*.min.js'],
-                    dest: 'lib/build',
-                    cwd: './lib',
+                    dest: './lib/build',
+                    cwd: './lib/src',
                     rename: function (dst, src) {
                         return dst + '/' + src.replace('.js', '.min.js');
                     }
@@ -84,7 +84,7 @@ module.exports = function (grunt) { // jshint ignore:line
                 files: [{
                     expand: true,
                     src: ['*.js', '!*.min.js'],
-                    dest: 'amd/build',
+                    dest: './amd/build',
                     cwd: './amd/src',
                     rename: function (dst, src) {
                         return dst + '/' + src.replace('.js', '.min.js');
@@ -121,6 +121,7 @@ module.exports = function (grunt) { // jshint ignore:line
     grunt.loadNpmTasks('grunt-contrib-cssmin');
 
     grunt.registerTask("plugin-build", ["ts", "terser"]);
+    grunt.registerTask("plugin-b", ["terser:amd"]);
     grunt.registerTask("plugin-check", ["jshint"]);
     grunt.registerTask("plugin-css", ["cssmin"]);
     grunt.registerTask("plugin-all", ["ts", "terser", "cssmin"]);

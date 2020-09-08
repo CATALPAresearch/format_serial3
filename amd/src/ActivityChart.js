@@ -123,7 +123,7 @@ define(['jquery'
             .dimension(mainDimension)
             .group(mainGroup)
             .renderHorizontalGridLines(true)
-            .keyAccessor(function (p) { 
+            .keyAccessor(function (p) {
                 return p.value.date;
             })
             .valueAccessor(function (p) {
@@ -201,8 +201,10 @@ define(['jquery'
         // not working
         //console.log(activityChart.chart.width());
         width = document.getElementById('planing-component').offsetWidth;
-        activityChart.chart.width(width).transitionDuration(0);
-        activityChart.chart.group(activityChart.getGroup());
+        if (activityChart && activityChart.chart) {
+            activityChart.chart.width(width).transitionDuration(0);
+            activityChart.chart.group(activityChart.getGroup());
+        }
 
         //dc.redrawAll(activityChart.getGroup());
     };

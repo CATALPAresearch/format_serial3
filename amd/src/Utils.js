@@ -11,18 +11,21 @@
 
 require.config({
     enforceDefine: false,
-    baseUrl: M.cfg.wwwroot + "/course/format/ladtopics/lib/build",
     paths: {
-        "crossfilter": ["crossfilter.min"],
-        "d3v4": ["d3.v4.min"], // upgrade to v5!
-        "dc": ["dc.v3.min"]
+        //"d3": [M.cfg.wwwroot + "/course/format/ladtopics/lib/build/d3.v3.min"], // upgrade to v5!
+        "d3": [M.cfg.wwwroot + "/course/format/ladtopics/lib/src/d3.v4"], // upgrade to v5!
+        "crossfilter": [M.cfg.wwwroot + "/course/format/ladtopics/lib/build/crossfilter.min"],
+        "dc": [M.cfg.wwwroot + "/course/format/ladtopics/lib/src/dc.v3"]
     },
     shim: {
+        'dc': {
+            deps: ['d3', 'crossfilter']
+        },
         'crossfilter': {
             exports: 'crossfilter'
         },
-        'dc': {
-            deps: ['d3v4', 'crossfilter']
+        'd3': {
+            exports: 'd3'
         }
     }
 });
@@ -30,11 +33,12 @@ require.config({
 define([
     'jquery',
     'core/ajax',
-    'd3v4',
+    'd3',
     'dc',
     M.cfg.wwwroot + '/course/format/ladtopics/amd/src/ErrorHandler.js'
 ], function ($, ajax, d3, dc, ErrorHandler) {
 
+    
     const Utils = function () {
         this.namex = 'utils';
         this.d3 = d3;
@@ -110,27 +114,21 @@ define([
             if (date.getMonth()) { return d3.timeFormat("%B")(date); } //7.12. 
             return d3.getDate("%Y");
 
-            /*   , function (d) { return d.; }],
-                [ function (d) { return d.getDay() && d.getDate() !== 1; }], 
-                ["%e.%m.", function (d) { return d.getDate() != 1; }], // 
-                [, function (d) { return d.; }],
-                [, function () { return true; }]
-                */
         };
 
         this.monthRange = [
-            { num: 1, name: 'Januar'},
-            { num: 2, name: 'Feburar'},
-            { num: 3, name: 'März'},
-            { num: 4, name: 'April'},
-            { num: 5, name: 'Mai'},
-            { num: 6, name: 'Juni'},
-            { num: 7, name: 'Juli'},
-            { num: 8, name: 'August'},
-            { num: 9, name: 'September'},
-            { num: 10, name: 'Oktober'},
-            { num: 11, name: 'November'},
-            { num: 12, name: 'Dezember'}
+            { num: 1, name: 'Januar' },
+            { num: 2, name: 'Feburar' },
+            { num: 3, name: 'März' },
+            { num: 4, name: 'April' },
+            { num: 5, name: 'Mai' },
+            { num: 6, name: 'Juni' },
+            { num: 7, name: 'Juli' },
+            { num: 8, name: 'August' },
+            { num: 9, name: 'September' },
+            { num: 10, name: 'Oktober' },
+            { num: 11, name: 'November' },
+            { num: 12, name: 'Dezember' }
         ];
 
         this.numberToWord = function (num, postfix) {
@@ -223,11 +221,7 @@ define([
                                     : this.formatYear; //(date);
         };
 
-        /**
-         * DC.js util to create filter charts. 
-         * @param obj (Object) chartType, selector, indepVar, depVar, colors, margins
-         * @param ndx 
-         */
+        
         this.addFilterChart = function (obj, ndx) {
             var filterSingleColors = this.d3.scale.ordinal().domain([0]).range(['#e6550d']);
             var filterChartHeight = 130;
@@ -257,7 +251,7 @@ define([
                 .dimension(dimension)
                 .group(group)
                 .colors(colors)
-                .title(function(p) {
+                .title(function (p) {
                     return [
                         obj.indepVar.charAt(0).toUpperCase(),
                         obj.indepVar.slice(1, obj.indepVar.length),
@@ -267,7 +261,7 @@ define([
                         'Value: ',
                         p.value].join('');
                 })
-                .label(function(d) {
+                .label(function (d) {
                     return obj.keys[d.key] || d.key;
                 })
                 ;
@@ -308,4 +302,5 @@ define([
     };
 
     return Utils;
+    
 });

@@ -1903,6 +1903,21 @@ define([
                             new ErrorHandler(error);
                         }
                     },
+                    modExportMilestones: function () {
+                        let ms = this.milestones.filter(
+                            function (element) {
+                                if (element.mod !== true) {
+                                    return true;
+                                }
+                                return false;
+                            }
+                        );
+                        if (ms.length <= 0) {
+                            this.modAlert("warning", "Keine Meilensteine vorhanden.");
+                            return;
+                        }
+                        this.exportMilestones(ms);
+                    },
                     modLoadMilestones: function () {
                         try {
                             let file = document.getElementById('modImportedFile').files[0];
@@ -1974,8 +1989,6 @@ define([
                         } else if ($("#modSaveExam").is(":checked")) {
                             this.modSaveMilestones("exam", ms, true);
                         } else if ($("#modSaveLocal").is(":checked")) {
-                            this.exportMilestones(ms);
-                        } else {
                             this.exportMilestones(ms);
                         }
                         return;
@@ -2140,11 +2153,11 @@ define([
                                     $('#modWorkload tr').not(':first').not(':last').remove();
                                     _this.modStatistics.users = resolve.num_users ? +resolve.num_users : 0;
                                     _this.modStatistics.surveys = resolve.num_survey ? +resolve.num_survey : 0;
-                                    _this.modStatistics.msProgessed = 0,
-                                        _this.modStatistics.msReady = 0,
-                                        _this.modStatistics.msUrgent = 0,
-                                        _this.modStatistics.msMissed = 0,
-                                        _this.modStatistics.msReflected = 0
+                                    _this.modStatistics.msProgessed = 0;
+                                    _this.modStatistics.msReady = 0;
+                                    _this.modStatistics.msUrgent = 0;
+                                    _this.modStatistics.msMissed = 0;
+                                    _this.modStatistics.msReflected = 0;
                                     _this.modStatistics.ptExam = 0;
                                     _this.modStatistics.ptOrientation = 0;
                                     _this.modStatistics.ptInterest = 0;

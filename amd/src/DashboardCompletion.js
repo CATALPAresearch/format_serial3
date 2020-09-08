@@ -15,16 +15,6 @@
  * - fix empty section names
  */
 
-require.config({
-    enforceDefine: false,
-    baseUrl: M.cfg.wwwroot + "/course/format/ladtopics/lib/build/",
-    paths: {
-        // "d3v4": ["d3.v4.min"], // upgrade to v5!
-        //"vue": ["vue.min"]
-    },
-    shim: {}
-});
-
 define([
     'jquery',
     M.cfg.wwwroot + "/course/format/ladtopics/lib/build/vue.min.js",

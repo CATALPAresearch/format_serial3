@@ -627,7 +627,8 @@ class format_ladtopics_external extends external_api {
                     $transaction->allow_commit();
                     foreach($res as $entry){   
                         $pos = -1;
-                        if(gettype($entry->section_sequence) === "string" && sizeof($entry->section_sequence) > 0){
+                        // I am not sure whether sizeof() and count() have the same results, but in php 7.2 sizeof() requires an array.
+                        if(gettype($entry->section_sequence) === "string" && count($entry->section_sequence) > 0){
                             $sequence = explode(",", preg_replace("/[^0-9,]/", "", $entry->section_sequence));                            
                             $pos = array_search(strval($entry->instance_url_id), $sequence);                                              
                         }           
