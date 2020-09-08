@@ -1112,7 +1112,8 @@ define([
                         return moment(date).fromNow();
                     },
                     getReadableTime: function (date) {
-                        return moment(date).format("d.MM.YYYY, HH:mm");
+                        console.log(moment(date).format("DD.MM.YYYY, HH:mm"), date)
+                        return moment(date).format("DD.MM.YYYY, HH:mm");
                     },
                     strategiesByCategory: function (cat) {
                         return this.strategies.filter(function (s) {
@@ -1158,8 +1159,8 @@ define([
                             case 'page': return 'Text';
                             case 'kurstermin': return 'Termin';
                             case 'data': return 'Text';
-                            case 'hvp': return '';
-                            case 'checklist': return '';
+                            case 'hvp': return 'H5P';
+                            case 'checklist': return 'Checkliste';
                             case 'url': return 'Link';
                             case 'feedback': return 'Feedback';
                             case 'resource': return 'Material';

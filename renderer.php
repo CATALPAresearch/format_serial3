@@ -608,7 +608,7 @@ $milestoneArchiveList = '
                 {{ m.name }}
             </a>           
             <span
-                data-toggle="tooltop" data-placement="top" :title="\'Beginn: \' + getReadableTime(m.start) + \'Ende: \' + getReadableTime(m.start)" 
+                data-toggle="tooltop" data-placement="top" :title="\'Beginn: \' + getReadableTime(m.start) + \', Ende: \' + getReadableTime(m.start)" 
                 :class="m.status == \'missed\' ? \'milestone-missed milestone-element-due\' : \'milestone-element-due\'">
                 {{ fromNow(m.end) }}
             </span>
@@ -728,7 +728,7 @@ $milestoneList = '
                 {{ m.name }}                
             </a>
             <span
-                data-toggle="tooltop" data-placement="top" :title="\'Beginn: \' + getReadableTime(m.start) + \'Ende: \' + getReadableTime(m.start)" 
+                data-toggle="tooltop" data-placement="top" :title="\'Beginn: \' + getReadableTime(m.start) + \', Ende: \' + getReadableTime(m.start)" 
                 :class="m.status == \'missed\' ? \'milestone-missed milestone-element-due\' : \'milestone-element-due\'">
                 {{ fromNow(m.end) }}
             </span>
