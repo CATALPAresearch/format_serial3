@@ -35,6 +35,8 @@ require_once($CFG->dirroot. '/course/format/lib.php');
  */
 class format_ladtopics extends format_base {
 
+    private $SURVEY_ENABLED = true;
+
     /**
      * Returns true if this course format uses sections
      *
@@ -147,7 +149,34 @@ class format_ladtopics extends format_base {
      * @param global_navigation $navigation
      * @param navigation_node $node The course node within the navigation
      */
-    public function extend_course_navigation($navigation, navigation_node $node) {
+    public function extend_course_navigation($navigation, navigation_node $node) {    
+
+        // SURVEY START
+        
+        global $COURSE, $DB, $CFG, $USER;
+
+        if($this->SURVEY_ENABLED === true){                 
+            $records = $DB->get_records_sql('SELECT * FROM '.$CFG->prefix.'limesurvey_assigns WHERE course_id = ?', array($COURSE->id));                   
+            foreach($records as $record){                
+                if($DB->record_exists_sql('SELECT * FROM '.$CFG->prefix.'limesurvey_submissions WHERE user_id = ? AND survey_id = ?', array($USER->id, $record->survey_id)) === false){
+                    if(isset($record->startdate) && !is_null($record->startdate)){
+                        if(time($record->startdate) > time()){
+                            continue;
+                        }
+                    }
+                    if(isset($record->stopdate) && !is_null($record->stopdate)){
+                        if(time($record->stopdate) < time()){
+                            continue;
+                        }
+                    }
+                    $redirectToSurvey = new moodle_url('/course/format/ladtopics/survey.php', array('c' => $COURSE->id));
+                    redirect($redirectToSurvey);
+                }
+            }
+        }      
+      
+        // SURVEY END
+        
         global $PAGE;
         // if section is specified in course/view.php, make sure it is expanded in navigation
         if ($navigation->includesectionnum === false) {
