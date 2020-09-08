@@ -300,7 +300,7 @@ class format_ladtopics extends format_base {
     /**
      * Updates format options for a course
      *
-     * In case if course format was changed to 'topics', we try to copy options
+     * In case if course format was changed to 'ladtopics', we try to copy options
      * 'coursedisplay' and 'hiddensections' from the previous format.
      *
      * @param stdClass|array $data return value from {@link moodleform::get_data()} or array with data
