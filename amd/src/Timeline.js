@@ -40,7 +40,7 @@ define([
         var margins = { top: 15, right: 10, bottom: 20, left: 10 };
         var course = {
             courseType: 'Kurs', // or 'Modul'
-            semesterShortName: 'SoSe 2020',
+            semesterShortName: 'WS 2020/21',
             id: parseInt($('#courseid').text(), 10),
             // module: parseInt($('#moduleid').html())
             startDate: new Date(2020, 3, 1, 0, 0, 0),
