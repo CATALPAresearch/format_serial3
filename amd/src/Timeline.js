@@ -2753,7 +2753,7 @@ define([
 
 
 
-            //var survey = new InitialSurvey(milestoneApp, utils, course);
+            var survey = new InitialSurvey(milestoneApp, utils, course);
 
             /**
              * Resize charte if window sizes change
