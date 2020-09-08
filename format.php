@@ -50,7 +50,7 @@ if (($marker >=0) && has_capability('moodle/course:setcurrentsection', $context)
 course_create_sections_if_missing($course, 0);
 
 
-$PAGE->requires->js_call_amd('format_ladtopics/ladtopics', 'init');//, array(array('data'=>$arr, 'user'=>$user_data)));
+$PAGE->requires->js_call_amd('format_ladtopics/ladtopics', 'init', array('courseid'=>$course->id));//, array(array('courseid'=>$course->id, 'user'=>$user_data)));
 
 $renderer = $PAGE->get_renderer('format_ladtopics');
 

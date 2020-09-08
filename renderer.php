@@ -1271,7 +1271,7 @@ $modalMilestone = '
                                                         <li v-if="milestones.length > 0" class="nav-item">
                                                             <a 
                                                                 class="nav-link" @click="showAdditionalCharts()" id="milestone-timeline-tab" data-toggle="pill" href="#view-timeline" role="tab" aria-controls="view-timeline" aria-selected="true">
-                                                                <i class="fa fa-clock"></i>Zeitleiste
+                                                                <i class="fa fa-clock mr-1"></i>Zeitleiste
                                                             </a>
                                                         </li>
                                                         <li v-if="milestones.length > 0" class="nav-item">
