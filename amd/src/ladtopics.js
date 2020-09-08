@@ -10,7 +10,6 @@
  * @license    MIT
  * @since      3.1
  */
-
 define([
     'jquery',
     M.cfg.wwwroot + '/course/format/ladtopics/amd/src/Timeline.js',
@@ -22,13 +21,16 @@ define([
     M.cfg.wwwroot + '/course/format/ladtopics/amd/src/ErrorHandler.js'
 ],
     function ($, Timeline, Utils, filterChart, activityChart, initialSurvey, Log, ErrorHandler) {
-        console.log(100)
+
         require.config({
             enforceDefine: false,
             paths: {
+                //"crossfilter": [M.cfg.wwwroot + "/course/format/ladtopics/lib/build/crossfilter.min"],
+                //"d3": [M.cfg.wwwroot + "/course/format/ladtopics/lib/build/d3.v4.min"], // upgrade to v5!
+                //"dc": [M.cfg.wwwroot + "/course/format/ladtopics/lib/build/dc.v4.min"],
+                "d3": [M.cfg.wwwroot + "/course/format/ladtopics/lib/src/d3.v4"], // upgrade to v5!
                 "crossfilter": [M.cfg.wwwroot + "/course/format/ladtopics/lib/build/crossfilter.min"],
-                "d3": [M.cfg.wwwroot + "/course/format/ladtopics/lib/build/d3.v4.min"], // upgrade to v5!
-                "dc": [M.cfg.wwwroot + "/course/format/ladtopics/lib/build/dc.v4.min"],
+                "dc": [M.cfg.wwwroot + "/course/format/ladtopics/lib/src/dc.v3"],
                 "moment226": [M.cfg.wwwroot + "/course/format/ladtopics/lib/build/moment-with-locales.min"], // ["moment.min"],
                 "intro293": [M.cfg.wwwroot + "/course/format/ladtopics/lib/build/intro.min"],
                 "ICAL": [M.cfg.wwwroot + "/course/format/ladtopics/lib/build/ical.min"],
@@ -59,7 +61,7 @@ define([
                 }
             }
         });
-
+        console.log(33)
         // hide unused div
         let box = $("#region-main-box");
         const h = box.outerHeight();
@@ -68,14 +70,13 @@ define([
                 box.show();
             }
         });
-        box.hide();
+        //box.hide();
 
         function start(courseid) {
-            console.log(12)
 
             require([
                 'crossfilter',
-                'd3v4',
+                'd3',
                 'dc',
                 'moment226',
                 'intro293',
@@ -85,13 +86,12 @@ define([
                 ErrorHandler.logger = logger;
                 ErrorHandler.logWindowErrors();
                 ErrorHandler.logConsoleErrors();
-                console.log('drin')
+
                 var utils = new Utils();
                 var logger = new Log(courseid, {
                     context: 'format_ladtopics',
                     outputType: 1 // 0: console, 1: logstore_standard_log
                 });
-
                 new Timeline(
                     d3,
                     dc,
@@ -107,12 +107,11 @@ define([
                     vDPde,
                     ErrorHandler
                 );
-
             });
         }
 
         return {
-            init: function (courseid) { console.log(11)
+            init: function (courseid) {
                 courseid = courseid === undefined ? parseInt($('#courseid').text(), 10) : courseid;
                 start(courseid);
             }

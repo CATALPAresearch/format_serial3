@@ -1244,7 +1244,7 @@ $modalMilestone = '
                         '. $initialSurvey .'
 
                         <!-- Planing Component -->
-                        <div id="planing-component" style="display:none;" v-cloak class="container dc-chart">
+                        <div id="planing-component" style="display:block;" v-cloak class="container dc-chart">
                             '.($this->checkModeratorStatus()?$moderationModal:$userMSPlan).'
                             <div>
                                 <div v-if="surveyDone > 0" class="row">

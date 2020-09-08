@@ -12,18 +12,19 @@
 require.config({
     enforceDefine: false,
     paths: {
-        "d3v4": [M.cfg.wwwroot + "/course/format/ladtopics/lib/build/d3.v4.min"], // upgrade to v5!
+        //"d3": [M.cfg.wwwroot + "/course/format/ladtopics/lib/build/d3.v3.min"], // upgrade to v5!
+        "d3": [M.cfg.wwwroot + "/course/format/ladtopics/lib/src/d3.v4"], // upgrade to v5!
         "crossfilter": [M.cfg.wwwroot + "/course/format/ladtopics/lib/build/crossfilter.min"],
-        "dc": [M.cfg.wwwroot + "/course/format/ladtopics/lib/build/dc.v4.min"]
+        "dc": [M.cfg.wwwroot + "/course/format/ladtopics/lib/src/dc.v3"]
     },
     shim: {
         'dc': {
-            deps: ['d3v4', 'crossfilter']
+            deps: ['d3', 'crossfilter']
         },
         'crossfilter': {
             exports: 'crossfilter'
         },
-        'd3v4': {
+        'd3': {
             exports: 'd3'
         }
     }
@@ -32,11 +33,12 @@ require.config({
 define([
     'jquery',
     'core/ajax',
-    'd3v4',
+    'd3',
     'dc',
     M.cfg.wwwroot + '/course/format/ladtopics/amd/src/ErrorHandler.js'
 ], function ($, ajax, d3, dc, ErrorHandler) {
 
+    
     const Utils = function () {
         this.namex = 'utils';
         this.d3 = d3;
@@ -112,12 +114,6 @@ define([
             if (date.getMonth()) { return d3.timeFormat("%B")(date); } //7.12. 
             return d3.getDate("%Y");
 
-            /*   , function (d) { return d.; }],
-                [ function (d) { return d.getDay() && d.getDate() !== 1; }], 
-                ["%e.%m.", function (d) { return d.getDate() != 1; }], // 
-                [, function (d) { return d.; }],
-                [, function () { return true; }]
-                */
         };
 
         this.monthRange = [
@@ -225,11 +221,7 @@ define([
                                     : this.formatYear; //(date);
         };
 
-        /**
-         * DC.js util to create filter charts. 
-         * @param obj (Object) chartType, selector, indepVar, depVar, colors, margins
-         * @param ndx 
-         */
+        
         this.addFilterChart = function (obj, ndx) {
             var filterSingleColors = this.d3.scale.ordinal().domain([0]).range(['#e6550d']);
             var filterChartHeight = 130;
@@ -310,4 +302,5 @@ define([
     };
 
     return Utils;
+    
 });

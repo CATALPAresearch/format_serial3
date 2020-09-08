@@ -26,7 +26,7 @@ define([
     M.cfg.wwwroot + "/course/format/ladtopics/amd/src/MilestoneCalendarExport.js",
     M.cfg.wwwroot + "/course/format/ladtopics/amd/src/DashboardCompletion.js"
 ], function ($, ajax, Vue, MilestoneCalendarExport, DashboardCompletion) {
-    console.log(Vue);
+
     var Timeline = function (d3, dc, crossfilter, moment, utils, introJs, logger, FilterChart, ActivityChart, InitialSurvey, vDP, vDPde, ErrorHandler) {
 
         $(document).ready(function () {
@@ -1903,7 +1903,7 @@ define([
                             new ErrorHandler(error);
                         }
                     },
-                    modExportMilestones: function(){
+                    modExportMilestones: function () {
                         let ms = this.milestones.filter(
                             function (element) {
                                 if (element.mod !== true) {
@@ -1990,7 +1990,7 @@ define([
                             this.modSaveMilestones("exam", ms, true);
                         } else if ($("#modSaveLocal").is(":checked")) {
                             this.exportMilestones(ms);
-                        } 
+                        }
                         return;
                     },
                     modResetSelect: function () {
@@ -2153,11 +2153,11 @@ define([
                                     $('#modWorkload tr').not(':first').not(':last').remove();
                                     _this.modStatistics.users = resolve.num_users ? +resolve.num_users : 0;
                                     _this.modStatistics.surveys = resolve.num_survey ? +resolve.num_survey : 0;
-                                    _this.modStatistics.msProgessed = 0,
-                                        _this.modStatistics.msReady = 0,
-                                        _this.modStatistics.msUrgent = 0,
-                                        _this.modStatistics.msMissed = 0,
-                                        _this.modStatistics.msReflected = 0
+                                    _this.modStatistics.msProgessed = 0;
+                                    _this.modStatistics.msReady = 0;
+                                    _this.modStatistics.msUrgent = 0;
+                                    _this.modStatistics.msMissed = 0;
+                                    _this.modStatistics.msReflected = 0;
                                     _this.modStatistics.ptExam = 0;
                                     _this.modStatistics.ptOrientation = 0;
                                     _this.modStatistics.ptInterest = 0;
