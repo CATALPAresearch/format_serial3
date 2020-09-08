@@ -147,7 +147,7 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                 <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="moderationModalTitle">Planung</h5>                                     
+                        <h5 class="modal-title" id="moderationModalTitle">Administration</h5>                                     
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -156,7 +156,8 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                         <div class="alert collapse fade" id="moderationAlert" data-dismiss="alert" role="alert">
                             This is a success alert—check it out!
                         </div>              
-                        <h5>Planungsempfehlungen</h5>           
+                        <h5>Mein Meilensteine als Planungsvorlage speichern</h5>
+                        Vorlage für folgende Zielsetzung der Eingangsbefragung speichern: 
                         <div class="my-2 mx-2">              
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="modSaveType" id="modSaveExam" value="0">
@@ -175,27 +176,24 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                                 <label class="form-check-label" for="modSaveInterest">
                                 Interesse am Themengebiet
                                 </label>
-                            </div>  
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="modSaveType" id="modSaveLocal" value="3">
-                                <label class="form-check-label" for="modSaveLocal">
-                                Eigene Meilensteine
-                                </label>
-                            </div>                             
+                            </div>                           
                         </div>
                         <button type="button" @click="modSaveSelect" class="btn btn-primary">Speichern</button>    
                         <button type="button" @click="modResetSelect" class="btn btn-danger">Zurücksetzen</button>                   
                         <hr>                        
-                        <h5>Meilensteine laden</h5>                        
+                        <h5>Meilensteine exportieren und importieren</h5>
+                        <div class="col mb-4 px-0">
+                            <button type="button" @click="modExportMilestones" class="btn btn-secondary">Meine Meilensteine exportieren</button>  
+                        </div>                     
                         <div class="col mb-4 px-0">
                             <div class="custom-file">
                                 <input type="file" class="custom-file-input" @input="modLoadPath" id="modImportedFile" lang="de">
                                 <label id="modLoadPathLabel" class="custom-file-label" for="modImportedFile">Bitte wählen Sie eine Datei aus.</label>
                             </div>
                         </div>                        
-                        <button type="button" @click="modLoadMilestones" class="btn btn-secondary">Laden</button>  
+                        <button type="button" @click="modLoadMilestones" class="btn btn-secondary">Importieren</button>  
                         <hr>   
-                            <h5>Benutzerplanung zurücksetzen</h5>        
+                            <h5>Zurücksetzen von Meilensteinen und Eingangsbefragung</h5>        
                             <div class="form-group">                                 
                                 <input type="string" @input="userAutocomplete($event.target, $event.target.value)" class="form-control" id="modResetUser" placeholder="Benutzer suchen">
                             </div>
@@ -204,17 +202,17 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                                 <div class="form-check">
                                     <input class="form-check-input" type="checkbox" value="" id="modResetUserPlan">
                                     <label class="form-check-label" for="modResetUserPlan">
-                                    Eingangsbefragung
+                                    Eingangsbefragung der ausgewählten Nutzer zurücksetzen
                                     </label>
                                 </div> 
                                 <div class="form-check">
                                     <input class="form-check-input" type="checkbox" value="" id="modResetUserMS">
                                     <label class="form-check-label" for="modResetUserMS">
-                                    Meilensteine
+                                    Alle Meilensteine der ausgewählten Nutzer löschen
                                     </label>
                                 </div>                                                     
                         </div>                        
-                        <button type="button" @click="modUpdateUser" class="btn btn-danger">Zurücksetzen</button>                         
+                        <button type="button" @click="modUpdateUser" class="btn btn-danger">Löschen / zurücksetzen</button>                         
                     </div>          
                     <div class="modal-footer">
                         <!-- Footer -->
@@ -610,7 +608,7 @@ $milestoneArchiveList = '
                 {{ m.name }}
             </a>           
             <span
-                data-toggle="tooltop" data-placement="top" :title="\'Beginn: \' + getReadableTime(m.start) + \'Ende: \' + getReadableTime(m.start)" 
+                data-toggle="tooltop" data-placement="top" :title="\'Beginn: \' + getReadableTime(m.start) + \', Ende: \' + getReadableTime(m.start)" 
                 :class="m.status == \'missed\' ? \'milestone-missed milestone-element-due\' : \'milestone-element-due\'">
                 {{ fromNow(m.end) }}
             </span>
@@ -730,7 +728,7 @@ $milestoneList = '
                 {{ m.name }}                
             </a>
             <span
-                data-toggle="tooltop" data-placement="top" :title="\'Beginn: \' + getReadableTime(m.start) + \'Ende: \' + getReadableTime(m.start)" 
+                data-toggle="tooltop" data-placement="top" :title="\'Beginn: \' + getReadableTime(m.start) + \', Ende: \' + getReadableTime(m.start)" 
                 :class="m.status == \'missed\' ? \'milestone-missed milestone-element-due\' : \'milestone-element-due\'">
                 {{ fromNow(m.end) }}
             </span>
@@ -1273,7 +1271,7 @@ $modalMilestone = '
                                                         <li v-if="milestones.length > 0" class="nav-item">
                                                             <a 
                                                                 class="nav-link" @click="showAdditionalCharts()" id="milestone-timeline-tab" data-toggle="pill" href="#view-timeline" role="tab" aria-controls="view-timeline" aria-selected="true">
-                                                                <i class="fa fa-clock"></i>Zeitleiste
+                                                                <i class="fa fa-clock mr-1"></i>Zeitleiste
                                                             </a>
                                                         </li>
                                                         <li v-if="milestones.length > 0" class="nav-item">
@@ -1295,13 +1293,13 @@ $modalMilestone = '
                                                         <div class="dropdown-menu" aria-labeledby="settingsMenuButton">
                                                         '.($this->checkModeratorStatus()?'
                                                             <a class="dropdown-item" data-toggle="modal" data-target="#moderationModal" href="#">
-                                                                <i class="fa fa-clock"></i>Planung
+                                                                <i class="fa fa-clock mr-1"></i>Administration
                                                             </a>
                                                             <a class="dropdown-item" data-toggle="modal" data-target="#reportModal" href="#">
-                                                                <i class="fa fa-clock"></i>Statistik
+                                                                <i class="fa fa-clock mr-1"></i>Analytics
                                                             </a>':
                                                             '<a class="dropdown-item" data-toggle="modal" data-target="#moderationModal" href="#">
-                                                                <i class="fa fa-clock"></i>Einstellungen
+                                                                <i class="fa fa-clock mr-1"></i>Einstellungen
                                                             </a>').'                                                            
                                                             <milestone-calendar-export v-bind:milestones="milestones" v-bind:calendar="calendar"></milestone-calendar-export>                                                         
                                                         </div>

@@ -19,7 +19,7 @@
  *
  * @package format_topics
  * @copyright 2006 The Open University
- * @author N.D.Freear@open.ac.uk, and others.
+ * @author Niels Seidel, N.D.Freear@open.ac.uk, and others.
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -50,18 +50,7 @@ if (($marker >=0) && has_capability('moodle/course:setcurrentsection', $context)
 course_create_sections_if_missing($course, 0);
 
 
-//$PAGE->requires->css( '/course/format/ladtopics/css/bootstrap.min.css');
-//$extra_css = $CFG->wwwroot.'/course/format/ladtopics/css/bootstrap.min.css';
-//$extra_css_meta = '<link rel="stylesheet" type="text/css" href="'.$extra_css.'" />';
-// function print_header_simple($title='', $heading='', $navigation='', $focus='', $meta='', $cache=true, $button='&nbsp;', $menu='', $usexml=false, $bodytags='', $return=false) {
-
-
-//$PAGE->requires->css( '/course/format/ladtopics/css/dc.min.css');
-//$PAGE->requires->css( '/course/format/ladtopics/styles.css', true );
-//echo $OUTPUT->header();
-
-//
-$PAGE->requires->js_call_amd('format_ladtopics/ladtopics', 'init');//, array(array('data'=>$arr, 'user'=>$user_data)));
+$PAGE->requires->js_call_amd('format_ladtopics/ladtopics', 'init', array('courseid'=>$course->id));//, array(array('courseid'=>$course->id, 'user'=>$user_data)));
 
 $renderer = $PAGE->get_renderer('format_ladtopics');
 

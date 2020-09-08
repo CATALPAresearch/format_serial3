@@ -19,15 +19,14 @@
  */
 define([
     M.cfg.wwwroot + '/course/format/ladtopics/lib/build/vue.min.js',
-    M.cfg.wwwroot + '/course/format/ladtopics/amd/src/ICalExport.js',
-    M.cfg.wwwroot + '/course/format/ladtopics/amd/src/ErrorHandler.js'
+    M.cfg.wwwroot + '/course/format/ladtopics/amd/build/ICalExport.min.js',
+    M.cfg.wwwroot + '/course/format/ladtopics/amd/build/ErrorHandler.min.js'
 ], function(Vue, ICalExport, ErrorHandler) {
 
     require.config({
         enforceDefine: false,
-        baseUrl: M.cfg.wwwroot + "/course/format/ladtopics/lib/build",
         paths: {
-            "ICAL": ["ical.min"]
+            "ICAL": [M.cfg.wwwroot + "/course/format/ladtopics/lib/build/ical.min"]
         },
         shim: {
             'ICAL': {
@@ -38,7 +37,7 @@ define([
     return Vue.component('MilestoneCalendarExport', {
 
         props: ['milestones', 'calendar'],
-        template: '<div class = "milestone-calendar-export"><a class="dropdown-item" @click="exportToICal()" href="#"><i class="fa fa-clock"></i>Termine in Kalender (iCal) exportieren</a></div>',
+        template: '<div class = "milestone-calendar-export"><a class="dropdown-item" @click="exportToICal()" href="#"><i class="fa fa-clock mr-1"></i>Termine in Kalender (iCal) exportieren</a></div>',
         methods: {
             exportToICal: function () {
                 var _this = this;

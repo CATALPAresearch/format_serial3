@@ -4,13 +4,11 @@
  * Main method of the plugin. Load depending javascript and css before starting the timeline dashboard.
  *
  * @module     format/ladtopics
- * @package    format_ladtopics
  * @class      LADTopics
- * @copyright  2019 Niels Seidel, niels.seidel@fernuni-hagen.de
+ * @copyright  2019 Niels Seidel <niels.seidel@fernuni-hagen.de>
  * @license    MIT
  * @since      3.1
  */
-
 define([
     'jquery',
     M.cfg.wwwroot + '/course/format/ladtopics/amd/src/Timeline.js',
@@ -22,21 +20,28 @@ define([
     M.cfg.wwwroot + '/course/format/ladtopics/amd/src/ErrorHandler.js'
 ],
     function ($, Timeline, Utils, filterChart, activityChart, initialSurvey, Log, ErrorHandler) {
-
+        /**
+         * I was testing d3v4 together with dcv4 but could not solve the dependency hell. It would be nice to replace dc.js by proper d3v6.
+         */
         require.config({
             enforceDefine: false,
-            baseUrl: M.cfg.wwwroot + "/course/format/ladtopics/lib/build",
             paths: {
-                "crossfilter": ["crossfilter.min"],
-                "d3v4": ["d3.v4.min"], // upgrade to v5!
-                "dc": ["dc.v3.min"],
-                "moment226": ["moment-with-locales.min"], // ["moment.min"],
-                "intro293": ["intro.min"],
-                "ICAL": ["ical.min"],
-                "vDP": ["vDP.min"],
-                "vDPde": ["vDPde.min"]
+                //"crossfilter": [M.cfg.wwwroot + "/course/format/ladtopics/lib/build/crossfilter.min"],
+                //"d3": [M.cfg.wwwroot + "/course/format/ladtopics/lib/build/d3.v4.min"], 
+                //"dc": [M.cfg.wwwroot + "/course/format/ladtopics/lib/build/dc.v4.min"],
+                "d3": [M.cfg.wwwroot + "/course/format/ladtopics/lib/buil/d3.v4.min"], 
+                "crossfilter": [M.cfg.wwwroot + "/course/format/ladtopics/lib/build/crossfilter.min"],
+                "dc": [M.cfg.wwwroot + "/course/format/ladtopics/lib/build/dc.v3.min"],
+                "moment226": [M.cfg.wwwroot + "/course/format/ladtopics/lib/build/moment-with-locales.min"], // ["moment.min"],
+                "intro293": [M.cfg.wwwroot + "/course/format/ladtopics/lib/build/intro.min"],
+                "ICAL": [M.cfg.wwwroot + "/course/format/ladtopics/lib/build/ical.min"],
+                "vDP": [M.cfg.wwwroot + "/course/format/ladtopics/lib/build/vDP.min"],
+                "vDPde": [M.cfg.wwwroot + "/course/format/ladtopics/lib/build/vDPde.min"]
             },
             shim: {
+                'dc': {
+                    deps: ['d3', 'crossfilter']
+                },
                 "moment226": {
                     exports: 'moment'
                 },
@@ -54,13 +59,9 @@ define([
                 },
                 "vDPde": {
                     exports: "vDPde"
-                },
-                'dc': {
-                    deps: ['d3v4']
                 }
             }
         });
-
         // hide unused div
         let box = $("#region-main-box");
         const h = box.outerHeight();
@@ -71,51 +72,43 @@ define([
         });
         box.hide();
 
-        function start(courseid) {
-        
-            require([
-                'crossfilter',
-                'd3v4',
-                'dc',
-                'moment226',
-                'intro293',
-                "vDP",
-                "vDPde"
-            ], function (crossfilter, d3, dc, moment, intro, vDP, vDPde) {
-
-
-                ErrorHandler.logger = logger;
-                ErrorHandler.logWindowErrors();
-                ErrorHandler.logConsoleErrors();
-
-                var utils = new Utils();
-                var logger = new Log(courseid, {
-                    context: 'format_ladtopics',
-                    outputType: 1 // 0: console, 1: logstore_standard_log
-                });
-
-                new Timeline(
-                    d3,
-                    dc,
-                    crossfilter,
-                    moment,
-                    utils,
-                    intro,
-                    logger,
-                    filterChart,
-                    activityChart,
-                    initialSurvey,
-                    vDP,
-                    vDPde,
-                    ErrorHandler
-                );
-            });
-        }
-
         return {
             init: function (courseid) {
-                courseid = courseid === undefined ? parseInt($('#courseid').text(), 10) : courseid;
-                start(courseid);
+
+                require([
+                    'crossfilter',
+                    'd3',
+                    'dc',
+                    'moment226',
+                    'intro293',
+                    "vDP",
+                    "vDPde"
+                ], function (crossfilter, d3, dc, moment, intro, vDP, vDPde) {
+                    ErrorHandler.logger = logger;
+                    ErrorHandler.logWindowErrors();
+                    ErrorHandler.logConsoleErrors();
+
+                    var utils = new Utils();
+                    var logger = new Log(courseid, {
+                        context: 'format_ladtopics',
+                        outputType: 1 // 0: console, 1: logstore_standard_log
+                    });
+                    new Timeline(
+                        d3,
+                        dc,
+                        crossfilter,
+                        moment,
+                        utils,
+                        intro,
+                        logger,
+                        filterChart,
+                        activityChart,
+                        initialSurvey,
+                        vDP,
+                        vDPde,
+                        ErrorHandler
+                    );
+                });
             }
         };
     });

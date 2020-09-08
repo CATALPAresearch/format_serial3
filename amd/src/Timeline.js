@@ -40,7 +40,7 @@ define([
         var margins = { top: 15, right: 10, bottom: 20, left: 10 };
         var course = {
             courseType: 'Kurs', // or 'Modul'
-            semesterShortName: 'SoSe 2020',
+            semesterShortName: 'WS 2020/21',
             id: parseInt($('#courseid').text(), 10),
             // module: parseInt($('#moduleid').html())
             startDate: new Date(2020, 3, 1, 0, 0, 0),
@@ -1112,7 +1112,8 @@ define([
                         return moment(date).fromNow();
                     },
                     getReadableTime: function (date) {
-                        return moment(date).format("d.MM.YYYY, HH:mm");
+                        console.log(moment(date).format("DD.MM.YYYY, HH:mm"), date)
+                        return moment(date).format("DD.MM.YYYY, HH:mm");
                     },
                     strategiesByCategory: function (cat) {
                         return this.strategies.filter(function (s) {
@@ -1158,8 +1159,8 @@ define([
                             case 'page': return 'Text';
                             case 'kurstermin': return 'Termin';
                             case 'data': return 'Text';
-                            case 'hvp': return '';
-                            case 'checklist': return '';
+                            case 'hvp': return 'H5P';
+                            case 'checklist': return 'Checkliste';
                             case 'url': return 'Link';
                             case 'feedback': return 'Feedback';
                             case 'resource': return 'Material';
@@ -1903,6 +1904,21 @@ define([
                             new ErrorHandler(error);
                         }
                     },
+                    modExportMilestones: function () {
+                        let ms = this.milestones.filter(
+                            function (element) {
+                                if (element.mod !== true) {
+                                    return true;
+                                }
+                                return false;
+                            }
+                        );
+                        if (ms.length <= 0) {
+                            this.modAlert("warning", "Keine Meilensteine vorhanden.");
+                            return;
+                        }
+                        this.exportMilestones(ms);
+                    },
                     modLoadMilestones: function () {
                         try {
                             let file = document.getElementById('modImportedFile').files[0];
@@ -1974,8 +1990,6 @@ define([
                         } else if ($("#modSaveExam").is(":checked")) {
                             this.modSaveMilestones("exam", ms, true);
                         } else if ($("#modSaveLocal").is(":checked")) {
-                            this.exportMilestones(ms);
-                        } else {
                             this.exportMilestones(ms);
                         }
                         return;
@@ -2140,11 +2154,11 @@ define([
                                     $('#modWorkload tr').not(':first').not(':last').remove();
                                     _this.modStatistics.users = resolve.num_users ? +resolve.num_users : 0;
                                     _this.modStatistics.surveys = resolve.num_survey ? +resolve.num_survey : 0;
-                                    _this.modStatistics.msProgessed = 0,
-                                        _this.modStatistics.msReady = 0,
-                                        _this.modStatistics.msUrgent = 0,
-                                        _this.modStatistics.msMissed = 0,
-                                        _this.modStatistics.msReflected = 0
+                                    _this.modStatistics.msProgessed = 0;
+                                    _this.modStatistics.msReady = 0;
+                                    _this.modStatistics.msUrgent = 0;
+                                    _this.modStatistics.msMissed = 0;
+                                    _this.modStatistics.msReflected = 0;
                                     _this.modStatistics.ptExam = 0;
                                     _this.modStatistics.ptOrientation = 0;
                                     _this.modStatistics.ptInterest = 0;
