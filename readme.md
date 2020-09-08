@@ -15,6 +15,22 @@ LAD Topics is a *Learning Analytics Dashboard* for Moodle courses. The dashboard
 2. Open the page https://<moodle>/admin/index.php?cache=1 and follow the install instructions for the plugin.
 3. Open a course of you choice and go to the *course settings* (watch out for the littel cog-icon). Set the 'course format' to 'LAD Topics'.
 
+# Usage
+
+**Limesurvey bindings**
+
+* Manuell in der Tabelle limesurvey_assigns die Kurs-ID sowie die ID der
+   LimeSurvey-Umfrage (z.B. https://umfrage.fernuni-hagen.de/v3/827287
+   => *827287*) einpflegen, um eine verpflichtende Umfrage vor der Kursnutzung zu realisieren. 
+   Was gibt man bei start and stop date an: 1597673805 (https://www.unixtimestamp.com/)
+* End-URL:
+   [moodlePfad]/course/format/ladtopics/survey.php?s={SID}&a={SAVEDID}
+* Die Umfrage muss aktiv sein und nach einem Test müssen die
+   Cookies zurückgesetzt werden (sonst klappt es bei LimeSurvey mit den
+   Parametern nicht).
+
+
+
 
 # Development
 

@@ -63,3 +63,22 @@
     </TABLE>
   </TABLES>
 </XMLDB>
+<!--
+create table moodlelimesurvey_submissions (
+id int,
+user_id int,
+survey_id int,
+submission_id int,
+complete_date int
+);
+
+create table moodlelimesurvey_assigns (
+id int,
+name varchar(255),
+course_id int,
+survey_id int,
+start_date int,
+stop_date int
+);
+
+-->
