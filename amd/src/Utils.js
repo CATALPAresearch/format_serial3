@@ -12,16 +12,19 @@
 require.config({
     enforceDefine: false,
     paths: {
-        "crossfilter": [M.cfg.wwwroot + "/course/format/ladtopics/lib/build/crossfilter.min"],
         "d3v4": [M.cfg.wwwroot + "/course/format/ladtopics/lib/build/d3.v4.min"], // upgrade to v5!
-        "dc": [M.cfg.wwwroot + "/course/format/ladtopics/lib/build/dc.v3.min"]
+        "crossfilter": [M.cfg.wwwroot + "/course/format/ladtopics/lib/build/crossfilter.min"],
+        "dc": [M.cfg.wwwroot + "/course/format/ladtopics/lib/build/dc.v4.min"]
     },
     shim: {
+        'dc': {
+            deps: ['d3v4', 'crossfilter']
+        },
         'crossfilter': {
             exports: 'crossfilter'
         },
-        'dc': {
-            deps: ['d3v4', 'crossfilter']
+        'd3v4': {
+            exports: 'd3'
         }
     }
 });

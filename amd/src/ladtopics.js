@@ -22,12 +22,12 @@ define([
     M.cfg.wwwroot + '/course/format/ladtopics/amd/src/ErrorHandler.js'
 ],
     function ($, Timeline, Utils, filterChart, activityChart, initialSurvey, Log, ErrorHandler) {
-
+        console.log(100)
         require.config({
             enforceDefine: false,
             paths: {
                 "crossfilter": [M.cfg.wwwroot + "/course/format/ladtopics/lib/build/crossfilter.min"],
-                "d3v4": [M.cfg.wwwroot + "/course/format/ladtopics/lib/build/d3.v4.min"], // upgrade to v5!
+                "d3": [M.cfg.wwwroot + "/course/format/ladtopics/lib/build/d3.v4.min"], // upgrade to v5!
                 "dc": [M.cfg.wwwroot + "/course/format/ladtopics/lib/build/dc.v4.min"],
                 "moment226": [M.cfg.wwwroot + "/course/format/ladtopics/lib/build/moment-with-locales.min"], // ["moment.min"],
                 "intro293": [M.cfg.wwwroot + "/course/format/ladtopics/lib/build/intro.min"],
@@ -36,6 +36,9 @@ define([
                 "vDPde": [M.cfg.wwwroot + "/course/format/ladtopics/lib/build/vDPde.min"]
             },
             shim: {
+                'dc': {
+                    deps: ['d3', 'crossfilter']
+                },
                 "moment226": {
                     exports: 'moment'
                 },
@@ -53,9 +56,6 @@ define([
                 },
                 "vDPde": {
                     exports: "vDPde"
-                },
-                'dc': {
-                    deps: ['d3v4', 'crossfilter']
                 }
             }
         });
@@ -71,6 +71,7 @@ define([
         box.hide();
 
         function start(courseid) {
+            console.log(12)
 
             require([
                 'crossfilter',
@@ -84,7 +85,7 @@ define([
                 ErrorHandler.logger = logger;
                 ErrorHandler.logWindowErrors();
                 ErrorHandler.logConsoleErrors();
-
+                console.log('drin')
                 var utils = new Utils();
                 var logger = new Log(courseid, {
                     context: 'format_ladtopics',
@@ -106,16 +107,14 @@ define([
                     vDPde,
                     ErrorHandler
                 );
+
             });
         }
 
         return {
-            init: function (courseid) {
+            init: function (courseid) { console.log(11)
                 courseid = courseid === undefined ? parseInt($('#courseid').text(), 10) : courseid;
-                console.log('exit')
-                return;
-
-                //start(courseid);
+                start(courseid);
             }
         };
     });

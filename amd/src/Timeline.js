@@ -26,7 +26,7 @@ define([
     M.cfg.wwwroot + "/course/format/ladtopics/amd/src/MilestoneCalendarExport.js",
     M.cfg.wwwroot + "/course/format/ladtopics/amd/src/DashboardCompletion.js"
 ], function ($, ajax, Vue, MilestoneCalendarExport, DashboardCompletion) {
-
+    console.log(Vue);
     var Timeline = function (d3, dc, crossfilter, moment, utils, introJs, logger, FilterChart, ActivityChart, InitialSurvey, vDP, vDPde, ErrorHandler) {
 
         $(document).ready(function () {
@@ -1903,6 +1903,21 @@ define([
                             new ErrorHandler(error);
                         }
                     },
+                    modExportMilestones: function(){
+                        let ms = this.milestones.filter(
+                            function (element) {
+                                if (element.mod !== true) {
+                                    return true;
+                                }
+                                return false;
+                            }
+                        );
+                        if (ms.length <= 0) {
+                            this.modAlert("warning", "Keine Meilensteine vorhanden.");
+                            return;
+                        }
+                        this.exportMilestones(ms);
+                    },
                     modLoadMilestones: function () {
                         try {
                             let file = document.getElementById('modImportedFile').files[0];
@@ -1975,9 +1990,7 @@ define([
                             this.modSaveMilestones("exam", ms, true);
                         } else if ($("#modSaveLocal").is(":checked")) {
                             this.exportMilestones(ms);
-                        } else {
-                            this.exportMilestones(ms);
-                        }
+                        } 
                         return;
                     },
                     modResetSelect: function () {
@@ -2740,7 +2753,7 @@ define([
 
 
 
-            var survey = new InitialSurvey(milestoneApp, utils, course);
+            //var survey = new InitialSurvey(milestoneApp, utils, course);
 
             /**
              * Resize charte if window sizes change
