@@ -1293,13 +1293,13 @@ $modalMilestone = '
                                                         <div class="dropdown-menu" aria-labeledby="settingsMenuButton">
                                                         '.($this->checkModeratorStatus()?'
                                                             <a class="dropdown-item" data-toggle="modal" data-target="#moderationModal" href="#">
-                                                                <i class="fa fa-clock"></i>Planung
+                                                                <i class="fa fa-clock mr-1"></i>Administration
                                                             </a>
                                                             <a class="dropdown-item" data-toggle="modal" data-target="#reportModal" href="#">
-                                                                <i class="fa fa-clock"></i>Statistik
+                                                                <i class="fa fa-clock mr-1"></i>Analytics
                                                             </a>':
                                                             '<a class="dropdown-item" data-toggle="modal" data-target="#moderationModal" href="#">
-                                                                <i class="fa fa-clock"></i>Einstellungen
+                                                                <i class="fa fa-clock mr-1"></i>Einstellungen
                                                             </a>').'                                                            
                                                             <milestone-calendar-export v-bind:milestones="milestones" v-bind:calendar="calendar"></milestone-calendar-export>                                                         
                                                         </div>
