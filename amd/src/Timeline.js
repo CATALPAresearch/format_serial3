@@ -24,8 +24,9 @@ define([
     'core/ajax',
     M.cfg.wwwroot + "/course/format/ladtopics/lib/build/vue.min.js",
     M.cfg.wwwroot + "/course/format/ladtopics/amd/src/MilestoneCalendarExport.js",
-    M.cfg.wwwroot + "/course/format/ladtopics/amd/src/DashboardCompletion.js"
-], function ($, ajax, Vue, MilestoneCalendarExport, DashboardCompletion) {
+    M.cfg.wwwroot + "/course/format/ladtopics/amd/src/DashboardCompletion.js",
+    M.cfg.wwwroot + "/course/format/ladtopics/amd/src/DashboardStrategy.js"
+], function ($, ajax, Vue, MilestoneCalendarExport, DashboardCompletion, DashboardStrategy) {
 
     var Timeline = function (d3, dc, crossfilter, moment, utils, introJs, logger, FilterChart, ActivityChart, InitialSurvey, vDP, vDPde, ErrorHandler) {
 
@@ -123,7 +124,8 @@ define([
                 components: {
                     'datepicker': vDP,
                     'milestone-calendar-export': MilestoneCalendarExport,
-                    'dashboard-completion': DashboardCompletion
+                    'dashboard-completion': DashboardCompletion,
+                    'dashboard-strategy': DashboardStrategy
                     // 'survey': surveyForm
                 },
                 data: function () {
