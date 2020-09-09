@@ -577,7 +577,7 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                                                 <div class="col-md">
                                                     <div>
                                                         <button @click="validateSurveyForm()" class="btn btn-primary btn-sm">{{ buttonText()}}</button>
-                                                        <button class="right btn btn-link right" data-dismiss="modal"
+                                                        <button class="right btn btn-link right" @click="closeModal()" data-dismiss="modal"
                                                             aria-label="abbrechen">jetzt nicht</button>
                                                     </div>
                                                 </div>
