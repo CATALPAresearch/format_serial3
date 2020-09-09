@@ -62,6 +62,7 @@ define([
                     }
                 },
                 fail: function (e) {
+                    // console.log(e); // for debuging database stuff we need the console, arn't we?
                     // eslint-disable-next-line no-console 
                     new ErrorHandler(e);
 

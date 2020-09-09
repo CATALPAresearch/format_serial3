@@ -52,6 +52,22 @@ define([
             maxPlaningPeriod: 12 // months
         };
 
+        utils.get_ws('policyacceptance', {
+            'policyversion': 1 // static value, needs to be set according to the defined policies
+        }, function (e) {
+            try {
+                let res = JSON.parse(e.data)
+                console.log(res);
+                if(res === false){
+                    // hide some parts of the course
+                }
+            } catch (e) {
+                // eslint-disable-next-line no-console
+                console.error(e);
+            }
+        });
+
+
         utils.get_ws('logstore', {
             'courseid': parseInt(course.id, 10)
         }, function (e) {
@@ -63,6 +79,7 @@ define([
             }
         });
 
+        
         /**
          * 
          * @param {*} activityData (Object)
@@ -1112,7 +1129,6 @@ define([
                         return moment(date).fromNow();
                     },
                     getReadableTime: function (date) {
-                        console.log(moment(date).format("DD.MM.YYYY, HH:mm"), date)
                         return moment(date).format("DD.MM.YYYY, HH:mm");
                     },
                     strategiesByCategory: function (cat) {

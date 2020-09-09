@@ -138,7 +138,14 @@ $functions = array( // completionProgress
                 'classpath'   => 'course/format/ladtopics/api.php',
                 'description' => 'Set and get user pref',
                 'type'        => 'write',
-                //'capabilities'  => 'format/ladtopics:view',
+                'ajax'        => true
+        ),
+        'format_ladtopics_policyacceptance' => array(
+                'classname'   => 'format_ladtopics_external',
+                'methodname'  => 'policyacceptance',
+                'classpath'   => 'course/format/ladtopics/api.php',
+                'description' => 'Get polics acceptance',
+                'type'        => 'write',
                 'ajax'        => true
         )
 
