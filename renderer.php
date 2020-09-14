@@ -1132,7 +1132,7 @@ $modalMilestone = '
                             <select @change="resourceSelected" id="modal_strategy-select">
                                 <option :selected="true" disabled value="default">Wählen Sie Themen, Materialien und Aktivitäten</option>
                                 <optgroup v-for="section in resourceSections()" :label="section.name">
-                                    <option v-for="s in resourcesBySection(section.id)" :value="s.id">{{ getInstanceTypeTitel(s.instance_type) }}: {{ s.name }} &FilledSmallSquare; &EmptySmallSquare; &EmptySmallSquare;</option>
+                                    <option v-for="s in resourcesBySection(section.id)" :value="s.id">{{ getInstanceTypeTitel(s.instance_type) }}: {{ s.name }}</option>
                                 </optgroup>
                             </select>
                         </div>
