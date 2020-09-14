@@ -674,35 +674,6 @@ $milestoneArchiveList = '
                                 
                             </li>
                         </ul>
-
-                <!-- Strategien -->
-                        <label for="" class="strategy-title">Meine Lernstrategien für diesen Meilenstein</label>
-                        <div v-if="m.strategies.length > 0" class="strategy-header">
-                            <span class="strat-col-1">erledigt?</span>
-                            <span class="strat-col-1">Meine Lernstrategien</span>
-                        </div>
-                        <ul class="strategy-list">
-                            <li v-for="s in m.strategies" :class="s.checked ? \'strategy-selected-item ms-done\' : \'strategy-selected-item ms-not-done\'">
-                                <label class="strategy-selected-label" for="defaultCheck1">
-                                    <input class="strategy-selected-check" 
-                                        type="checkbox" value=""
-                                        data-toggle="tooltip"
-                                        title="Setzen Sie das Häkchen, wenn Sie diese Lernstrategie bereits angewendet haben."
-                                        v-model="s.checked"
-                                        :id="s.id"
-                                        :disabled = "m.status === \'reflected\'"
-                                        @change="updateMilestoneStatus()"
-                                        >
-                                    <span class="strategy-selected-name">{{ s.name }}</span>
-                                    <button type="button" class="btn btn-sm btn-link"
-                                        data-toggle="popover" :data-content="s.desc"><i
-                                            class="fa fa-question"></i></button>
-                                    <span hidden class="strategy-selected-remove remove-btn" data-toggle="tooltip" title="Lernstrategie entferenen">
-                                        <i class="fa fa-trash" @click="strategyRemove(s.id)"></i>
-                                    </span>
-                                </label>
-                            </li>
-                        </ul>
             </div>
         </div>
     </li>
@@ -791,35 +762,7 @@ $milestoneList = '
                                     </span>
                                 </label>                                
                             </li>
-                        </ul>
-
-                <!-- Strategien -->
-                        <label for="" class="strategy-title">Meine Lernstrategien für diesen Meilenstein</label>
-                        <div v-if="m.strategies.length > 0" class="strategy-header">
-                            <span class="strat-col-1">erledigt?</span>
-                            <span class="strat-col-1">Meine Lernstrategien</span>
-                        </div>
-                        <ul class="strategy-list">
-                            <li v-for="s in m.strategies" :class="s.checked ? \'strategy-selected-item ms-done\' : \'strategy-selected-item ms-not-done\'">
-                                <label class="strategy-selected-label" for="defaultCheck1">
-                                    <input class="strategy-selected-check" 
-                                        type="checkbox" value=""
-                                        data-toggle="tooltip"
-                                        title="Setzen Sie das Häkchen, wenn Sie diese Lernstrategie bereits angewendet haben."
-                                        v-model="s.checked"
-                                        :id="s.id"
-                                        @change="updateMilestoneStatus()"
-                                        >
-                                    <span class="strategy-selected-name">{{ s.name }}</span>
-                                    <button type="button" class="btn btn-sm btn-link"
-                                        data-toggle="popover" :data-content="s.desc"><i
-                                            class="fa fa-question"></i></button>
-                                    <span hidden class="strategy-selected-remove remove-btn" data-toggle="tooltip" title="Lernstrategie entferenen">
-                                        <i class="fa fa-trash" @click="strategyRemove(s.id)"></i>
-                                    </span>
-                                </label>
-                            </li>
-                        </ul>
+                        </ul>        
             </div>
         </div>
     </li>
@@ -1098,32 +1041,6 @@ $modalMilestone = '
                             </li>
                         </ul>
                     </div>
-                    <div id="strategies" class="col-md-6">
-                        <!-- Strategien -->
-                        <label for="" class="strategy-title">Meine Lernstrategien für diesen Meilenstein</label>
-                        <div v-if="getSelectedMilestone().strategies.length > 0" class="strategy-header">
-                            <span class="strat-col-1">erledigt?</span>
-                            <span class="strat-col-1">Meine Lernstrategien</span>
-                        </div>
-                        <ul class="strategy-list">
-                            <li v-for="s in getSelectedMilestone().strategies" :class="s.checked ? \'strategy-selected-item ms-done\' : \'strategy-selected-item ms-not-done\'">
-                                <label class="strategy-selected-label" for="defaultCheck1">
-                                    <input class="strategy-selected-check" 
-                                        type="checkbox" value=""
-                                        data-toggle="tooltip"
-                                        title="Setzen Sie das Häkchen, wenn Sie diese Lernstrategie bereits angewendet haben."
-                                        id="strategyCheck" v-model="s.checked" v-bind:id="s.id">
-                                    <span class="strategy-selected-name">{{ s.name }}</span>
-                                    <button type="button" class="btn btn-sm btn-link"
-                                        data-toggle="popover" :data-content="s.desc"><i
-                                            class="fa fa-question"></i></button>
-                                    <span class="strategy-selected-remove remove-btn" data-toggle="tooltip" title="Lernstrategie entferenen">
-                                        <i class="fa fa-trash" @click="strategyRemove(s.id)"></i>
-                                    </span>
-                                </label>
-                            </li>
-                        </ul>
-                    </div>
                 </div>
                 <div class="row">
                     <div class="col-md-6">
@@ -1137,49 +1054,6 @@ $modalMilestone = '
                             </select>
                         </div>
                         <div class="col-sm-10 alert-invalid" v-if="invalidResources">Wählen Sie bitte Themen, Materialien und Aktivitäten aus.</div>
-                    </div>
-                    <div id="modal-strategies" class="col-md-6">
-                        <span id="strategy-introduction" class="strategy-introduction">Welche Lernstrategien möchten Sie anwenden?</span>
-                        <div :style="invalidStrategy ? \'border: solid 1px #ff420e;\' : \'none\'">
-                            <div v-for="cat in strategyCategories" class="strategy-category">
-                                <div class="strategy-category-title">{{cat.name}}</div>
-                                <div 
-                                    class="strategy-category-item" 
-                                    v-for="s in strategiesByCategory(cat.id)" 
-                                    :value="s.id"
-                                    v-if="!isSelectedStrategy(s.id)"
-                                    >
-                                    <button @click="strategySelected(s.id)" type="button" class="btn btn-sm" title="Für den Meilenstein auswählen">
-                                        <i class="fa fa-arrow-up"></i>
-                                    </button>
-                                    {{ s.name }}
-                                    <button type="button" class="btn btn-sm btn-link"
-                                        data-toggle="popover" :data-content="s.desc"><i
-                                            class="fa fa-question"></i></button>
-                                </div>
-                            </div>
-                            
-                            <select hidden @change="strategySelected" id="modal_strategy-select">
-                                <option :selected="true" disabled>Lernstrategie</option>
-                                <optgroup label="Organisationsstrategien">
-                                    <option v-for="s in strategiesByCategory(\'organization\')"
-                                        :value="s.id">{{ s.name }}</option>
-                                </optgroup>
-                                <optgroup label="Elaborationsstrategien">
-                                    <option v-for="s in strategiesByCategory(\'elaboration\')"
-                                        :value="s.id">{{ s.name }}</option>
-                                </optgroup>
-
-                                <optgroup label="Wiederholungsstrategien">
-                                    <option v-for="s in strategiesByCategory(\'repeatition\')"
-                                        :value="s.id">{{ s.name }}</option>
-                                </optgroup>
-                                <!--<optgroup label="Sonstige">
-                                    <option v-for="s in strategiesByCategory(\'misc\')" :value="s.id">{{ s.name }}</option>
-                                    </optgroup>-->
-                            </select>
-                        </div>
-                        <div class="col-sm-10 alert-invalid" v-if="invalidStrategy">Wählen Sie bitte mindestens eine Lernstrategie aus.</div>
                     </div>
                 </div>
                 <hr />
