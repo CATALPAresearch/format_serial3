@@ -23,21 +23,21 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['addsections'] = 'Add topics';
-$string['currentsection'] = 'This topic';
-$string['editsection'] = 'Edit topic';
-$string['editsectionname'] = 'Edit topic name';
-$string['deletesection'] = 'Delete topic';
-$string['newsectionname'] = 'New name for topic {$a}';
-$string['sectionname'] = 'Topic';
+$string['addsections'] = 'Themenabschnitt hinzufügen';
+$string['currentsection'] = 'Dieser Themenabschnitt';
+$string['editsection'] = 'Themenabschnitt bearbeiten';
+$string['editsectionname'] = 'Namen des Themenabschnitts bearbeiten';
+$string['deletesection'] = 'Themenabschnitt löschen';
+$string['newsectionname'] = 'Neuer Namen für den Themenabschnitt {$a}';
+$string['sectionname'] = 'Themenabschnitt';
 $string['pluginname'] = 'LAD Topics format';
-$string['section0name'] = 'General';
-$string['page-course-view-topics'] = 'Any course main page in topics format';
-$string['page-course-view-topics-x'] = 'Any course page in topics format';
-$string['hidefromothers'] = 'Hide topic';
-$string['showfromothers'] = 'Show topic';
+$string['section0name'] = 'Allgemein';
+$string['page-course-view-topics'] = 'Beliebige Kursübersichtsseite im LAD-Topics Format';
+$string['page-course-view-topics-x'] = 'Beliebige Kursübersichtsseite im LAD-Topics Format';
+$string['hidefromothers'] = 'Themenabschnitt verbergen';
+$string['showfromothers'] = 'Themenabschnitt anzeigen';
 // Survey
-$string['surveyTitle'] = 'Survey heading';
-$string['surveyHeadline'] = 'This is the survey heading.';
+$string['surveyTitle'] = 'Das ist der Titel der Umfrage';
+$string['surveyHeadline'] = 'Das ist die Überschrift der Umfrage';
 $string['surveyDescription'] = 'Survey description';
-$string['surveyButton'] = 'Refresh.';
+$string['surveyButton'] = 'Neu laden.';
