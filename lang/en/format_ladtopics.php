@@ -37,7 +37,10 @@ $string['page-course-view-topics-x'] = 'Any course page in topics format';
 $string['hidefromothers'] = 'Hide topic';
 $string['showfromothers'] = 'Show topic';
 // Survey
-$string['surveyTitle'] = 'Das ist der Titel der Umfrage';
-$string['surveyHeadline'] = 'Das ist die Überschrift der Umfrage';
-$string['surveyDescription'] = 'Survey description';
-$string['surveyButton'] = 'Neu laden.';
+$string['surveyTitle'] = 'Begleitforschung D²L²';
+$string['surveyHeadline'] = 'Begleitforschung D²L²';
+$string['surveyDescription'] = 'Im Rahmen der Begleitforschung des Forschungsschwerpunkts D²L² bitten wir Sie, an folgenden Umfragen teilzunehmen und so 
+unsere Forschung zu unterstützen.';
+$string['surveyRequired'] = 'Umfragen, die mit einem roten Ausrufungszeichen (<i class="icon fa fa-exclamation text-danger fa-fw" style="padding: 0px; margin: 0px;"></i>) gekennzeichnet sind,
+müssen absolviert werden, damit Sie wieder auf die Lernumgebung zugreifen können.';
+$string['surveyButton'] = 'Zurück zum Kurs';

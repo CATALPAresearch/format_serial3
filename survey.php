@@ -42,30 +42,39 @@ if(isset($sess->s)){
 } 
 
 if(isset($sess->c)){    
-    $records = $DB->get_records_sql('SELECT * FROM '.$CFG->prefix.'limesurvey_assigns WHERE course_id = ?', array(+$sess->c));
-    
-    
+    $records = $DB->get_records_sql('SELECT * FROM '.$CFG->prefix.'limesurvey_assigns WHERE course_id = ?', array(+$sess->c));   
     $pending = false;
     $list = '<div class="list-group">';
     foreach($records as $record){
         $record->done = $DB->record_exists_sql('SELECT * FROM '.$CFG->prefix.'limesurvey_submissions WHERE user_id = ? AND survey_id = ?', array($USER->id, $record->survey_id));        
         if($record->done === true) {          
-            $list .= '<a href="#" class="list-group-item list-group-item-action disabled" style="background-color: rgb(195,230,203);"><i class="icon fa fa-check"></i>'.$record->name.'</a>';
+            $list .= '<a href="#" class="list-group-item list-group-item-action disabled" style="background-color: rgb(195,230,203);"><span class="text-success"><i class="icon fa fa-check fa-fw"></i>'.$record->name.'</span></a>';
         } else {
             $show = true;
+            $icon = 'fa-share'; // fa-check
+            $color = '';
             if(isset($record->startdate) && !is_null($record->startdate)){
                 if(time($record->startdate) > time()){
                     $show = false;
                 }
             }
             if(isset($record->stopdate) && !is_null($record->stopdate)){
-                if(time($record->stopdate) < time()){
+                if(time($record->stopdate) <= time()){
                     $show = false;
                 }
             }
+            if(isset($record->warndate) && !is_null($record->warndate)){
+                if(time($record->warndate) <= time()){
+                    $icon = 'fa-exclamation';
+                    $color = 'text-danger';
+                }
+            } else {
+                $icon = 'fa-exclamation';
+                $color = 'text-danger';
+            }
             if($show){
                 $pending = true;
-                $list .= '<a href="'.$link.$record->survey_id.'" class="list-group-item list-group-item-action list-group-item-light"><i class="icon fa fa-share"></i>'.$record->name.'</a>';
+                $list .= '<a href="'.$link.$record->survey_id.'" class="list-group-item list-group-item-action list-group-item-light"><span class="'.$color.'"><i class="icon fa '.$icon.' fa-fw"></i>'.$record->name.'</span></a>';
             }            
         }
     }
@@ -79,11 +88,12 @@ if(isset($sess->c)){
     $PAGE->set_title(get_string('surveyTitle', 'format_ladtopics'));
     $PAGE->set_heading(get_string('surveyHeadline', 'format_ladtopics'));
     echo $OUTPUT->header();    
-    echo '<p>'.get_string('surveyDescription', 'format_ladtopics').'</p>';   
+    echo '<p class="mb-2">'.get_string('surveyDescription', 'format_ladtopics').'</p>';   
     echo $list;
-    echo '<div class="pt-3 text-center"><button onClick="window.location.reload()" class="btn btn-primary center-block">'.get_string('surveyButton', 'format_ladtopics').'</button></div>';
+    echo '<p class="mt-2"><i>'.get_string('surveyRequired', 'format_ladtopics').'</i></p>';
+    echo '<p>'.time().'</p>'; 
+    echo '<div class="mt-1 text-center"><button onClick="'.new moodle_url('/').'" class="btn btn-primary center-block">'.get_string('surveyButton', 'format_ladtopics').'</button></div>';
     echo $OUTPUT->footer();
-
 } else {    
     redirect(new moodle_url('/'));
 }

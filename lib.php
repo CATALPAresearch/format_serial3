@@ -155,7 +155,7 @@ class format_ladtopics extends format_base {
         
         global $COURSE, $DB, $CFG, $USER;
 
-        if($this->SURVEY_ENABLED === true){                 
+        if($this->SURVEY_ENABLED === true){             
             $records = $DB->get_records_sql('SELECT * FROM '.$CFG->prefix.'limesurvey_assigns WHERE course_id = ?', array($COURSE->id));                   
             foreach($records as $record){                
                 if($DB->record_exists_sql('SELECT * FROM '.$CFG->prefix.'limesurvey_submissions WHERE user_id = ? AND survey_id = ?', array($USER->id, $record->survey_id)) === false){
@@ -165,7 +165,12 @@ class format_ladtopics extends format_base {
                         }
                     }
                     if(isset($record->stopdate) && !is_null($record->stopdate)){
-                        if(time($record->stopdate) < time()){
+                        if(time($record->stopdate) <= time()){
+                            continue;
+                        }
+                    }
+                    if(isset($record->warndate) && !is_null($record->warndate)){
+                        if(time($record->warndate) <= time()){
                             continue;
                         }
                     }
