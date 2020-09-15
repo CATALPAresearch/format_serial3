@@ -54,17 +54,17 @@ if(isset($sess->c)){
             $icon = 'fa-share'; // fa-check
             $color = '';
             if(isset($record->startdate) && !is_null($record->startdate)){
-                if(time($record->startdate) > time()){
+                if($record->startdate > time()){
                     $show = false;
                 }
             }
             if(isset($record->stopdate) && !is_null($record->stopdate)){
-                if(time($record->stopdate) <= time()){
-                    $show = false;
+                if($record->stopdate <= time()){
+                    $show = true;                    
                 }
             }
             if(isset($record->warndate) && !is_null($record->warndate)){
-                if(time($record->warndate) <= time()){
+                if($record->warndate <= time()){
                     $icon = 'fa-exclamation';
                     $color = 'text-danger';
                 }
@@ -90,9 +90,9 @@ if(isset($sess->c)){
     echo $OUTPUT->header();    
     echo '<p class="mb-2">'.get_string('surveyDescription', 'format_ladtopics').'</p>';   
     echo $list;
-    echo '<p class="mt-2"><i>'.get_string('surveyRequired', 'format_ladtopics').'</i></p>';
-    echo '<p>'.time().'</p>'; 
-    echo '<div class="mt-1 text-center"><button onClick="'.new moodle_url('/').'" class="btn btn-primary center-block">'.get_string('surveyButton', 'format_ladtopics').'</button></div>';
+    echo '<p class="mt-2"><i>'.get_string('surveyRequired', 'format_ladtopics').'</i></p>'; 
+    $courseURL = new moodle_url('/course/view.php', array('id' => +$sess->c));
+    echo '<div class="mt-1 text-center"><button onClick="javascript:window.location.href=\''.$courseURL->__toString().'\';" class="btn btn-primary center-block">'.get_string('surveyButton', 'format_ladtopics').'</button></div>';
     echo $OUTPUT->footer();
 } else {    
     redirect(new moodle_url('/'));

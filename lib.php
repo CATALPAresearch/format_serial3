@@ -160,17 +160,17 @@ class format_ladtopics extends format_base {
             foreach($records as $record){                
                 if($DB->record_exists_sql('SELECT * FROM '.$CFG->prefix.'limesurvey_submissions WHERE user_id = ? AND survey_id = ?', array($USER->id, $record->survey_id)) === false){
                     if(isset($record->startdate) && !is_null($record->startdate)){
-                        if(time($record->startdate) > time()){
+                        if($record->startdate < time()){
                             continue;
                         }
                     }
                     if(isset($record->stopdate) && !is_null($record->stopdate)){
-                        if(time($record->stopdate) <= time()){
+                        if($record->stopdate >= time()){
                             continue;
                         }
                     }
                     if(isset($record->warndate) && !is_null($record->warndate)){
-                        if(time($record->warndate) <= time()){
+                        if($record->warndate > time()){
                             continue;
                         }
                     }

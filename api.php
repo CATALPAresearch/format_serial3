@@ -55,6 +55,54 @@ function get_meta($courseID)
 
 class format_ladtopics_external extends external_api
 {
+    public static function limesurvey_parameters(){
+        return new external_function_parameters(
+            array(
+                'courseid' => new external_value(PARAM_INT, 'course id')
+            )
+        );
+    }
+
+    public static function limesurvey($courseid){
+        global $CFG, $DB, $USER;
+        $out = array();       
+        try{
+            $out['warnSurvey'] = false;
+            $records = $DB->get_records_sql('SELECT * FROM '.$CFG->prefix.'limesurvey_assigns WHERE course_id = ? AND warndate > ? AND stopdate > ?', array($courseid, time(), time()));
+            foreach($records as $record){
+                if($DB->record_exists_sql('SELECT * FROM '.$CFG->prefix.'limesurvey_submissions WHERE user_id = ? AND survey_id = ?', array($USER->id, $record->survey_id)) === false){
+                    $out['warnSurvey'] = true;                    
+                    $warn = $record->warndate;
+                    $url = new moodle_url('/course/format/ladtopics/survey.php', array('c' => $courseid));
+                    $out['link'] = $url->__toString();
+                    if(isset($out['warnDate'])){
+                        if($warn < $out['warnDate']){
+                            $out['warnDate'] = $warn;
+                        }
+                    } else {
+                        $out['warnDate'] = $warn;
+                    }
+                }
+            }
+        } catch(Exception $ex){
+            $out['debug'] = $ex->getMessage();
+        }
+        return array('data' => json_encode($out));
+    }
+
+    public static function limesurvey_is_allowed_from_ajax(){
+        return true;
+    }
+
+    public static function limesurvey_returns(){
+        return new external_single_structure(
+            array(
+                'data' => new external_value(PARAM_RAW, 'data')
+            )
+        );
+    }
+    
+    
     public static function statistics_parameters()
     {
         return new external_function_parameters(

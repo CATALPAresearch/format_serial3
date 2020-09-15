@@ -92,7 +92,52 @@ define([
                     var logger = new Log(courseid, {
                         context: 'format_ladtopics',
                         outputType: 1 // 0: console, 1: logstore_standard_log
-                    });
+                    });                                  
+
+
+                    // Limesurvey alert
+                    utils.get_ws('limesurvey', {
+                        'courseid': parseInt(courseid, 10)
+                    }, function (e) {                        
+                        try {
+                            if(typeof e === "object" && e !== null){                                                               
+                                if(typeof e.data === "string"){
+                                    const data = JSON.parse(e.data);
+                                    if(data.warnSurvey === true){
+
+                                        const time = moment(data.warnDate * 1000);
+                                        const now = moment();
+                                        const diff = `${time.diff(now, 'days')}`;
+
+                                        const wDate = new Date(data.warnDate * 1000);
+                                        let date = ("0" + wDate.getDate()).slice(-2);
+                                        let month = ("0" + (wDate.getMonth() + 1)).slice(-2);
+                                        let year = wDate.getFullYear();
+                                        let hours = wDate.getHours();
+                                        let minutes = wDate.getMinutes(); 
+                                        
+                                        const obj = $(
+                                            `
+                                            <div class="alert alert-primary" role="alert" style="cursor:pointer;">
+                                                Sie haben noch ${diff} Tage Zeit, um eine Umfrage aufzuschieben. Ab dem ${date}.${month}.${year} ${hours}:${minutes} Uhr müssen Sie die Umfrage absolvieren, um wieder auf die Lernumgebung zurgreifen zu können.
+                                                Klicken Sie auf dieses Feld, um die Umfragen zu sehen. 
+                                            </div>
+                                            `
+                                        );
+
+                                        obj.on("click", function(){
+                                            window.location.href = data.link;
+                                        });
+
+                                        $("header").after(obj);
+                                    }                                    
+                                }
+                            }                            
+                        } catch (error) {
+                            new ErrorHandler(error);
+                        }
+                    });              
+
                     new Timeline(
                         d3,
                         dc,

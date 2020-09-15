@@ -92,6 +92,12 @@ class format_ladtopics_renderer extends format_section_renderer_base {
         }    
     }
 
+    private function checkForSurveys(){
+
+        
+        return '<div class="alert alert-check" role="alert"><a href="'.new moodle_url('/course/format/ladtopics/survey.php').'">Bitte</a></div>';
+    }
+
     /**
      * Generate the starting container html for a list of sections
      * @return string HTML to output.
