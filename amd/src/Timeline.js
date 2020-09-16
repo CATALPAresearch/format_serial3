@@ -2606,8 +2606,10 @@ define([
                                     }
                                 );
                                 this.modUsers = result;
+                                if(typeof result !== "object" || result.length <= 0) this.modAlert("warning", "Es wurde keine Kursteilnehmer*innen gefunden.");
                             }
                             value = value.toLowerCase();
+                            let anyEntry = false;
                             for (let i in this.modUsers) {
                                 let element = this.modUsers[i];
                                 element.id = +element.id;
@@ -2635,8 +2637,11 @@ define([
                                     let divElem = $("<div class=\"form-check\"></div>").appendTo(list);
                                     $("<input class=\"mru form-check-input\" type=\"checkbox\" value=\"" + element.id + "\" id=\"mru-" + element.id + "\" />").appendTo(divElem);
                                     $("<label class=\"form-check-label\" for=\"modResetUsers\" />").text(ident).appendTo(divElem);
+                                    anyEntry = true;
                                 }
                             }
+                            console.log(anyEntry);
+                            if(!anyEntry) this.modAlert("warning", "Es wurde kein passender Eintrag gefunden.");
                         } catch (error) {
                             console.log(error);
                         }
