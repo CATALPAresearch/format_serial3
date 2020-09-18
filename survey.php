@@ -48,8 +48,8 @@ if(isset($sess->c)){
     $list = '';
     foreach($records as $record){    
         
-        if(is_int(+$record->startdate)) if(time() < $record->startdate) continue;
-        if(is_int(+$record->stopdate)) if(time() > $record->stopdate) continue;
+        //if(is_int(+$record->startdate)) if(time() < $record->startdate) continue;
+        //if(is_int(+$record->stopdate)) if(time() > $record->stopdate) continue;
 
         $record->done = $DB->record_exists_sql('SELECT * FROM '.$CFG->prefix.'limesurvey_submissions WHERE user_id = ? AND survey_id = ?', array($USER->id, $record->survey_id));        
         // Insert values.
@@ -106,10 +106,8 @@ if(isset($sess->c)){
     $PAGE->set_title(get_string('surveyTitle', 'format_ladtopics'));
     $PAGE->set_heading(get_string('surveyHeadline', 'format_ladtopics'));
     echo $OUTPUT->header();  
-    echo '<p class="mt-2 mb-4 text-center">'.get_string('surveyDescription', 'format_ladtopics').'</p>';   
-    echo "<div class=\"row justify-content-center\">
-            <div class=\"col-auto\">
-                <table class=\"table table-striped\">
+    echo '<div style="display: inline-block;"><p class="mt-2 mb-4">'.get_string('surveyDescription', 'format_ladtopics').'</p>';   
+    echo "<table class=\"table table-striped\">
                     <thead class=\"thead-dark\">
                         <tr>
                             <th scope=\"col\">".get_string('surveyID', 'format_ladtopics')."</th>
@@ -124,12 +122,10 @@ if(isset($sess->c)){
                     <tbody>
                         {$list}
                     </tbody>
-                </table>
-            </div>
-        </div>";       
+                </table>";       
     $courseURL = new moodle_url('/course/view.php', array('id' => +$sess->c));
     echo '<p class="text-center">'.get_string('surveyReqText', 'format_ladtopics').'</p>';
-    echo '<div class="text-center"><button onClick="javascript:window.location.href=\''.$courseURL->__toString().'\';" class="btn btn-secondary center-block">'.get_string('surveyButton', 'format_ladtopics').'</button></div>';
+    echo '<div class="text-center"><button onClick="javascript:window.location.href=\''.$courseURL->__toString().'\';" class="btn btn-secondary center-block">'.get_string('surveyButton', 'format_ladtopics').'</button></div></div>';
     echo $OUTPUT->footer();
 } else {    
     redirect(new moodle_url('/'));
