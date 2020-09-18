@@ -48,12 +48,13 @@ if(isset($sess->c)){
     $list = '';
     foreach($records as $record){    
         
-        if(is_int(+$record->startdate) && !is_null($record->startdate)) {            
+        if(isset($record->startdate) && is_int(+$record->startdate) && !is_null($record->startdate)) {            
             if(time() < $record->startdate) {
                 continue;
             }
-        };
-        if(is_int(+$record->stopdate) && !is_null($record->stopdate)){
+        }
+
+        if(isset($record->stopdate) && is_int(+$record->stopdate) && !is_null($record->stopdate)){
             if(time() > $record->stopdate) {
                 continue;
             };

@@ -68,20 +68,37 @@ class format_ladtopics_external extends external_api
         $out = array();       
         try{
             $out['warnSurvey'] = false;
-            $records = $DB->get_records_sql('SELECT * FROM '.$CFG->prefix.'limesurvey_assigns WHERE course_id = ? AND warndate > ? AND stopdate > ?', array($courseid, time(), time()));
+            $records = $DB->get_records_sql('SELECT * FROM '.$CFG->prefix.'limesurvey_assigns WHERE course_id = ?', array($courseid));
             foreach($records as $record){
+
+                if(isset($record->startdate) && is_int(+$record->startdate) && !is_null($record->startdate)) {            
+                    if(time() < $record->startdate) {
+                        continue;
+                    }
+                }
+
+                if(isset($record->stopdate) && is_int(+$record->stopdate) && !is_null($record->stopdate)){
+                    if(time() > $record->stopdate) {
+                        continue;
+                    };
+                }
+
                 if($DB->record_exists_sql('SELECT * FROM '.$CFG->prefix.'limesurvey_submissions WHERE user_id = ? AND survey_id = ?', array($USER->id, $record->survey_id)) === false){
-                    $out['warnSurvey'] = true;                    
-                    $warn = $record->warndate;
-                    $url = new moodle_url('/course/format/ladtopics/survey.php', array('c' => $courseid));
-                    $out['link'] = $url->__toString();
-                    if(isset($out['warnDate'])){
-                        if($warn < $out['warnDate']){
+                    $out['warnSurvey'] = true;    
+                    
+                    if(isset($record->warndate) && is_int(+$record->warndate) && !is_null($record->warndate)){
+                        $warn = $record->warndate;
+                        if(isset($out['warnDate'])){
+                            if($warn < $out['warnDate']){
+                                $out['warnDate'] = $warn;
+                            }
+                        } else {
                             $out['warnDate'] = $warn;
                         }
-                    } else {
-                        $out['warnDate'] = $warn;
-                    }
+                    }        
+
+                    //$url = new moodle_url('/course/format/ladtopics/survey.php', array('c' => $courseid));
+                    //$out['link'] = $url->__toString();              
                 }
             }
         } catch(Exception $ex){
