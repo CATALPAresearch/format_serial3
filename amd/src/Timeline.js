@@ -2639,8 +2639,7 @@ define([
                                     $("<label class=\"form-check-label\" for=\"modResetUsers\" />").text(ident).appendTo(divElem);
                                     anyEntry = true;
                                 }
-                            }
-                            console.log(anyEntry);
+                            }                           
                             if(!anyEntry) this.modAlert("warning", "Es wurde kein passender Eintrag gefunden.");
                         } catch (error) {
                             console.log(error);
