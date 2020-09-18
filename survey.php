@@ -41,58 +41,95 @@ if(isset($sess->s)){
     redirect($url);
 } 
 
-if(isset($sess->c)){    
+if(isset($sess->c)){  
+    $id = 1;  
     $records = $DB->get_records_sql('SELECT * FROM '.$CFG->prefix.'limesurvey_assigns WHERE course_id = ?', array(+$sess->c));   
     $pending = false;
-    $list = '<div class="list-group">';
-    foreach($records as $record){
+    $list = '';
+    foreach($records as $record){    
+        
+        if(is_int(+$record->startdate)) if(time() < $record->startdate) continue;
+        if(is_int(+$record->stopdate)) if(time() > $record->stopdate) continue;
+
         $record->done = $DB->record_exists_sql('SELECT * FROM '.$CFG->prefix.'limesurvey_submissions WHERE user_id = ? AND survey_id = ?', array($USER->id, $record->survey_id));        
-        if($record->done === true) {          
-            $list .= '<a href="#" class="list-group-item list-group-item-action disabled" style="background-color: rgb(195,230,203);"><span class="text-success"><i class="icon fa fa-check fa-fw"></i>'.$record->name.'</span></a>';
+        // Insert values.
+        $title = $record->name;        
+        if(isset($record->startdate) && is_int(+$record->startdate) && $record->startdate > 0){
+            $start = date("d.m.Y H:i", $record->startdate);
         } else {
-            $show = true;
-            $icon = 'fa-share'; // fa-check
-            $color = '';
-            if(isset($record->startdate) && !is_null($record->startdate)){
-                if($record->startdate > time()){
-                    $show = false;
-                }
-            }
-            if(isset($record->stopdate) && !is_null($record->stopdate)){
-                if($record->stopdate <= time()){
-                    $show = true;                    
-                }
-            }
-            if(isset($record->warndate) && !is_null($record->warndate)){
-                if($record->warndate <= time()){
-                    $icon = 'fa-exclamation';
-                    $color = 'text-danger';
-                }
-            } else {
-                $icon = 'fa-exclamation';
-                $color = 'text-danger';
-            }
-            if($show){
-                $pending = true;
-                $list .= '<a href="'.$link.$record->survey_id.'" class="list-group-item list-group-item-action list-group-item-light"><span class="'.$color.'"><i class="icon fa '.$icon.' fa-fw"></i>'.$record->name.'</span></a>';
-            }            
+            $start = "-";
         }
-    }
-    $list .= '</div>';
+
+        if(isset($record->stopdate) && is_int(+$record->stopdate) && $record->stopdate > 0){
+            $stop = date("d.m.Y H:i", $record->stopdate);
+        } else {
+            $stop = "-";
+        }
+        if(isset($record->warndate) && is_int(+$record->warndate) && $record->warndate > 0){
+            $warn = date("d.m.Y H:i", $record->warndate);
+        } else {
+            $warn = "-";
+        }     
+
+        if($record->done === true){
+            $state = "<span class=\"text-success font-weight-bold\">".get_string('surveyDone', 'format_ladtopics')."</span>";
+        } else {
+            $pending = true;
+            if(isset($record->warndate) && is_int(+$record->warndate) && $record->warndate <= time()){
+                $state = "<span class=\"text-danger font-weight-bold\">".get_string('surveyRequired', 'format_ladtopics')."</span>"; 
+            } else {
+                $state = "<span class=\"text-warning font-weight-bold\">".get_string('surveyPending', 'format_ladtopics')."</span>"; 
+            }
+        }     
+        
+        $surveyID = $record->survey_id;      
+       
+        $list .=    "<tr>
+            <th class=\"align-middle\">{$id}</th>
+                <td class=\"align-middle\">{$title}</td>
+                <td class=\"align-middle\">{$start}</td>
+                <td class=\"align-middle\">{$warn}</td>
+                <td class=\"align-middle\">{$stop}</td>
+                <td class=\"align-middle\">{$state}</td>
+                <td class=\"align-middle\"><button class=\"btn btn-primary center-block\" onClick=\"javascript:window.location.href='{$link}{$surveyID}'\">Zur Umfrage</button></td>
+            </tr>";
+        $id++;    
+
+    }   
+
     if($pending === false){        
         redirect(new moodle_url('/course/view.php', array('id' => +$sess->c)));
-    }   
+    }
 
     // OUTPUT
     $PAGE->set_pagelayout('course');
     $PAGE->set_title(get_string('surveyTitle', 'format_ladtopics'));
     $PAGE->set_heading(get_string('surveyHeadline', 'format_ladtopics'));
-    echo $OUTPUT->header();    
-    echo '<p class="mb-2">'.get_string('surveyDescription', 'format_ladtopics').'</p>';   
-    echo $list;
-    echo '<p class="mt-2"><i>'.get_string('surveyRequired', 'format_ladtopics').'</i></p>'; 
+    echo $OUTPUT->header();  
+    echo '<p class="mt-2 mb-4 text-center">'.get_string('surveyDescription', 'format_ladtopics').'</p>';   
+    echo "<div class=\"row justify-content-center\">
+            <div class=\"col-auto\">
+                <table class=\"table table-striped\">
+                    <thead class=\"thead-dark\">
+                        <tr>
+                            <th scope=\"col\">".get_string('surveyID', 'format_ladtopics')."</th>
+                            <th scope=\"col\">".get_string('surveyTitle', 'format_ladtopics')."</th>
+                            <th scope=\"col\">".get_string('surveyStart', 'format_ladtopics')."</th>
+                            <th scope=\"col\">".get_string('surveyWarn', 'format_ladtopics')."</th>
+                            <th scope=\"col\">".get_string('surveyStop', 'format_ladtopics')."</th>
+                            <th scope=\"col\">".get_string('surveyState', 'format_ladtopics')."</th>
+                            <th scope=\"col\">".get_string('surveyLink', 'format_ladtopics')."</th>
+                        </tr>
+                    <thead>
+                    <tbody>
+                        {$list}
+                    </tbody>
+                </table>
+            </div>
+        </div>";       
     $courseURL = new moodle_url('/course/view.php', array('id' => +$sess->c));
-    echo '<div class="mt-1 text-center"><button onClick="javascript:window.location.href=\''.$courseURL->__toString().'\';" class="btn btn-primary center-block">'.get_string('surveyButton', 'format_ladtopics').'</button></div>';
+    echo '<p class="text-center">'.get_string('surveyReqText', 'format_ladtopics').'</p>';
+    echo '<div class="text-center"><button onClick="javascript:window.location.href=\''.$courseURL->__toString().'\';" class="btn btn-secondary center-block">'.get_string('surveyButton', 'format_ladtopics').'</button></div>';
     echo $OUTPUT->footer();
 } else {    
     redirect(new moodle_url('/'));

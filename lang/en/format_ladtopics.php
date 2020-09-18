@@ -37,10 +37,20 @@ $string['page-course-view-topics-x'] = 'Any course page in topics format';
 $string['hidefromothers'] = 'Hide topic';
 $string['showfromothers'] = 'Show topic';
 // Survey
-$string['surveyTitle'] = 'Begleitforschung D²L²';
-$string['surveyHeadline'] = 'Begleitforschung D²L²';
-$string['surveyDescription'] = 'Im Rahmen der Begleitforschung des Forschungsschwerpunkts D²L² bitten wir Sie, an folgenden Umfragen teilzunehmen und so 
+$string['surveyTitle'] = 'Begleitforschung APLE / LA-DIVA';
+$string['surveyHeadline'] = 'Begleitforschung APLE / LA-DIVA';
+$string['surveyDescription'] = 'Im Rahmen der Begleitforschung der Forschungsprojekte APLE / LA-DIVA bitten wir Sie, an folgenden Umfragen teilzunehmen und so 
 unsere Forschung zu unterstützen.';
-$string['surveyRequired'] = 'Umfragen, die mit einem roten Ausrufungszeichen (<i class="icon fa fa-exclamation text-danger fa-fw" style="padding: 0px; margin: 0px;"></i>) gekennzeichnet sind,
-müssen absolviert werden, damit Sie wieder auf die Lernumgebung zugreifen können.';
+$string['surveyReqText'] = "Umfragen mit dem Status 'erforderlich' müssen absolviert werden, bevor Sie wieder auf die Lernumgebung zugreifen können.";
 $string['surveyButton'] = 'Zurück zum Kurs';
+// survey table
+$string['surveyID'] = "#";
+$string['surveyTitle'] = "Titel";
+$string['surveyStart'] = "Startdatum";
+$string['surveyWarn'] = "Aufschubsfrist";
+$string['surveyStop'] = "Enddatum";
+$string['surveyState'] = "Status";
+$string['surveyLink'] = "Link";
+$string['surveyDone'] = "teilgenommen";
+$string['surveyRequired'] = "erforderlich";
+$string['surveyPending'] = "unerledigt";
