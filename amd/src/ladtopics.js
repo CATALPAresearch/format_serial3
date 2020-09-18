@@ -122,7 +122,10 @@ define([
                                             text = `Sie haben noch ${diff} Tage Zeit, um eine Umfrage zur Begleitforschung der Forschungsprojekte APLE / LA-DIVA aufzuschieben. <br />Ab dem ${date}.${month}.${year} ${hours}:${minutes} Uhr müssen Sie die Umfrage absolvieren, um wieder auf die Lernumgebung zurgreifen zu können.`;
                                         }
 
-                                        const link = `${window.location.protocol}//${window.location.hostname}/course/format/ladtopics/survey.php?c=${courseid}`;
+                                        //const link = `${window.location.protocol}//${window.location.hostname}/course/format/ladtopics/survey.php?c=${courseid}`;
+                                        const curl = window.location.href;
+                                        const split = curl.substr(0, curl.indexOf("view"));
+                                        const link = `${split}format/ladtopics/survey.php?c=${courseid}`
 
                                         const obj = $(
                                             `
