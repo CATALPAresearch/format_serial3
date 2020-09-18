@@ -48,24 +48,32 @@ if(isset($sess->c)){
     $list = '';
     foreach($records as $record){    
         
-        //if(is_int(+$record->startdate)) if(time() < $record->startdate) continue;
-        //if(is_int(+$record->stopdate)) if(time() > $record->stopdate) continue;
+        if(is_int(+$record->startdate) && !is_null($record->startdate)) {            
+            if(time() < $record->startdate) {
+                continue;
+            }
+        };
+        if(is_int(+$record->stopdate) && !is_null($record->stopdate)){
+            if(time() > $record->stopdate) {
+                continue;
+            };
+        }
 
         $record->done = $DB->record_exists_sql('SELECT * FROM '.$CFG->prefix.'limesurvey_submissions WHERE user_id = ? AND survey_id = ?', array($USER->id, $record->survey_id));        
         // Insert values.
         $title = $record->name;        
-        if(isset($record->startdate) && is_int(+$record->startdate) && $record->startdate > 0){
+        if(isset($record->startdate) && !is_null($record->startdate) && is_int(+$record->startdate) && $record->startdate > 0){
             $start = date("d.m.Y H:i", $record->startdate);
         } else {
             $start = "-";
         }
 
-        if(isset($record->stopdate) && is_int(+$record->stopdate) && $record->stopdate > 0){
+        if(isset($record->stopdate) && !is_null($record->stopdate) && is_int(+$record->stopdate) && $record->stopdate > 0){
             $stop = date("d.m.Y H:i", $record->stopdate);
         } else {
             $stop = "-";
         }
-        if(isset($record->warndate) && is_int(+$record->warndate) && $record->warndate > 0){
+        if(isset($record->warndate) && !is_null($record->warndate) && is_int(+$record->warndate) && $record->warndate > 0){
             $warn = date("d.m.Y H:i", $record->warndate);
         } else {
             $warn = "-";

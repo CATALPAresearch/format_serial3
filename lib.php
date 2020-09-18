@@ -159,21 +159,22 @@ class format_ladtopics extends format_base {
             $records = $DB->get_records_sql('SELECT * FROM '.$CFG->prefix.'limesurvey_assigns WHERE course_id = ?', array($COURSE->id));                   
             foreach($records as $record){                
                 if($DB->record_exists_sql('SELECT * FROM '.$CFG->prefix.'limesurvey_submissions WHERE user_id = ? AND survey_id = ?', array($USER->id, $record->survey_id)) === false){
-                    if(isset($record->startdate) && !is_null($record->startdate)){
-                        if($record->startdate < time()){
+                    if(isset($record->startdate) && !is_null($record->startdate) && is_int(+$record->startdate)){
+                        if($record->startdate > time()){
                             continue;
                         }
                     }
-                    if(isset($record->stopdate) && !is_null($record->stopdate)){
-                        if($record->stopdate >= time()){
+                    if(isset($record->stopdate) && !is_null($record->stopdate) && is_int(+$record->stopdate)){
+                        if($record->stopdate < time()){
                             continue;
                         }
                     }
-                    if(isset($record->warndate) && !is_null($record->warndate)){
+                    if(isset($record->warndate) && !is_null($record->warndate) && is_int(+$record->warndate)){
                         if($record->warndate > time()){
                             continue;
                         }
                     }
+                    //if((!isset($record->startdate) || !is_int(+$record->startdate)) && (!isset($record->stopdate) || !is_int(+$record->stopdate)) && (!isset($record->warndate) || !is_int(+$record->warndate))) continue;
                     $redirectToSurvey = new moodle_url('/course/format/ladtopics/survey.php', array('c' => $COURSE->id));
                     redirect($redirectToSurvey);
                 }
