@@ -2,10 +2,9 @@
  * DashboardCompletion
  *
  * @module     format/ladtopics
- * @package    format_ladtopics
  * @class      DashboardCompletion
- * @copyright  2020 Niels Seidel, niels.seidel@fernuni-hagen.de
- * @description Shows per course section a row of rectangles indicating the completion of assigned activities.
+ * @copyright  2020 Niels Seidel <niels.seidel@fernuni-hagen.de>
+ * @description xxx
  * @license    MIT
  * @since      3.1
  * 
@@ -17,10 +16,9 @@
 
 define([
     'jquery',
-    M.cfg.wwwroot + "/course/format/ladtopics/lib/build/vue.min.js",
-    M.cfg.wwwroot + "/course/format/ladtopics/amd/src/Utils.js"
-], function ($, Vue, Utils) {
-    Utils = new Utils();
+    M.cfg.wwwroot + "/course/format/ladtopics/lib/build/vue.min.js"
+], function ($, Vue) {
+    
     return Vue.component('dashboard-completion',
         {
             props: ['course'],
@@ -28,9 +26,9 @@ define([
             data: function () {
                 return {
                     strategyCategories: [
-                        { id: 'organization', name: 'Organisation' },
-                        { id: 'elaboration', name: 'Elaborationsstrategien' },
-                        { id: 'repeatition', name: 'Wiederholungsstrategien' },
+                        { id: 'cognitive', name: 'Kognitive Lernstrategien' },
+                        { id: 'metacognitive', name: 'Metakognitive Lernstrategien' },
+                        { id: 'resource', name: 'Ressourcenbezogene Lernstrategien' },
                         { id: 'misc', name: 'Sonstige' }
                     ],
                     pedagogicStrategies: [
@@ -38,7 +36,7 @@ define([
                         { id: 'performance', name: 'Lernen', desc: 'Ein Beschreibung zur Lernphase' },
                         { id: 'exams', name: 'Pürfungsvorbreitung', desc: 'Ein Beschreibung zur Prüfungsvorbereitung' }
                     ],
-                    strategies: [ // Übertrage Ansätze auf Kontexte ?? #86
+                    strategies: [
                         { id: 'reading', pcategory:'overview', name: 'Überblick durch Lesen/Querlesen', desc: '<div>Durch schnelles Querlesen verschaffen Sie sich einen Überblick über das Themengebiet. Schauen Sie sich doch auch einmal die PQ4R-Methode an. <a href="https://www.example.com/">Details</a></div>', url: "", category: 'organization' },
                         { id: 'mindmap', pcategory: 'overview', name: 'Erzeuge Mindmap', desc: 'Eine Mindmap hilft dabei, Zusammenhänge darzustellen.', url: "", category: 'organization' },
                         { id: 'exzerpte', pcategory: 'overview', name: 'Fertige Exzerpt an', desc: 'Ein Exzerpt ist mehr als nur eine einfache Zusammenfassung der wichtigsten Inhalte.', url: "", category: 'organization' },
@@ -66,6 +64,7 @@ define([
             },
 
             mounted: function () {},
+
             created: function (){
                 $(function () {
                     $('#strategyTab li:first-child a').tab('show');

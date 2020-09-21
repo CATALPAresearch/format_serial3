@@ -22,9 +22,11 @@ LAD Topics is a *Learning Analytics Dashboard* for Moodle courses. The dashboard
 * Manuell in der Tabelle limesurvey_assigns die Kurs-ID sowie die ID der
    LimeSurvey-Umfrage (z.B. https://umfrage.fernuni-hagen.de/v3/827287
    => *827287*) einpflegen, um eine verpflichtende Umfrage vor der Kursnutzung zu realisieren. 
-   Was gibt man bei start and stop date an: 1597673805 (https://www.unixtimestamp.com/)
-* End-URL:
-   [moodlePfad]/course/format/ladtopics/survey.php?s={SID}&a={SAVEDID}
+   Was gibt man bei start and stop date an? 1597673805 (https://www.unixtimestamp.com/)
+* Damit Moodle den Abschluss einer Umfrage registrieren kann, muss in Limesurvey eine End-URL definiert werden. Unter XXX muss eine URL gemäß des folgenden Schemas eingefügt werden:
+   * `[moodlePfad]/course/format/ladtopics/survey.php?s={SID}&a={SAVEDID}`
+   * z.B. `http://aple.fernuni-hagen.de/course/format/ladtopics/survey.php?s={SID}&a={SAVEDID}`
+
 * Die Umfrage muss aktiv sein und nach einem Test müssen die
    Cookies zurückgesetzt werden (sonst klappt es bei LimeSurvey mit den
    Parametern nicht).
@@ -41,14 +43,20 @@ LAD Topics is a *Learning Analytics Dashboard* for Moodle courses. The dashboard
 * `grunt plugin-css` bundles and minifies css files
 * `grunt plugin-all` handles both tasks mentioned above
 
+**Notes**
+
+https://docs.moodle.org/dev/Developer_Mode
+
 **Dependencies**
+
 * vue.js, vuex
 * d3.js
 * crossfilter
 * dc.js
-* ...
+* moment.js
 
 **Getting started**
+
 api.php: In this file you'll find the SQL queries. All API get or post requests implement  webservices. The naming conventions are very strict. Take care to to follow the nameing schema for the functions. 
 
 db/services.php: Here your are defining the webservice by referencing the involved files (api.php and its containing classes and functions)
@@ -66,5 +74,8 @@ amd/src/Assessment.js: This the major file where your assment dashboard has to b
 A good sheet sheet: http://tech.solin.eu/doku.php?id=moodle:course_construction
 
 
-# Notes
-https://docs.moodle.org/dev/Developer_Mode
+
+## Contributors
+* Niels Seidel
+* Marc Burchart
+* Heike Karolyi
