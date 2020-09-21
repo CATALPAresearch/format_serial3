@@ -866,13 +866,13 @@ $modalReflection = '
                     </div>
                     <div class="form-group col-12">
                         <label class="col-sm-12 col-form-label question-label" for="ref2">
-                            Frage 2: Wie gut passten die ausgewählten Lernstrategien zu den Arbeitsmaterialien, um mein Lernziel zu erreichen?
+                            Frage 2: Wie zufrieden war ich mit meiner Lernstrategie, um mein Lernziel zu erreichen?
                         </label>
                         <div class="col-sm-12">
                             <div class="row likert-row">
                                 <div class="col">
                                     <input class="form-check-input" type="radio" name="refquestion2" id="ref2a" value="1" v-model="getSelectedMilestone().reflections[1]">
-                                    <label class="form-check-label" for="ref1a">1 (sehr gut)</label>
+                                    <label class="form-check-label" for="ref1a">1 (sehr zufrieden)</label>
                                 </div>
                                 <div class="col">
                                     <input class="form-check-input" type="radio" name="refquestion2" id="ref2b" value="2" v-model="getSelectedMilestone().reflections[1]">
@@ -888,7 +888,7 @@ $modalReflection = '
                                 </div>
                                 <div class="col">
                                     <input class="form-check-input" type="radio" name="refquestion2" id="ref2e" value="5" v-model="getSelectedMilestone().reflections[1]">
-                                    <label class="form-check-label" for="ref1e">5 (gar nicht)</label>
+                                    <label class="form-check-label" for="ref1e">5 (gar nicht zufrieden)</label>
                                 </div>
                             </div>
                         </div>
@@ -1243,15 +1243,15 @@ $modalMilestone = '
                             <!-- Begin dashboard -->
                             <div class="dashboard" style="display:block;">
                                 <div class="col-md-12">
-                                    <ul class="nav nav-tabs nav-fill dashboard-tab">
+                                    <ul class="nav nav-tabs dashboard-tab">
                                         <li class="nav-item active"><a class="nav-link active" data-toggle="tab" href="#learningstatus"
                                                 role="tab">Lernstand</a></li>    
-                                        <li class="nav-item ">
+                                        <li hidden class="nav-item ">
                                             <a class="nav-link" data-toggle="tab" href="#timemanagement" role="tab">Zeitmanagement</a></li>
                                         <li class="nav-item">
                                             <a class="nav-link" data-toggle="tab" href="#strategy" role="tab">Strategie</a>
                                         </li>
-                                        <li class="nav-item">
+                                        <li hidden class="nav-item">
                                             <a class="nav-link" data-toggle="tab" href="#quiz" role="tab">Quiz</a>
                                         </li>
                                     </ul>
