@@ -364,7 +364,7 @@ class format_ladtopics_external extends external_api
                 if (isset($value->lastname) && strlen($value->lastname) > 0) {
                     $name = ucfirst(strtolower($value->lastname));
                     if (isset($value->middlename) && strlen($value->middlename) > 0) {
-                        $name = ucfirst(strtolower($value->moddlename))." ".$name;
+                        $name = ucfirst(strtolower($value->middlename))." ".$name;
                     }
                     if (isset($value->firstname) && strlen($value->firstname) > 0) {
                         $name = ucfirst(strtolower($value->firstname))." ".$name;
@@ -381,7 +381,7 @@ class format_ladtopics_external extends external_api
         } catch (Exception $ex) {
             $out['debug'] = $ex->getMessage();
         }
-        return array('data' => json_encode($out));
+        return array('data' => json_encode($out, JSON_PARTIAL_OUTPUT_ON_ERROR));
     }
 
     public static function getalluser_is_allowed_from_ajax()
