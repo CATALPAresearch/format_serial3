@@ -18,6 +18,14 @@ $functions = array( // completionProgress
                 'type'        => 'read',
                 'ajax'        => true 
         ),
+        'format_ladtopics_limesurvey' => array(
+                'classname'   => 'format_ladtopics_external',
+                'methodname'  => 'limesurvey',
+                'classpath'   => 'course/format/ladtopics/api.php',
+                'description' => 'xxx',
+                'type'        => 'read',
+                'ajax'        => true 
+        ),
         'format_ladtopics_statistics' => array(
                 'classname'   => 'format_ladtopics_external',
                 'methodname'  => 'statistics',

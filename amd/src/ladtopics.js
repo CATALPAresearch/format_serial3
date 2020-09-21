@@ -92,7 +92,95 @@ define([
                     var logger = new Log(courseid, {
                         context: 'format_ladtopics',
                         outputType: 1 // 0: console, 1: logstore_standard_log
-                    });
+                    });                                  
+
+
+                    // Limesurvey alert
+                    utils.get_ws('limesurvey', {
+                        'courseid': parseInt(courseid, 10)
+                    }, function (e) {                        
+                        try {
+                            if(typeof e === "object" && e !== null){                                                               
+                                if(typeof e.data === "string"){
+                                    const data = JSON.parse(e.data);
+                                    if(data.warnSurvey === true){
+
+                                        let text = "Sie haben noch offene Umfragen zur Begleitforschung der Forschungsprojekte APLE / LA-DIVA.";
+
+                                        if(data.warnDate){
+                                            const time = moment(data.warnDate * 1000);
+                                            const now = moment();
+                                            const diff = `${time.diff(now, 'days')}`;
+    
+                                            const wDate = new Date(data.warnDate * 1000);
+                                            const date = ("0" + wDate.getDate()).slice(-2);
+                                            const month = ("0" + (wDate.getMonth() + 1)).slice(-2);
+                                            const year = wDate.getFullYear();
+                                            const hours = wDate.getHours();
+                                            const minutes = wDate.getMinutes(); 
+
+                                            text = `Sie haben noch ${diff} Tage Zeit, um eine Umfrage zur Begleitforschung der Forschungsprojekte APLE / LA-DIVA aufzuschieben. <br />Ab dem ${date}.${month}.${year} ${hours}:${minutes} Uhr müssen Sie die Umfrage absolvieren, um wieder auf die Lernumgebung zurgreifen zu können.`;
+                                        }
+
+                                        //const link = `${window.location.protocol}//${window.location.hostname}/course/format/ladtopics/survey.php?c=${courseid}`;
+                                        const curl = window.location.href;
+                                        const split = curl.substr(0, curl.indexOf("view"));
+                                        const link = `${split}format/ladtopics/survey.php?c=${courseid}`
+
+                                        const obj = $(
+                                            `
+                                            <div class="alert alert-primary" style="cursor:pointer;">
+                                                <div class="w-75">
+                                                    <p>${text}</p>
+                                                    <button type="button" class="btn btn-primary" onclick="javascript:window.location.href='${link}'">Zur Umfrageübersicht</button>
+                                                </div>                                                
+                                            </div>
+                                            `
+                                        );
+
+                                        $("header").after(obj);
+
+
+
+                                        /*
+
+                                        Sie haben noch ${diff} Tage Zeit, um eine Umfrage aufzuschieben. Ab dem ${date}.${month}.${year} ${hours}:${minutes} Uhr müssen Sie die Umfrage absolvieren, um wieder auf die Lernumgebung zurgreifen zu können.
+                                                Klicken Sie auf dieses Feld, um die Umfragen zu sehen. 
+
+                                        const time = moment(data.warnDate * 1000);
+                                        const now = moment();
+                                        const diff = `${time.diff(now, 'days')}`;
+
+                                        const wDate = new Date(data.warnDate * 1000);
+                                        let date = ("0" + wDate.getDate()).slice(-2);
+                                        let month = ("0" + (wDate.getMonth() + 1)).slice(-2);
+                                        let year = wDate.getFullYear();
+                                        let hours = wDate.getHours();
+                                        let minutes = wDate.getMinutes(); 
+                                        
+                                        const obj = $(
+                                            `
+                                            <div class="alert alert-primary" style="cursor:pointer;">
+                                                <p class="w-75">...</p>
+                                                Sie haben noch ${diff} Tage Zeit, um eine Umfrage aufzuschieben. Ab dem ${date}.${month}.${year} ${hours}:${minutes} Uhr müssen Sie die Umfrage absolvieren, um wieder auf die Lernumgebung zurgreifen zu können.
+                                                Klicken Sie auf dieses Feld, um die Umfragen zu sehen. 
+                                            </div>
+                                            `
+                                        );
+
+                                        obj.on("click", function(){
+                                            window.location.href = data.link;
+                                        });
+
+                                        $("header").after(obj);*/
+                                    }                                    
+                                }
+                            }                            
+                        } catch (error) {
+                            new ErrorHandler(error);
+                        }
+                    });              
+
                     new Timeline(
                         d3,
                         dc,

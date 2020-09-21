@@ -55,6 +55,71 @@ function get_meta($courseID)
 
 class format_ladtopics_external extends external_api
 {
+    public static function limesurvey_parameters(){
+        return new external_function_parameters(
+            array(
+                'courseid' => new external_value(PARAM_INT, 'course id')
+            )
+        );
+    }
+
+    public static function limesurvey($courseid){
+        global $CFG, $DB, $USER;
+        $out = array();       
+        try{
+            $out['warnSurvey'] = false;
+            $records = $DB->get_records_sql('SELECT * FROM '.$CFG->prefix.'limesurvey_assigns WHERE course_id = ?', array($courseid));
+            foreach($records as $record){
+
+                if(isset($record->startdate) && is_int(+$record->startdate) && !is_null($record->startdate)) {            
+                    if(time() < $record->startdate) {
+                        continue;
+                    }
+                }
+
+                if(isset($record->stopdate) && is_int(+$record->stopdate) && !is_null($record->stopdate)){
+                    if(time() > $record->stopdate) {
+                        continue;
+                    };
+                }
+
+                if($DB->record_exists_sql('SELECT * FROM '.$CFG->prefix.'limesurvey_submissions WHERE user_id = ? AND survey_id = ?', array($USER->id, $record->survey_id)) === false){
+                    $out['warnSurvey'] = true;    
+                    
+                    if(isset($record->warndate) && is_int(+$record->warndate) && !is_null($record->warndate)){
+                        $warn = $record->warndate;
+                        if(isset($out['warnDate'])){
+                            if($warn < $out['warnDate']){
+                                $out['warnDate'] = $warn;
+                            }
+                        } else {
+                            $out['warnDate'] = $warn;
+                        }
+                    }        
+
+                    //$url = new moodle_url('/course/format/ladtopics/survey.php', array('c' => $courseid));
+                    //$out['link'] = $url->__toString();              
+                }
+            }
+        } catch(Exception $ex){
+            $out['debug'] = $ex->getMessage();
+        }
+        return array('data' => json_encode($out));
+    }
+
+    public static function limesurvey_is_allowed_from_ajax(){
+        return true;
+    }
+
+    public static function limesurvey_returns(){
+        return new external_single_structure(
+            array(
+                'data' => new external_value(PARAM_RAW, 'data')
+            )
+        );
+    }
+    
+    
     public static function statistics_parameters()
     {
         return new external_function_parameters(
