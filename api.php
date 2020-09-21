@@ -766,7 +766,7 @@ class format_ladtopics_external extends external_api
                     foreach ($res as $entry) {
                         $pos = -1;
                         // I am not sure whether sizeof() and count() have the same results, but in php 7.2 sizeof() requires an array.
-                        if (gettype($entry->section_sequence) === "string" && count($entry->section_sequence) > 0) {
+                        if (gettype($entry->section_sequence) === "string" && sizeof($entry->section_sequence) > 0) {
                             $sequence = explode(",", preg_replace("/[^0-9,]/", "", $entry->section_sequence));
                             $pos = array_search(strval($entry->instance_url_id), $sequence);
                         }
@@ -1403,7 +1403,7 @@ class format_ladtopics_external extends external_api
         global $CFG, $DB, $USER;
         
         $transaction = $DB->start_delegated_transaction();
-        $res = $DB->get_record("tool_policy_acceptances", array("policyversionid" => (int)$data, "userid" => (int)$USER->id ), 'timemodified' );
+        $res = $DB->get_record("tool_policy_acceptances", array("policyversionid" => (int)$data, "userid" => (int)$USER->id ), "timemodified" );
         $transaction->allow_commit();
         
         return array('data' => json_encode($res) );

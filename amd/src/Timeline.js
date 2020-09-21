@@ -24,8 +24,9 @@ define([
     'core/ajax',
     M.cfg.wwwroot + "/course/format/ladtopics/lib/build/vue.min.js",
     M.cfg.wwwroot + "/course/format/ladtopics/amd/src/MilestoneCalendarExport.js",
-    M.cfg.wwwroot + "/course/format/ladtopics/amd/src/DashboardCompletion.js"
-], function ($, ajax, Vue, MilestoneCalendarExport, DashboardCompletion) {
+    M.cfg.wwwroot + "/course/format/ladtopics/amd/src/DashboardCompletion.js",
+    M.cfg.wwwroot + "/course/format/ladtopics/amd/src/DashboardStrategy.js"
+], function ($, ajax, Vue, MilestoneCalendarExport, DashboardCompletion, DashboardStrategy) {
 
     var Timeline = function (d3, dc, crossfilter, moment, utils, introJs, logger, FilterChart, ActivityChart, InitialSurvey, vDP, vDPde, ErrorHandler) {
 
@@ -52,20 +53,24 @@ define([
             maxPlaningPeriod: 12 // months
         };
 
-        utils.get_ws('policyacceptance', {
-            'policyversion': 1 // static value, needs to be set according to the defined policies
-        }, function (e) {
-            try {
-                let res = JSON.parse(e.data)
-                console.log(res);
-                if(res === false){
-                    // hide some parts of the course
+        // look whether a user has had agreed to a certain moodle policy (e.g. privacy policy).
+        if(false){
+            utils.get_ws('policyacceptance', {
+                'policyversion': 1 // static value, needs to be set according to the defined policies
+            }, function (e) {
+                try {
+                    let res = JSON.parse(e.data)
+                    // console.log(res);
+                    if (res === false) {
+                        // hide some parts of the course
+                    }
+                } catch (e) {
+                    // eslint-disable-next-line no-console
+                    console.error(e);
                 }
-            } catch (e) {
-                // eslint-disable-next-line no-console
-                console.error(e);
-            }
-        });
+            });
+        }
+        
 
 
         utils.get_ws('logstore', {
@@ -123,7 +128,8 @@ define([
                 components: {
                     'datepicker': vDP,
                     'milestone-calendar-export': MilestoneCalendarExport,
-                    'dashboard-completion': DashboardCompletion
+                    'dashboard-completion': DashboardCompletion,
+                    'dashboard-strategy': DashboardStrategy
                     // 'survey': surveyForm
                 },
                 data: function () {
@@ -171,7 +177,6 @@ define([
                             status: 'progress', // progress, ready, urgent, missed, reflected
                             progress: 0.0,
                             resources: [],
-                            strategies: [],
                             reflections: [],
                             yLane: 0,
                             mod: false
@@ -179,7 +184,6 @@ define([
                         invalidName: false,
                         invalidObjective: false,
                         invalidResources: false,
-                        invalidStrategy: false,
                         invalidEndDate: false,
                         invalidStartDate: false,
                         invalidReflections: [],
@@ -218,35 +222,6 @@ define([
                             ptWA4: 0,
                             ptWANA: 0
                         },
-                        strategyCategories: [
-                            { id: 'organization', name: 'Organisation' },
-                            { id: 'elaboration', name: 'Elaborationsstrategien' },
-                            { id: 'repeatition', name: 'Wiederholungsstrategien' },
-                            { id: 'misc', name: 'Sonstige' }
-
-                        ],
-                        strategies: [ // Übertrage Ansätze auf Kontexte ?? #86
-                            { id: 'reading', name: 'Überblick durch Lesen/Querlesen', desc: '<div>Durch schnelles Querlesen verschaffen Sie sich einen Überblick über das Themengebiet. Schauen Sie sich doch auch einmal die PQ4R-Methode an. <a href="https://www.example.com/">Details</a></div>', url: "", category: 'organization' },
-                            { id: 'mindmap', name: 'Erzeuge Mindmap', desc: 'Eine Mindmap hilft dabei, Zusammenhänge darzustellen.', url: "", category: 'organization' },
-                            { id: 'exzerpte', name: 'Fertige Exzerpt an', desc: 'Ein Exzerpt ist mehr als nur eine einfache Zusammenfassung der wichtigsten Inhalte.', url: "", category: 'organization' },
-                            { id: 'gliederung', name: 'Erstelle Gliederung', desc: 'Themenfelder lassen sich mit einer Gliederung übersichtlich strukturieren.', url: "", category: 'organization' },
-                            { id: 'strukturierung', name: 'Strukturiere Wissen', desc: 'Fachausdrücke oder Definitionen lassen sich gut in Listen oder Tabellen sammeln.', url: "", category: 'organization' },
-                            { id: 'makeflashcards', name: 'Lernkarten erstellen', desc: 'Lernkarten kann man sehr früh digital z.B. in einer App oder auf Papier erstellen. Das erleichtert die Prüfungsvorbereitung.', url: "", category: 'organization' },
-
-
-                            { id: 'transfer', name: 'Wende neues Wissen an', desc: 'Neues Wissen kann durch die Verknüpfung mit dem eigenen Erleben leichter veranschaulicht und gelernt werden.', url: "", category: 'elaboration' },
-                            { id: 'examples', name: 'Übertrage Ansätze auf Berufliches', desc: 'Ein Beispiel aus dem eigenen Umfeld hilft dabei, neue Wissensschemata schneller zu lernen.', url: "", category: 'elaboration' },
-                            { id: 'critical', name: 'Hinterfrage Inhalte kritisch', desc: 'Durch kritisches Hinterfragen kann man seine Aufmerksamkeit beim Lesen steigern.', url: "", category: 'elaboration' },
-                            { id: 'structuring', name: 'Stelle Bezug zu anderen Fächern her', desc: 'Bekanntes Wissen und Bezüge zu anderen Kursen erleichtern das Verständnis von Zusammenhängen.', url: "", category: 'elaboration' },
-                            { id: 'pq4r', name: 'Wende PQ4R - Methode an', desc: 'Hinter dem Kürzel verstecken sich sechs Schritte: (1) Preview – Übersicht gewinnen; (2) Questions – Fragen an den Text stellen;  (3) Read – Zweiter Leseschritt - Gründliches Lesen des Textes; (4) Reflect – Gedankliche Auseinandersetzung mit dem Text; (5) Recite – Wiederholen und aus dem Gedächtnis Verfassen; (6) Review – Rückblick und Überprüfung', url: "", category: 'elaboration' },
-
-
-                            { id: 'flashcards', name: 'Auswendiglernen mit Lernkarten', desc: 'Mit Lernkarten kann man Dinge systematisch wiederholen bis alles für die Prüfung sitzt. ', url: "", category: 'repeatition' },
-                            { id: 'repeatition', name: 'Repetieren', desc: 'Mit vielen Wiederholungen festigt sich das Wissen. ', url: "", category: 'repeatition' },
-                            { id: 'assoc', name: 'Eselsbrücken', desc: 'Mit einem Reim oder einer Eselsbrücke kann man sich Begriffe oder Reihenfolgen leichter merken.', url: "", category: 'repeatition' },
-                            { id: 'loci', name: 'Loci Methode', desc: 'Bei der Loci Methode verknüpft man Lerninhalte mit Orten oder Gegenständen. Für Abfolgen übt man eine Strecke/einen Spaziergang ein.', url: "", category: 'repeatition' }
-
-                        ],
                         resources: []
                     };
                 },
@@ -796,8 +771,7 @@ define([
                                 end: new Date(this.getSelectedMilestone().end).getTime(),
                                 status: this.getSelectedMilestone().status,
                                 objective: this.getSelectedMilestone().objective,
-                                resources: this.getSelectedMilestone().resources.map(function (resource) { return { name: resource.instance_title, section: resource.section, type: resource.instance_type, done: resource.checked !== undefined ? true : false }; }),
-                                strategies: this.getSelectedMilestone().strategies.map(function (strategy) { return { name: strategy.id, done: strategy.checked !== undefined ? true : false }; })
+                                resources: this.getSelectedMilestone().resources.map(function (resource) { return { name: resource.instance_title, section: resource.section, type: resource.instance_type, done: resource.checked !== undefined ? true : false }; })
                             });
                         }
                     },
@@ -819,8 +793,7 @@ define([
                             end: new Date(this.getSelectedMilestone().end).getTime(),
                             status: this.getSelectedMilestone().status,
                             objective: this.getSelectedMilestone().objective,
-                            resources: this.getSelectedMilestone().resources.map(function (resource) { return { name: resource.instance_title, section: resource.section, type: resource.instance_type, done: resource.checked !== undefined ? true : false }; }),
-                            strategies: this.getSelectedMilestone().strategies.map(function (strategy) { return { name: strategy.id, done: strategy.checked !== undefined ? true : false }; })
+                            resources: this.getSelectedMilestone().resources.map(function (resource) { return { name: resource.instance_title, section: resource.section, type: resource.instance_type, done: resource.checked !== undefined ? true : false }; })
                         });
 
                     },
@@ -866,10 +839,6 @@ define([
                             this.invalidResources = true;
                             isValid = false;
                         }
-                        if (this.getSelectedMilestone().strategies.length === 0) {
-                            this.invalidStrategy = true;
-                            isValid = false;
-                        }
                         if (isValid) {
                             if (this.selectedMilestone === -1) {
                                 let id = this.createMilestone();
@@ -905,8 +874,8 @@ define([
                                     end: new Date(this.getSelectedMilestone().end).getTime(),
                                     status: this.getSelectedMilestone().status,
                                     objective: this.getSelectedMilestone().objective,
-                                    resources: this.getSelectedMilestone().resources.map(function (resource) { return { name: resource.instance_title, section: resource.section, type: resource.instance_type, done: resource.checked !== undefined ? true : false }; }),
-                                    strategies: this.getSelectedMilestone().strategies.map(function (strategy) { return { name: strategy.id, done: strategy.checked !== undefined ? true : false }; })
+                                    resources: this.getSelectedMilestone().resources.map(function (resource) { return { name: resource.instance_title, section: resource.section, type: resource.instance_type, done: resource.checked !== undefined ? true : false }; })
+                                    
                                 });
                                 if ($("#milestone-list-tab").hasClass("active") || $("#milestone-archive-list-tab").hasClass("active")) {
                                     if (this.getSelectedMilestone().status === "missed" || this.getSelectedMilestone().status === "reflected") {
@@ -939,8 +908,7 @@ define([
                             end: new Date(this.emptyMilestone.end).getTime(),
                             status: this.emptyMilestone.status,
                             objective: this.emptyMilestone.objective,
-                            resources: this.emptyMilestone.resources.map(function (resource) { return { name: resource.instance_title, section: resource.section, type: resource.instance_type, done: resource.checked !== undefined ? true : false }; }),
-                            strategies: this.emptyMilestone.strategies.map(function (strategy) { return { name: strategy.id, done: strategy.checked !== undefined ? true : false }; })
+                            resources: this.emptyMilestone.resources.map(function (resource) { return { name: resource.instance_title, section: resource.section, type: resource.instance_type, done: resource.checked !== undefined ? true : false }; })
                         });
 
                         var x = d3.scaleTime().domain(this.range).range([0, width]);
@@ -957,7 +925,6 @@ define([
                             status: 'progress',
                             progress: 0.0,
                             resources: [],
-                            strategies: [],
                             reflections: [],
                             yLane: 0,
                             mod: false
@@ -988,8 +955,7 @@ define([
                             end: new Date(this.getSelectedMilestone().end).getTime(),
                             status: this.getSelectedMilestone().status,
                             objective: this.getSelectedMilestone().objective,
-                            resources: this.getSelectedMilestone().resources.map(function (resource) { return { name: resource.instance_title, section: resource.section, type: resource.instance_type, done: resource.checked !== undefined ? true : false }; }),
-                            strategies: this.getSelectedMilestone().strategies.map(function (strategy) { return { name: strategy.id, done: strategy.checked !== undefined ? true : false }; })
+                            resources: this.getSelectedMilestone().resources.map(function (resource) { return { name: resource.instance_title, section: resource.section, type: resource.instance_type, done: resource.checked !== undefined ? true : false }; })
                         });
                         for (var s = 0; s < this.milestones.length; s++) {
                             if (this.milestones[s].id === this.getSelectedMilestone().id) {
@@ -1131,16 +1097,6 @@ define([
                     getReadableTime: function (date) {
                         return moment(date).format("DD.MM.YYYY, HH:mm");
                     },
-                    strategiesByCategory: function (cat) {
-                        return this.strategies.filter(function (s) {
-                            return s.category === cat ? true : false;
-                        });
-                    },
-                    strategyById: function (id) {
-                        return JSON.parse(JSON.stringify(this.strategies.filter(function (s) {
-                            return s.id === id ? true : false;
-                        })[0]));
-                    },
                     resourcesBySection: function (id) {
                         return this.resources.filter(function (s) {
                             return parseInt(s.section_id, 10) === parseInt(id, 10) ? true : false;
@@ -1185,26 +1141,6 @@ define([
                             default: return instance_type;
                         }
                     },
-                    strategySelected: function (id) {
-                        var el = this.strategyById(id);
-                        if (this.getSelectedMilestone().strategies.indexOf(el) === -1) {
-                            this.getSelectedMilestone().strategies.push(el);
-                        }
-                        this.invalidStrategy = this.getSelectedMilestone().strategies.length > 0 ? false : true;
-                    },
-                    isSelectedStrategy: function (id) {
-                        return this.getSelectedMilestone().strategies.filter(function (e) {
-                            return e.id === id ? true : false;
-                        }).length > 0 ? true : false;
-                    },
-                    strategyRemove: function (id) {
-                        for (var s = 0; s < this.getSelectedMilestone().strategies.length; s++) {
-                            if (this.getSelectedMilestone().strategies[s].id === id) {
-                                this.getSelectedMilestone().strategies.splice(s, 1);
-                            }
-                        }
-                        this.invalidStrategy = this.getSelectedMilestone().strategies.length > 0 ? false : true;
-                    },
                     resourceSelected: function (event) {
                         var el = this.resourceById(event.target.value);
                         if (this.getSelectedMilestone().resources.indexOf(el) === -1) {
@@ -1230,17 +1166,12 @@ define([
                     },
                     determineMilestoneProgress: function (milestone) {
                         var resourceProgress = 0;
-                        var strategiesProgress = 0;
 
                         resourceProgress = milestone.resources.filter(function (e) {
                             return e.checked === true ? true : false;
                         }).length / milestone.resources.length;
 
-                        strategiesProgress = milestone.strategies.filter(function (e) {
-                            return e.checked === true ? true : false;
-                        }).length / milestone.strategies.length;
-
-                        return ((resourceProgress + strategiesProgress) / 2);
+                        return resourceProgress;
                     },
                     updateMilestones: function () {
                         this.sortMilestones();
@@ -1456,145 +1387,7 @@ define([
                             }
                         );
                     },
-                    /* exportToICal: function (link) {
-                        
-                        this.$refs.MilestoneCalendarExport.exportToICal(link);
-                    },
-                   
-                    exportToICal: function (link) {
-                        try {
-                            // Initialize the calendar
-                            let config = {
-                                prodid: "APLE",
-                                domain: "APLE",
-                                tzid: "Europe/Berlin",
-                                type: "Gregorian",
-                                version: "2.0"
-                            }
-                            let cal = new ICalExport(ICalLib, config);
-                            // Register all Milestones
-                            if (this.milestones && this.milestones.length > 0) {
-                                this.milestones.forEach(
-                                    (milestone) => {
-                                        try {
-                                            let initDate = new Date(milestone.end.toISOString());
-                                            initDate.setHours(12);
-                                            initDate.setMinutes(0);
-                                            initDate.setSeconds(0);
-                                            let data = {
-                                                uid: milestone.id,
-                                                title: "[Meilenstein] " + milestone.name,
-                                                start: initDate
-                                            }
-                                            // Generate description
-                                            let description = milestone.objective ? "Lernziel: " + milestone.objective : "";
-                                            if (milestone.resources && milestone.resources.length > 0) {
-                                                description += "\n\nZu diesem Meilenstein gehören folgende Lernressourcen:";
-                                                milestone.resources.forEach(
-                                                    (resource) => {
-                                                        let done = resource.checked ? "[erledigt] " : "";
-                                                        if (resource.instance_title) description += "\n- " + done + resource.instance_title;
-                                                    }
-                                                )
-                                            }
-                                            if (milestone.strategies && milestone.strategies.length > 0) {
-                                                description += "\n\nZu diesem Meilenstein gehören folgende Lernstrategien:";
-                                                milestone.strategies.forEach(
-                                                    (strategie) => {
-                                                        let done = strategie.checked ? "[erledigt] " : "";
-                                                        if (strategie.name) description += "\n- " + done + strategie.name;
-                                                    }
-                                                )
-                                            }
-                                            data.description = description;
-                                            let event = cal.addEvent(data);
-                                            // Set an alarm three days before end.
-                                            let date = new Date(milestone.start.toISOString());
-                                            date.setDate(date.getDate() - 3);
-                                            cal.addAlarm(event, {
-                                                type: 0,
-                                                title: data.title,
-                                                date: date,
-                                                description: "Der Meilenstein " + data.title + " ist fast erreicht!"
-                                            });
-                                            // Set an alarm one week before end.
-                                            date.setDate(date.getDate() - 4);
-                                            cal.addAlarm(event, {
-                                                type: 0,
-                                                title: data.title,
-                                                date: date,
-                                                description: "Der Meilenstein " + data.title + " ist bald erreicht!"
-                                            });
-                                        } catch (error) {
-                                            new ErrorHandler(error);
-                                        }
-                                    }
-                                );
-                            }
-                            // Register all calendar events                   
-                            if (typeof this.calendar === "object" && Object.keys(this.calendar).length > 0) {
-                                Object.keys(this.calendar).forEach(
-                                    (id) => {
-                                        try {
-                                            let entry = this.calendar[id];
-                                            let type = "[Nutzertermin]";
-                                            switch (entry.eventtype) {
-                                                case "course": type = "[Kurstermin]"
-                                                    break;
-                                                case "category": type = "[Kursbereich]"
-                                                    break;
-                                                case "site": type = "[Seitentermin]"
-                                                    break;
-                                                case "group": type = "[Gruppentermin]"
-                                                    break;
-                                            }
-                                            let data = {
-                                                uid: id + entry.timemodified,
-                                                title: type + " " + entry.name,
-                                                start: new Date(entry.timestart * 1000)
-                                            }
-                                            if (entry.timeduration) data.stop = new Date(entry.timestart * 1000 + entry.timeduration * 1000);
-                                            data.description = entry.description;
-                                            let event = cal.addEvent(data);
-                                            // Set an alarm three days before end.
-                                            let date = new Date(data.start.toISOString());
-                                            date.setDate(date.getDate() - 3);
-                                            cal.addAlarm(event, {
-                                                type: 0,
-                                                title: data.title,
-                                                date: date,
-                                                description: "Der Termin " + data.title + " ist fast erreicht!"
-                                            });
-                                            // Set an alarm one week before end.
-                                            date.setDate(date.getDate() - 4);
-                                            cal.addAlarm(event, {
-                                                type: 0,
-                                                title: data.title,
-                                                date: date,
-                                                description: "Der Termin " + data.title + " ist bald erreicht!"
-                                            });
-                                        } catch (error) {
-                                            new ErrorHandler(error);
-                                        }
-                                    }
-                                )
-                            }
-                            let now = new Date();
-                            let year = now.getFullYear().toString().padStart(4, "0");
-                            let month = now.getMonth() + 1;
-                            month = month.toString().padStart(2, "0");
-                            let day = now.getDate().toString().padStart(2, "0");
-                            let hour = now.getHours().toString().padStart(2, "0");
-                            let minutes = now.getMinutes().toString().padStart(2, "0");
-                            let title = document.title.replace(/[^A-Za-z0-9]/g, "");
-                            var link = document.createElement("a");
-                            link.href = "data:text/calendar;charset=utf-8," + escape(cal.print());
-                            link.download = "Semesterplanung_" + title + "_" + year + month + day + hour + minutes + ".ics";
-                            link.click();
-                        } catch (error) {
-                            new ErrorHandler(error);
-                        }
-                    },*/
+                    
                     createMilestonePicker: function () {
                         let _this = this;
                         let updateMilestoneList = function (id) {
@@ -2783,7 +2576,9 @@ define([
                 width = document.getElementById('planing-component').offsetWidth;
                 milestoneApp.width = width - margins.right;
                 //dc.redrawAll(mainGroup);
-                milestoneApp.timeFilterChart.filterTime();
+                if (milestoneApp.timeFilterChart){
+                    milestoneApp.timeFilterChart.filterTime();
+                }
             };
 
         };// end draw
