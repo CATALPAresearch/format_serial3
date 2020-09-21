@@ -26,9 +26,21 @@ define([
             data: function () {
                 return {
                     strategyCategories: [
-                        { id: 'cognitive', name: 'Überblick beim Lernen', desc: 'Kognitive Lernstrategien' },
-                        { id: 'metacognitive', name: 'Lernen gestalten', desc: 'Metakognitive Lernstrategien' },
-                        { id: 'resource', name: 'Meine Ressourcen', desc: 'Ressourcenbezogene Lernstrategien' },
+                        {
+                            id: 'cognitive', 
+                            name: 'Überblick beim Lernen', 
+                            desc: 'Bei kognitiven Lernstrategien unterscheidet man zwischen Organisations-, Elaborations- und Wiederholungsstrategien. Organisationsstrategien betrachten, wie der/die Lernernde sein/ihr Wissen organisiert und für den weiteren Lernprozess strukturiert. Strategien, die dies konkret veranschaulichen, sind das Erstellen von Mindmaps, das Verfassen von Exzerpten oder Gliederungen zum Lernstoff sowie das Sammeln wichtiger Inhalte, z.B. durch das Erstellen von Tabellen, Diagrammen, Schaubildern oder Listen mit Fachausdrücken und Definitionen. Elaborationsstrategien werden eingesetzt, um ein erweitertes Wissen zu generieren. Lernende bedienen sich dabei meist der bereits internalisierten Schemata und Wissensbasen und nutzen z. B. vertraute Abläufe, um Querbezüge herzustellen. vgl. Wissenssynthese. Wiederholungsstrategien sind notwendig, um sich Lernstoff dauerhaft einzuprägen und gleichsam eine schnelle Verfügbarkeit von Wissen zu gewährleisten. Daher stehen hier Lernaktivitäten wie z. B. Auswendiglernen mit Lernkarten und repetierende Übungen im Vordergrund.',
+                        },
+                        {
+                            id: 'metacognitive', 
+                            name: 'Lernen gestalten', 
+                            desc: 'Bei den metakognitiven Lernstrategie geht es darum den Lernprozess zu Steuern und zu kontrollieren. Dazu bedient man sich Strategien wie dem Planen, Vorbereiten und Ziele setzen. Dies geht eiher mit einem stetigen Prozess der Selbsteinschätzung und Selbstregulation. Nur so kann der Lernprozess stetig verbessert und angepasst werden. '
+                        },
+                        {
+                            id: 'resource', 
+                            name: 'Meine Ressourcen', 
+                            desc: 'Ressourcenorientierte Selbstorganisation im StudiumUm eine Balance zwischen Studium und beruflichen wie privaten Verpflichtungen herzustellen, ist es wichtig, die eigenen Ressourcen zu kennen und sich Zeit und Energie im Studium gut einzuteilen.Eine systematische Auseinandersetzung mit Zielen, Anstrengungen beim Lernen und der eigenen Aufmerksamkeitsfähigkeit soll Ihnen helfen, Ihre Ressourcen besser kennen zu lernen.Motivation und Durchhaltevermögen können Sie durch eine Balance zwischen Selbstverpflichtung, Belohnung und Regeneration steigern. ' 
+                        },
                         { id: 'misc', name: 'Sonstige' }
                     ],
 
@@ -50,12 +62,17 @@ define([
 
                     strategies: [
                         // cognitive strategies
-                        { id: 'reading', name: 'Überblick durch Querlesen', desc: '', url: "", category: 'cognitive' },
-                        { id: '', name: '', desc: '', category: 'cognitive', subcategory: 'orga' },
-                        { id: '', name: '', desc: '', category: 'cognitive' },
-                        { id: '', name: '', desc: '', category: 'cognitive' },
-                        { id: '', name: '', desc: '', category: 'cognitive' },
-                        { id: '', name: '', desc: '', category: 'cognitive' },
+                        { id: 'reading', name: 'Überblick durch Querlesen', desc: '', category: 'cognitive' },
+                        {
+                            id: 'mindmap', name: 'Mindmap', desc: 'Mit Mindmaps können Sie zentrale Themen, Bezüge und Zusammengänge grafisch darstellen und visuell veranschaulichen. Bei einer Mindmap wird die zentrale Idee eines Textes bzw. der zentrale Begriff, in der Mitte des Blattes platziert. Weitere Schlüsselwörter, die im Text behandelt werden, werden nun in Relation dazu (Abstand - Nähe; Schriftgröße, etc.) hinzugefügt. Sie können diese Begriffe auch durch Symbole oder Kurzkommentare ergänzen. Es empfiehlt sich allerdings, nicht ganze Sätze zu formulieren, da die Übersichtlichkeit darunter leiden könnte.', category: 'cognitive' },
+                        {
+                            id: 'exzerpt', name: 'Exzerpte / Zusammenfassungen', desc: 'Ein Exzerpt ist mehr als nur eine einfache Zusammenfassung der wichtigsten Inhalte. Gerade wenn es darum geht, vor einer Prüfung Lerninhalte noch einmal zu wiederholen, helfen Ihnen Exzerpte oder Zusammenfassungen dabei, schnell in die einzelnen Wissensbereiche einzutauchen, ohne auf das ausführliche Kursmaterial zurückzugreifen. Zudem können Sie schon bei der Erstellung eines Exzerpts üben, Wissen in eigenen Worten wiederzugeben. Auch kritische Perspektiven und eine wissenschaftliche Schreibweise sollten Sie in einem Exzerpt berücksichtigen.', category: 'cognitive' },
+                        {
+                            id: 'toc', name: 'Gliederungen', desc: 'Gliederungen helfen, einen Überblick über den zu lernenden Inhalt zu bekommen. Wissen kann so leichter strukturiert oder kategorisiert werden. Themenfelder lassen sich mit einer Gliederung z. B. übersichtlich strukturieren.', category: 'cognitive' },
+                        {
+                            id: 'structure', name: 'Strukturierung von Wissen', desc: 'Um den Lernstoff klarer darzustellen, ist die Erstellung von Tabellen, Diagrammen, Listen oder Schaubildern hilfreich. Fachausdrücke oder Definitionen lassen sich gut in Listen oder Tabellen sammeln.', category: 'cognitive' },
+                        {
+                            id: 'cards', name: 'Lernkarten früh erstellen', desc: 'Lernkarten können schon sehr früh digital z. B. in einer App oder auf Papier erstellt werden und die Lernorganisation so erleichtern. Dabei können nicht nur Begriffe notiert werden, sondern auch Prozesse oder mögliche Fragestellungen, die Sie z. B. in der Prüfung erwarten könnten.', category: 'cognitive' },
                         { id: '', name: '', desc: '', category: 'cognitive' },
 
                         // metacognitive strategies
