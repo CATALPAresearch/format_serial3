@@ -37,7 +37,20 @@ $string['page-course-view-topics-x'] = 'Any course page in topics format';
 $string['hidefromothers'] = 'Hide topic';
 $string['showfromothers'] = 'Show topic';
 // Survey
-$string['surveyTitle'] = 'Das ist der Titel der Umfrage';
-$string['surveyHeadline'] = 'Das ist die Überschrift der Umfrage';
-$string['surveyDescription'] = 'Survey description';
-$string['surveyButton'] = 'Neu laden.';
+$string['surveyTitle'] = 'Begleitforschung APLE / LA-DIVA';
+$string['surveyHeadline'] = 'Begleitforschung APLE / LA-DIVA';
+$string['surveyDescription'] = 'Im Rahmen der Begleitforschung der Forschungsprojekte APLE / LA-DIVA bitten wir Sie, an folgenden Umfragen teilzunehmen und so 
+unsere Forschung zu unterstützen.';
+$string['surveyReqText'] = "Umfragen mit dem Status 'erforderlich' müssen absolviert werden, bevor Sie wieder auf die Lernumgebung zugreifen können.";
+$string['surveyButton'] = 'Zurück zum Kurs';
+// survey table
+$string['surveyID'] = "#";
+$string['surveyTitle'] = "Titel";
+$string['surveyStart'] = "Startdatum";
+$string['surveyWarn'] = "Optional bis";
+$string['surveyStop'] = "Enddatum";
+$string['surveyState'] = "Status";
+$string['surveyLink'] = "Link";
+$string['surveyDone'] = "teilgenommen";
+$string['surveyRequired'] = "erforderlich";
+$string['surveyPending'] = "unerledigt";
