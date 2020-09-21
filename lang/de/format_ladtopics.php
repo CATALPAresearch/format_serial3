@@ -23,21 +23,21 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['addsections'] = 'Themenabschnitt hinzufügen';
-$string['currentsection'] = 'Dieser Themenabschnitt';
-$string['editsection'] = 'Themenabschnitt bearbeiten';
-$string['editsectionname'] = 'Namen des Themenabschnitts bearbeiten';
-$string['deletesection'] = 'Themenabschnitt löschen';
-$string['newsectionname'] = 'Neuer Namen für den Themenabschnitt {$a}';
-$string['sectionname'] = 'Themenabschnitt';
-$string['pluginname'] = 'LAD Topics format';
-$string['section0name'] = 'Allgemein';
-$string['page-course-view-topics'] = 'Beliebige Kursübersichtsseite im LAD-Topics Format';
-$string['page-course-view-topics-x'] = 'Beliebige Kursübersichtsseite im LAD-Topics Format';
-$string['hidefromothers'] = 'Themenabschnitt verbergen';
-$string['showfromothers'] = 'Themenabschnitt anzeigen';
-// Survey
-$string['surveyTitle'] = 'Das ist der Titel der Umfrage';
-$string['surveyHeadline'] = 'Das ist die Überschrift der Umfrage';
-$string['surveyDescription'] = 'Survey description';
-$string['surveyButton'] = 'Neu laden.';
+
+$string['surveyTitle'] = 'Begleitforschung APLE / LA-DIVA';
+$string['surveyHeadline'] = 'Begleitforschung APLE / LA-DIVA';
+$string['surveyDescription'] = 'Im Rahmen der Begleitforschung der Forschungsprojekte APLE / LA-DIVA bitten wir Sie, an folgenden Umfragen teilzunehmen und so 
+unsere Forschung zu unterstützen.';
+$string['surveyReqText'] = "Umfragen mit dem Status 'erforderlich' müssen absolviert werden, bevor Sie wieder auf die Lernumgebung zugreifen können.";
+$string['surveyButton'] = 'Zurück zum Kurs';
+// survey table
+$string['surveyID'] = "#";
+$string['surveyTitle'] = "Titel";
+$string['surveyStart'] = "Startdatum";
+$string['surveyWarn'] = "Optional bis";
+$string['surveyStop'] = "spätester Termin";
+$string['surveyState'] = "Status";
+$string['surveyLink'] = "";
+$string['surveyDone'] = "teilgenommen";
+$string['surveyRequired'] = "erforderlich";
+$string['surveyPending'] = "steht noch aus";

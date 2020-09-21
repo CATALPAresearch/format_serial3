@@ -96,13 +96,12 @@ if(isset($sess->c)){
         $list .=    "<tr>
             <th class=\"align-middle\">{$id}</th>
                 <td class=\"align-middle\">{$title}</td>
-                <td class=\"align-middle\">{$start}</td>
-                <td class=\"align-middle\">{$warn}</td>
                 <td class=\"align-middle\">{$stop}</td>
                 <td class=\"align-middle\">{$state}</td>
                 <td class=\"align-middle\"><button class=\"btn btn-primary center-block\" onClick=\"javascript:window.location.href='{$link}{$surveyID}'\">Zur Umfrage</button></td>
             </tr>";
-        $id++;    
+        $id++;  
+        // <td class=\"align-middle\">{$start}</td>  <td class=\"align-middle\">{$warn}</td>
 
     }   
 
@@ -116,13 +115,11 @@ if(isset($sess->c)){
     $PAGE->set_heading(get_string('surveyHeadline', 'format_ladtopics'));
     echo $OUTPUT->header();  
     echo '<div style="display: inline-block;"><p class="mt-2 mb-4">'.get_string('surveyDescription', 'format_ladtopics').'</p>';   
-    echo "<table class=\"table table-striped\">
-                    <thead class=\"thead-dark\">
+    echo "<table class=\"table\">
+                    <thead class=\"thead-light\">
                         <tr>
                             <th scope=\"col\">".get_string('surveyID', 'format_ladtopics')."</th>
                             <th scope=\"col\">".get_string('surveyTitle', 'format_ladtopics')."</th>
-                            <th scope=\"col\">".get_string('surveyStart', 'format_ladtopics')."</th>
-                            <th scope=\"col\">".get_string('surveyWarn', 'format_ladtopics')."</th>
                             <th scope=\"col\">".get_string('surveyStop', 'format_ladtopics')."</th>
                             <th scope=\"col\">".get_string('surveyState', 'format_ladtopics')."</th>
                             <th scope=\"col\">".get_string('surveyLink', 'format_ladtopics')."</th>
@@ -131,7 +128,9 @@ if(isset($sess->c)){
                     <tbody>
                         {$list}
                     </tbody>
-                </table>";       
+                </table>";   
+                // <th scope=\"col\">".get_string('surveyStart', 'format_ladtopics')."</th><th scope=\"col\">".get_string('surveyWarn', 'format_ladtopics')."</th>
+                                
     $courseURL = new moodle_url('/course/view.php', array('id' => +$sess->c));
     echo '<p class="text-center">'.get_string('surveyReqText', 'format_ladtopics').'</p>';
     echo '<div class="text-center"><button onClick="javascript:window.location.href=\''.$courseURL->__toString().'\';" class="btn btn-secondary center-block">'.get_string('surveyButton', 'format_ladtopics').'</button></div></div>';
