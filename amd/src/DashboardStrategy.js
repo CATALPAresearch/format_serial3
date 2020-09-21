@@ -18,7 +18,7 @@ define([
     'jquery',
     M.cfg.wwwroot + "/course/format/ladtopics/lib/build/vue.min.js"
 ], function ($, Vue) {
-    
+
     return Vue.component('dashboard-completion',
         {
             props: ['course'],
@@ -26,18 +26,42 @@ define([
             data: function () {
                 return {
                     strategyCategories: [
-                        { id: 'cognitive', name: 'Kognitive Lernstrategien' },
-                        { id: 'metacognitive', name: 'Metakognitive Lernstrategien' },
-                        { id: 'resource', name: 'Ressourcenbezogene Lernstrategien' },
+                        { id: 'cognitive', name: 'Überblick beim Lernen', desc: 'Kognitive Lernstrategien' },
+                        { id: 'metacognitive', name: 'Lernen gestalten', desc: 'Metakognitive Lernstrategien' },
+                        { id: 'resource', name: 'Meine Ressourcen', desc: 'Ressourcenbezogene Lernstrategien' },
                         { id: 'misc', name: 'Sonstige' }
                     ],
-                    pedagogicStrategies: [
-                        { id: 'overview', name: 'Überblick', desc: 'Ein Beschreibung zum Überblick' },
-                        { id: 'performance', name: 'Lernen', desc: 'Ein Beschreibung zur Lernphase' },
-                        { id: 'exams', name: 'Pürfungsvorbreitung', desc: 'Ein Beschreibung zur Prüfungsvorbereitung' }
+
+                    strategySubCategories: [
+                        {
+                            id: 'organisation', name: 'Organisationsstrategien ', desc: 'Organisationsstrategien betrachten, wie der/die Lernernde sein/ihr Wissen organisiert und für den weiteren Lernprozess strukturiert. Strategien, die dies konkret veranschaulichen, sind das Erstellen von Mindmaps, das Verfassen von Exzerpten oder Gliederungen zum Lernstoff sowie das Sammeln wichtiger Inhalte, z.B. durch das Erstellen von Tabellen, Diagrammen, Schaubildern oder Listen mit Fachausdrücken und Definitionen.'
+                        },
+                        {
+                            id: 'elaboration', name: 'Elaborationsstrategien', desc: 'Elaborationsstrategien werden eingesetzt, um ein erweitertes Wissen zu generieren. Lernende bedienen sich dabei meist der bereits internalisierten Schemata und Wissensbasen und nutzen z. B. vertraute Abläufe, um Querbezüge herzustellen. vgl. Wissenssynthese.'
+                        },
+                        {
+                            id: 'repetition', name: 'Wiederholungsstrategien', desc: 'Wiederholungsstrategien sind notwendig, um sich Lernstoff dauerhaft einzuprägen und gleichsam eine schnelle Verfügbarkeit von Wissen zu gewährleisten. Daher stehen hier Lernaktivitäten wie z. B. Auswendiglernen mit Lernkarten und repetierende Übungen im Vordergrund.'
+                        },
+                        { id: '', name: '', desc: '' },
+                        { id: '', name: '', desc: '' },
+                        { id: '', name: '', desc: '' },
+                        { id: '', name: '', desc: '' }
                     ],
+
                     strategies: [
-                        { id: 'reading', pcategory:'overview', name: 'Überblick durch Lesen/Querlesen', desc: '<div>Durch schnelles Querlesen verschaffen Sie sich einen Überblick über das Themengebiet. Schauen Sie sich doch auch einmal die PQ4R-Methode an. <a href="https://www.example.com/">Details</a></div>', url: "", category: 'organization' },
+                        // cognitive strategies
+                        { id: 'reading', name: 'Überblick durch Querlesen', desc: '', url: "", category: 'cognitive' },
+                        { id: '', name: '', desc: '', category: 'cognitive', subcategory: 'orga' },
+                        { id: '', name: '', desc: '', category: 'cognitive' },
+                        { id: '', name: '', desc: '', category: 'cognitive' },
+                        { id: '', name: '', desc: '', category: 'cognitive' },
+                        { id: '', name: '', desc: '', category: 'cognitive' },
+                        { id: '', name: '', desc: '', category: 'cognitive' },
+
+                        // metacognitive strategies
+
+
+
                         { id: 'mindmap', pcategory: 'overview', name: 'Erzeuge Mindmap', desc: 'Eine Mindmap hilft dabei, Zusammenhänge darzustellen.', url: "", category: 'organization' },
                         { id: 'exzerpte', pcategory: 'overview', name: 'Fertige Exzerpt an', desc: 'Ein Exzerpt ist mehr als nur eine einfache Zusammenfassung der wichtigsten Inhalte.', url: "", category: 'organization' },
                         { id: 'gliederung', pcategory: 'performance', name: 'Erstelle Gliederung', desc: 'Themenfelder lassen sich mit einer Gliederung übersichtlich strukturieren.', url: "", category: 'organization' },
@@ -63,9 +87,9 @@ define([
                 };
             },
 
-            mounted: function () {},
+            mounted: function () { },
 
-            created: function (){
+            created: function () {
                 $(function () {
                     $('#strategyTab li:first-child a').tab('show');
                 });
@@ -111,6 +135,6 @@ define([
                     <div class="clearfix"></div>
                 </div>
              </div>
-            ` 
+            `
         });
 });
