@@ -7,5 +7,6 @@ CREATE TABLE m_limesurvey_assign (
     course_id int,
     survey_id int,
     startdate int,
+    warndate int,
     stopdate int
 );
