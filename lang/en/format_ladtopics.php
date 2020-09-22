@@ -37,20 +37,19 @@ $string['page-course-view-topics-x'] = 'Any course page in topics format';
 $string['hidefromothers'] = 'Hide topic';
 $string['showfromothers'] = 'Show topic';
 // Survey
-$string['surveyTitle'] = 'Begleitforschung APLE / LA-DIVA';
-$string['surveyHeadline'] = 'Begleitforschung APLE / LA-DIVA';
-$string['surveyDescription'] = 'Im Rahmen der Begleitforschung der Forschungsprojekte APLE / LA-DIVA bitten wir Sie, an folgenden Umfragen teilzunehmen und so 
-unsere Forschung zu unterstützen.';
-$string['surveyReqText'] = "Umfragen mit dem Status 'erforderlich' müssen absolviert werden, bevor Sie wieder auf die Lernumgebung zugreifen können.";
-$string['surveyButton'] = 'Zurück zum Kurs';
+$string['surveyTitle'] = 'Accompanying research APLE / LA-DIVA';
+$string['surveyHeadline'] = 'Accompanying research APLE / LA-DIVA';
+$string['surveyDescription'] = 'As part of the accompanying research of research projects APLE and LA-DIVA, we ask you to take part in the following surveys and thus support our research.';
+$string['surveyReqText'] = "Surveys with the status 'required' must be completed before you can access the learning environment again.";
+$string['surveyButton'] = 'Back to the course';
 // survey table
 $string['surveyID'] = "#";
-$string['surveyTitle'] = "Titel";
-$string['surveyStart'] = "Startdatum";
-$string['surveyWarn'] = "Optional bis";
-$string['surveyStop'] = "Enddatum";
+$string['surveyTitle'] = "Title";
+$string['surveyStart'] = "Start date";
+$string['surveyWarn'] = "Optional until";
+$string['surveyStop'] = "Deadline";
 $string['surveyState'] = "Status";
 $string['surveyLink'] = "Link";
-$string['surveyDone'] = "teilgenommen";
-$string['surveyRequired'] = "erforderlich";
-$string['surveyPending'] = "unerledigt";
+$string['surveyDone'] = "Completed";
+$string['surveyRequired'] = "Required";
+$string['surveyPending'] = "Outstanding";

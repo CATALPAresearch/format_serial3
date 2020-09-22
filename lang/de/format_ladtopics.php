@@ -16,7 +16,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'format_topics', language 'en', branch 'MOODLE_20_STABLE'
+ * Strings for component 'format_topics', language 'de', branch 'MOODLE_20_STABLE'
  *
  * @package   format_topics
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
@@ -26,8 +26,7 @@
 
 $string['surveyTitle'] = 'Begleitforschung APLE / LA-DIVA';
 $string['surveyHeadline'] = 'Begleitforschung APLE / LA-DIVA';
-$string['surveyDescription'] = 'Im Rahmen der Begleitforschung der Forschungsprojekte APLE / LA-DIVA bitten wir Sie, an folgenden Umfragen teilzunehmen und so 
-unsere Forschung zu unterstützen.';
+$string['surveyDescription'] = 'Im Rahmen der Begleitforschung der Forschungsprojekte APLE und LA-DIVA bitten wir Sie, an folgenden Umfragen teilzunehmen und so unsere Forschung zu unterstützen.';
 $string['surveyReqText'] = "Umfragen mit dem Status 'erforderlich' müssen absolviert werden, bevor Sie wieder auf die Lernumgebung zugreifen können.";
 $string['surveyButton'] = 'Zurück zum Kurs';
 // survey table
@@ -35,9 +34,9 @@ $string['surveyID'] = "#";
 $string['surveyTitle'] = "Titel";
 $string['surveyStart'] = "Startdatum";
 $string['surveyWarn'] = "Optional bis";
-$string['surveyStop'] = "spätester Termin";
+$string['surveyStop'] = "Spätester Termin";
 $string['surveyState'] = "Status";
-$string['surveyLink'] = "";
-$string['surveyDone'] = "teilgenommen";
-$string['surveyRequired'] = "erforderlich";
-$string['surveyPending'] = "steht noch aus";
+$string['surveyLink'] = "Link";
+$string['surveyDone'] = "Teilgenommen";
+$string['surveyRequired'] = "Erforderlich";
+$string['surveyPending'] = "Ausstehend";
