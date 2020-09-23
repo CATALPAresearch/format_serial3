@@ -1,3 +1,18 @@
+.nav-link[data-toggle].collapsed:before {
+    content: " ▾";
+}
+
+.nav-link[data-toggle]:not(.collapsed):before {
+    content: " ▴";
+}
+
+.learning-strategy-item:hover {
+    cursor: pointer;
+    background-color: #ddd;
+}
+
+/* not existing anymore? */
+
 .tabs-left, .tabs-right {
     border-bottom: none;
     padding-top: 2px;
