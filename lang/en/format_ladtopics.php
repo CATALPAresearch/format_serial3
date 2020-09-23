@@ -37,7 +37,7 @@ $string['page-course-view-topics-x'] = 'Any course page in topics format';
 $string['hidefromothers'] = 'Hide topic';
 $string['showfromothers'] = 'Show topic';
 // Survey
-$string['surveyTitle'] = 'Accompanying research APLE / LA-DIVA';
+$string['surveyPageTitle'] = 'Accompanying research APLE / LA-DIVA';
 $string['surveyHeadline'] = 'Accompanying research APLE / LA-DIVA';
 $string['surveyDescription'] = 'As part of the accompanying research of research projects APLE and LA-DIVA, we ask you to take part in the following surveys and thus support our research.';
 $string['surveyReqText'] = "Surveys with the status 'required' must be completed before you can access the learning environment again.";
