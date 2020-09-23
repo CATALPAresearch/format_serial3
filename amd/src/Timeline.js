@@ -44,10 +44,10 @@ define([
             semesterShortName: 'WS 2020/21',
             id: parseInt($('#courseid').text(), 10),
             // module: parseInt($('#moduleid').html())
-            startDate: new Date(2020, 3, 1, 0, 0, 0),
-            endDate: new Date(2020, 8, 30, 23, 59, 59),
-            start: (new Date(2020, 3, 1, 0, 0, 0)).getTime() / 1000,
-            end: (new Date(2020, 8, 30, 23, 59, 59)).getTime() / 1000,
+            startDate: new Date(2020, 8, 29, 0, 0, 0),
+            endDate: new Date(2021, 2, 31, 23, 59, 59),
+            start: (new Date(2020, 8, 29, 0, 0, 0)).getTime() / 1000,
+            end: (new Date(2021, 2, 31, 23, 59, 59)).getTime() / 1000,
             minimumWeeklyWorkload: 6,
             maximumWeeklyWorkload: 30,
             maxPlaningPeriod: 12 // months
