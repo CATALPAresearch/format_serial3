@@ -195,6 +195,13 @@ class format_ladtopics_external extends external_api
                 ));
                 $transaction->allow_commit();
                 $uo->survey = $res;
+                // count limesurvey
+                $LimeSurveys = $DB->get_records("limesurvey_assigns", array('course_id' => $courseid));
+                $uo->lime = 0;
+                foreach($LimeSurveys as $srv){                   
+                    $uo->lime = $uo->lime + $DB->count_records("limesurvey_submissions", array('user_id' => $user->id, 'survey_id' => $srv->survey_id));
+                }                
+                // ---
                 $out['users'][] = $uo;
                 if (!is_bool($resSD) && !is_bool($res)) {
                     $out['num_survey']++;
