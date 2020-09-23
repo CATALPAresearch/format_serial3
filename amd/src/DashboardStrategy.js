@@ -71,7 +71,7 @@ define([
                         
                         
                         {
-                            id: 'elaboration', subheading: true, name: 'Elaborationsstrategien'
+                            id: 'elaboration', subheading: true, name: 'Elaborationsstrategien', category:'cognitive'
                         },
                         {
                             id: 'fastread', name: 'schnelles Lesen', desc: 'Üben Sie das schnelle Lesen, indem Sie einmal probieren, so schnell zu lesen, wie Sie können. Lesen Sie so schnell, dass Sie kaum etwas vom Inhalt des Textes mitbekommen. Betrachten Sie das als eine Tempo-Übung. Eine weitere Übung, um die Lesegeschwindigkeit zu erhöhen, ist die Vergrößerung des Fixierungsbereichs; lesen Sie in Wortgruppen anstelle des wortwörtlichen Lesens.Beide Prozesse werden durch die nachfolgenden Abbildungen dargestellt. :>> Abb normale_Lesebewegung.png und schnelle_Lesebewegung.png >> Eine weitere unterstützende Technik bietet die Beschleunigung des Lesefingers.Lesen Sie zu Beginn mit dem Finger unter den Zeilen.Das schult die Blickbewegung, so dass mehrere Worte auf einmal wahrgenommen werden können.Steigern Sie dabei das Tempo Ihres Fingers; je schneller der Finger über die Zeilen gleitet, desto schneller müssen Sie auch lesen. ', category: 'cognitive'
@@ -214,17 +214,17 @@ define([
                     <div class="col-3">
                         <ul class="nav flex-column flex-nowrap overflow-hidden">
                             <li v-for="pc in strategyCategories" class="nav-item">
-                                <a :class="currentMenuItem==pc.id ? 'nav-link text-truncate' : 'nav-link collapsed text-truncate'" v-on:click="currentMenuItem=pc.id" :href="'#submenu-'+pc.id" data-toggle="collapse" :data-target="'#submenu-'+pc.id">
+                                <a :class="currentMenuItem==pc.id ? 'nav-link text-truncate mb-0 pb-0' : 'nav-link collapsed text-truncate'" v-on:click="currentMenuItem=pc.id" :href="'#submenu-'+pc.id" data-toggle="collapse" :data-target="'#submenu-'+pc.id">
                                     <i class="fa fa-arrow"></i> 
                                     <span class="d-none d-sm-inline bold">{{ pc.name}}</span>
                                 </a>
                                 <div v-if="strategiesByCategory(pc.id).length > 0" :class="currentMenuItem==pc.id ? 'collapse fade show' : 'collapse fade'" :id="'submenu-'+pc.id" aria-expanded="false">
                                     <ul class="flex-column pl-2 nav">
                                         <li v-for="s in strategiesByCategory(pc.id)" :style="currentStrategy==s.id ? 'background-color:lightblue;' : ''" :class="currentStrategy == s.id ? 'nav-item active' : 'nav-item'">
-                                            <a v-if="s.subheading !== true" class="nav-link py-0" v-on:click.prevent="currentStrategy=s.id">
-                                                <span>- {{s.name}}</span>
+                                            <a v-if="s.subheading !== true" class="bl-2 pl-1 ml-4 nav-link py-0" v-on:click.prevent="currentStrategy=s.id">
+                                                <span>{{s.name}}</span>
                                             </a>
-                                            <span v-if="s.subheading">{{s.name}}</span>
+                                            <span v-if="s.subheading" class="pl-1 ml-2">{{s.name}}</span>
                                         </li>
                                     </ul>
                                 </div>
@@ -236,7 +236,7 @@ define([
                         <div>{{ getSelectedStrategy().desc }}</div>
                     </div>
                     <div class="col-3">
-                        <h4>Meine Notizen aus der Reflexion</h4>
+                        <h5>Meine Notizen aus der Reflexion</h5>
                         <div v-for="r in the_milestones">{{r.reflections[3]}}</div>
                     </div>
                 </div>
