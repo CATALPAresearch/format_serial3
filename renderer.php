@@ -392,7 +392,6 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                                             <td><b>Abgelaufene MS</b></td>
                                             <td><b>Abgeschlossene MS</b></td>                                            
                                             <td><b>Reflektierte MS</b></td>  
-                                            <td><b>Beantw. Umfragen</b></td>
                                         </tr>                                                                 
                                     </table>
                                 </div>                                                           
