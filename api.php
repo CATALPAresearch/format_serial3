@@ -55,6 +55,45 @@ function get_meta($courseID)
 
 class format_ladtopics_external extends external_api
 {
+    public static function limeaccess_parameters(){
+        return new external_function_parameters(
+            array(
+                'courseid' => new external_value(PARAM_INT, 'course id'),
+                'surveyid' => new external_value(PARAM_INT, 'survey id'),
+            )
+        );
+    }
+    
+    public static function limeaccess($courseid, $surveyid){
+        global $CFG, $DB, $USER;
+        $out = array();
+        try{
+            $obj = new stdClass();
+            $obj->user_id = $USER->id;
+            $obj->course_id = $courseid;
+            $obj->survey_id = $surveyid;
+            $obj->access_date = time();            
+            $id = $DB->insert_record("limesurvey_access", $obj);
+            $out['val'] = is_int(+$id);
+        } catch(Exception $ex){
+            $out['debug'] = $ex->getMessage();
+        }
+        return array('data' => json_encode($out));
+    }
+
+    public static function limeaccess_is_allowed_from_ajax(){
+        return true;
+    }
+
+    public static function limeaccess_returns(){
+        return new external_single_structure(
+            array(
+                'data' => new external_value(PARAM_RAW, 'data')
+            )
+        );
+    }
+    
+    
     public static function limesurvey_parameters(){
         return new external_function_parameters(
             array(
@@ -195,6 +234,13 @@ class format_ladtopics_external extends external_api
                 ));
                 $transaction->allow_commit();
                 $uo->survey = $res;
+                // count limesurvey
+                $LimeSurveys = $DB->get_records("limesurvey_assigns", array('course_id' => $courseid));
+                $uo->lime = 0;
+                foreach($LimeSurveys as $srv){                   
+                    $uo->lime = $uo->lime + $DB->count_records("limesurvey_submissions", array('user_id' => $user->id, 'survey_id' => $srv->survey_id));
+                }                
+                // ---
                 $out['users'][] = $uo;
                 if (!is_bool($resSD) && !is_bool($res)) {
                     $out['num_survey']++;
