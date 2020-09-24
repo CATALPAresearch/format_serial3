@@ -29,10 +29,25 @@ define([
                     currentMenuItem: 'cognitive',
                     the_milestones: [],
                     strategyCategories: [
-                        {
+                        /*{
                             id: 'cognitive',
                             name: 'Lernen gestalten',
                             desc: 'Bei kognitiven Lernstrategien unterscheidet man zwischen Organisations-, Elaborations- und Wiederholungsstrategien. Organisationsstrategien betrachten, wie der/die Lernernde sein/ihr Wissen organisiert und für den weiteren Lernprozess strukturiert. Strategien, die dies konkret veranschaulichen, sind das Erstellen von Mindmaps, das Verfassen von Exzerpten oder Gliederungen zum Lernstoff sowie das Sammeln wichtiger Inhalte, z.B. durch das Erstellen von Tabellen, Diagrammen, Schaubildern oder Listen mit Fachausdrücken und Definitionen. Elaborationsstrategien werden eingesetzt, um ein erweitertes Wissen zu generieren. Lernende bedienen sich dabei meist der bereits internalisierten Schemata und Wissensbasen und nutzen z. B. vertraute Abläufe, um Querbezüge herzustellen. vgl. Wissenssynthese. Wiederholungsstrategien sind notwendig, um sich Lernstoff dauerhaft einzuprägen und gleichsam eine schnelle Verfügbarkeit von Wissen zu gewährleisten. Daher stehen hier Lernaktivitäten wie z. B. Auswendiglernen mit Lernkarten und repetierende Übungen im Vordergrund.',
+                        },*/
+                        {
+                            id: 'organisation',
+                            name: 'Lernstoff organisieren',
+                            desc: '==Organisationsstrategien',
+                        },
+                        {
+                            id: 'elaboration',
+                            name: 'Inhalte erarbeiten',
+                            desc: '== (Elaborationstrategien)',
+                        },
+                        {
+                            id: 'build',
+                            name: 'Wissen aufbauen',
+                            desc: '==(Wiederholungsstrategien)',
                         },
                         {
                             id: 'metacognitive',
@@ -48,65 +63,65 @@ define([
 
                     strategies: [
                         // cognitive strategies
-                        {
+                        /*{
                             id: 'organisation', subheading: true, name: 'Organisationsstrategien', category: 'cognitive'
-                        },
+                        },*/
                         { 
-                            id: 'reading', name: 'Überblick durch Querlesen', desc: '', category: 'cognitive' },
+                            id: 'reading', name: 'Überblick durch Querlesen', desc: '', category: 'organisation' },
                         {
-                            id: 'mindmap', name: 'Mindmap', desc: 'Mit Mindmaps können Sie zentrale Themen, Bezüge und Zusammengänge grafisch darstellen und visuell veranschaulichen. Bei einer Mindmap wird die zentrale Idee eines Textes bzw. der zentrale Begriff, in der Mitte des Blattes platziert. Weitere Schlüsselwörter, die im Text behandelt werden, werden nun in Relation dazu (Abstand - Nähe; Schriftgröße, etc.) hinzugefügt. Sie können diese Begriffe auch durch Symbole oder Kurzkommentare ergänzen. Es empfiehlt sich allerdings, nicht ganze Sätze zu formulieren, da die Übersichtlichkeit darunter leiden könnte.', category: 'cognitive'
+                            id: 'mindmap', name: 'Mindmap', desc: 'Mit Mindmaps können Sie zentrale Themen, Bezüge und Zusammengänge grafisch darstellen und visuell veranschaulichen. Bei einer Mindmap wird die zentrale Idee eines Textes bzw. der zentrale Begriff, in der Mitte des Blattes platziert. Weitere Schlüsselwörter, die im Text behandelt werden, werden nun in Relation dazu (Abstand - Nähe; Schriftgröße, etc.) hinzugefügt. Sie können diese Begriffe auch durch Symbole oder Kurzkommentare ergänzen. Es empfiehlt sich allerdings, nicht ganze Sätze zu formulieren, da die Übersichtlichkeit darunter leiden könnte.', category: 'organisation'
                         },
                         {
-                            id: 'exzerpt', name: 'Exzerpte / Zusammenfassungen', desc: 'Ein Exzerpt ist mehr als nur eine einfache Zusammenfassung der wichtigsten Inhalte. Gerade wenn es darum geht, vor einer Prüfung Lerninhalte noch einmal zu wiederholen, helfen Ihnen Exzerpte oder Zusammenfassungen dabei, schnell in die einzelnen Wissensbereiche einzutauchen, ohne auf das ausführliche Kursmaterial zurückzugreifen. Zudem können Sie schon bei der Erstellung eines Exzerpts üben, Wissen in eigenen Worten wiederzugeben. Auch kritische Perspektiven und eine wissenschaftliche Schreibweise sollten Sie in einem Exzerpt berücksichtigen.', category: 'cognitive'
+                            id: 'exzerpt', name: 'Exzerpte / Zusammenfassungen', desc: 'Ein Exzerpt ist mehr als nur eine einfache Zusammenfassung der wichtigsten Inhalte. Gerade wenn es darum geht, vor einer Prüfung Lerninhalte noch einmal zu wiederholen, helfen Ihnen Exzerpte oder Zusammenfassungen dabei, schnell in die einzelnen Wissensbereiche einzutauchen, ohne auf das ausführliche Kursmaterial zurückzugreifen. Zudem können Sie schon bei der Erstellung eines Exzerpts üben, Wissen in eigenen Worten wiederzugeben. Auch kritische Perspektiven und eine wissenschaftliche Schreibweise sollten Sie in einem Exzerpt berücksichtigen.', category: 'organisation'
                         },
                         {
-                            id: 'toc', name: 'Gliederungen', desc: 'Gliederungen helfen, einen Überblick über den zu lernenden Inhalt zu bekommen. Wissen kann so leichter strukturiert oder kategorisiert werden. Themenfelder lassen sich mit einer Gliederung z. B. übersichtlich strukturieren.', category: 'cognitive'
+                            id: 'toc', name: 'Gliederungen', desc: 'Gliederungen helfen, einen Überblick über den zu lernenden Inhalt zu bekommen. Wissen kann so leichter strukturiert oder kategorisiert werden. Themenfelder lassen sich mit einer Gliederung z. B. übersichtlich strukturieren.', category: 'organisation'
                         },
                         {
-                            id: 'structure', name: 'Strukturierung von Wissen', desc: 'Um den Lernstoff klarer darzustellen, ist die Erstellung von Tabellen, Diagrammen, Listen oder Schaubildern hilfreich. Fachausdrücke oder Definitionen lassen sich gut in Listen oder Tabellen sammeln.', category: 'cognitive'
+                            id: 'structure', name: 'Strukturierung von Wissen', desc: 'Um den Lernstoff klarer darzustellen, ist die Erstellung von Tabellen, Diagrammen, Listen oder Schaubildern hilfreich. Fachausdrücke oder Definitionen lassen sich gut in Listen oder Tabellen sammeln.', category: 'organisation'
                         },
                         {
-                            id: 'cards', name: 'Lernkarten früh erstellen', desc: 'Lernkarten können schon sehr früh digital z. B. in einer App oder auf Papier erstellt werden und die Lernorganisation so erleichtern. Dabei können nicht nur Begriffe notiert werden, sondern auch Prozesse oder mögliche Fragestellungen, die Sie z. B. in der Prüfung erwarten könnten.', category: 'cognitive'
+                            id: 'cards', name: 'Lernkarten früh erstellen', desc: 'Lernkarten können schon sehr früh digital z. B. in einer App oder auf Papier erstellt werden und die Lernorganisation so erleichtern. Dabei können nicht nur Begriffe notiert werden, sondern auch Prozesse oder mögliche Fragestellungen, die Sie z. B. in der Prüfung erwarten könnten.', category: 'organisation'
                         },
                         
                         
-                        {
+                        /*{
                             id: 'elaboration', subheading: true, name: 'Elaborationsstrategien', category:'cognitive'
+                        },*/
+                        {
+                            id: 'fastread', name: 'schnelles Lesen', desc: 'Üben Sie das schnelle Lesen, indem Sie einmal probieren, so schnell zu lesen, wie Sie können. Lesen Sie so schnell, dass Sie kaum etwas vom Inhalt des Textes mitbekommen. Betrachten Sie das als eine Tempo-Übung. Eine weitere Übung, um die Lesegeschwindigkeit zu erhöhen, ist die Vergrößerung des Fixierungsbereichs; lesen Sie in Wortgruppen anstelle des wortwörtlichen Lesens.Beide Prozesse werden durch die nachfolgenden Abbildungen dargestellt. :>> Abb normale_Lesebewegung.png und schnelle_Lesebewegung.png >> Eine weitere unterstützende Technik bietet die Beschleunigung des Lesefingers.Lesen Sie zu Beginn mit dem Finger unter den Zeilen.Das schult die Blickbewegung, so dass mehrere Worte auf einmal wahrgenommen werden können.Steigern Sie dabei das Tempo Ihres Fingers; je schneller der Finger über die Zeilen gleitet, desto schneller müssen Sie auch lesen. ', category: 'elaboration'
                         },
                         {
-                            id: 'fastread', name: 'schnelles Lesen', desc: 'Üben Sie das schnelle Lesen, indem Sie einmal probieren, so schnell zu lesen, wie Sie können. Lesen Sie so schnell, dass Sie kaum etwas vom Inhalt des Textes mitbekommen. Betrachten Sie das als eine Tempo-Übung. Eine weitere Übung, um die Lesegeschwindigkeit zu erhöhen, ist die Vergrößerung des Fixierungsbereichs; lesen Sie in Wortgruppen anstelle des wortwörtlichen Lesens.Beide Prozesse werden durch die nachfolgenden Abbildungen dargestellt. :>> Abb normale_Lesebewegung.png und schnelle_Lesebewegung.png >> Eine weitere unterstützende Technik bietet die Beschleunigung des Lesefingers.Lesen Sie zu Beginn mit dem Finger unter den Zeilen.Das schult die Blickbewegung, so dass mehrere Worte auf einmal wahrgenommen werden können.Steigern Sie dabei das Tempo Ihres Fingers; je schneller der Finger über die Zeilen gleitet, desto schneller müssen Sie auch lesen. ', category: 'cognitive'
+                            id: 'readingcomprehension', name: 'Leseverständnis steigern', desc: '', category: 'elaboration'
                         },
                         {
-                            id: 'readingcomprehension', name: 'Leseverständnis steigern', desc: '', category: 'cognitive'
+                            id: 'transfertoknown', name: 'Übertragung auf bekannte Schemata', desc: '', category: 'elaboration' 
                         },
                         {
-                            id: 'transfertoknown', name: 'Übertragung auf bekannte Schemata', desc: '', category: 'cognitive' 
+                            id: 'critical', name: 'kritisches Hinterfragen', desc: '', category: 'elaboration' 
                         },
                         {
-                            id: 'critical', name: 'kritisches Hinterfragen', desc: '', category: 'cognitive' 
+                            id: 'subjectrelations', name: 'Bezug zu anderen Fächern herstellen', desc: '', category: 'elaboration'
                         },
                         {
-                            id: 'subjectrelations', name: 'Bezug zu anderen Fächern herstellen', desc: '', category: 'cognitive'
-                        },
-                        {
-                            id: 'PQ4R', name: 'PQ4R-Methode', desc: '', category: 'cognitive'
+                            id: 'PQ4R', name: 'PQ4R-Methode', desc: '', category: 'elaboration'
                         },
                         
                         
-                        {
+                        /*{
                             id: 'rep', name: 'Wiederholungsstrategien', subheading:true, category: 'cognitive'
+                        },*/
+                        {
+                            id: 'cards', name: 'Lernkartei', desc: 'Mit einer Lernkartei können Sie Dinge systematisch wiederholen. Eine Karte wandert bei einer richtigen Antwort ein Fach weiter, bei einer falschen Antwort bleibt die Karte im Fach. Das 1. Fach wird z. B. täglich wiederholt, das 2. Fach alle 3 Tage usw. So arbeiten Sie sich durch Ihre Lernkartei, bis alles für die Prüfung sitzt.', category: 'build'
                         },
                         {
-                            id: 'cards', name: 'Lernkartei', desc: 'Mit einer Lernkartei können Sie Dinge systematisch wiederholen. Eine Karte wandert bei einer richtigen Antwort ein Fach weiter, bei einer falschen Antwort bleibt die Karte im Fach. Das 1. Fach wird z. B. täglich wiederholt, das 2. Fach alle 3 Tage usw. So arbeiten Sie sich durch Ihre Lernkartei, bis alles für die Prüfung sitzt.', category: 'cognitive'
+                            id: 'repetieren', name: 'Repetieren', desc: '', category: 'build'
                         },
                         {
-                            id: 'repetieren', name: 'Repetieren', desc: '', category: 'cognitive'
+                            id: 'reminder', name: 'Kleine Erinnerungshilfen', desc: 'Mit einem Reim oder einer Eselsbrücke können Sie sich Begriffe oder Reihenfolgen einfacher merken.', category: 'build'
                         },
                         {
-                            id: 'reminder', name: 'Kleine Erinnerungshilfen', desc: 'Mit einem Reim oder einer Eselsbrücke können Sie sich Begriffe oder Reihenfolgen einfacher merken.', category: 'cognitive'
-                        },
-                        {
-                            id: 'remindercomplex', name: 'Erinnerungshilfen für komplexe Inhalte', desc: 'Die Loci-Methode oder auch der Lernspaziergang sind Methoden, um sich Dinge in einer konkreten Reihenfolge einzuprägen. Mit der Loci Methode können Sie sich komplexe Dinge wie z. B. Prozesse oder Stufenmodelle schneller merken, indem Sie Lerninhalte mit Gegenständen oder Orten und Abfolgen aus dem Alltag verknüpfen. Diese Methode ist auch als Gedächtnisspaziergang bekannt.', category: 'cognitive'
+                            id: 'remindercomplex', name: 'Erinnerungshilfen für komplexe Inhalte', desc: 'Die Loci-Methode oder auch der Lernspaziergang sind Methoden, um sich Dinge in einer konkreten Reihenfolge einzuprägen. Mit der Loci Methode können Sie sich komplexe Dinge wie z. B. Prozesse oder Stufenmodelle schneller merken, indem Sie Lerninhalte mit Gegenständen oder Orten und Abfolgen aus dem Alltag verknüpfen. Diese Methode ist auch als Gedächtnisspaziergang bekannt.', category: 'build'
                         },
 
                         //// metacognitive
@@ -209,19 +224,19 @@ define([
 
             template: `
             <div>
-                <h4>Lernstrategien</h4>
+                <h4>Lernen gestalten</h4>
                 <div class="row">
                     <div class="col-3">
                         <ul class="nav flex-column flex-nowrap overflow-hidden">
                             <li v-for="pc in strategyCategories" class="nav-item">
-                                <a :class="currentMenuItem==pc.id ? 'nav-link text-truncate mb-0 pb-0' : 'nav-link collapsed text-truncate'" v-on:click="currentMenuItem=pc.id" :href="'#submenu-'+pc.id" data-toggle="collapse" :data-target="'#submenu-'+pc.id">
-                                    <i class="fa fa-arrow"></i> 
+                                <a :class="currentMenuItem==pc.id ? 'nav-link text-truncate mb-0 pb-0' : 'nav-link collapsed text-truncate'" v-on:click="currentMenuItem=pc.id" :href="'#submenu-'+pc.id" data-toggle="collapse" :data-target="'#submenu-'+pc.id" style="cursor:pointer;">
+                                    <i :class="currentMenuItem==pc.id ? 'fa fa-caret-down' : 'fa fa-caret-right'"></i> 
                                     <span class="d-none d-sm-inline bold">{{ pc.name}}</span>
                                 </a>
                                 <div v-if="strategiesByCategory(pc.id).length > 0" :class="currentMenuItem==pc.id ? 'collapse fade show' : 'collapse fade'" :id="'submenu-'+pc.id" aria-expanded="false">
                                     <ul class="flex-column pl-2 nav">
                                         <li v-for="s in strategiesByCategory(pc.id)" :style="currentStrategy==s.id ? 'background-color:lightblue;' : ''" :class="currentStrategy == s.id ? 'nav-item active' : 'nav-item'">
-                                            <a v-if="s.subheading !== true" class="bl-2 pl-1 ml-4 nav-link py-0" v-on:click.prevent="currentStrategy=s.id">
+                                            <a v-if="s.subheading !== true" class="bl-2 pl-1 ml-4 nav-link py-0" v-on:click.prevent="currentStrategy=s.id" style="cursor:pointer;">
                                                 <span>{{s.name}}</span>
                                             </a>
                                             <span v-if="s.subheading" class="pl-1 ml-2">{{s.name}}</span>
@@ -235,7 +250,7 @@ define([
                         <div class="bold">{{ getSelectedStrategy().name }}</div>
                         <div>{{ getSelectedStrategy().desc }}</div>
                     </div>
-                    <div class="col-3">
+                    <div class="col-3 border-left">
                         <div class="bold mb-3">Meine Notizen aus der Reflexion</div>
                         <div v-for="r in milestones">
                             <span v-if="r.reflections[3]" class="card p-1 mb-2" style="font-size:0.8em">{{ r.reflections[3] }}</span>

@@ -1189,8 +1189,8 @@ span.autocompletion, .tooglecompletion {
 }
 
 .dashboard-tab .nav-link, .dashboard-tab .nav>li>a {
-  font-size: .8em;
-  padding: 1px 2px;
+  font-size: 1em;
+  padding: 2px 4px;
   margin-left: 4px;
 }
 

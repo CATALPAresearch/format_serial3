@@ -1261,7 +1261,7 @@ $modalMilestone = '
                                         <li hidden class="nav-item ">
                                             <a class="nav-link" data-toggle="tab" href="#timemanagement" role="tab">Zeitmanagement</a></li>
                                         <li class="nav-item">
-                                            <a class="nav-link" data-toggle="tab" href="#strategy" role="tab">Strategie</a>
+                                            <a class="nav-link" data-toggle="tab" href="#strategy" role="tab">Lernen gestalten</a>
                                         </li>
                                         <li hidden class="nav-item">
                                             <a class="nav-link" data-toggle="tab" href="#quiz" role="tab">Quiz</a>
