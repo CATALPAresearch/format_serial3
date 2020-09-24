@@ -11,6 +11,7 @@ CREATE TABLE m_limesurvey_assign (
     stopdate int
 );
 
+
 CREATE TABLE m_limesurvey_access(
 id int NOT NULL AUTO_INCREMENT,
 user_id int,
