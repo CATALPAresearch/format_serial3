@@ -25,7 +25,7 @@ class blocking
     public static function tool_policy_accepted()
     {
         global $DB, $USER;
-        $version = $_SERVER['HTTP_HOST'] == 'localhost' || '127.0.0.1' ? 1 : 3;
+        $version = 3;//$_SERVER['HTTP_HOST'] == 'localhost' || '127.0.0.1' ? 1 : 3;
         $res = $DB->get_record("tool_policy_acceptances", array("policyversionid" => $version, "userid" => (int)$USER->id ), "timemodified");
         if (isset($res->timemodified) && $res->timemodified > 1000) {
             return true;
