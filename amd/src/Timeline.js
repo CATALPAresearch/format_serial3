@@ -969,18 +969,21 @@ define([
                     },
 
                     validateStartDate: function (date) {
+                        console.log("startDate");
                         if (date <= this.dpRange.to || date >= this.dpRange.from) {
                             this.invalidStartDate = true;
                             return;
                         }
-                        if (date > this.endDate) {
+                        if (date > this.getSelectedMilestone().end) {
                             this.invalidEndDate = true;
+                            return;
                         }
                         this.invalidStartDate = false;
                         this.getSelectedMilestone().start = date;
                         return;
                     },
                     validateEndDate: function (date) {
+                        console.log("endDate");
                         if (date <= this.dpRange.to || date < this.getSelectedMilestone().start || date >= this.dpRange.from) {
                             this.invalidEndDate = true;
                             return;
