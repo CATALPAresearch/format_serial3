@@ -31,12 +31,12 @@ define([
                     strategyCategories: [
                         {
                             id: 'cognitive',
-                            name: 'Überblick beim Lernen',
+                            name: 'Lernen gestalten',
                             desc: 'Bei kognitiven Lernstrategien unterscheidet man zwischen Organisations-, Elaborations- und Wiederholungsstrategien. Organisationsstrategien betrachten, wie der/die Lernernde sein/ihr Wissen organisiert und für den weiteren Lernprozess strukturiert. Strategien, die dies konkret veranschaulichen, sind das Erstellen von Mindmaps, das Verfassen von Exzerpten oder Gliederungen zum Lernstoff sowie das Sammeln wichtiger Inhalte, z.B. durch das Erstellen von Tabellen, Diagrammen, Schaubildern oder Listen mit Fachausdrücken und Definitionen. Elaborationsstrategien werden eingesetzt, um ein erweitertes Wissen zu generieren. Lernende bedienen sich dabei meist der bereits internalisierten Schemata und Wissensbasen und nutzen z. B. vertraute Abläufe, um Querbezüge herzustellen. vgl. Wissenssynthese. Wiederholungsstrategien sind notwendig, um sich Lernstoff dauerhaft einzuprägen und gleichsam eine schnelle Verfügbarkeit von Wissen zu gewährleisten. Daher stehen hier Lernaktivitäten wie z. B. Auswendiglernen mit Lernkarten und repetierende Übungen im Vordergrund.',
                         },
                         {
                             id: 'metacognitive',
-                            name: 'Lernen gestalten',
+                            name: 'Überblick beim Lernen',
                             desc: 'Bei den metakognitiven Lernstrategie geht es darum den Lernprozess zu Steuern und zu kontrollieren. Dazu bedient man sich Strategien wie dem Planen, Vorbereiten und Ziele setzen. Dies geht eiher mit einem stetigen Prozess der Selbsteinschätzung und Selbstregulation. Nur so kann der Lernprozess stetig verbessert und angepasst werden. '
                         },
                         {
@@ -190,20 +190,20 @@ define([
                     return this.currentStrategy !== null ?
                         this.strategyById(this.currentStrategy) : { name: '', desc: '' };
                 },
-                getReflections: function () {
-                    this.the_milestones.filter(function (m) {
-                        return m.reflections !== undefined
-                            && m.reflections[3]
-                            && m.reflections[3].length > 0 ?
-                            true : false;
+                getReflections: function (milestones) {
+                    return this.milestones.filter(function (m) {
+                        return m.reflections[3].length > 0 ? true : false;
                     });
+                },
+                getMilestones: function(){
+                    return this.milestones;
                 }
             },
 
             watch: {
                 milestones: function (m) {
-                    console.log(m);
-                    this.the_milestones = m;
+                    console.log('ee', this.getReflections(m), m)
+                    this.the_milestones = m;//this.getReflections(m);
                 }
             },
 
@@ -236,8 +236,10 @@ define([
                         <div>{{ getSelectedStrategy().desc }}</div>
                     </div>
                     <div class="col-3">
-                        <h5>Meine Notizen aus der Reflexion</h5>
-                        <div v-for="r in the_milestones">{{r.reflections[3]}}</div>
+                        <div class="bold mb-3">Meine Notizen aus der Reflexion</div>
+                        <div v-for="r in milestones">
+                            <span v-if="r.reflections[3]" class="card p-1 mb-2" style="font-size:0.8em">{{ r.reflections[3] }}</span>
+                        </div>
                     </div>
                 </div>
             `
