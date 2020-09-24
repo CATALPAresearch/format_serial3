@@ -1679,24 +1679,24 @@ define([
                             )
                         } catch (error) { }
                     },
-                    modAlert: function (type, text) {
-                        let field = $("#moderationAlert");
-                        field.removeClass();
-                        field.addClass("alert");
+                    modAlert: function (type, text, position="#moderationAlert") {                                                 
+                        $(position).removeClass(); 
+                        $(position).addClass("alert");  
+                        $(position).addClass("modAlert");                                        
                         switch (type) {
-                            case "success": field.addClass("alert-success");
+                            case "success": $(position).addClass("alert-success");
                                 break;
-                            case "danger": field.addClass("alert-danger");
+                            case "danger": $(position).addClass("alert-danger");
                                 break;
-                            case "warning": field.addClass("alert-warning");
+                            case "warning": $(position).addClass("alert-warning");
                                 break;
-                            case "info": field.addClass("alert-info");
+                            case "info": $(position).addClass("alert-info");
                                 break;
-                            default: field.addClass("alert-secondary");
-                        }
-                        field.text(text);
-                        field.fadeIn('slow', function () {
-                            $(this).delay(2000).fadeOut('slow');
+                            default: $(position).addClass("alert-secondary");
+                        }                        
+                        $(position).text(text);                        
+                        $(position).fadeIn('slow', function () {
+                            $(this).delay(2500).fadeOut('slow');
                         });
                     },
                     modLoadPath: function (e) {
@@ -1723,7 +1723,7 @@ define([
                             }
                         );
                         if (ms.length <= 0) {
-                            this.modAlert("warning", "Keine Meilensteine vorhanden.");
+                            this.modAlert("warning", "Keine Meilensteine vorhanden.", "#moderationAlertExpInp");
                             return;
                         }
                         this.exportMilestones(ms);
@@ -1734,15 +1734,15 @@ define([
                             $("#modLoadPathLabel").text("Bitte wählen Sie eine Datei aus.");
                             document.getElementById('modImportedFile').value = "";
                             if (file === undefined) {
-                                this.modAlert("warning", "Bitte wählen Sie eine Datei aus.");
+                                this.modAlert("warning", "Bitte wählen Sie eine Datei aus.", "#moderationAlertExpInp");
                                 return;
                             }
                             if (file.type !== "application/json") {
-                                this.modAlert("warning", "Es wird eine Datei im JSON-Format benötigt.");
+                                this.modAlert("warning", "Es wird eine Datei im JSON-Format benötigt.", "#moderationAlertExpInp");
                                 return;
                             }
                             if (file.size <= 0) {
-                                this.modAlert("danger", "Die Datei ist fehlerhaft.");
+                                this.modAlert("danger", "Die Datei ist fehlerhaft.", "#moderationAlertExpInp");
                                 return;
                             }
                             const reader = new FileReader();
@@ -1753,7 +1753,7 @@ define([
                                     let result = evt.target.result;
                                     let json = JSON.parse(result);
                                     if (typeof json !== "object" || !Array.isArray(json)) {
-                                        this.modAlert("danger", "Die Datei ist fehlerhaft.");
+                                        this.modAlert("danger", "Die Datei ist fehlerhaft.", "#moderationAlertExpInp");
                                         return;
                                     }
                                     json.forEach(
@@ -1765,17 +1765,17 @@ define([
                                         }
                                     );
                                     _this.updateMilestones();
-                                    _this.modAlert("success", "Meilensteine wurden geladen.");
+                                    _this.modAlert("success", "Meilensteine wurden geladen.", "#moderationAlertExpInp");
                                 } catch (error) {
                                     new ErrorHandler(error);
                                 }
                             };
                             reader.onerror = function (error) {
-                                _this.modAlert("warning", "Die Datei konnte nicht gelesen werden.");
+                                _this.modAlert("warning", "Die Datei konnte nicht gelesen werden.", "#moderationAlertExpInp");
                                 new ErrorHandler(error);
                             }
                         } catch (error) {
-                            this.modAlert("danger", "Konnte die Meilensteine nicht laden.");
+                            this.modAlert("danger", "Konnte die Meilensteine nicht laden.", "#moderationAlertExpInp");
                             new ErrorHandler(error);
                         }
                     },
@@ -1789,7 +1789,7 @@ define([
                             }
                         );
                         if (ms.length <= 0) {
-                            this.modAlert("warning", "Keine Meilensteine vorhanden.");
+                            this.modAlert("warning", "Keine Meilensteine vorhanden.", "#moderationAlertExpInp");
                             return;
                         }
                         if ($("#modSaveInterest").is(":checked")) {
@@ -2320,13 +2320,13 @@ define([
                         let _this = this;
                         let items = $("input.mru:checked");
                         if (items.length <= 0) {
-                            this.modAlert("warning", "Bitte wählen Sie einen Benutzer aus.");
+                            this.modAlert("warning", "Bitte wählen Sie einen Benutzer aus.", "#moderationAlertUser");
                             return;
                         }
                         let resetMS = $("#modResetUserMS").is(":checked");
                         let resetPlan = $("#modResetUserPlan").is(":checked");
                         if (!resetMS && !resetPlan) {
-                            this.modAlert("warning", "Bitte wählen Sie aus, was zurück gesetzt werden soll.");
+                            this.modAlert("warning", "Bitte wählen Sie aus, was zurück gesetzt werden soll.", "#moderationAlertUser");
                             return;
                         }
                         let update = [];
@@ -2369,10 +2369,10 @@ define([
                                 for (let i in resolve) {
                                     if (resolve[i] === true) location.reload();
                                 }
-                                this.modAlert("success", "Benutzerplanung zurückgesetzt");
+                                this.modAlert("success", "Benutzerplanung zurückgesetzt", "#moderationAlertUser");
                             },
                             (reject) => {
-                                this.modAlert("danger", reject);
+                                this.modAlert("danger", reject, "#moderationAlertUser");
                             }
                         )
                         return;
@@ -2399,7 +2399,7 @@ define([
                                     }
                                 );
                                 this.modUsers = result;
-                                if(typeof result !== "object" || result.length <= 0) this.modAlert("warning", "Es wurde keine Kursteilnehmer*innen gefunden.");
+                                if(typeof result !== "object" || result.length <= 0) this.modAlert("warning", "Es wurde keine Kursteilnehmer*innen gefunden.", "#moderationAlertUser");
                             }
                             value = value.toLowerCase();
                             let anyEntry = false;
@@ -2433,7 +2433,7 @@ define([
                                     anyEntry = true;
                                 }
                             }                           
-                            if(!anyEntry) this.modAlert("warning", "Es wurde kein passender Eintrag gefunden.");
+                            if(!anyEntry) this.modAlert("warning", "Es wurde kein passender Eintrag gefunden.", "#moderationAlertUser");
                         } catch (error) {
                             console.log(error);
                         }

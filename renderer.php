@@ -164,13 +164,13 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                         </div>              
                         <h5>Mein Meilensteine als Planungsvorlage speichern</h5>
                         Vorlage für folgende Zielsetzung der Eingangsbefragung speichern: 
-                        <div class="my-2 mx-2">              
+                        <div class="my-2 mx-2">  
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="modSaveType" id="modSaveExam" value="0">
                                 <label class="form-check-label" for="modSaveExam">
                                 Prüfung
                                 </label>
-                            </div>
+                            </div>   
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="modSaveType" id="modSaveOrientation" value="1">
                                 <label class="form-check-label" for="modSaveOrientation">
@@ -188,6 +188,9 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                         <button type="button" @click="modResetSelect" class="btn btn-danger">Zurücksetzen</button>                   
                         <hr>                        
                         <h5>Meilensteine exportieren und importieren</h5>
+                        <div class="alert collapse fade" id="moderationAlertExpInp" data-dismiss="alert" role="alert">
+                            This is a success alert—check it out!
+                        </div>
                         <div class="col mb-4 px-0">
                             <button type="button" @click="modExportMilestones" class="btn btn-secondary">Meine Meilensteine exportieren</button>  
                         </div>                     
@@ -199,24 +202,27 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                         </div>                        
                         <button type="button" @click="modLoadMilestones" class="btn btn-secondary">Importieren</button>  
                         <hr>   
-                            <h5>Zurücksetzen von Meilensteinen und Eingangsbefragung</h5>        
-                            <div class="form-group">                                 
-                                <input type="string" @input="userAutocomplete($event.target, $event.target.value)" class="form-control" id="modResetUser" placeholder="Benutzer suchen">
+                        <h5>Zurücksetzen von Meilensteinen und Eingangsbefragung</h5> 
+                        <div class="alert collapse fade" id="moderationAlertUser" data-dismiss="alert" role="alert">
+                            This is a success alert—check it out!
+                        </div>       
+                        <div class="form-group">                                 
+                            <input type="string" @input="userAutocomplete($event.target, $event.target.value)" class="form-control" id="modResetUser" placeholder="Benutzer suchen">
                             </div>
-                            <div class="userAutocomplete col px-2"></div>                           
+                        <div class="userAutocomplete col px-2"></div>                           
                             <div class="col mb-3 px-2">                                
                                 <div class="form-check">
                                     <input class="form-check-input" type="checkbox" value="" id="modResetUserPlan">
                                     <label class="form-check-label" for="modResetUserPlan">
-                                    Eingangsbefragung der ausgewählten Nutzer zurücksetzen
+                                        Eingangsbefragung der ausgewählten Nutzer zurücksetzen
                                     </label>
                                 </div> 
-                                <div class="form-check">
+                            <div class="form-check">
                                     <input class="form-check-input" type="checkbox" value="" id="modResetUserMS">
                                     <label class="form-check-label" for="modResetUserMS">
-                                    Alle Meilensteine der ausgewählten Nutzer löschen
+                                        Alle Meilensteine der ausgewählten Nutzer löschen
                                     </label>
-                                </div>                                                     
+                            </div>                                                     
                         </div>                        
                         <button type="button" @click="modUpdateUser" class="btn btn-danger">Löschen / zurücksetzen</button>                         
                     </div>          
