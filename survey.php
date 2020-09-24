@@ -6,33 +6,6 @@ $context = context_system::instance();
 global $USER, $PAGE, $DB, $CFG;
 $PAGE->set_context($context);
 $PAGE->set_url($CFG->wwwroot.'/course/format/ladtopics/survey.php');
-$PAGE->requires->js_amd_inline('
-    require(["jquery", "core/ajax"], function($, ajax) {       
-        
-        $("button.survey").click(
-            function(e){         
-                var me = $(this);
-                ajax.call([{
-                    methodname: "format_ladtopics_limeaccess",
-                    args: {
-                        courseid: me.attr("courseid"),
-                        surveyid: me.attr("surveyid")
-                    },
-                    done: function (msg) {
-                        //console.log("saved"+msg["val"]);
-                        window.location.href = me.attr("link");
-                    },
-                    fail: function (e) {
-                        //console.log(e);
-                        window.location.href = me.attr("link");
-                    }
-                }]);
-            }
-        );
-        
-        return;
-    });
-');
 
 $link = 'https://umfrage.fernuni-hagen.de/v3/';
 
@@ -118,14 +91,14 @@ if(isset($sess->c)){
             }
         }     
         
-        $surveyID = $record->survey_id;     
+        $surveyID = $record->survey_id;      
        
         $list .=    "<tr>
             <th class=\"align-middle\">{$id}</th>
                 <td class=\"align-middle\">{$title}</td>
                 <td class=\"align-middle\">{$stop}</td>
                 <td class=\"align-middle\">{$state}</td>
-                <td class=\"align-middle\"><button class=\"btn btn-primary center-block survey\" surveyid=\"{$surveyID}\" courseid=\"{$sess->c}\" link=\"{$link}{$surveyID}\">Zur Umfrage</button></td>
+                <td class=\"align-middle\"><button class=\"btn btn-primary center-block\" onClick=\"javascript:window.location.href='{$link}{$surveyID}'\">Zur Umfrage</button></td>
             </tr>";
         $id++;  
         // <td class=\"align-middle\">{$start}</td>  <td class=\"align-middle\">{$warn}</td>
@@ -138,7 +111,7 @@ if(isset($sess->c)){
 
     // OUTPUT
     $PAGE->set_pagelayout('course');
-    $PAGE->set_title(get_string('surveyPageTitle', 'format_ladtopics'));
+    $PAGE->set_title(get_string('surveyTitle', 'format_ladtopics'));
     $PAGE->set_heading(get_string('surveyHeadline', 'format_ladtopics'));
     echo $OUTPUT->header();  
     echo '<div style="display: inline-block;"><p class="mt-2 mb-4">'.get_string('surveyDescription', 'format_ladtopics').'</p>';   
