@@ -1,10 +1,4 @@
-.nav-link[data-toggle].collapsed:before {
-    content: " ▾";
-}
 
-.nav-link[data-toggle]:not(.collapsed):before {
-    content: " ▴";
-}
 
 .learning-strategy-item:hover {
     cursor: pointer;
