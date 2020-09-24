@@ -2184,6 +2184,7 @@ define([
                                                     }
                                                 }
                                             }
+                                            let limeSurveys = resolve.users[i]["lime"] ? resolve.users[i]["lime"] : 0;                                            
                                             let milestones = 0;
                                             let msDone = 0;
                                             let msReady = 0;
@@ -2216,7 +2217,7 @@ define([
                                             }
 
                                             if ($('#stUserList').length > 0) {
-                                                $('#stUserList tr:last').after(`<tr><td>${resolve.users[i]['firstname']}</td><td>${resolve.users[i]['lastname']}</td><td>${resolve.users[i]['email']}</td><td>${surveyDone}</td><td>${milestones}</td><td>${msFailed}</td><td>${msReady}</td><td>${msDone}</td></tr>`);
+                                                $('#stUserList tr:last').after(`<tr><td>${resolve.users[i]['firstname']}</td><td>${resolve.users[i]['lastname']}</td><td>${resolve.users[i]['email']}</td><td>${surveyDone}</td><td>${milestones}</td><td>${msFailed}</td><td>${msReady}</td><td>${msDone}</td><td>${limeSurveys}</td></tr>`);
                                             }
                                             //console.log(JSON.parse(resolve.users[i]["milestones"]["milestones"]));
                                             /*
