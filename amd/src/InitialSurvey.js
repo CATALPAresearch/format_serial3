@@ -241,7 +241,7 @@ define([
                         isValid = false;
                     }
                     if (isValid) {
-                        this.saveSurvey();
+                        this.saveSurvey();                        
                     }
                     //return ! isValid;
                 },
@@ -285,7 +285,7 @@ define([
                     return text;
                 },
                 saveSurvey: function () {
-                    this.modalSurveyVisible = false;
+                    //this.modalSurveyVisible = false;
                     // generate milestones automatically
                     switch (this.objectives) {
                         case 'f1a': // wants examination
@@ -342,6 +342,7 @@ define([
                                 }
                             }, function (e) {
                                 // console.log('saved survey ', e);
+                                location.reload();
                             });
 
                         } catch (e) {
