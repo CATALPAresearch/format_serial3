@@ -37,6 +37,8 @@ define(['jquery'
      * @param utils (Object) Custome util class
      */
     var activityChart = function (d3, dc, crossfilter, moment, data, utils, courseSettings) {
+        let _this = this;
+        this.timeFilterRange = [0, 0]
 
         data = data.filter(function (d) {
             return d.utc >= courseSettings.start && d.utc < courseSettings.end ? true : false;
@@ -90,7 +92,7 @@ define(['jquery'
             d3.max(mainGroup.all(), function (d) { return d.key[0]; })
         ];
         xRange[1] = moment(xRange[1]).isSameOrBefore(new Date()) ? new Date() : xRange[1];
-
+        this.timeFilterRange = xRange;
         this.getXRange = function () {
             return xRange;
         };
@@ -142,15 +144,27 @@ define(['jquery'
                     " " + activityTypes[p.value.action]
                 ].join("");
             })
-            .xAxis(d3.axisBottom().ticks(10))
-            ;
+            .xAxis(d3.axisBottom()
+                .ticks(10)
+                .tickFormat(function (v) {
+                    let start = new Date(_this.timeFilterRange[0]).getTime();
+                    let end = new Date(_this.timeFilterRange[1]).getTime();
+                    if ((end - start) > 0 && (end - start) < 518400000) { // six days = 518400000 = 6 * 24 * 3600 * 1000
+                        let h = utils.formatHour(v);
+                        return h === '00:00' ? utils.formatDate(v) : h;
+                    }
+                    return utils.formatDate(v);
+                })
+            );
+
 
         this.update = function (range) {
+            this.timeFilterRange = range;
             chart
                 .x(d3.scaleTime().domain(range))
                 .selectAll('line.grid-line')
                 .attr('y2', chart.effectiveHeight())
-                .attr('opacity', 0.5)
+                .attr('opacity', 0.7)
                 ;
             //chart.selectAll('line.grid-line').attr('y2', chart.effectiveHeight());
             chart.render();

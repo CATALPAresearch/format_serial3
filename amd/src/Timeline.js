@@ -28,7 +28,7 @@ define([
     M.cfg.wwwroot + "/course/format/ladtopics/amd/src/DashboardStrategy.js"
 ], function ($, ajax, Vue, MilestoneCalendarExport, DashboardCompletion, DashboardStrategy) {
 
-    var Timeline = function (d3, dc, crossfilter, moment, utils, introJs, logger, FilterChart, ActivityChart, InitialSurvey, vDP, vDPde, ErrorHandler) {
+    var Timeline = function (d3, dc, crossfilter, moment, utils, introJs, logger, ChartTimeFilter, ChartActivity, InitialSurvey, vDP, vDPde, ErrorHandler) {
 
         $(document).ready(function () {
             let edit = $("a.milestone-element-edit");
@@ -249,10 +249,10 @@ define([
                                     _this.updateMilestoneStatus();
 
                                     var facts = crossfilter(activityData);
-                                    _this.timeFilterChart = new FilterChart(d3, dc, crossfilter, facts, xRange, _this, utils, logger, course);
+                                    _this.timeFilterChart = new ChartTimeFilter(d3, dc, crossfilter, facts, xRange, _this, utils, logger, course);
 
-                                    _this.setFilterPreset('semester');
-                                    var activityChart = new ActivityChart(d3, dc, crossfilter, moment, activityData, utils, course);
+                                    _this.setFilterPreset('next-week'); 
+                                    var activityChart = new ChartActivity(d3, dc, crossfilter, moment, activityData, utils, course);
                                     xRange = activityChart.getXRange();
                                     _this.timeFilterChart.registerChart(activityChart);
 

@@ -205,6 +205,7 @@ define([
         this.formatHour = locale.format("%H:%M");
         this.formatDay = locale.format("%a %e.%m.");
         this.formatDate = locale.format("%d.%m.%Y");
+        this.formatDateFull = locale.format("%d.%m.%Y %H:%M");
         this.formatDate2 = locale.format("%d/%m/%Y");
         this.formatWeek = locale.format("%b %d");
         this.formatWeekNum = locale.format("%U");
