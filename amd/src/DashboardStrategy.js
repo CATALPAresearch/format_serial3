@@ -37,26 +37,26 @@ define([
                         {
                             id: 'organisation',
                             name: 'Lernstoff organisieren',
-                            desc: '==Organisationsstrategien',
+                            desc: 'Organisationsstrategien betrachten, wie der/die Lernernde sein/ihr Wissen organisiert und für den weiteren Lernprozess strukturiert. Strategien, die dies konkret veranschaulichen, sind das Erstellen von Mindmaps, das Verfassen von Exzerpten oder Gliederungen zum Lernstoff sowie das Sammeln wichtiger Inhalte, z.B. durch das Erstellen von Tabellen, Diagrammen, Schaubildern oder Listen mit Fachausdrücken und Definitionen.',
                         },
                         {
                             id: 'elaboration',
                             name: 'Inhalte erarbeiten',
-                            desc: '== (Elaborationstrategien)',
+                            desc: 'Elaborationsstrategien werden eingesetzt, um ein erweitertes Wissen zu generieren. Lernende bedienen sich dabei meist der bereits internalisierten Schemata und Wissensbasen und nutzen z. B. vertraute Abläufe, um Querbezüge herzustellen. vgl. Wissenssynthese.',
                         },
                         {
                             id: 'build',
                             name: 'Wissen aufbauen',
-                            desc: '==(Wiederholungsstrategien)',
+                            desc: 'Wiederholungsstrategien sind notwendig, um sich Lernstoff dauerhaft einzuprägen und gleichsam eine schnelle Verfügbarkeit von Wissen zu gewährleisten. Daher stehen hier Lernaktivitäten wie z. B. Auswendiglernen mit Lernkarten und repetierende Übungen im Vordergrund.',
                         },
                         {
                             id: 'metacognitive',
-                            name: 'Überblick beim Lernen',
+                            name: 'Lernprozess verbessern',
                             desc: 'Bei den metakognitiven Lernstrategie geht es darum den Lernprozess zu Steuern und zu kontrollieren. Dazu bedient man sich Strategien wie dem Planen, Vorbereiten und Ziele setzen. Dies geht eiher mit einem stetigen Prozess der Selbsteinschätzung und Selbstregulation. Nur so kann der Lernprozess stetig verbessert und angepasst werden. '
                         },
                         {
                             id: 'resource',
-                            name: 'Meine Ressourcen',
+                            name: 'Ressourcen nutzen',
                             desc: 'Ressourcenorientierte Selbstorganisation im StudiumUm eine Balance zwischen Studium und beruflichen wie privaten Verpflichtungen herzustellen, ist es wichtig, die eigenen Ressourcen zu kennen und sich Zeit und Energie im Studium gut einzuteilen.Eine systematische Auseinandersetzung mit Zielen, Anstrengungen beim Lernen und der eigenen Aufmerksamkeitsfähigkeit soll Ihnen helfen, Ihre Ressourcen besser kennen zu lernen.Motivation und Durchhaltevermögen können Sie durch eine Balance zwischen Selbstverpflichtung, Belohnung und Regeneration steigern. '
                         }
                     ],

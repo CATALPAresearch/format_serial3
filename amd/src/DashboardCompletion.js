@@ -101,7 +101,7 @@ define([
                 },
                 getLink: function (instance) {
                     instance = instance == undefined ? this.getCurrent() : instance;
-                    return '/moodle/mod/' + instance.type + '/view.php?id=' + instance.id;
+                    return '/mod/' + instance.type + '/view.php?id=' + instance.id;
                 },
                 getStatus: function (instance) {
                     instance = instance == undefined ? this.getCurrent() : instance;
@@ -114,7 +114,7 @@ define([
                     <div v-for="(section, sIndex) in sections" class="row">
                         <div class="col-3">{{ section[0].sectionname }}</div>
                         <div class="col-9">
-                            <div v-for="(m, index) in section" :class="m.completion==1 ? \'rect-green completion-rect\' : \'rect-blue completion-rect\'" @mouseover="setCurrent(index, sIndex)"></div>
+                            <a v-bind:href="getLink()" v-for="(m, index) in section" :class="m.completion==1 ? \'rect-green completion-rect\' : \'rect-blue completion-rect\'" @mouseover="setCurrent(index, sIndex)"></a>
                         </div>
                     </div>
                     <div class="row">
