@@ -51,8 +51,8 @@ define([
                     objectives: '',
                     availableTime: 0,
                     planingStyle: '',
-                    selectedMonth: 0,
-                    selectedYear: 0,
+                    selectedMonth: -1,
+                    selectedYear: -1,
                     resources: [],
                     availableResources: [],
                     invalidAvailableTime: false,
@@ -157,7 +157,7 @@ define([
                     return utils.monthRange;
                 },
                 yearRange: function () {
-                    return [2020, 2021, 2022, 2023]; // xxx should become a plugin setting
+                    return [2021, 2022, 2023, 2024]; // xxx should become a plugin setting
                 },
                 monthSelected: function (event) {
                     this.selectedMonth = event.target.value;
@@ -210,6 +210,7 @@ define([
                     this.invalidResources = this.resources.length > 0 ? false : true;
                 },
                 updateObjective: function (e) {
+                    console.log('update ',this.objectives)
                     this.invalidObjective = this.objectives === '' ? true : false;
                 },
                 updateAvailableTime: function () {
@@ -260,15 +261,15 @@ define([
                     }
                 },
                 buttonText: function () {
-                    var text = 'Ohne Planung fortfahren';
+                    var text = 'Fortfahren';
 
                     var reason = {
-                        'f1a': ', damit ich mich gut auf die Prüfung vorbereiten kann.',
-                        'f1b': ', damit ich mich im Kurs orientieren kann.',
-                        'f1c': '.',
-                        'f1d': '.'
+                        'f1a': 'Semesterplanung für die Prüfungsvorbereitung vorschlagen',
+                        'f1b': 'Semesterplanung für eine erste Orientierung vorschlagen',
+                        'f1c': '',
+                        'f1d': ''
                     };
-
+                    /*
                     var takt = {
                         'planing-style-a': 'im Wochentakt',
                         'planing-style-b': 'im 4-Wochentakt',
@@ -277,14 +278,9 @@ define([
                         'planing-style-e': 'im Monatstakt',
                         'planing-style-f': ''
                     };
-
+                    */
                     if (this.objectives !== '' || this.planingStyle !== '') {
-                        text = [
-                            'Semesterplanung ',
-                            takt[this.planingStyle] === undefined ? '' : takt[this.planingStyle],
-                            ' vorschlagen',
-                            reason[this.objectives]
-                        ].join('');
+                        text = reason[this.objectives];    
                     }
                     return text;
                 },

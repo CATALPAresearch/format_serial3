@@ -459,6 +459,7 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                                                             Meinen eigenen Interessen bzgl. bestimmter Themengebiete nachgehen
                                                         </label>
                                                     </div>
+                                                    
                                                     <div class="form-check">
                                                         <input @change="updateObjective" class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios4"
                                                             value="f1d" v-model="objectives">
@@ -533,62 +534,31 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                                             <hr v-if="objectives === \'f1a\'">
                                             <div v-if="objectives === \'f1a\'" class="form-check row">
                                                 <label for="inputObjectic" class="col-10 col-form-label survey-objective-label">Wann beabsichtigen Sie die Prüfung
-                                                    abzulegen?</label>
+                                                    abzulegen?{{selectedMonth}}</label>
                                                 <div class="col-4">
                                                     <select @change="monthSelected" id="select_month">
                                                         <option v-for="d in monthRange()"
-                                                            :selected="d.num-1 === (new Date()).getMonth()"
+                                                            :selected="selectedMonth === -1 ? (d.num-1 === (new Date()).getMonth()) : ((d.num-1)===selectedMonth)"
                                                             :value="d.num">{{ d.name }}</option>
                                                     </select>
 
                                                     <select @change="yearSelected" id="select_year">
-                                                        <option v-for="d in yearRange()" :selected="d === (new Date()).getFullYear()">
-                                                            {{ d }}</option>
+                                                        <option v-for="d in yearRange(3)" 
+                                                            :selected="selectedYear === -1 ? (d === (new Date()).getFullYear()) : d===selectedYear"
+                                                            >
+                                                            {{ d }}
+                                                        </option>
                                                     </select>
                                                 </div>
                                                 <div class="col-7"></div>
                                             </div>
-                                            <hr v-if="objectives === \'f1c\'">
-                                            <div v-if="objectives === \'f1c\'" class="row">
-                                                <label class="col-12 col-form-label">Wählen Sie die Themen, Materialien und Aktivitäten aus,
-                                                    die Sie besonders interessieren und sortieren Sie diese absteigend nach Ihrem
-                                                    Interesse:</label>
-                                                <div class="col-12 alert-invalid" role="alert" v-if="invalidResources">Wählen Sie bitte mindestens ein Thema, Material oder eine Aktivität aus.</div>
-                                                <div id="resources" class="col-md">
-                                                    <ul id="selected_resources">
-                                                        <li v-for="s in resources" class="form-check">
-                                                            <label class="form-check-label" for="defaultCheck1">
-                                                                <i class="fa fa-sort" title="Reihenfolge ändern"></i>
-                                                                {{ s.name }}
-                                                                <span class="remove-btn">
-                                                                    <i class="fa fa-trash" @click="resourceRemove(s.id)"
-                                                                        title="entfernen"></i>
-                                                                </span>
-                                                            </label>
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                            <div v-if="objectives === \'f1c\'" class="row">
-                                                <div class="col-md">
-                                                    <div class="select-wrapper">
-                                                        <span id="before-select"><i class="fa fa-plus"></i> </span>
-                                                        <select @change="resourceSelected" id="modal_strategy-select">
-                                                            <option :selected="true" disabled value="default">Wählen Sie Themen, Materialien
-                                                                und Aktivitäten</option>
-                                                            <optgroup v-for="section in resourceSections()" :label="section.name">
-                                                                <!--<option :value="\'complete-section-\'+section.id">Alles im Abschnitt: {{section.name}}</option>-->
-                                                                <option v-for="s in resourcesBySection(section.id)" :value="s.id">{{ s.instance_type }}: {{ s.name }}</option>
-                                                            </optgroup>
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                            
+                                            
                                             <br />
                                             <div class="row row-smooth">
                                                 <div class="col-md">
                                                     <div>
-                                                        <button @click="validateSurveyForm()" class="btn btn-primary btn-sm">{{ buttonText()}}</button>
+                                                        <button @click="validateSurveyForm()" class="btn btn-primary btn-sm">{{ buttonText() }}</button>
                                                         <button class="right btn btn-link right" @click="closeModal()" data-dismiss="modal"
                                                             aria-label="abbrechen">jetzt nicht</button>
                                                     </div>

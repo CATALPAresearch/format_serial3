@@ -54,7 +54,7 @@ define([
         };
 
         // look whether a user has had agreed to a certain moodle policy (e.g. privacy policy).
-        if(false){
+        if (false) {
             utils.get_ws('policyacceptance', {
                 'policyversion': 1 // static value, needs to be set according to the defined policies
             }, function (e) {
@@ -70,7 +70,7 @@ define([
                 }
             });
         }
-        
+
 
 
         utils.get_ws('logstore', {
@@ -84,7 +84,7 @@ define([
             }
         });
 
-        
+
         /**
          * 
          * @param {*} activityData (Object)
@@ -875,7 +875,7 @@ define([
                                     status: this.getSelectedMilestone().status,
                                     objective: this.getSelectedMilestone().objective,
                                     resources: this.getSelectedMilestone().resources.map(function (resource) { return { name: resource.instance_title, section: resource.section, type: resource.instance_type, done: resource.checked !== undefined ? true : false }; })
-                                    
+
                                 });
                                 if ($("#milestone-list-tab").hasClass("active") || $("#milestone-archive-list-tab").hasClass("active")) {
                                     if (this.getSelectedMilestone().status === "missed" || this.getSelectedMilestone().status === "reflected") {
@@ -1091,8 +1091,9 @@ define([
                     monthRange: function () {
                         return utils.monthRange;
                     },
-                    yearRange: function () {
-                        return [course.startDate.getFullYear(), course.endDate.getFullYear()]; // xxx should become a plugin setting
+                    yearRange: function (n) {
+                        n = n === undefined ? 0 : n;
+                        return [course.startDate.getFullYear(), course.endDate.getFullYear() + n];
                     },
                     fromNow: function (date) {
                         return moment(date).fromNow();
@@ -1390,7 +1391,7 @@ define([
                             }
                         );
                     },
-                    
+
                     createMilestonePicker: function () {
                         let _this = this;
                         let updateMilestoneList = function (id) {
@@ -1682,10 +1683,10 @@ define([
                             )
                         } catch (error) { }
                     },
-                    modAlert: function (type, text, position="#moderationAlert") {                                                 
-                        $(position).removeClass(); 
-                        $(position).addClass("alert");  
-                        $(position).addClass("modAlert");                                        
+                    modAlert: function (type, text, position = "#moderationAlert") {
+                        $(position).removeClass();
+                        $(position).addClass("alert");
+                        $(position).addClass("modAlert");
                         switch (type) {
                             case "success": $(position).addClass("alert-success");
                                 break;
@@ -1696,8 +1697,8 @@ define([
                             case "info": $(position).addClass("alert-info");
                                 break;
                             default: $(position).addClass("alert-secondary");
-                        }                        
-                        $(position).text(text);                        
+                        }
+                        $(position).text(text);
                         $(position).fadeIn('slow', function () {
                             $(this).delay(2500).fadeOut('slow');
                         });
@@ -2402,7 +2403,7 @@ define([
                                     }
                                 );
                                 this.modUsers = result;
-                                if(typeof result !== "object" || result.length <= 0) this.modAlert("warning", "Es wurde keine Kursteilnehmer*innen gefunden.", "#moderationAlertUser");
+                                if (typeof result !== "object" || result.length <= 0) this.modAlert("warning", "Es wurde keine Kursteilnehmer*innen gefunden.", "#moderationAlertUser");
                             }
                             value = value.toLowerCase();
                             let anyEntry = false;
@@ -2435,8 +2436,8 @@ define([
                                     $("<label class=\"form-check-label\" for=\"modResetUsers\" />").text(ident).appendTo(divElem);
                                     anyEntry = true;
                                 }
-                            }                           
-                            if(!anyEntry) this.modAlert("warning", "Es wurde kein passender Eintrag gefunden.", "#moderationAlertUser");
+                            }
+                            if (!anyEntry) this.modAlert("warning", "Es wurde kein passender Eintrag gefunden.", "#moderationAlertUser");
                         } catch (error) {
                             console.log(error);
                         }
@@ -2579,7 +2580,7 @@ define([
                 width = document.getElementById('planing-component').offsetWidth;
                 milestoneApp.width = width - margins.right;
                 //dc.redrawAll(mainGroup);
-                if (milestoneApp.timeFilterChart){
+                if (milestoneApp.timeFilterChart) {
                     milestoneApp.timeFilterChart.filterTime();
                 }
             };
