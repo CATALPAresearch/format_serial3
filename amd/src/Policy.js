@@ -74,18 +74,19 @@ define([
                                             haben Sie 
                                             am <span class="">{{ convertTime(p.acceptance) }}</span>
                                             zugestimmt <i class="fa fa-check ml-3"></i>
+                                        </span>
                                         <span v-if="p.status==0">
                                             <i class="fa fa-times ml-3"></i>
                                         </span>
                                     </div>
                                     <div class="col-2">
                                         <span v-if="p.status==1">
-                                            <a :href="getLink(p,0)" class="right btn btn-sm btn-outline-primary">Zustimmung widerufen</a></span>
+                                            <a :href="getLink(p,0)" class="right btn btn-sm btn-outline-primary">Zustimmung widerufen</a>
+                                        </span>
                                         <span v-if="p.status==0">
                                             <a :href="getLink(p,1)" class="btn btn-sm btn-primary">Akzeptieren</a>
                                         </span>
                                     </div>
-                                    
                                 </div>
                             </div>
                         `
