@@ -34,13 +34,14 @@ define([
         });
 
         return {
-            init: function (policies) {
+            init: function (policies, message) {
                 return new Vue({
                     el: 'policy-container',
 
                     data: function () {
                         return {
-                            policies: policies
+                            policies: policies,
+                            message: message
                         }
                     },
 
@@ -62,19 +63,15 @@ define([
 
                     template: `
                             <div id="policy-container">
-                                <h3 class="my-4">Zustimmung und Wideruf zur Datenverarbeitung</h3>
+                                <h3 class="my-4">Zustimmung und Wideruf von Richtlinien</h3>
+                                <div v-if="message != ''" class="alert alert-success w-50">
+                                    Ihre Änderungen wurden umgesetzt.
+                                </div>
                                 <div class="row mb-3 border-bottom pb-2" v-for="p in policies">
-                                    <!-- 
-                                    href="http://127.0.0.1/moodle/admin/tool/policy/view.php?policyid=1&versionid=9&returnurl=http%3A%2F%2F127.0.0.1%2Fmoodle%2Fadmin%2Ftool%2Fpolicy%2Fuser.php%3Fuserid%3D2"
-                                    -->
                                     <div class="col-10">
                                         <a target="s" class="bold">{{p.name}}</a> in der Version vom 
-                                        <span class="">{{ convertTime(p.creation) }}</span>
-                                        <span v-if="p.status==1">
-                                            haben Sie 
-                                            am <span class="">{{ convertTime(p.acceptance) }}</span>
-                                            zugestimmt <i class="fa fa-check ml-3"></i>
-                                        </span>
+                                        <span>{{ convertTime(p.creation) }}</span>
+                                        <span v-if="p.status==1">haben Sie am {{ convertTime(p.acceptance) }} zugestimmt <i class="fa fa-check ml-3"></i></span>
                                         <span v-if="p.status==0">
                                             <i class="fa fa-times ml-3"></i>
                                         </span>

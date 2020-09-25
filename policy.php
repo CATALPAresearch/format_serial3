@@ -12,11 +12,13 @@ echo $OUTPUT->header();
 
 
 global $DB, $USER;
-
+$message = '';
 // change policy status
 if(isset($_GET['policy']) && isset($_GET['action']) && isset($_GET['version'])){
     //$query = '';
     //$res = $DB->set_records_sql($query, array((int)$USER->id));
+    $message = 'Die Richtlinien wurden aktualisiert.';
+    
 }
 
 // fetch policies
@@ -30,6 +32,6 @@ WHERE a.userid = ?
 $res = $DB->get_records_sql($query, array((int)$USER->id));
 //get_records("tool_policy_acceptances", array("userid" => (int)$USER->id ));
 echo '<policy-container></policy-container>';
-$PAGE->requires->js_call_amd('format_ladtopics/Policy', 'init', array('policies'=>$res));
+$PAGE->requires->js_call_amd('format_ladtopics/Policy', 'init', array('policies'=>$res, 'message'=>$message));
 echo $OUTPUT->footer();
 

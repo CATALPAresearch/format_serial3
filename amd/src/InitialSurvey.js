@@ -266,8 +266,8 @@ define([
                     var reason = {
                         'f1a': 'Semesterplanung für die Prüfungsvorbereitung vorschlagen',
                         'f1b': 'Semesterplanung für eine erste Orientierung vorschlagen',
-                        'f1c': '',
-                        'f1d': ''
+                        'f1c': 'Fortfahren',
+                        'f1d': 'Fortfahren'
                     };
                     /*
                     var takt = {
