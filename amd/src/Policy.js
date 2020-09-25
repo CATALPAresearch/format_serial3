@@ -17,7 +17,6 @@ define([
     'jquery',
     M.cfg.wwwroot + "/course/format/ladtopics/lib/build/vue.min.js",
     M.cfg.wwwroot + "/course/format/ladtopics/lib/build/moment-with-locales.min.js"
-
 ],
     function ($, Vue, moment) {
 

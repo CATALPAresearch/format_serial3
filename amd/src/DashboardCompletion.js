@@ -19,8 +19,7 @@ define([
     'jquery',
     M.cfg.wwwroot + "/course/format/ladtopics/lib/build/vue.min.js",
     // 'd3v4',
-    M.cfg.wwwroot + "/course/format/ladtopics/amd/src/Utils.js"//,
-    //M.cfg.wwwroot + '/course/format/ladtopics/amd/src/ErrorHandler.js'
+    M.cfg.wwwroot + "/course/format/ladtopics/amd/src/utils/Utils.js"
 ], function ($, Vue, Utils) {
     Utils = new Utils();
     return Vue.component('dashboard-completion',
@@ -111,8 +110,9 @@ define([
 
             template: `
                 <div id="dashboard-completion">
+                    <p class="w-75" style="font-size:0.9em">Anhand dieser Balken können Sie erkennen, welche Lernangebote Sie bereits genutzt haben. Jedes Kästchen steht für ein Lernangebot, welches Sie durch einen Klick aufrufen können.</p>
                     <div v-for="(section, sIndex) in sections" class="row">
-                        <div class="col-3">{{ section[0].sectionname }}</div>
+                        <div class="col-3" style="font-size:0.9em">{{ section[0].sectionname }}</div>
                         <div class="col-9">
                             <a v-bind:href="getLink()" v-for="(m, index) in section" :class="m.completion==1 ? \'rect-green completion-rect\' : \'rect-blue completion-rect\'" @mouseover="setCurrent(index, sIndex)"></a>
                         </div>

@@ -251,7 +251,7 @@ define([
                                     var facts = crossfilter(activityData);
                                     _this.timeFilterChart = new FilterChart(d3, dc, crossfilter, facts, xRange, _this, utils, logger, course);
 
-                                    _this.setFilterPreset('last-month');
+                                    _this.setFilterPreset('semester');
                                     var activityChart = new ActivityChart(d3, dc, crossfilter, moment, activityData, utils, course);
                                     xRange = activityChart.getXRange();
                                     _this.timeFilterChart.registerChart(activityChart);

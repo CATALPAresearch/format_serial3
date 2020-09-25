@@ -35,7 +35,7 @@ define([
     'core/ajax',
     'd3',
     'dc',
-    M.cfg.wwwroot + '/course/format/ladtopics/amd/src/ErrorHandler.js'
+    M.cfg.wwwroot + '/course/format/ladtopics/amd/src/utils/ErrorHandler.js'
 ], function ($, ajax, d3, dc, ErrorHandler) {
 
     
@@ -77,8 +77,8 @@ define([
             "currency": ["€", ""],
             "dateTime": "%a %b %e %X %Y",
             "date": "%d.%m.%Y",
-            "time": "%H:%M:%S",
-            "periods": ["AM", "PM"],
+            "time": "%H:%M",
+            "periods": ["", ""],
             "days": [
                 "Sonntag",
                 "Montag",
@@ -158,8 +158,8 @@ define([
             "currency": ["€", ""],
             "dateTime": "%a %b %e %X %Y",
             "date": "%d.%m.%Y",
-            "time": "%H:%M:%S",
-            "periods": ["AM", "PM"],
+            "time": "%H:%M",
+            "periods": ["", ""],
             "days": [
                 "Sonntag",
                 "Montag",

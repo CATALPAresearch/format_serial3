@@ -183,7 +183,6 @@ define(['jquery'], function ($) {
             registeredCharts.push(chart);
         };
 
-
     };
 
     return filterChart;

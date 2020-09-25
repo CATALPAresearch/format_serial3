@@ -1227,7 +1227,7 @@ $modalMilestone = '
                                 <div class="col-md-12">
                                     <ul class="nav nav-tabs dashboard-tab">
                                         <li class="nav-item active"><a class="nav-link active" data-toggle="tab" href="#learningstatus"
-                                                role="tab">Lernstand</a></li>    
+                                                role="tab">Genutzte Lernangebote</a></li>    
                                         <li hidden class="nav-item ">
                                             <a class="nav-link" data-toggle="tab" href="#timemanagement" role="tab">Zeitmanagement</a></li>
                                         <li class="nav-item">

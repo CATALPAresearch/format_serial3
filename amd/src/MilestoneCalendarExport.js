@@ -20,7 +20,7 @@
 define([
     M.cfg.wwwroot + '/course/format/ladtopics/lib/build/vue.min.js',
     M.cfg.wwwroot + '/course/format/ladtopics/amd/build/ICalExport.min.js',
-    M.cfg.wwwroot + '/course/format/ladtopics/amd/build/ErrorHandler.min.js'
+    M.cfg.wwwroot + '/course/format/ladtopics/amd/build/utils/ErrorHandler.min.js'
 ], function(Vue, ICalExport, ErrorHandler) {
 
     require.config({

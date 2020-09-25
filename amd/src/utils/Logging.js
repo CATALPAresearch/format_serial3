@@ -11,7 +11,7 @@
 define([
     'jquery', 
     'core/ajax', 
-    M.cfg.wwwroot + "/course/format/ladtopics/amd/src/Utils.js"
+    M.cfg.wwwroot + "/course/format/ladtopics/amd/src/utils/Utils.js"
 ], function ($, ajax, utils) {
     
     utils = new utils();

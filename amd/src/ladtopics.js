@@ -12,12 +12,12 @@
 define([
     'jquery',
     M.cfg.wwwroot + '/course/format/ladtopics/amd/src/Timeline.js',
-    M.cfg.wwwroot + '/course/format/ladtopics/amd/src/Utils.js',
-    M.cfg.wwwroot + '/course/format/ladtopics/amd/src/FilterChart.js',
-    M.cfg.wwwroot + '/course/format/ladtopics/amd/src/ActivityChart.js',
+    M.cfg.wwwroot + '/course/format/ladtopics/amd/src/utils/Utils.js',
+    M.cfg.wwwroot + '/course/format/ladtopics/amd/src/ChartTimeFilter.js',
+    M.cfg.wwwroot + '/course/format/ladtopics/amd/src/ChartActivity.js',
     M.cfg.wwwroot + '/course/format/ladtopics/amd/src/InitialSurvey.js',
-    M.cfg.wwwroot + '/course/format/ladtopics/amd/src/Logging.js',
-    M.cfg.wwwroot + '/course/format/ladtopics/amd/src/ErrorHandler.js'
+    M.cfg.wwwroot + '/course/format/ladtopics/amd/src/utils/Logging.js',
+    M.cfg.wwwroot + '/course/format/ladtopics/amd/src/utils/ErrorHandler.js'
 ],
     function ($, Timeline, Utils, filterChart, activityChart, initialSurvey, Log, ErrorHandler) {
         /**
