@@ -193,14 +193,13 @@ define([
 
             watch: {
                 milestones: function (m) {
-                    console.log('ee', this.getReflections(m), m)
+                    //console.log('ee', this.getReflections(m), m)
                     this.the_milestones = m;//this.getReflections(m);
                 }
             },
 
             template: `
             <div>
-                <h4>Lernen gestalten</h4>
                 <div class="row">
                     <div class="col-3">
                         <ul class="nav flex-column flex-nowrap overflow-hidden">
