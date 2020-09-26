@@ -255,15 +255,17 @@ define([
                             erwarten könnten.
                         </div>
                         <div v-if="currentStrategy=='fastread'">
-                            Üben Sie das schnelle Lesen, indem Sie einmal probieren, so schnell zu lesen, wie Sie können.Lesen Sie so schnell, dass Sie kaum etwas
+                            <p>Üben Sie das schnelle Lesen, indem Sie einmal probieren, so schnell zu lesen, wie Sie können.Lesen Sie so schnell, dass Sie kaum etwas
                             vom Inhalt des Textes mitbekommen. Betrachten Sie das als eine Tempo-Übung.Eine weitere Übung, um die Lesegeschwindigkeit zu erhöhen,
                             ist die Vergrößerung des Fixierungsbereichs; lesen Sie in Wortgruppen anstelle des wortwörtlichen Lesens. Beide Prozesse werden durch
                             die nachfolgenden Abbildungen dargestellt:<img class="w-50" src="/course/format/ladtopics/pix/schnelle_Lesebewegung.png" /><img
                                 class="w-50" src="/course/format/ladtopics/pix/normale_Lesebewegung.png" />Eine weitere unterstützende Technik bietet die
                             Beschleunigung des Lesefingers. Lesen Sie zu Beginn mit dem Finger unter den Zeilen. Das schult die Blickbewegung, so dass mehrere Worte
                             auf einmal wahrgenommen werden können. Steigern Sie dabei das Tempo Ihres Fingers; je schneller der Finger über die Zeilen gleitet,
-                            desto schneller müssen Sie auch lesen.Quelle: Stary, J. &amp; Kretschmer, H. (1994). Umgang mit wissenschaftlicher Literatur. Eine
-                            Arbeitshilfe für das sozial- und geisteswissenschaftliche Studium (3.Auflage). Berlin: Cornelsen Scriptor.
+                            desto schneller müssen Sie auch lesen.</p>
+                            
+                            <p>Quelle:<br> Stary, J. &amp; Kretschmer, H. (1994). Umgang mit wissenschaftlicher Literatur. Eine
+                            Arbeitshilfe für das sozial- und geisteswissenschaftliche Studium (3.Auflage). Berlin: Cornelsen Scriptor.</p>
                         </div>
                         <div v-if="currentStrategy=='readingcomprehension'">
                             Gibt es trotz aller getroffenen Vorbereitungsmaßnahmen noch Probleme, den Text zu verstehen? Auch das kann passieren und manchmal
@@ -294,7 +296,48 @@ define([
                             bereits vorhandene Wissen zurückgreifen und müssen Dinge nicht neu lernen. Oft hilft es, wenn Sie sich an die bereits gelernten
                             Zusammenhänge erinnern.
                         </div>
-                        <div v-if="currentStrategy=='PQ4R'">xxx</div>
+                        <div v-if="currentStrategy=='PQ4R'">
+                            Diese Methode wird für das lernende Bearbeiten von Texten empfohlen. Hinter dem Kürzel verstecken sich sechs Schritte:
+                            <p><span class="font-weight-bold">Preview –</span> Übersicht gewinnen
+                                Kursorisches Lesen (Überfliegen des gesamten Textes) vermittelt einen Überblick und ersten Eindruck: Welche Intention des Autors/der
+                                Autorin
+                                wird im Vorwort oder in der Einleitung deutlich? Welche Themen und Theorien erwarten mich?
+                                Informationen über den Text sammeln: Welche Personen werden thematisiert? Welche Theorien werden vorgestellt?
+                                Vorwissen aktivieren: Was haben Sie bspw. bereits in anderen Kontexten über Platon oder Kant gelernt?
+                                Struktur des Textes kennenlernen: Wie sind bspw. die einzelnen Textabschnitte aufgebaut? Wo enden die einzelnen Sinneinheiten? (Bei
+                                Texten,
+                                die kein Zwischenüberschriften verwenden, können Sie eigene formulieren)
+                                Unbekannte Wörter und Begriffe notieren und nachschlagen
+                            </p>
+                            <p>
+                                <span class="font-weight-bold">Questions –</span> Fragen an den Text stellen
+                                W- Fragen: Was? Warum? Wozu? Wie? Wer? Wo? Wann?
+                                Bsp.: Wer hat den Text geschrieben? Wann und in welchem Kontext? Warum bezieht sich der Autor auf die verwendeten Begriffe und nicht auf
+                                andere? Wo gibt es Parallelen zu Ihrer Fragestellung? Fragen wecken Interesse und Neugier, was das Lesen erleichtert.
+                            </p>
+
+                            <p><span class="font-weight-bold">Read –</span> Zweiter Leseschritt
+                                Gründliches Lesen des Textes. Lesen Sie jeden Abschnitt gründlich.
+                                Versuchen Sie, die an den Text gestellten Fragen zu beantworten, so lesen Sie zielgerichteter.
+                                Markieren Sie wichtige Punkte, machen Sie Randbemerkungen
+                            </p>
+                            <p><span class="font-weight-bold">Reflect –</span> Gedankliche Auseinandersetzung mit dem Text
+                                Versuchen Sie den Text zu verstehen, bleiben Sie aber auch kritisch: Ist der Text nachvollziehbar, sind die Behauptungen stimmig? Der
+                                Text
+                                wird so lebendiger und prägt sich besser ein.
+                            </p>
+                            <p><span class="font-weight-bold">Recite –</span> Wiederholen aus dem Gedächtnis
+                                Verfassen Sie nach dem Lesen eines Abschnittes oder Kapitels ausführliche Notizen, fassen Sie diese in eigenen Worten aus dem Gedächtnis
+                                zusammen, vergleichen Sie mit der entsprechenden Textpassage, wenn Sie nicht weiterkommen.
+                            </p>
+                            <p><span class="font-weight-bold">Review –</span> Rückblick und Überprüfung
+                                Kontrollieren Sie Ihre Aufzeichnungen und erstellen Sie Zusammenfassungen, oder visualisieren Sie Ihre Ergebnisse.
+                            </p>
+                            <br>
+                            Quelle:<br>
+                            Thomas, E. L./Robinson, H.A. (1972). Improving reading in every class: A sourcebook for teachers. Boston: Houghton Mifflin.
+
+                        </div>
                         <div v-if="currentStrategy=='cards'">
                             Mit einer Lernkartei können Sie Dinge systematisch wiederholen. Eine Karte wandert bei einer richtigen Antwort ein Fach weiter, bei
                             einer falschen Antwort bleibt die Karte im Fach. Das 1. Fach wird z. B. täglich wiederholt, das 2. Fach alle 3 Tage usw. So arbeiten Sie
@@ -311,7 +354,7 @@ define([
                                 <li>Schlüsselbegriffe auswendig lernen, um sich in einer Prüfung besser an wichtige Inhaltsbereiche erinnern zu können;</li>
                                 <li>einen Text durchlesen und sich anschließend den Inhalt selbst erklären.</li>
                             </ul>
-                            <p>Quelle: Wild, K. – P., &amp; Klein-Allermann, E. (1995). Nicht alle lernen auf die gleiche Weise. Individuelle Lernstrategien und
+                            <p>Quelle:<br> Wild, K. – P., &amp; Klein-Allermann, E. (1995). Nicht alle lernen auf die gleiche Weise. Individuelle Lernstrategien und
                                 Hochschulunterricht. In B. Behrendt (Ed.), Handbuch Hochschullehre. Bonn: Raabe Verlag (Stangl, 2020).</p>
                         </div>
                         <div v-if="currentStrategy=='reminder'">
@@ -399,7 +442,7 @@ define([
                             werden.Für eine Prüfungsvorbereitung ist also beides unabdingbar, Auswendiglernen und Verstehen, das allein nützt jedoch wenig, wenn
                             man dieses nicht auch klar und strukturiert wiedergeben kann.
                             <br>
-                            Quellen 
+                            Quellen: 
                             <ul>
                                 <li>Lehner, M. (2015). Viel Stoff - schnell gelernt: Prüfungen optimal vorbereiten. Bern: Haupt.</li>
                                 <li>Marton, F. &amp; Säaljö, R. (1976). On qualitative differences in learning II - outcome as a function of the learner’s
@@ -435,13 +478,13 @@ define([
                             Multitasking praktizieren, effektiver darin sind, ihre Aufmerksamkeit willentlich auf eine Aufgabe auszurichten(vgl.Ophir, Nass &
                             amp; Wagner,2009).Multitasking ist im Lernkontext demnach nicht wirklich zielführend.Gehen Sie daher bewusst mit Ihrer Zeit um,
                             trennen Sie Lernen und Freizeit voneinander und berücksichtigen Sie dies auch bei der Planung Ihrer Lernzeiten.</p>
-                            <p>Quellen
+                            <br>
+                            Quellen:
                             <ul>
                                 <li>Boujon, C. &amp; Quaireau, C. (1997). Attention et réussite scolaire. Dunod.</li>
                                 <li>Ophir, E., Nass, C., &amp; Wagner, A. D. (2009). Cognitive control in media multitaskers. Proceedings of the</li>
                                 <li>National Academy of Sciences,106 (37),15583–15587.</li>
-                                </ul>
-                            </p>
+                            </ul>
                         </div>
                         <div v-if="currentStrategy=='resour'">
                             Verstärkung, Belohnung, Entspannung und Sport Vergessen Sie nicht, sich selbst auch einmal für die erreichten Ziele zu belohnen.Die
@@ -489,8 +532,10 @@ define([
                             </ul>
                             <p>Schauen Sie doch einmal in Ihrem App-Store, es gibt zahlreiche Pomodoro-Apps, die Sie nutzen können. Eine einfache Stoppuhr und
                                 ein Block erfüllen aber sicher auch ihren Zweck und Ihr Handy schalten Sie für den Anfang einfach einmal in den Flugmodus.</p>
-                            <p>Quelle: Cirillo, F. (2013). The Pomodoro Technique: do more and have fun with time management. Berlin: FC Garage.
-                                http:\/\/pomodorotechnique.com </p>
+                            <p>Quelle:<br> 
+                            Cirillo, F. (2013). The Pomodoro Technique: do more and have fun with time management. Berlin: FC Garage.
+                                <a href="http://pomodorotechnique.com/">http://pomodorotechnique.com/</a>
+                                </p>
                         </div>
                         <div v-if="currentStrategy=='partner'">
                             Nutzen Sie den Austausch mit Kommilitonen*innen, um Lernstoff zu diskutieren, um sich gegenseitig Lerninhalte zu erklären, oder auf
@@ -520,7 +565,9 @@ define([
                                     hinausgeschoben hat; Unordnung im Zimmer, die stört; Prokrastination oder Lernblockaden</li>
                                 <li>Identifizieren Sie Ihre persönlichen Zeitdiebe. Benennen Sie Ihre fünf gefährlichsten Gegner. Erforschen Sie die Ursachen
                                     und überlegen Sie sich, wie Sie dagegen vorgehen könnten, damit Sie sich in Zukunft nicht die Zeit stehlen lassen.</li>
-                            </ul>Quelle: Meier, H. (1998). Selbstmanagement im Studium. Ludwigshafen (Rhein): Kiehl.
+                            </ul>
+                            <br>
+                            Quelle:<br> Meier, H. (1998). Selbstmanagement im Studium. Ludwigshafen (Rhein): Kiehl.
                         </div>
                     </div>
                     <div class="col-3 border-left">
