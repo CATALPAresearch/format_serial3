@@ -930,6 +930,29 @@ define([
                     removeMilestone: function () {
                         this.closeModal(false);
                         $('div.modal-backdrop.show').remove();
+                        // keep milestone hidden if it is from plan to avoid beeing displayed
+                        const id = this.getSelectedMilestone().id;
+                        const mp = this.milestones.filter(
+                            function (ms) {
+                                return ms.id === id;
+                            }
+                        );
+                        if (typeof mp[0] === "object" && mp[0].fromPlan === true) {
+                            mp[0].hide = true;
+                        } else {
+                            console.log(25)
+                            for (var s = 0; s < this.milestones.length; s++) {
+                                if (this.milestones[s].id === this.getSelectedMilestone().id) {
+                                    this.milestones.splice(s, 1);
+                                    this.selectedMilestone = -1;
+                                }
+                            }
+                        }
+                        console.log(22)
+                        this.updateMilestones();
+                        console.log(23)
+                        this.$forceUpdate(); // We want the create new ms button back!
+                        console.log(24)
                         logger.add('milestone_removed', {
                             milestoneId: this.getSelectedMilestone().id,
                             name: this.getSelectedMilestone().name,
@@ -939,25 +962,7 @@ define([
                             objective: this.getSelectedMilestone().objective,
                             resources: this.getSelectedMilestone().resources.map(function (resource) { return { name: resource.instance_title, section: resource.section, type: resource.instance_type, done: resource.checked !== undefined ? true : false }; })
                         });
-                        // keep milestone hidden if it is from plan to avoid beeing displayed
-                        const id = this.getSelectedMilestone().id;
-                        const mp = this.milestones.filter(
-                            function(ms){
-                                return ms.id === id;                                
-                            }
-                        );
-                        if(typeof mp[0] === "object" && mp[0].fromPlan === true){                            
-                            mp[0].hide = true;
-                        } else {
-                            for (var s = 0; s < this.milestones.length; s++) {
-                                if (this.milestones[s].id === this.getSelectedMilestone().id) {
-                                    this.milestones.splice(s, 1);
-                                    this.selectedMilestone = -1;
-                                }
-                            }                            
-                        }
-                        this.updateMilestones();
-                        this.$forceUpdate(); // We want the create new ms button back!
+
                         return;
                     },
 
@@ -1144,7 +1149,7 @@ define([
                         this.invalidResources = this.getSelectedMilestone().resources.length > 0 ? false : true;
                     },
                     addFreeTextRescource: function () {
-                        if (this.freeTextRessource === ''){
+                        if (this.freeTextRessource === '') {
                             return;
                         }
                         let obj = {
@@ -1446,7 +1451,7 @@ define([
                                         let id = +href.slice(posID + 3);
                                         if (typeof id !== "number" || id < 0) return;
                                         let instance_type = href.split('/mod/')[1].split('/')[0];
-                                        
+
                                         // add the dom elements
                                         let dom = " \
                                             <div class=\"dropdown milestone_picker\"> \
@@ -1478,7 +1483,7 @@ define([
                                                 "display": "none"
                                             });
                                         });
-                                        pickerLink.click(function (e) { 
+                                        pickerLink.click(function (e) {
                                             e.preventDefault();
                                             if (dropdown.css("display") !== "block") {
                                                 logger.add('activity_milestone_dropdown_open', { instance_id: id, instance_type: instance_type });
@@ -1494,7 +1499,7 @@ define([
                                                     let entryID = +entry.attr("id");
                                                     let icon = $(this).find("i.icon");
                                                     if (typeof entryID === "number") {
-                                                        entry.click(function (e) { 
+                                                        entry.click(function (e) {
                                                             e.preventDefault();
                                                             if (typeof _this.milestones === "object" && typeof _this.resources === "object") {
                                                                 for (let i in _this.milestones) {
@@ -2308,7 +2313,7 @@ define([
                             console.log(error);
                         }
                     },
-                    
+
                     modUpdateUser: function () {
                         let _this = this;
                         let items = $("input.mru:checked");
@@ -2432,6 +2437,7 @@ define([
                         }
                     },
                     getMilestonePlan: function () {
+                        console.log(88)
                         try {
                             let _this = this;
                             utils.get_ws("userpreferences", {
@@ -2441,15 +2447,22 @@ define([
                                     'fieldname': 'ladtopics_survey_results',
                                 }
                             }, function (u) {
+
                                 if (typeof u.response !== "string" || u.response.length <= 0) return;
                                 let survey = JSON.parse(u.response);
-                                if (survey[0]["value"] === '0') return;
+                                
+                                if (
+                                    !survey[0].hasOwnProperty("value") || 
+                                    survey[0]["value"] === '0' || 
+                                    typeof survey[0]["value"] !== 'string' || 
+                                    survey[0]["value"].length === 0) 
+                                    return
                                 let result = JSON.parse(survey[0]["value"]);
                                 let plan = result.objectives.toLowerCase();
                                 let ps = result.planingStyle.toLowerCase();
                                 let sr = {
                                     from: course.startDate,
-                                    to: course.endDate//new Date(end.setDate(end.getDate() + 1 + this.daysOffset)) // had to create new date otherwise it will throw a parse error 
+                                    to: course.endDate
                                 };
                                 let diff = Math.round((sr.to - sr.from) / (7 * 24 * 60 * 60 * 1000));
                                 switch (plan) {
@@ -2462,12 +2475,14 @@ define([
                                     default: plan = null;
                                 }
                                 if (typeof plan !== "string" && plan === null) return;
+                                console.log(89, plan)
                                 utils.get_ws('getmilestoneplan', {
                                     data: {
                                         'courseid': parseInt(course.id, 10),
                                         'plan': plan
                                     }
                                 }, function (e) {
+                                    console.log(90)
                                     try {
                                         if (typeof e.data === "string" && e.data.length > 0) {
                                             let obj = JSON.parse(e.data);
