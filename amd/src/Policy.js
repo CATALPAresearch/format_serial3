@@ -9,8 +9,7 @@
  * @license    MIT
  * @since      3.1
  * 
- * TODO
- * - set link to policy text
+ * TODO:
  * - submit accept/withdraw
  */
 define([
@@ -40,7 +39,8 @@ define([
                     data: function () {
                         return {
                             policies: policies,
-                            message: message
+                            message: message,
+                            hasRead:{}
                         }
                     },
 
@@ -56,7 +56,10 @@ define([
                             return moment.unix(utc).format("DD.MM.YYYY");
                         },
                         getLink: function(p, action){
-                            return M.cfg.wwwroot + '/course/format/ladtopics/policy.php?policy='+p.id+'&version='+p.version+'&action='+action;
+                            return M.cfg.wwwroot + '/course/format/ladtopics/policy.php?policy='+p.id+'&version='+p.version+'&status='+action;
+                        },
+                        getPolicyLink: function(version_id){
+                            return M.cfg.wwwroot + '/admin/tool/policy/viewall.php#policy-'+version_id;
                         }
                     },
 
@@ -64,23 +67,33 @@ define([
                             <div id="policy-container">
                                 <h3 class="my-4">Zustimmung und Wideruf von Richtlinien</h3>
                                 <div v-if="message != ''" class="alert alert-success w-50">
-                                    Ihre Änderungen wurden umgesetzt.
+                                    {{ message }}
                                 </div>
                                 <div class="row mb-3 border-bottom pb-2" v-for="p in policies">
-                                    <div class="col-10">
-                                        <a target="s" class="bold">{{p.name}}</a> in der Version vom 
+                                    <div class="col-9">
+                                        <i v-if="p.status==1" class="fa fa-check ml-3" style="color:green;"></i>
+                                        <i v-if="p.status==0" class="fa fa-times ml-3" style="color:red;"></i>
+                                        <a :href="getPolicyLink(p.version)" target="s" class="bold">{{p.name}}:</a> Der Version vom 
                                         <span>{{ convertTime(p.creation) }}</span>
-                                        <span v-if="p.status==1">haben Sie am {{ convertTime(p.acceptance) }} zugestimmt <i class="fa fa-check ml-3"></i></span>
+                                        <span v-if="p.status==1">
+                                            haben Sie am {{ convertTime(p.acceptance) }} zugestimmt.
+                                        </span>
                                         <span v-if="p.status==0">
-                                            <i class="fa fa-times ml-3"></i>
+                                            haben Sie nicht zugestimmt.
                                         </span>
                                     </div>
-                                    <div class="col-2">
+                                    <div class="col-3">
                                         <span v-if="p.status==1">
                                             <a :href="getLink(p,0)" class="right btn btn-sm btn-outline-primary">Zustimmung widerufen</a>
                                         </span>
                                         <span v-if="p.status==0">
-                                            <a :href="getLink(p,1)" class="btn btn-sm btn-primary">Akzeptieren</a>
+                                            <div class="form-check">
+                                                <input v-model="hasRead[p.version]" class="form-check-input" type="checkbox" value="1" id="defaultCheck1">
+                                                <label class="form-check-label" style="font-size:0.8em;" for="defaultCheck1">
+                                                    Ich habe die Richtlinie gelesen und akzeptiere sie.
+                                                </label>
+                                            </div>
+                                            <a :href="getLink(p,1)" :class="hasRead[p.version] ? 'btn btn-sm btn-primary' : 'disabled btn btn-sm btn-primary'">Akzeptieren</a>
                                         </span>
                                     </div>
                                 </div>
