@@ -1826,6 +1826,22 @@ define([
                             new ErrorHandler(error);
                         }
                     },
+                    studSaveSelect: function(){
+                        let ms = this.milestones.filter(
+                            function (element) {
+                                if (element.mod !== true) {
+                                    return true;
+                                }
+                                return false;
+                            }
+                        );
+                        if (ms.length <= 0) {
+                            this.modAlert("warning", "Keine Meilensteine vorhanden.");
+                            return;
+                        }
+                        this.exportMilestones(ms);
+                        return;
+                    },
                     modSaveSelect: function () {
                         let ms = this.milestones.filter(
                             function (element) {
@@ -1836,7 +1852,7 @@ define([
                             }
                         );
                         if (ms.length <= 0) {
-                            this.modAlert("warning", "Keine Meilensteine vorhanden.", "#moderationAlertExpInp");
+                            this.modAlert("warning", "Keine Meilensteine vorhanden.");
                             return;
                         }
                         if ($("#modSaveInterest").is(":checked")) {
@@ -1849,6 +1865,12 @@ define([
                             this.exportMilestones(ms);
                         }
                         return;
+                    },
+                    studResetMS: function(){
+                        var check = confirm('Wollen Sie wirklich alle Meilensteine zurücksetzen?');
+                        if (check === true) {
+                            this.resetMilestones();
+                        }
                     },
                     modResetSelect: function () {
                         var check = confirm('Wollen Sie wirklich alle Meilensteine zurücksetzen?');
