@@ -482,15 +482,18 @@ define([
                                             abzulegen?{{selectedMonth}}</label>
                                         <div class="col-4">
                                             <select @change="monthSelected" id="select_month">
+                                                <!-- 
+                                                :selected="selectedMonth === -1 ? (d.num-1 === (new Date()).getMonth()) : ((d.num-1)===selectedMonth)"
+                                                -->
                                                 <option v-for="d in monthRange()"
-                                                    :selected="selectedMonth === -1 ? (d.num-1 === (new Date()).getMonth()) : ((d.num-1)===selectedMonth)"
                                                     :value="d.num">{{ d.name }}</option>
                                             </select>
 
                                             <select @change="yearSelected" id="select_year">
-                                                <option v-for="d in yearRange(3)" 
-                                                    :selected="selectedYear === -1 ? (d === (new Date()).getFullYear()) : d===selectedYear"
-                                                    >
+                                                <!--
+                                                :selected="selectedYear === -1 ? (d === (new Date()).getFullYear()) : d===selectedYear"
+                                                -->
+                                                <option v-for="d in yearRange(3)" >
                                                     {{ d }}
                                                 </option>
                                             </select>
