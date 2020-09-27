@@ -1282,8 +1282,8 @@ class format_ladtopics_external extends external_api
     {
         return new external_single_structure(
             array(
-                    'activities' => new external_value(PARAM_RAW, 'Plugin name'),
-                    'completions' => new external_value(PARAM_RAW, 'Plugin name')
+                    'activities' => new external_value(PARAM_RAW, ''),
+                    'completions' => new external_value(PARAM_RAW, '')
                 )
         );
     }
@@ -1291,10 +1291,10 @@ class format_ladtopics_external extends external_api
     {
         global $CFG, $DB, $USER, $COURSE;
         $userid = (int)$USER->id;
-        $courseid = $data;//['courseid'];
-        //require_login(courseid);
+        $courseid = $data;
         $meta = get_meta($courseid);
-        // obtain all course activities
+        
+        // Step 1: obtain all course activities
         $modinfo = get_fast_modinfo($courseid, -1);
         $sections = $modinfo->get_sections();
         $activities = array();
@@ -1320,7 +1320,7 @@ class format_ladtopics_external extends external_api
             }
         }
 
-        // get all submissions of an user in a course
+        // Step 2:get all submissions of an user in a course
         $submissions = array();
         $params = array('courseid' => $courseid, 'userid' => $userid);
 
@@ -1353,18 +1353,22 @@ class format_ladtopics_external extends external_api
             }
         }
 
-        // => $submissions
+        // => $submissions TODO: Here is something missing. We don't do anything with the submission. Do we need to do something here?
 
-        // get completions
+        // Step 3: get completions
         $completions = array();
         $completion = new completion_info($COURSE);
+        // $completion->is_enabled($cm) TODO: We nee to check this
         $cm = new stdClass();
 
         foreach ($activities as $activity) {
             $cm->id = $activity['id'];
             $activitycompletion = $completion->get_data($cm, true, $userid);
-            //$completions[$activity['id']] = $activitycompletion->completionstate;
             $activity['completion'] = $activitycompletion->completionstate;
+            $activity['status'] = $activitycompletion->status;
+            $activity['criteria'] = $completiondata->criteria;
+            $activity['hidden'] = $completiondata->hidden;
+
             $completions[$activity['id']] = $activity;
             if ($completions[$activity['id']] === COMPLETION_INCOMPLETE && in_array($activity['id'], $submissions)) {
                 $completions[$activity['id']] = 'submitted';

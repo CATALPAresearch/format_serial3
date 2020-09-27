@@ -40,7 +40,6 @@ define([
                 Utils.get_ws('completionprogress', {
                     'courseid': parseInt(this.course.id, 10)
                 }, function (e) {
-
                     try {
                         //console.log(JSON.parse(e.activities));
                         //console.log(JSON.parse(e.completions));
@@ -53,7 +52,7 @@ define([
             },
 
             methods: {
-                draw: function (data) {
+                draw: function (data) { 
                     var groupBy = function (data, key) {
                         var arr = [];
                         for (var val in data) {
@@ -65,32 +64,7 @@ define([
                         });
                     };
                     this.sections = groupBy(data, 'section');
-                    //$(document).ready(function () {
-                    //  $('a[href="#learningstatus"]').tab("show");
-                    //$('[data-toggle="tooltip"]').tooltip();
-                    //$('[data-toggle="popover"]').popover();
-                    //});
-                    /*
-                    
-                     data-toggle="tooltip"
-                                        data-container="body"
-                                        :title="m.type"
-                                        data-content="m.name"
-                                        data-placement="top">
-                                            <rect @mouseover="setCurrent(index, sIndex)" class="completion-rect"
-                                                :x="index * 20"
-                                                :y="sIndex*30"
-                                                :height="20"
-                                                :width="20"
-                                                :fill="m.completion==1 ? \'green\' : \'blue\'"
-                                                data-toggle="popover"
-                                                data-container="body"
-                                                :title="m.type"
-                                                :data-content="m.name"
-                                                data-placement="bottom"
-
-                     */
-
+                    console.log(this.sections);
                 },
                 setCurrent: function (id, section) {
                     this.current = { id: id, section: section };
