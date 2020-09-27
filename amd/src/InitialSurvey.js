@@ -43,7 +43,8 @@ define([
 
 
         new Vue({
-            el: '#planningsurvey',
+            //el: '#planningsurvey',
+            el: 'initial-survey',
             data: function () {
                 return {
                     modalSurveyVisible: false,
@@ -210,7 +211,7 @@ define([
                     this.invalidResources = this.resources.length > 0 ? false : true;
                 },
                 updateObjective: function (e) {
-                    console.log('update ',this.objectives)
+                    console.log('update ', this.objectives)
                     this.invalidObjective = this.objectives === '' ? true : false;
                 },
                 updateAvailableTime: function () {
@@ -280,7 +281,7 @@ define([
                     };
                     */
                     if (this.objectives !== '' || this.planingStyle !== '') {
-                        text = reason[this.objectives];    
+                        text = reason[this.objectives];
                     }
                     return text;
                 },
@@ -353,7 +354,171 @@ define([
                     });
 
                 }
-            }
+            },
+
+            template: `
+                <div id="planningsurvey" display="visibility: hidden;">
+                    <div v-if="!surveyComplete" hidden class="row survey-btn">
+                        <div class="col-sm-2 col-centered">
+                            <div class="wrapper">
+                                <div @click="showModal()" class="survey-starter survey-animate" data-toggle="modal" data-target="#theSurveyModal">
+                                    <span>Lernen mit Plan</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="theSurveyModal" class="xmodal" tabindex="-1" role="dialog">
+                        <div v-if="modalSurveyVisible" class="xmodal-dialog xmodal-lg" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="MilestoneModalLabel">Vorbereitung Ihrer Semesterplanung für diesen Kurs</h5>
+                                    <button @click="closeModal()" type="button" class="close" data-dismiss="modal"
+                                        aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="form-check row">
+                                        <p>Teilen Sie uns bitte hier Ihre Ziele mit, dann können wir Sie in der Semesterplanung besser unterstützen.
+                                        </p>
+                                        <label for="" class="col-12 col-form-label survey-objective-label">Welches Ziel verfolgen
+                                            Sie in diesem Kurs/Modul?</label>
+                                        <span :style="invalidObjective ? \'display:inline-block; border: solid 1px #ff420e;\' : \'\'">
+                                            <div class="form-check">
+                                                <input @change="updateObjective" class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1"
+                                                    value="f1a" v-model="objectives">
+                                                <label class="form-check-label" for="exampleRadios1">
+                                                    Die Prüfung erfolgreich absolvieren
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input @change="updateObjective" class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios2"
+                                                    value="f1b" v-model="objectives">
+                                                <label class="form-check-label" for="exampleRadios2">
+                                                    Orientierung im Themengebiet erlangen
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input @change="updateObjective" class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios3"
+                                                    value="f1c" v-model="objectives">
+                                                <label class="form-check-label" for="exampleRadios3">
+                                                    Meinen eigenen Interessen bzgl. bestimmter Themengebiete nachgehen
+                                                </label>
+                                            </div>
+                                            
+                                            <div class="form-check">
+                                                <input @change="updateObjective" class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios4"
+                                                    value="f1d" v-model="objectives">
+                                                <label class="form-check-label" for="exampleRadios4">
+                                                    keine Angaben
+                                                </label>
+                                            </div>
+                                        </span>
+                                        <div class="col-12 alert-invalid" role="alert" v-if="invalidObjective">Entscheiden Sie sich bitte für einer der Auswahlmöglichkeiten</div>
+                                    </div>
+                                    <hr>
+                                    <div class="form-check row">
+                                        <label for="inputMSname" class="col-10 col-form-label survey-objective-label">Wie viele Stunden pro Woche planen Sie für das Lernen in diesem Kurs / Modul ein?</label>
+                                        <div class="col-2 ml-0 pl-0">
+                                            <input :style="invalidAvailableTime ? \'border: solid 1px #ff420e;\' : \'\'" type="number" @change="updateAvailableTime()" class="form-control ml-0" id="inputMSname" placeholder="0" min="0"
+                                                v-model="availableTime">
+                                        </div>
+                                        <div class="col-12 alert-invalid" role="alert" v-if="invalidAvailableTime">Geben Sie bitte eine Anzahl an Stunden, die größer Null ist.</div>
+                                        <div class="col-12 w-50 alert-warning" role="warning">{{ isAvailableTimeSufficient() }}</div>
+                                    </div>
+                                    <hr>
+                                    <div class="form-check row">
+                                        <label for="" class="col-12 col-form-label survey-objective-label">
+                                            Wie detailliert planen Sie Ihre Lernaktivitäten?<br/>Ich plane meist 
+                                        </label>
+                                        <span :style="invalidPlaningStyle ? \'display:inline-block; border: solid 1px #ff420e;\' : \'\'">
+                                            <div class="form-check">
+                                                <input @change="updatePlaningStyle" class="form-check-input" type="radio" name="planingRadios" id="planingRadios1"
+                                                    value="planing-style-a" v-model="planingStyle">
+                                                <label class="form-check-label" for="planingRadios1">
+                                                    nur für eine Woche.
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input @change="updatePlaningStyle" class="form-check-input" type="radio" name="planingRadios" id="planingRadios2"
+                                                    value="planing-style-b" v-model="planingStyle">
+                                                <label class="form-check-label" for="planingRadios2">
+                                                    für die nächsten 4 Wochen.
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input @change="updatePlaningStyle" class="form-check-input" type="radio" name="planingRadios" id="planingRadios3"
+                                                    value="planing-style-c" v-model="planingStyle">
+                                                <label class="form-check-label" for="planingRadios3">
+                                                    für das ganze Semester mit Arbeitspaketen für je eine Woche.
+                                                </label>
+                                            </div>
+                                                <div class="form-check">
+                                                <input @change="updatePlaningStyle" class="form-check-input" type="radio" name="planingRadios" id="planingRadios4"
+                                                    value="planing-style-d" v-model="planingStyle">
+                                                <label class="form-check-label" for="planingRadios4">
+                                                    für das ganze Semester mit Arbeitspaketen für je 2 Wochen. 
+                                                </label>
+                                            </div>
+                                                <div class="form-check">
+                                                <input @change="updatePlaningStyle" class="form-check-input" type="radio" name="planingRadios" id="planingRadios5"
+                                                    value="planing-style-e" v-model="planingStyle">
+                                                <label class="form-check-label" for="planingRadios5">
+                                                    für das ganze Semester mit Arbeitspaketen für je einen Monat.
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input @change="updatePlaningStyle" class="form-check-input" type="radio" name="planingRadios" id="planingRadios6"
+                                                    value="planing-style-f" v-model="planingStyle">
+                                                <label class="form-check-label" for="planingRadios6">
+                                                    keine Angaben
+                                                </label>
+                                            </div>
+                                        </span>
+                                        <div class="col-12 alert-invalid" role="alert" v-if="invalidPlaningStyle">Verraten Sie uns bitte wie detailliert Sie Ihre Lernaktivitäten planen.</div>
+                                    </div>
+                                    <hr v-if="objectives === \'f1a\'">
+                                    <div v-if="objectives === \'f1a\'" class="form-check row">
+                                        <label for="inputObjectic" class="col-10 col-form-label survey-objective-label">Wann beabsichtigen Sie die Prüfung
+                                            abzulegen?{{selectedMonth}}</label>
+                                        <div class="col-4">
+                                            <select @change="monthSelected" id="select_month">
+                                                <!-- 
+                                                :selected="selectedMonth === -1 ? (d.num-1 === (new Date()).getMonth()) : ((d.num-1)===selectedMonth)"
+                                                -->
+                                                <option v-for="d in monthRange()"
+                                                    :value="d.num">{{ d.name }}</option>
+                                            </select>
+
+                                            <select @change="yearSelected" id="select_year">
+                                                <!--
+                                                :selected="selectedYear === -1 ? (d === (new Date()).getFullYear()) : d===selectedYear"
+                                                -->
+                                                <option v-for="d in yearRange(3)" >
+                                                    {{ d }}
+                                                </option>
+                                            </select>
+                                        </div>
+                                        <div class="col-7"></div>
+                                    </div>
+                                    
+                                    
+                                    <br />
+                                    <div class="row row-smooth">
+                                        <div class="col-md">
+                                            <div>
+                                                <button @click="validateSurveyForm()" class="btn btn-primary btn-sm">{{ buttonText() }}</button>
+                                                <button class="right btn btn-link right" @click="closeModal()" data-dismiss="modal"
+                                                    aria-label="abbrechen">jetzt nicht</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
         });
     };
     return survey;

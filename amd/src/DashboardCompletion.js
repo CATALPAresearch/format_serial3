@@ -19,13 +19,12 @@ define([
     'jquery',
     M.cfg.wwwroot + "/course/format/ladtopics/lib/build/vue.min.js",
     // 'd3v4',
-    M.cfg.wwwroot + "/course/format/ladtopics/amd/src/Utils.js"//,
-    //M.cfg.wwwroot + '/course/format/ladtopics/amd/src/ErrorHandler.js'
+    M.cfg.wwwroot + "/course/format/ladtopics/amd/src/utils/Utils.js"
 ], function ($, Vue, Utils) {
     Utils = new Utils();
     return Vue.component('dashboard-completion',
         {
-            props: ['course'],
+            props: ['course', 'log'],
 
             data: function () {
                 return {
@@ -41,7 +40,6 @@ define([
                 Utils.get_ws('completionprogress', {
                     'courseid': parseInt(this.course.id, 10)
                 }, function (e) {
-
                     try {
                         //console.log(JSON.parse(e.activities));
                         //console.log(JSON.parse(e.completions));
@@ -66,35 +64,11 @@ define([
                         });
                     };
                     this.sections = groupBy(data, 'section');
-                    //$(document).ready(function () {
-                    //  $('a[href="#learningstatus"]').tab("show");
-                    //$('[data-toggle="tooltip"]').tooltip();
-                    //$('[data-toggle="popover"]').popover();
-                    //});
-                    /*
-                    
-                     data-toggle="tooltip"
-                                        data-container="body"
-                                        :title="m.type"
-                                        data-content="m.name"
-                                        data-placement="top">
-                                            <rect @mouseover="setCurrent(index, sIndex)" class="completion-rect"
-                                                :x="index * 20"
-                                                :y="sIndex*30"
-                                                :height="20"
-                                                :width="20"
-                                                :fill="m.completion==1 ? \'green\' : \'blue\'"
-                                                data-toggle="popover"
-                                                data-container="body"
-                                                :title="m.type"
-                                                :data-content="m.name"
-                                                data-placement="bottom"
-
-                     */
-
+                    // console.log(this.sections);
                 },
                 setCurrent: function (id, section) {
                     this.current = { id: id, section: section };
+                    this.$emit('log', 'dashboard_completion_item_hover', { url: this.getLink(), completion: this.getCurrent().completion });
                 },
                 getCurrent: function () {
                     return this.sections[this.current.section][this.current.id];
@@ -106,23 +80,34 @@ define([
                 getStatus: function (instance) {
                     instance = instance == undefined ? this.getCurrent() : instance;
                     return instance.completion === 0 ? '<i class="fa fa-times-square"></i>Nicht abgeschlossen' : '<i class="fa fa-check"></i> Abgeschlossen';
+                },
+                trackClick: function () {
+                    let instance = this.getCurrent();
+                    this.$emit('log', 'dashboard_completion_item_click', { type: instance.type, instance: instance.id });
                 }
             },
 
             template: `
                 <div id="dashboard-completion">
+                    <p class="w-75" style="font-size:0.9em">Anhand dieser Balken können Sie erkennen, welche Lernangebote Sie bereits genutzt haben. Jedes Kästchen steht für ein Lernangebot, welches Sie durch einen Klick aufrufen können.</p>
                     <div v-for="(section, sIndex) in sections" class="row">
-                        <div class="col-3">{{ section[0].sectionname }}</div>
+                        <div class="col-3" style="font-size:0.9em">{{ section[0].sectionname }}</div>
                         <div class="col-9">
-                            <a v-bind:href="getLink()" v-for="(m, index) in section" :class="m.completion==1 ? \'rect-green completion-rect\' : \'rect-blue completion-rect\'" @mouseover="setCurrent(index, sIndex)"></a>
+                            <span v-for="(m, index) in section">
+                                <a v-bind:href="getLink()" v-on:click="trackClick()" v-if="m.type !== 'label' && m.type !== 'headline'" :class="m.completion==1 ? \'rect-green completion-rect\' : \'rect-blue completion-rect\'" @mouseover="setCurrent(index, sIndex)"></a>
+                            </span>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-3"></div>
                         <div class="col-9">
-                            <a v-bind:href="getLink()">
-                                <span v-if="getCurrent().completion === 0"><i class="fa fa-times-rectangle"></i> {{ getCurrent().name }}, nicht abgeschlossen</span>
-                                <span v-if="getCurrent().completion !== 0"><i class="fa fa-check"></i> {{ getCurrent().name }}, abgeschlossen</span>
+                            <a v-bind:href="getLink()" v-on:click="trackClick()">
+                                <span v-if="getCurrent().completion === 0">
+                                    <i class="fa fa-times-rectangle"></i> {{ getCurrent().name }}, nicht abgeschlossen
+                                </span>
+                                <span v-if="getCurrent().completion !== 0">
+                                    <i class="fa fa-check"></i> {{ getCurrent().name }}, abgeschlossen
+                                </span>
                             </a>
                         </div>
                     </div>

@@ -13,11 +13,16 @@ echo $OUTPUT->header();
 
 global $DB, $USER;
 $message = '';
+
 // change policy status
-if(isset($_GET['policy']) && isset($_GET['action']) && isset($_GET['version'])){
-    //$query = '';
-    //$res = $DB->set_records_sql($query, array((int)$USER->id));
-    $message = 'Die Richtlinien wurden aktualisiert.';
+if(isset($_GET['policy']) && isset($_GET['status']) && isset($_GET['version'])){
+    
+    $query = '
+    UPDATE '.$CFG->prefix.'tool_policy_acceptances 
+    SET status=? 
+    WHERE policyversionid=? AND userid=?';
+    $res = $DB->execute($query, array((int)$_GET['status'], (int)$_GET['version'], (int)$USER->id));
+    $message = 'Eine Richtlinie wurde aktualisiert.';
     
 }
 
