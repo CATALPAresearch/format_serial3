@@ -25,11 +25,15 @@ class blocking
     public static function tool_policy_accepted()
     {
         global $DB, $USER;
-        $version = 11;//$_SERVER['HTTP_HOST'] == 'localhost' || '127.0.0.1' ? 1 : 3;
+        require_login();
+        if(isset($_SESSION['policy_accepted']) && $_SESSION['policy_accepted'] === true) return true;        
+        $version = 1;//$_SERVER['HTTP_HOST'] == 'localhost' || '127.0.0.1' ? 1 : 3;
         $res = $DB->get_record("tool_policy_acceptances", array("policyversionid" => $version, "userid" => (int)$USER->id ), "timemodified");
         if (isset($res->timemodified) && $res->timemodified > 1000) {
+            $_SESSION['policy_accepted'] = true;
             return true;
         }
+        $_SESSION['policy_accepted'] = false;
         return false;
     }
 }

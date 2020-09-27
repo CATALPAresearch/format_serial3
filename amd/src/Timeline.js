@@ -180,7 +180,9 @@ define([
                             resources: [],
                             reflections: [],
                             yLane: 0,
-                            mod: false
+                            mod: false,
+                            fromPlan: false,
+                            hide: false
                         },
                         invalidName: false,
                         invalidObjective: false,
@@ -331,14 +333,14 @@ define([
                     archivedMilestones: function () {
                         return this.milestones.filter(
                             function (f) {
-                                return f.status === "missed" || f.status === "reflected";
+                                return f.status === "missed" || f.status === "reflected" && f.hide !== true;
                             }
                         );
                     },
                     remainingMilestones: function () {
                         return this.milestones.filter(
                             function (f) {
-                                return f.status !== "missed" && f.status !== "reflected";
+                                return f.status !== "missed" && f.status !== "reflected" && f.hide !== true;
                             }
                         );
                     },
@@ -931,7 +933,9 @@ define([
                             resources: [],
                             reflections: [],
                             yLane: 0,
-                            mod: false
+                            mod: false,
+                            fromPlan: false,
+                            hide: false
                         };
                         $('#theMilestoneModal').modal('hide');
                         return id;
@@ -961,11 +965,22 @@ define([
                             objective: this.getSelectedMilestone().objective,
                             resources: this.getSelectedMilestone().resources.map(function (resource) { return { name: resource.instance_title, section: resource.section, type: resource.instance_type, done: resource.checked !== undefined ? true : false }; })
                         });
-                        for (var s = 0; s < this.milestones.length; s++) {
-                            if (this.milestones[s].id === this.getSelectedMilestone().id) {
-                                this.milestones.splice(s, 1);
-                                this.selectedMilestone = -1;
+                        // keep milestone hidden if it is from plan to avoid beeing displayed
+                        const id = this.getSelectedMilestone().id;
+                        const mp = this.milestones.filter(
+                            function(ms){
+                                return ms.id === id;                                
                             }
+                        );
+                        if(typeof mp[0] === "object" && mp[0].fromPlan === true){                            
+                            mp[0].hide = true;
+                        } else {
+                            for (var s = 0; s < this.milestones.length; s++) {
+                                if (this.milestones[s].id === this.getSelectedMilestone().id) {
+                                    this.milestones.splice(s, 1);
+                                    this.selectedMilestone = -1;
+                                }
+                            }                            
                         }
                         this.updateMilestones();
                         this.$forceUpdate(); // We want the create new ms button back!
@@ -2571,6 +2586,7 @@ define([
                                                         element.start = moment(element.start).toDate();
                                                         element.end = moment(element.end).toDate();
                                                         element.mod = true;
+                                                        element.fromPlan = true;
 
                                                         let found = false;
                                                         for (let u in _this.milestones) {
