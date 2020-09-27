@@ -430,7 +430,7 @@ select#select_day, select#select_month, select#select_year {
   margin-left: 19px;
 }
 
-.resources-selected-name {
+a.resources-selected-name {
   text-decoration: underline;
 }
 
