@@ -168,6 +168,7 @@ define([
                         range: [],
                         milestones: [],
                         calendar: {},
+                        freeTextRessource: '',
                         emptyMilestone: {
                             id: 10,
                             name: '',
@@ -251,7 +252,7 @@ define([
                                     var facts = crossfilter(activityData);
                                     _this.timeFilterChart = new ChartTimeFilter(d3, dc, crossfilter, facts, xRange, _this, utils, logger, course);
 
-                                    _this.setFilterPreset('next-week'); 
+                                    _this.setFilterPreset('next-week');
                                     var activityChart = new ChartActivity(d3, dc, crossfilter, moment, activityData, utils, course);
                                     xRange = activityChart.getXRange();
                                     _this.timeFilterChart.registerChart(activityChart);
@@ -391,7 +392,7 @@ define([
                     }
                 },
                 methods: {
-                    log: function(action, event){
+                    log: function (action, event) {
                         logger.add(action, { data: event !== undefined ? event : 'none' });
                     },
                     getSemesterShortName: function () {
@@ -1149,11 +1150,31 @@ define([
                         }
                     },
                     resourceSelected: function (event) {
+                        console.log(this.resourceById(event.target.value));
                         var el = this.resourceById(event.target.value);
                         if (this.getSelectedMilestone().resources.indexOf(el) === -1) {
                             this.getSelectedMilestone().resources.push(el);
                         }
                         this.invalidResources = this.getSelectedMilestone().resources.length > 0 ? false : true;
+                    },
+                    addFreeTextRescource: function () {
+                        let obj = {
+                            course_id: 55,
+                            id: Math.ceil(Math.random() * 20000000),
+                            //instance_id: "7",
+                            instance_title: this.freeTextRessource,
+                            instance_type: "freeText",
+                            //instance_url_id: "126",
+                            //module_id: "1",
+                            name: this.freeTextRessource,
+                            //pos_module: 4,
+                            //pos_section: "1",
+                            //section: "21",
+                            //section_id: "21",
+                            //section_name: "Kurseinheit 1: Geräte und Prozesse",
+                        }
+                        this.getSelectedMilestone().resources.push(obj);
+                        this.freeTextRessource = '';
                     },
                     resourceRemove: function (id) {
                         for (var s = 0; s < this.getSelectedMilestone().resources.length; s++) {
@@ -1394,7 +1415,7 @@ define([
                             }
                         );
                     },
-
+                    // TODO: This function is much too complicate. It needs to be separated as a component using native vue.
                     createMilestonePicker: function () {
                         let _this = this;
                         let updateMilestoneList = function (id) {
@@ -1414,7 +1435,7 @@ define([
                                         list += "<a class=\"dropdown-item\" href=\"#\" id=\"" + element.id + "\"><i class=\"icon fa " + icon + "\"></i>" + element.name + "</a>";
                                     }
                                 );
-                                return list.length <= 0 ? "<span class=\"px-2\" style=\"user-select:none;\">Kein Meilenstein</span>" : list;
+                                return list.length <= 0 ? "<span class=\"px-2\" style=\"user-select:none;\">Legen Sie bitte einen Meilenstein an.</span>" : list;
                             } catch (error) {
                                 return "<div class=\"dropdown-item\">Meilensteine konnten nicht geladen werden.</div>";
                             }

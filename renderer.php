@@ -412,7 +412,7 @@ class format_ladtopics_renderer extends format_section_renderer_base {
 
 
 
-
+// TODO: this is a dupplication of code !!
 $milestoneArchiveList = '
 <!-- Milestone list -->
 <ul>    
@@ -486,9 +486,10 @@ $milestoneArchiveList = '
                                         :disabled = "m.status === \'reflected\'"
                                         @change="updateMilestoneStatus()"
                                         >
-                                    <a 
+                                    <a v-if="s.instance_type !== \'freeText\'" 
                                         :href="(s.instance_type === \'kurstermin\'?(getMoodlePath() + \'/calendar/view.php?month&course=\' + '.$COURSE->id.'):(getMoodlePath() + \'/mod/\' + s.instance_type + \'/view.php?id=\'+ s.instance_url_id))" 
                                         class="resources-selected-name">{{ s.name }}</a>
+                                    <span v-if="s.instance_type === \'freeText\'" class="resources-selected-name">{{ s.name }}</span>
                                     <span hidden class="resources-selected-remove remove-btn" data-toggle="tooltip" title="Thema, Material oder Aktivität entfernen">
                                         <i class="fa fa-trash" @click="resourceRemove(s.id)"></i>
                                     </span>
@@ -576,9 +577,10 @@ $milestoneList = '
                                         :id="s.id"
                                         @change="updateMilestoneStatus()"
                                         >
-                                    <a 
+                                    <a v-if="s.instance_type !== \'freeText\'" 
                                         :href="(s.instance_type === \'kurstermin\'?(getMoodlePath() + \'/calendar/view.php?month&course=\' + '.$COURSE->id.'):(getMoodlePath() + \'/mod/\' + s.instance_type + \'/view.php?id=\'+ s.instance_url_id))" 
                                         class="resources-selected-name">{{ s.name }}</a>
+                                    <span v-if="s.instance_type === \'freeText\'" class="resources-selected-name">{{ s.name }}</span>
                                     <span hidden class="resources-selected-remove remove-btn" data-toggle="tooltip" title="Thema, Material oder Aktivität entfernen">
                                         <i class="fa fa-trash" @click="resourceRemove(s.id)"></i>
                                     </span>
@@ -853,9 +855,10 @@ $modalMilestone = '
                                         v-model="s.checked" 
                                         v-bind:id="s.id"
                                         >
-                                    <a 
+                                    <a v-if="s.instance_type !== \'freeText\'" 
                                         :href="getMoodlePath() + \'/mod/\' + s.instance_type + \'/view.php?id=\'+ s.instance_url_id" 
                                         class="resources-selected-name">{{ s.name }}</a>
+                                    <span v-if="s.instance_type === \'freeText\'" class="resources-selected-name">{{ s.name }}</span>
                                     <span class="resources-selected-remove remove-btn" data-toggle="tooltip" title="Thema, Material oder Aktivität entfernen">
                                         <i class="fa fa-trash" @click="resourceRemove(s.id)"></i>
                                     </span>
@@ -876,6 +879,13 @@ $modalMilestone = '
                             </select>
                         </div>
                         <div class="col-sm-10 alert-invalid" v-if="invalidResources">Wählen Sie bitte Themen, Materialien und Aktivitäten aus.</div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group align-top mb-auto">
+                            <input v-model="freeTextRessource" type="text" class="form-control p-1" id="freeRessource" aria-describedby="ressourceHelp" placeholder="..." style="border: 1px #004c97 solid;">
+                            <small hidden id="ressourceHelp" class="form-text text-muted">Notieren Sie sich hier andere Lernmaterialien, die Sie verwenden möchten.</small>
+                            <button class="btn btn-sm btn-default mt-1" v-on:click="addFreeTextRescource()">Andere Lernmaterialien hinzufügen</button>
+                        </div>
                     </div>
                 </div>
                 <hr />
