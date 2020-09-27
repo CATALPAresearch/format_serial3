@@ -1474,6 +1474,8 @@ define([
                                         if (posID === -1) return;
                                         let id = +href.slice(posID + 3);
                                         if (typeof id !== "number" || id < 0) return;
+                                        let instance_type = href.split('/mod/')[1].split('/')[0];
+                                        
                                         // add the dom elements
                                         let dom = " \
                                             <div class=\"dropdown milestone_picker\"> \
@@ -1505,9 +1507,10 @@ define([
                                                 "display": "none"
                                             });
                                         });
-                                        pickerLink.click(function (e) {
+                                        pickerLink.click(function (e) { 
                                             e.preventDefault();
                                             if (dropdown.css("display") !== "block") {
+                                                logger.add('activity_milestone_dropdown_open', { instance_id: id, instance_type: instance_type });
                                                 dropdown.empty();
                                                 let data = updateMilestoneList(id);
                                                 $(data).prependTo(dropdown);
@@ -1520,12 +1523,13 @@ define([
                                                     let entryID = +entry.attr("id");
                                                     let icon = $(this).find("i.icon");
                                                     if (typeof entryID === "number") {
-                                                        entry.click(function (e) {
+                                                        entry.click(function (e) { 
                                                             e.preventDefault();
                                                             if (typeof _this.milestones === "object" && typeof _this.resources === "object") {
                                                                 for (let i in _this.milestones) {
                                                                     if (_this.milestones[i]["id"] === entryID) {
                                                                         for (let u in _this.resources) {
+                                                                            // TODO: It is only tested for instance_url_id, but not for the module oder instance_type (e.g. page, quiz, forum), but activities of differnt typ can have the same instance_id
                                                                             if (+_this.resources[u]["instance_url_id"] === id) {
                                                                                 if (typeof _this.milestones[i]["resources"] === "object") {
                                                                                     if (Object.keys(_this.milestones[i]["resources"]).length > 0) {
@@ -1536,10 +1540,13 @@ define([
                                                                                             }
                                                                                         }
                                                                                         if (found !== null) {
+                                                                                            // add activity to milestone
+                                                                                            logger.add('activity_milestone_dropdown_remove', { instance_id: id, instance_type: instance_type, milestone_name: _this.milestones[i].name, milestone_id: _this.milestones[i].id });
                                                                                             _this.milestones[i]["resources"].splice(found, 1);
                                                                                             icon.removeClass("fa-check-square");
                                                                                             icon.addClass("fa-square");
                                                                                         } else {
+                                                                                            logger.add('activity_milestone_dropdown_add', { instance_id: id, instance_type: instance_type, milestone_name: _this.milestones[i].name, milestone_id: _this.milestones[i].id });
                                                                                             _this.milestones[i]["resources"].push(_this.resources[u]);
                                                                                             icon.addClass("fa-check-square");
                                                                                             icon.removeClass("fa-square");
