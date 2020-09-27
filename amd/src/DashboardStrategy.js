@@ -21,13 +21,14 @@ define([
 
     return Vue.component('dashboard-completion',
         {
-            props: ['course', 'milestones'],
+            props: ['course', 'milestones', 'log'],
 
             data: function () {
                 return {
                     currentStrategy: null,
                     currentMenuItem: 'cognitive',
                     the_milestones: [],
+                    moodlePath: M.cfg.wwwroot,
                     strategyCategories: [
 
                         {
@@ -41,7 +42,7 @@ define([
                             desc: 'Elaborationsstrategien werden eingesetzt, um ein erweitertes Wissen zu generieren. Lernende bedienen sich dabei meist der bereits internalisierten Schemata und Wissensbasen und nutzen z. B. vertraute Abläufe, um Querbezüge herzustellen. vgl. Wissenssynthese.',
                         },
                         {
-                            id: 'build',
+                            id: 'knowledgebuilding',
                             name: 'Wissen aufbauen',
                             desc: 'Wiederholungsstrategien sind notwendig, um sich Lernstoff dauerhaft einzuprägen und gleichsam eine schnelle Verfügbarkeit von Wissen zu gewährleisten. Daher stehen hier Lernaktivitäten wie z. B. Auswendiglernen mit Lernkarten und repetierende Übungen im Vordergrund.',
                         },
@@ -59,7 +60,7 @@ define([
 
                     strategies: [
                         {
-                            id: 'reading', name: 'Überblick durch Querlesen', category: 'organisation'
+                            id: 'crossreading', name: 'Überblick durch Querlesen', category: 'organisation'
                         },
                         {
                             id: 'mindmap', name: 'Mindmap', category: 'organisation'
@@ -74,10 +75,10 @@ define([
                             id: 'structure', name: 'Strukturierung von Wissen', category: 'organisation'
                         },
                         {
-                            id: 'cards', name: 'Lernkarten früh erstellen', category: 'organisation'
+                            id: 'cardsearly', name: 'Lernkarten früh erstellen', category: 'organisation'
                         },
                         {
-                            id: 'fastread', name: 'schnelles Lesen', category: 'elaboration'
+                            id: 'fastreading', name: 'schnelles Lesen', category: 'elaboration'
                         },
                         {
                             id: 'readingcomprehension', name: 'Leseverständnis steigern', category: 'elaboration'
@@ -86,7 +87,7 @@ define([
                             id: 'transfertoknown', name: 'Übertragung auf bekannte Schemata', category: 'elaboration'
                         },
                         {
-                            id: 'critical', name: 'kritisches Hinterfragen', category: 'elaboration'
+                            id: 'criticalquestioning', name: 'kritisches Hinterfragen', category: 'elaboration'
                         },
                         {
                             id: 'subjectrelations', name: 'Bezug zu anderen Fächern herstellen', category: 'elaboration'
@@ -95,16 +96,16 @@ define([
                             id: 'PQ4R', name: 'PQ4R-Methode', category: 'elaboration'
                         },
                         {
-                            id: 'cards', name: 'Lernkartei', category: 'build'
+                            id: 'cards', name: 'Lernkartei', category: 'knowledgebuilding'
                         },
                         {
-                            id: 'repetieren', name: 'Repetieren', category: 'build'
+                            id: 'repetitions', name: 'Repetieren', category: 'knowledgebuilding'
                         },
                         {
-                            id: 'reminder', name: 'Kleine Erinnerungshilfen', category: 'build'
+                            id: 'reminder', name: 'Kleine Erinnerungshilfen', category: 'knowledgebuilding'
                         },
                         {
-                            id: 'remindercomplex', name: 'Erinnerungshilfen für komplexe Inhalte', category: 'build'
+                            id: 'remindercomplex', name: 'Erinnerungshilfen für komplexe Inhalte', category: 'knowledgebuilding'
                         },
                         //// metacognitive
                         {
@@ -114,7 +115,7 @@ define([
                             id: 'prepare', name: 'Vorbereiten', category: 'metacognitive'
                         },
                         {
-                            id: 'selfconfidence', name: 'Selbsteinschätzung', category: 'metacognitive'
+                            id: 'selfevaluation', name: 'Selbsteinschätzung', category: 'metacognitive'
                         },
                         {
                             id: 'regulations', name: 'Regulationsstrategien', category: 'metacognitive'
@@ -124,31 +125,31 @@ define([
                         },
                         //// resource
                         {
-                            id: 'anstr', name: 'Anstrengungsmanagement', category: 'resource'
+                            id: 'demand', name: 'Anstrengungsmanagement', category: 'resource'
                         },
                         {
                             id: 'attention', name: 'Aufmerksamkeitsmanagement', category: 'resource'
                         },
                         {
-                            id: 'resour', name: 'Ressourcenmanagement', category: 'resource'
+                            id: 'resourcemanagement', name: 'Ressourcenmanagement', category: 'resource'
                         },
                         {
-                            id: 'time', name: 'Zeitmanagement', category: 'resource'
+                            id: 'timemanagement', name: 'Zeitmanagement', category: 'resource'
                         },
                         {
-                            id: 'efftime', name: 'Effektives Zeitmanagement', category: 'resource'
+                            id: 'effectivetimemanagement', name: 'Effektives Zeitmanagement', category: 'resource'
                         },
                         {
                             id: 'partner', name: 'Lernpartner', category: 'resource'
                         },
                         {
-                            id: 'self', name: 'Selbstverpflichtung', category: 'resource'
+                            id: 'selfcommittment', name: 'Selbstverpflichtung', category: 'resource'
                         },
                         {
                             id: 'literature', name: 'Literatur', category: 'resource'
                         },
                         {
-                            id: 'thefts', name: 'Zeitdiebe', category: 'resource'
+                            id: 'timethefts', name: 'Zeitdiebe', category: 'resource'
                         }
                     ]
                 };
@@ -188,6 +189,17 @@ define([
                 },
                 getMilestones: function () {
                     return this.milestones;
+                },
+                setCurrentMenuItem: function (item) {
+                    this.currentMenuItem = item;
+                    this.$emit('log', 'dashboard_strategy_category_click', item);
+                },
+                setCurrentStrategy: function (strategy) {
+                    this.currentStrategy = strategy;
+                    this.$emit('log', 'dashboard_strategy_strategy_click', { 
+                        strategy: strategy, 
+                        category: this.strategyById(strategy).category 
+                    });
                 }
             },
 
@@ -204,14 +216,14 @@ define([
                     <div class="col-3">
                         <ul class="nav flex-column flex-nowrap overflow-hidden">
                             <li v-for="pc in strategyCategories" class="nav-item">
-                                <a :class="currentMenuItem==pc.id ? 'nav-link text-truncate mb-0 pb-0' : 'nav-link collapsed text-truncate'" v-on:click="currentMenuItem=pc.id" :href="'#submenu-'+pc.id" data-toggle="collapse" :data-target="'#submenu-'+pc.id" style="cursor:pointer;">
+                                <a :class="currentMenuItem==pc.id ? 'nav-link text-truncate mb-0 pb-0' : 'nav-link collapsed text-truncate'" v-on:click="setCurrentMenuItem(pc.id)" :href="'#submenu-'+pc.id" data-toggle="collapse" :data-target="'#submenu-'+pc.id" style="cursor:pointer;">
                                     <i :class="currentMenuItem==pc.id ? 'fa fa-caret-down' : 'fa fa-caret-right'"></i> 
                                     <span class="d-none d-sm-inline bold">{{ pc.name}}</span>
                                 </a>
                                 <div v-if="strategiesByCategory(pc.id).length > 0" :class="currentMenuItem==pc.id ? 'collapse fade show' : 'collapse fade'" :id="'submenu-'+pc.id" aria-expanded="false">
                                     <ul class="flex-column pl-2 nav">
                                         <li v-for="s in strategiesByCategory(pc.id)" :style="currentStrategy==s.id ? 'background-color:lightblue;' : ''" :class="currentStrategy == s.id ? 'nav-item active' : 'nav-item'">
-                                            <a v-if="s.subheading !== true" class="bl-2 pl-1 ml-4 nav-link py-0" v-on:click.prevent="currentStrategy=s.id" style="cursor:pointer;">
+                                            <a v-if="s.subheading !== true" class="bl-2 pl-1 ml-4 nav-link py-0" v-on:click.prevent="setCurrentStrategy(s.id)" style="cursor:pointer;">
                                                 <span>{{s.name}}</span>
                                             </a>
                                             <span v-if="s.subheading" class="pl-1 ml-2">{{s.name}}</span>
@@ -223,7 +235,7 @@ define([
                     </div>
                     <div id="strategy-description" class="col-6">
                         <div class="bold">{{ getSelectedStrategy().name }}</div>
-                        <div v-if="currentStrategy=='reading'">
+                        <div v-if="currentStrategy=='crossreading'">
                             Elaborationsstrategien werden eingesetzt, um ein erweitertes Wissen zu generieren. Lernende bedienen sich dabei
                             meist der bereits internalisierten Schemata und Wissensbasen und nutzen z. B. vertraute Abläufe, um Querbezüge herzustellen. vgl.
                             Wissenssynthese.
@@ -249,17 +261,17 @@ define([
                             Um den Lernstoff klarer darzustellen, ist die Erstellung von Tabellen, Diagrammen, Listen oder Schaubildern hilfreich. Fachausdrücke
                             oder Definitionen lassen sich gut in Listen oder Tabellen sammeln.
                         </div>
-                        <div v-if="currentStrategy=='cards'">
+                        <div v-if="currentStrategy=='cardsearly'">
                             Lernkarten können schon sehr früh digital z. B. in einer App oder auf Papier erstellt werden und die Lernorganisation so erleichtern.
                             Dabei können nicht nur Begriffe notiert werden, sondern auch Prozesse oder mögliche Fragestellungen, die Sie z. B. in der Prüfung
                             erwarten könnten.
                         </div>
-                        <div v-if="currentStrategy=='fastread'">
+                        <div v-if="currentStrategy=='fastreading'">
                             <p>Üben Sie das schnelle Lesen, indem Sie einmal probieren, so schnell zu lesen, wie Sie können.Lesen Sie so schnell, dass Sie kaum etwas
                             vom Inhalt des Textes mitbekommen. Betrachten Sie das als eine Tempo-Übung.Eine weitere Übung, um die Lesegeschwindigkeit zu erhöhen,
                             ist die Vergrößerung des Fixierungsbereichs; lesen Sie in Wortgruppen anstelle des wortwörtlichen Lesens. Beide Prozesse werden durch
-                            die nachfolgenden Abbildungen dargestellt:<img class="w-50" src="/course/format/ladtopics/pix/schnelle_Lesebewegung.png" /><img
-                                class="w-50" src="/course/format/ladtopics/pix/normale_Lesebewegung.png" />Eine weitere unterstützende Technik bietet die
+                            die nachfolgenden Abbildungen dargestellt:<img class="w-50" :src="moodlePath + \'/course/format/ladtopics/pix/schnelle_Lesebewegung.png\'" /><img
+                                class="w-50" :src="moodlePath + \'/course/format/ladtopics/pix/normale_Lesebewegung.png\'" />Eine weitere unterstützende Technik bietet die
                             Beschleunigung des Lesefingers. Lesen Sie zu Beginn mit dem Finger unter den Zeilen. Das schult die Blickbewegung, so dass mehrere Worte
                             auf einmal wahrgenommen werden können. Steigern Sie dabei das Tempo Ihres Fingers; je schneller der Finger über die Zeilen gleitet,
                             desto schneller müssen Sie auch lesen.</p>
@@ -287,7 +299,7 @@ define([
                             werden. Wissen, Prozesse oder Modelle können z. B. auf verschiedene Beispiele übertragen werden. So veranschaulichen Sie diese und
                             prüfen kritisch eine mögliche Generalisierbarkeit.
                         </div>
-                        <div v-if="currentStrategy=='critical'">
+                        <div v-if="currentStrategy=='criticalquestioning'">
                             Kritisches Hinterfragen eines Textes steigert die Aufmerksamkeit. Ein geübter Leser kann so bald Wichtiges von Unwichtigem
                             unterscheiden.
                         </div>
@@ -343,7 +355,7 @@ define([
                             einer falschen Antwort bleibt die Karte im Fach. Das 1. Fach wird z. B. täglich wiederholt, das 2. Fach alle 3 Tage usw. So arbeiten Sie
                             sich durch Ihre Lernkartei, bis alles für die Prüfung sitzt.
                         </div>
-                        <div v-if="currentStrategy=='repetieren'">
+                        <div v-if="currentStrategy=='repetitions'">
                             <p>Mit vielen Wiederholungen festigt sich Wissen. Als Wiederholungstrategien werden solche Lerntätigkeiten bezeichnet, mit denen durch
                                 das einfache Wiederholen einzelner Fakten eine feste Verankerung im Langzeitgedächtnis erreicht wird. Sie beziehen sich nicht nur
                                 auf isolierte Begriffe oder Fakten, sondern können - je nach Fachgebiet - auch das Einprägen von Zusammenhängen und Regeln zum
@@ -382,7 +394,7 @@ define([
                             zurecht.Sorgen Sie dafür, dass Ihr elektronisches Endgerät auf dem neuesten Stand ist und eine genügend große Bandbreite für die
                             Datenübertragung zur Verfügung steht.Dann kann es ja weiter gehen.
                         </div>
-                        <div v-if="currentStrategy=='selfconfidence'">
+                        <div v-if="currentStrategy=='selfevaluation'">
                             Überprüfen Sie immer wieder Ihr Verständnis der Kursinhalte. Nutzen Sie dazu Quiz, Übungsaufgaben und Self-Assessments, die Ihnen
                             ein Feedback zu Ihrem Lernstand geben. Ihr Ziel sollte es sein, sich immer besser selbst einschätzen zu können. Die Ansichten zum
                             Lernfortschritt und die Quiz-Übersicht hilft ihnen dabei wahrzunehmen, wie groß Ihr Fortschritt ist.
@@ -420,7 +432,7 @@ define([
                             </ul>Setzen Sie zu Beginn eines jeden Semestern Ihre großen und kleinen Lernziele fest und überlegen Sie sich eine möglichst
                             realistische Zeitvorgabe, um Ihre Ziele zu erreichen.Lassen Sie dabei Ihren Gesamtzeitplan für Ihr Studium aber nicht außer Acht.
                         </div>
-                        <div v-if="currentStrategy=='anstr'">
+                        <div v-if="currentStrategy=='demand'">
                             Auswendiglernen oder Verstehen?Der Philosoph Karl Propper beschreibt in seiner Scheinwerfertheorie die Erweiterung des menschlichen
                             Geistes als das Leuchten eines Scheinwerfers. Demnach geht eine wissenschaftliche Erkenntnis immer von einem gesetzten
                             Erwartungshorizont aus. Dieser ist geprägt vom Vorwissen des/der Lernenden, der/die nur das erfassen kann, worauf er/sie
@@ -486,7 +498,7 @@ define([
                                 <li>National Academy of Sciences,106 (37),15583–15587.</li>
                             </ul>
                         </div>
-                        <div v-if="currentStrategy=='resour'">
+                        <div v-if="currentStrategy=='resourcemanagement'">
                             Verstärkung, Belohnung, Entspannung und Sport Vergessen Sie nicht, sich selbst auch einmal für die erreichten Ziele zu belohnen.Die
                             Belohnung sollten Sie sich dann immer unmittelbar nach dem Erreichen des zuvor definierten Ziels gönnen.Und belohnen Sie sich auch
                             wirklich nicht, wenn Sie Ihr Ziel nicht erreichen! Belohnungen sollten zudem etwas Besonderes sein und allein dafür reserviert
@@ -495,7 +507,7 @@ define([
                             gut eignet sich dafür Ausdauersport wie Joggen, Schwimmen, Rudern, Tennis oder eine entspannte Runde auf dem Crosstrainer.Auch Yoga,
                             Autogenes Training o.Ä.sind nicht zu unterschätzende Begleiter im Studium.
                         </div>
-                        <div v-if="currentStrategy=='time'">
+                        <div v-if="currentStrategy=='timemanagement'">
                             <p>Wenn Sie das Ziel verfolgen, die Prüfung zu absolvieren, wurde Ihnen vom System eine erste Planung erstellt. Dieser ist nur ein
                             erster Vorschlag, den Sie sich in einem weiteren Schritt individuell anpassen sollten. Eventuell arbeiten Sie auch gerne mit
                             detaillierteren Plänen oder To-do-Listen für jeden Tag. Auch diese lassen sich durch die Freitexteingaben erstellen und können dann
@@ -511,7 +523,7 @@ define([
                                 <li>Individuelle Ressourcen: Vorwissen, Vorerfahrungen, vorhandenes Arbeitsmaterial, Lesegeschwindigkeit</li>
                             </ul>
                         </div>
-                        <div v-if="currentStrategy=='efftime'">
+                        <div v-if="currentStrategy=='effectivetimemanagement'">
                             <p>Eine sehr effektive Methode des Zeitmanagements ist die Pomodoro-Technik, die in den 1980er Jahren von Francesco Cirillo
                                 entwickelt wurde. Das System ist recht simpel: Francesco Cirillo teilte seine Arbeit in 25-Minuten-Abschnitte und Pausenzeiten
                                 ein. Die Idee dahinter ist, dass häufige Pausen die geistige Beweglichkeit verbessern können. Zu Beginn nutzte Cirillo einen
@@ -542,7 +554,7 @@ define([
                             spielerische Weise ein Speed-Quiz zu machen. Oft klärt ein Nachfragen bei einem Kommilitonen offene Fragen schneller, wenn man
                             selbst die Antwort nicht auf Anhieb finden kann. Lernpartner können zudem dabei helfen ein Motivationstief zu überwinden.
                         </div>
-                        <div v-if="currentStrategy=='self'">
+                        <div v-if="currentStrategy=='selfcommittment'">
                             Gerade das Fernstudium verlangt von Ihnen eigenständiges Arbeiten und Selbstorganisation. Nehmen Sie sich also selbst in die Pflicht
                             und setzen Sie sich Teilziele, die systematisch erarbeitet werden können. Dafür ist ein realistischer Zeitplan, in dem Sie
                             regelmäßige und feste Lernzeiten verbindlich festlegen, aber auch nötige Pausen, Ferien und Entspannungszeiten berücksichtigen, sehr
@@ -554,7 +566,7 @@ define([
                             veranschaulicht. Nutzen Sie dazu auch das Angebot der Universitätsbibliothek in Hagen oder das einer Bibliothek in der Nähe Ihres
                             Wohnortes.
                         </div>
-                        <div v-if="currentStrategy=='thefts'">
+                        <div v-if="currentStrategy=='timethefts'">
                             Die süßen kleinen „Zeitdiebe" können als objektive oder subjektive Störungen verstanden werden.<ul>
                                 <li>Sie lungern um uns herum - Zeitschrift; Smartphone; TV; Internet</li>
                                 <li>Sie kommen zu uns - Lärm; Kinder; Besuch; der Partner; das Haustier oder die Sonderangebote, die ihr Browser für Sie
