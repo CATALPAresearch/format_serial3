@@ -391,6 +391,9 @@ define([
                     }
                 },
                 methods: {
+                    log: function(action, event){
+                        logger.add(action, { data: event !== undefined ? event : 'none' });
+                    },
                     getSemesterShortName: function () {
                         return course.semesterShortName;
                     },
@@ -527,10 +530,10 @@ define([
                         $('#filter-presets').show();
                         logger.add('milestone_view_switch', { selectedView: 'timeline' });
                     },
-                    hideAdditionalCharts: function () {
+                    hideAdditionalCharts: function (location) {
                         $('#additionalCharts').hide();
                         $('#filter-presets').hide();
-                        logger.add('milestone_view_switch', { selectedView: 'list' });
+                        logger.add('milestone_view_switch', { selectedView: location });
                     },
                     getMoodlePath: function () {
                         return M.cfg.wwwroot;
@@ -1571,7 +1574,7 @@ define([
                     },
                     moveToMilestoneArchiveListEntry: function (mID, collapseOther) {
                         try {
-                            this.hideAdditionalCharts();
+                            this.hideAdditionalCharts('archive');
                             $('a[href="#view-archive-list"]').tab("show");
                             let promises = [];
                             $("div.milestone-entry-details").each(
@@ -1628,7 +1631,7 @@ define([
                     },
                     moveToMilestoneListEntry: function (mID, collapseOther) {
                         try {
-                            this.hideAdditionalCharts();
+                            this.hideAdditionalCharts('list');
                             $('a[href="#view-list"]').tab("show");
                             let promises = [];
                             $("div.milestone-entry-details").each(

@@ -1120,7 +1120,7 @@ $modalMilestone = '
                                                         </li>
                                                         <li v-if="milestones.length > 0" class="nav-item">
                                                             <a 
-                                                                class="nav-link active" @click="hideAdditionalCharts()" id="milestone-list-tab" data-toggle="pill" href="#view-list" role="tab" aria-controls="view-list" aria-selected="false">
+                                                                class="nav-link active" @click="hideAdditionalCharts(\'list\')" id="milestone-list-tab" data-toggle="pill" href="#view-list" role="tab" aria-controls="view-list" aria-selected="false">
                                                                 <i hidden class="fa fa-list"></i> Aktuelle Meilensteine <span>({{remainingMilestones.length}})</span>
                                                             </a>                                                            
                                                         </li>
@@ -1132,7 +1132,7 @@ $modalMilestone = '
                                                         </li>
                                                         <li v-if="milestones.length > 0" class="nav-item">
                                                             <a 
-                                                                class="nav-link" @click="hideAdditionalCharts()" id="milestone-archive-list-tab" data-toggle="pill" href="#view-archive-list" role="tab" aria-controls="view-archive-list" aria-selected="false">
+                                                                class="nav-link" @click="hideAdditionalCharts(\'archive\')" id="milestone-archive-list-tab" data-toggle="pill" href="#view-archive-list" role="tab" aria-controls="view-archive-list" aria-selected="false">
                                                                 <i hidden class="fa fa-list"></i> Archiv <span>({{archivedMilestones.length}})</span>
                                                             </a>
                                                         </li>                                                                                                        
@@ -1143,21 +1143,21 @@ $modalMilestone = '
                                                         <button v-if="surveyDone > 0" class="btn btn-link" @click="startIntroJs()" style="padding: 0px 0px 5.5px 5px; margin: 0px -5px 0px 0px;">
                                                             <i class="fa fa-question-circle"></i>
                                                         </button>
-                                                        <button class="btn btn-link dropdown-toggle" type="button" id="settingsMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expand="false">
+                                                        <button class="btn btn-link dropdown-toggle" v-on:click="log(\'setting_menu_open\')" type="button" id="settingsMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expand="false">
                                                         <i class="fa fa-cog"></i>
                                                         </button>
                                                         <div class="dropdown-menu" aria-labeledby="settingsMenuButton">
                                                         '.($this->checkModeratorStatus()?'
-                                                            <a class="dropdown-item" data-toggle="modal" data-target="#moderationModal" href="#">
+                                                            <a class="dropdown-item" v-on:click="log(\'teacher_settings_administration_open\')" data-toggle="modal" data-target="#moderationModal" href="#">
                                                                 <i class="fa fa-clock mr-1"></i>Administration
                                                             </a>
-                                                            <a class="dropdown-item" data-toggle="modal" data-target="#reportModal" href="#">
+                                                            <a class="dropdown-item" v-on:click="log(\'teacher_settings_analytics_open\')" data-toggle="modal" data-target="#reportModal" href="#">
                                                                 <i class="fa fa-clock mr-1"></i>Analytics
                                                             </a>':
-                                                            '<a class="dropdown-item" data-toggle="modal" data-target="#moderationModal" href="#">
+                                                            '<a class="dropdown-item"  v-on:click="log(\'user_setting_open\')" data-toggle="modal" data-target="#moderationModal" href="#">
                                                                 <i class="fa fa-clock mr-1"></i>Einstellungen
                                                             </a>').'                                                            
-                                                            <milestone-calendar-export v-bind:milestones="milestones" v-bind:calendar="calendar"></milestone-calendar-export>                                                         
+                                                            <milestone-calendar-export v-on:log="log" v-bind:milestones="milestones" v-bind:calendar="calendar"></milestone-calendar-export>                                                         
                                                         </div>
                                                     </div>
                                                     
@@ -1226,25 +1226,29 @@ $modalMilestone = '
                             <div class="dashboard" style="display:block;">
                                 <div class="col-md-12">
                                     <ul class="nav nav-tabs dashboard-tab">
-                                        <li class="nav-item active"><a class="nav-link active" data-toggle="tab" href="#learningstatus"
-                                                role="tab">Genutzte Lernangebote</a></li>    
+                                        <li class="nav-item active">
+                                            <a class="nav-link active" v-on:click="log(\'dashboard_completion_open\')" data-toggle="tab" href="#learningstatus" role="tab">Genutzte Lernangebote</a></li>    
                                         <li hidden class="nav-item ">
-                                            <a class="nav-link" data-toggle="tab" href="#timemanagement" role="tab">Zeitmanagement</a></li>
+                                            <a class="nav-link"v-on:click="log(\'dashboard_time-management_open\')"  data-toggle="tab" href="#timemanagement" role="tab">Zeitmanagement</a></li>
                                         <li class="nav-item">
-                                            <a class="nav-link" data-toggle="tab" href="#strategy" role="tab">Lernen gestalten</a>
+                                            <a class="nav-link" v-on:click="log(\'dashboard_strategy_open\')" data-toggle="tab" href="#strategy" role="tab">Lernen gestalten</a>
                                         </li>
                                         <li hidden class="nav-item">
-                                            <a class="nav-link" data-toggle="tab" href="#quiz" role="tab">Quiz</a>
+                                            <a class="nav-link" v-on:click="log(\'dashboard_communication_open\')"  data-toggle="tab" href="#communication" role="tab">Kommunikation</a>
+                                        </li>
+                                        <li hidden class="nav-item">
+                                            <a class="nav-link" v-on:click="log(\'dashboard_assessment_open\')"  data-toggle="tab" href="#quiz" role="tab">Quiz</a>
                                         </li>
                                     </ul>
                                     <br>
                                     <div class="tab-content" style="display:block;">
                                         <div class="tab-pane fade show active" id="learningstatus" role="tabpanel">
-                                            <dashboard-completion v-bind:course="course"></dashboard-completion>
+                                            <dashboard-completion v-on:log="log" v-bind:course="course"></dashboard-completion>
                                         </div>    
                                         <div class="tab-pane fade" id="timemanagement" role="tabpanel">Zeitmanagement</div>
+                                        <div class="tab-pane fade" id="communication" role="tabpanel">Kommunikation</div>
                                         <div class="tab-pane fade" id="strategy" role="tabpanel">
-                                            <dashboard-strategy v-bind:course="course" v-bind:milestones="milestones"></dashboard-strategy>
+                                            <dashboard-strategy v-on:log="log" v-bind:course="course" v-bind:milestones="milestones"></dashboard-strategy>
                                         </div>
                                         <div class="tab-pane fade" id="quiz" role="tabpanel">Quiz</div>
                                     </div>
