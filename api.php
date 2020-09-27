@@ -1365,9 +1365,12 @@ class format_ladtopics_external extends external_api
             $cm->id = $activity['id'];
             $activitycompletion = $completion->get_data($cm, true, $userid);
             $activity['completion'] = $activitycompletion->completionstate;
+            // TODO: Determine activities whos completion shall not be visible ("Abschluss wird nicht angezeigt")
+            /*
             $activity['status'] = $activitycompletion->status;
             $activity['criteria'] = $completiondata->criteria;
             $activity['hidden'] = $completiondata->hidden;
+            */
 
             $completions[$activity['id']] = $activity;
             if ($completions[$activity['id']] === COMPLETION_INCOMPLETE && in_array($activity['id'], $submissions)) {
