@@ -1158,6 +1158,9 @@ define([
                         this.invalidResources = this.getSelectedMilestone().resources.length > 0 ? false : true;
                     },
                     addFreeTextRescource: function () {
+                        if (this.freeTextRessource === ''){
+                            return;
+                        }
                         let obj = {
                             course_id: 55,
                             id: Math.ceil(Math.random() * 20000000),
@@ -1173,6 +1176,7 @@ define([
                             //section_id: "21",
                             //section_name: "Kurseinheit 1: Geräte und Prozesse",
                         }
+                        logger.add('resources_added_freetext', { title: this.freeTextRessource });
                         this.getSelectedMilestone().resources.push(obj);
                         this.freeTextRessource = '';
                     },

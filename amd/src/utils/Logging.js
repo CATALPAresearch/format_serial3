@@ -104,6 +104,7 @@ define([
                     break;
                 case 1:
                     this.sendLog(logEntry);
+                    console.log('LOG: ',logEntry.action, logEntry);
                     break;
                 default:
                 // Do nothing
