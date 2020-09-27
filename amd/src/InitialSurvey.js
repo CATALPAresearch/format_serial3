@@ -342,7 +342,8 @@ define([
                                     })
                                 }
                             }, function (e) {
-                                // console.log('saved survey ', e);
+                                console.log('saved survey ', e);
+                                milestoneApp.getMilestonePlan();
                                 location.reload();
                             });
 
