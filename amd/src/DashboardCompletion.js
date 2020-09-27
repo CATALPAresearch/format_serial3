@@ -24,7 +24,7 @@ define([
     Utils = new Utils();
     return Vue.component('dashboard-completion',
         {
-            props: ['course'],
+            props: ['course', 'log'],
 
             data: function () {
                 return {
@@ -52,7 +52,7 @@ define([
             },
 
             methods: {
-                draw: function (data) { 
+                draw: function (data) {
                     var groupBy = function (data, key) {
                         var arr = [];
                         for (var val in data) {
@@ -68,6 +68,7 @@ define([
                 },
                 setCurrent: function (id, section) {
                     this.current = { id: id, section: section };
+                    this.$emit('log', 'dashboard_completion_item_hover', { url: this.getLink(), completion: this.getCurrent().completion });
                 },
                 getCurrent: function () {
                     return this.sections[this.current.section][this.current.id];
@@ -79,6 +80,10 @@ define([
                 getStatus: function (instance) {
                     instance = instance == undefined ? this.getCurrent() : instance;
                     return instance.completion === 0 ? '<i class="fa fa-times-square"></i>Nicht abgeschlossen' : '<i class="fa fa-check"></i> Abgeschlossen';
+                },
+                trackClick: function () {
+                    let instance = this.getCurrent();
+                    this.$emit('log', 'dashboard_completion_item_click', { type: instance.type, instance: instance.id });
                 }
             },
 
@@ -89,16 +94,20 @@ define([
                         <div class="col-3" style="font-size:0.9em">{{ section[0].sectionname }}</div>
                         <div class="col-9">
                             <span v-for="(m, index) in section">
-                                <a v-bind:href="getLink()" v-if="m.type !== 'label' && m.type !== 'headline'" :class="m.completion==1 ? \'rect-green completion-rect\' : \'rect-blue completion-rect\'" @mouseover="setCurrent(index, sIndex)"></a>
+                                <a v-bind:href="getLink()" v-on:click="trackClick()" v-if="m.type !== 'label' && m.type !== 'headline'" :class="m.completion==1 ? \'rect-green completion-rect\' : \'rect-blue completion-rect\'" @mouseover="setCurrent(index, sIndex)"></a>
                             </span>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-3"></div>
                         <div class="col-9">
-                            <a v-bind:href="getLink()">
-                                <span v-if="getCurrent().completion === 0"><i class="fa fa-times-rectangle"></i> {{ getCurrent().name }}, nicht abgeschlossen</span>
-                                <span v-if="getCurrent().completion !== 0"><i class="fa fa-check"></i> {{ getCurrent().name }}, abgeschlossen</span>
+                            <a v-bind:href="getLink()" v-on:click="trackClick()">
+                                <span v-if="getCurrent().completion === 0">
+                                    <i class="fa fa-times-rectangle"></i> {{ getCurrent().name }}, nicht abgeschlossen
+                                </span>
+                                <span v-if="getCurrent().completion !== 0">
+                                    <i class="fa fa-check"></i> {{ getCurrent().name }}, abgeschlossen
+                                </span>
                             </a>
                         </div>
                     </div>
