@@ -75,7 +75,7 @@ define([
                 },
                 getLink: function (instance) {
                     instance = instance == undefined ? this.getCurrent() : instance;
-                    return '/mod/' + instance.type + '/view.php?id=' + instance.id;
+                    return M.cfg.wwwroot + '/mod/' + instance.type + '/view.php?id=' + instance.id;
                 },
                 getStatus: function (instance) {
                     instance = instance == undefined ? this.getCurrent() : instance;
