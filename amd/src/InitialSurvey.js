@@ -418,12 +418,12 @@ define([
                                     <hr>
                                     <div class="form-check row">
                                         <label for="inputMSname" class="col-10 col-form-label survey-objective-label">Wie viele Stunden pro Woche planen Sie für das Lernen in diesem Kurs / Modul ein?</label>
-                                        <div class="col-2">
-                                            <input :style="invalidAvailableTime ? \'border: solid 1px #ff420e;\' : \'\'" type="number" @change="updateAvailableTime()" class="form-control" id="inputMSname" placeholder="0" min="0"
+                                        <div class="col-2 ml-0 pl-0">
+                                            <input :style="invalidAvailableTime ? \'border: solid 1px #ff420e;\' : \'\'" type="number" @change="updateAvailableTime()" class="form-control ml-0" id="inputMSname" placeholder="0" min="0"
                                                 v-model="availableTime">
                                         </div>
                                         <div class="col-12 alert-invalid" role="alert" v-if="invalidAvailableTime">Geben Sie bitte eine Anzahl an Stunden, die größer Null ist.</div>
-                                        <div class="col-12 alert-warning" role="warning">{{ isAvailableTimeSufficient() }}</div>
+                                        <div class="col-12 w-50 alert-warning" role="warning">{{ isAvailableTimeSufficient() }}</div>
                                     </div>
                                     <hr>
                                     <div class="form-check row">
