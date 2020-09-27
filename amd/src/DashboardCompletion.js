@@ -64,7 +64,7 @@ define([
                         });
                     };
                     this.sections = groupBy(data, 'section');
-                    console.log(this.sections);
+                    // console.log(this.sections);
                 },
                 setCurrent: function (id, section) {
                     this.current = { id: id, section: section };
@@ -88,7 +88,9 @@ define([
                     <div v-for="(section, sIndex) in sections" class="row">
                         <div class="col-3" style="font-size:0.9em">{{ section[0].sectionname }}</div>
                         <div class="col-9">
-                            <a v-bind:href="getLink()" v-for="(m, index) in section" :class="m.completion==1 ? \'rect-green completion-rect\' : \'rect-blue completion-rect\'" @mouseover="setCurrent(index, sIndex)"></a>
+                            <span v-for="(m, index) in section">
+                                <a v-bind:href="getLink()" v-if="m.type !== 'label' && m.type !== 'headline'" :class="m.completion==1 ? \'rect-green completion-rect\' : \'rect-blue completion-rect\'" @mouseover="setCurrent(index, sIndex)"></a>
+                            </span>
                         </div>
                     </div>
                     <div class="row">
