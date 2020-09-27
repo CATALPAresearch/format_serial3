@@ -480,7 +480,7 @@ define([
                                     <hr v-if="objectives === \'f1a\'">
                                     <div v-if="objectives === \'f1a\'" class="form-check row">
                                         <label for="inputObjectic" class="col-10 col-form-label survey-objective-label">Wann beabsichtigen Sie die Prüfung
-                                            abzulegen?{{selectedMonth}}</label>
+                                            abzulegen?</label>
                                         <div class="col-4">
                                             <select @change="monthSelected" id="select_month">
                                                 <!-- 

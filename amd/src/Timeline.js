@@ -53,26 +53,6 @@ define([
             maxPlaningPeriod: 12 // months
         };
 
-        // look whether a user has had agreed to a certain moodle policy (e.g. privacy policy).
-        if (false) {
-            utils.get_ws('policyacceptance', {
-                'policyversion': 1 // static value, needs to be set according to the defined policies
-            }, function (e) {
-                try {
-                    let res = JSON.parse(e.data)
-                    // console.log(res);
-                    if (res === false) {
-                        // hide some parts of the course
-                    }
-                } catch (e) {
-                    // eslint-disable-next-line no-console
-                    console.error(e);
-                }
-            });
-        }
-
-
-
         utils.get_ws('logstore', {
             'courseid': parseInt(course.id, 10)
         }, function (e) {
@@ -318,10 +298,6 @@ define([
                     };
                 },
                 watch: {
-                    milestones: function (newMilestone) {
-                        //console.log('watch ms called')
-                        //this.updateMilestones();
-                    },
                     surveyDone: function (surveyStatus) {
                         if (this.surveyDone > 0) {
                             $('.activity-chart-container').show();
@@ -521,7 +497,6 @@ define([
                                 }
                             })
                             .onafterchange(function (targetElement) {
-                                console.log(targetElement.id)
                                 if (targetElement.id === "strategy-introduction") {
                                     document.querySelector('#close-modal').click();
                                 }
@@ -941,7 +916,6 @@ define([
                         return id;
                     },
                     addMilestones: function (milestones) {
-                        console.log('Is this function used anymore?')
                         // add multiple milestones to the data
                         for (var i = 0; i < milestones.length; i++) {
                             milestones[i].start = new Date(milestones[i].start.split('T')[0]);
@@ -988,7 +962,6 @@ define([
                     },
 
                     validateStartDate: function (date) {
-                        console.log("startDate");
                         if (date <= this.dpRange.to || date >= this.dpRange.from) {
                             this.invalidStartDate = true;
                             return;
@@ -1002,7 +975,6 @@ define([
                         return;
                     },
                     validateEndDate: function (date) {
-                        console.log("endDate");
                         if (date <= this.dpRange.to || date < this.getSelectedMilestone().start || date >= this.dpRange.from) {
                             this.invalidEndDate = true;
                             return;
@@ -1165,7 +1137,6 @@ define([
                         }
                     },
                     resourceSelected: function (event) {
-                        console.log(this.resourceById(event.target.value));
                         var el = this.resourceById(event.target.value);
                         if (this.getSelectedMilestone().resources.indexOf(el) === -1) {
                             this.getSelectedMilestone().resources.push(el);
@@ -1540,12 +1511,13 @@ define([
                                                                                             }
                                                                                         }
                                                                                         if (found !== null) {
-                                                                                            // add activity to milestone
+                                                                                            // remove activity to milestone
                                                                                             logger.add('activity_milestone_dropdown_remove', { instance_id: id, instance_type: instance_type, milestone_name: _this.milestones[i].name, milestone_id: _this.milestones[i].id });
                                                                                             _this.milestones[i]["resources"].splice(found, 1);
                                                                                             icon.removeClass("fa-check-square");
                                                                                             icon.addClass("fa-square");
                                                                                         } else {
+                                                                                            // add activity to milestone
                                                                                             logger.add('activity_milestone_dropdown_add', { instance_id: id, instance_type: instance_type, milestone_name: _this.milestones[i].name, milestone_id: _this.milestones[i].id });
                                                                                             _this.milestones[i]["resources"].push(_this.resources[u]);
                                                                                             icon.addClass("fa-check-square");
@@ -1912,7 +1884,7 @@ define([
                                     location.reload();
                                 },
                                 (reject) => {
-                                    console.log(reject);
+                                    console.error(reject);
                                 }
                             )
                         }
@@ -1930,9 +1902,7 @@ define([
                             }, function (e) {
                                 let out = JSON.parse(e.data);
                                 if (out.success === true) {
-                                    console.log("success");
                                     if (reset) {
-                                        console.log("reset");
                                         _this.milestones = [];
                                         _this.updateMilestones();
                                     } else {
@@ -2338,38 +2308,7 @@ define([
                             console.log(error);
                         }
                     },
-                    sendNotification: function (subject, text) {
-                        /*require(['core/notification'], function(notification) {
-                            notification.addNotification({
-                              message: "Your message here",
-                              type: "info"
-                            });
-                        });*/
-
-                        try {
-                            utils.get_ws("notification", {
-                                'courseid': parseInt(course.id, 10),
-                                'subject': "hello",
-                                'short': "ss",
-                                'text': "Hier steht deine Werbung"
-                            }, function (u) {
-                                console.log(u);
-                            });
-                        } catch (error) {
-                            console.log(error);
-                        }
-
-
-                        /*require(['core/notification'], function(notification) {
-                                console.log("LOADED");
-                                console.log(typeof notification.addNotification);
-                                notification.addNotification({
-                                  message: "Your message here",
-                                  type: "info"
-                                });
-                                console.log(typeof notification.fetchNotifications);                                
-                            });*/
-                    },
+                    
                     modUpdateUser: function () {
                         let _this = this;
                         let items = $("input.mru:checked");
