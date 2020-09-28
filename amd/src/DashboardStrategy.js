@@ -39,22 +39,22 @@ define([
                         {
                             id: 'elaboration',
                             name: 'Inhalte erarbeiten',
-                            desc: 'Elaborationsstrategien werden eingesetzt, um ein erweitertes Wissen zu generieren. Lernende bedienen sich dabei meist der bereits internalisierten Schemata und Wissensbasen und nutzen z. B. vertraute Abläufe, um Querbezüge herzustellen. vgl. Wissenssynthese.',
+                            desc: 'Die so genannten Elaborationsstrategien werden eingesetzt, um ein erweitertes Wissen zu generieren. Lernende bedienen sich dabei meist der bereits internalisierten Schemata und Wissensbasen und nutzen z. B. vertraute Abläufe, um Querbezüge herzustellen. vgl. Wissenssynthese.',
                         },
                         {
                             id: 'knowledgebuilding',
                             name: 'Wissen aufbauen',
-                            desc: 'Wiederholungsstrategien sind notwendig, um sich Lernstoff dauerhaft einzuprägen und gleichsam eine schnelle Verfügbarkeit von Wissen zu gewährleisten. Daher stehen hier Lernaktivitäten wie z. B. Auswendiglernen mit Lernkarten und repetierende Übungen im Vordergrund.',
+                            desc: 'Um sich Lernstoff dauerhaft einzuprägen und gleichsam eine schnelle Verfügbarkeit von Wissen zu gewährleisten sind Wiederholungsstrategien wichtig. Daher stehen hier Lernaktivitäten wie z. B. Auswendiglernen mit Lernkarten und repetierende Übungen im Vordergrund.',
                         },
                         {
                             id: 'metacognitive',
                             name: 'Lernprozess verbessern',
-                            desc: 'Bei den metakognitiven Lernstrategie geht es darum den Lernprozess zu Steuern und zu kontrollieren. Dazu bedient man sich Strategien wie dem Planen, Vorbereiten und Ziele setzen. Dies geht eiher mit einem stetigen Prozess der Selbsteinschätzung und Selbstregulation. Nur so kann der Lernprozess stetig verbessert und angepasst werden. '
+                            desc: 'Man kann mit ganz unterschiedlichen  Lernstrategien  zum  Studienerfolg  kommen.  Insofern  erscheint  es  erforderlich,  den Strategieeinsatz  zu planen,  zu  reflektieren  und  ggf.  anzupassen.  Überprüfen  Sie,  welche  Prüfungsanforderungen  gegeben  sind  (z.B.  reines  Faktenwissen  auswendig lernen oder Zusammenhänge erkennen, Transfer von Wissen auf neue Anwendungsgebiete), auf welche  Ressourcen  Sie  zurückgreifen  können  (z.B.  gemeinsames  Lernen  mit  Kommiliton/-innen)  und  planen  Sie  die  Zeit  für  den  Lernaufwand  bzw.  die  konkrete  Prüfungsvorbereitung  ein.  Reflektieren  Sie, welche Lernerfahrungen Sie  bisher  gemacht  haben  und  welche  Lernstrategien  Sie bevorzugen. Wenn Sie regelmäßig Anforderungen analysieren, Lernziele formulieren, überprüfen ob Sie alles verstanden haben können Sie immer schneller lücken im Lernprozess schließen.'
                         },
                         {
                             id: 'resource',
                             name: 'Ressourcen nutzen',
-                            desc: 'Ressourcenorientierte Selbstorganisation im StudiumUm eine Balance zwischen Studium und beruflichen wie privaten Verpflichtungen herzustellen, ist es wichtig, die eigenen Ressourcen zu kennen und sich Zeit und Energie im Studium gut einzuteilen.Eine systematische Auseinandersetzung mit Zielen, Anstrengungen beim Lernen und der eigenen Aufmerksamkeitsfähigkeit soll Ihnen helfen, Ihre Ressourcen besser kennen zu lernen.Motivation und Durchhaltevermögen können Sie durch eine Balance zwischen Selbstverpflichtung, Belohnung und Regeneration steigern. '
+                            desc: 'Um eine Balance zwischen Studium und beruflichen wie privaten Verpflichtungen herzustellen, ist es wichtig, die eigenen Ressourcen zu kennen und sich Zeit und Energie im Studium gut einzuteilen. Eine systematische Auseinandersetzung mit Zielen, Anstrengungen beim Lernen und der eigenen Aufmerksamkeitsfähigkeit soll Ihnen helfen, Ihre Ressourcen besser kennen zu lernen. Motivation und Durchhaltevermögen können Sie durch eine Balance zwischen Selbstverpflichtung, Belohnung und Regeneration steigern.'
                         }
                     ],
 
