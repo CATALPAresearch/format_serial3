@@ -32,16 +32,7 @@ define([
         var csCourse = 3;// 2
         var courseid = parseInt($('#courseid').text(), 10);
 
-        var milestonePresets = {};
-        milestonePresets.biwi = {};
-
-        milestonePresets.biwi.exame = [];
-        milestonePresets.biwi.orientation = [];
-        milestonePresets.cs = {};
-        milestonePresets.cs.exame = [];
-        milestonePresets.cs.orientation = [];
-
-
+        
         new Vue({
             //el: '#planningsurvey',
             el: 'initial-survey',
@@ -211,8 +202,8 @@ define([
                     this.invalidResources = this.resources.length > 0 ? false : true;
                 },
                 updateObjective: function (e) {
-                    console.log('update ', this.objectives)
                     this.invalidObjective = this.objectives === '' ? true : false;
+                    console.log('update ', this.objectives, this.invalidObjective)
                 },
                 updateAvailableTime: function () {
                     this.invalidAvailableTime = this.availableTime <= 0 ? true : false;
@@ -235,12 +226,12 @@ define([
                         this.invalidPlaningStyle = true;
                         isValid = false;
                     }
-                    if (this.objectives === 'f1c' && this.resources.length === 0 &&
+                    /*if (this.objectives === 'f1c' && this.resources.length === 0 &&
                         this.availableResources.length > 0
                     ) {
                         this.invalidResources = true;
                         isValid = false;
-                    }
+                    }*/
                     if (isValid) {
                         this.saveSurvey();                        
                     }
@@ -286,28 +277,6 @@ define([
                     return text;
                 },
                 saveSurvey: function () {
-                    //this.modalSurveyVisible = false;
-                    // generate milestones automatically
-                    switch (this.objectives) {
-                        case 'f1a': // wants examination
-                            if (courseid === biwiCourse && milestonePresets.biwi.exame.length > 0) {
-                                milestoneApp.addMilestones(milestonePresets.biwi.exame);
-                            } else if (courseid === csCourse && milestonePresets.cs.exame.length > 0) {
-                                milestoneApp.addMilestones(milestonePresets.cs.exame);
-                            }
-                            break;
-                        case 'f1b': // wants orientation
-                            if (courseid === biwiCourse && milestonePresets.biwi.orientation.length > 0) {
-                                milestoneApp.addMilestones(milestonePresets.biwi.orientation);
-                            } else if (courseid === csCourse && milestonePresets.cs.orientation.length > 0) {
-                                milestoneApp.addMilestones(milestonePresets.cs.orientation);
-                            }
-                            break;
-                        case 'f1c': // wants certain topics
-                            break;
-                        case 'f1d': // doesn't want anything
-                            break;
-                    }
                     var _this = this;
                     // set survey as done
                     utils.get_ws('userpreferences', {
@@ -320,7 +289,7 @@ define([
                     }, function (e) {
                         try {
                             e = JSON.parse(e.response);
-                            // console.log('got data from user pref ', e);
+                            console.log('got data from user pref ', e);
                             milestoneApp.surveyDone = 1;
                             this.surveyComplete = true;
                             $('#theSurveyModal').modal('hide');
@@ -342,8 +311,8 @@ define([
                                     })
                                 }
                             }, function (e) {
-                                console.log('saved survey ', e);
-                                milestoneApp.getMilestonePlan();
+                                //console.log('saved survey ', e);
+                                //milestoneApp.getMilestonePlan();
                                 location.reload();
                             });
 

@@ -10,7 +10,7 @@
  * @since      3.1
  * 
  * TODO:
- * - submit accept/withdraw
+ * - temporal limit accaptance to 31.10.2020, window.open("https://example.com", "_blank"); 
  */
 define([
     'jquery',
@@ -34,6 +34,7 @@ define([
         return {
             init: function (policies, message) {
                 return new Vue({
+
                     el: 'policy-container',
 
                     data: function () {
@@ -49,9 +50,6 @@ define([
                     },
 
                     methods:{
-                        accept: function(){
-
-                        },
                         convertTime: function(utc){
                             return moment.unix(utc).format("DD.MM.YYYY");
                         },
