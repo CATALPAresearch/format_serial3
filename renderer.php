@@ -136,9 +136,9 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                             <label id="modLoadPathLabel" class="custom-file-label" for="modImportedFile">Bitte wählen Sie eine Datei aus.</label>
                         </div>
                     </div>      
-                    <button type="button" @click="modSaveSelect" class="btn btn-primary">Speichern</button>                                     
+                    <button type="button" @click="studSaveSelect()" class="btn btn-primary">Speichern</button>                                     
                     <button type="button" @click="modLoadMilestones()" class="btn btn-secondary">Laden</button>  
-                    <button type="button" @click="modResetSelect()" class="btn btn-danger">Zurücksetzen</button>                      
+                    <button type="button" @click="studResetMS()" class="btn btn-danger">Zurücksetzen</button>                      
                 </div>          
                 <div class="modal-footer">
                     <!-- Footer -->
