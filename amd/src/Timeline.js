@@ -576,10 +576,11 @@ define([
                                         id: element.id,
                                         instance_id: null,
                                         instance_title: null,
-                                        instance_type: element.eventtype === "course" ? "kurstermin" : "gruppentermin",
+                                        instance_type: element.eventtype === "course" ? "coursedate" : "gruppentermin",
                                         instance_url_id: null,
                                         module_id: null,
                                         name: element.name + " [" + date + "]",
+                                        time: element.timestart,
                                         pos_module: null,
                                         pos_section: null,
                                         section: null,
@@ -1129,7 +1130,7 @@ define([
                             case 'quiz': return 'Selbsttest';
                             case 'studentquiz': return 'Selbsttest';
                             case 'page': return 'Text';
-                            case 'kurstermin': return 'Termin';
+                            case 'coursedate': return 'Termin';
                             case 'data': return 'Text';
                             case 'hvp': return 'H5P';
                             case 'checklist': return 'Checkliste';
@@ -2450,12 +2451,12 @@ define([
 
                                 if (typeof u.response !== "string" || u.response.length <= 0) return;
                                 let survey = JSON.parse(u.response);
-                                
+
                                 if (
-                                    !survey[0].hasOwnProperty("value") || 
-                                    survey[0]["value"] === '0' || 
-                                    typeof survey[0]["value"] !== 'string' || 
-                                    survey[0]["value"].length === 0) 
+                                    !survey[0].hasOwnProperty("value") ||
+                                    survey[0]["value"] === '0' ||
+                                    typeof survey[0]["value"] !== 'string' ||
+                                    survey[0]["value"].length === 0)
                                     return
                                 let result = JSON.parse(survey[0]["value"]);
                                 let plan = result.objectives.toLowerCase();

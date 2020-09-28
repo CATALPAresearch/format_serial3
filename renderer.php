@@ -487,7 +487,7 @@ $milestoneArchiveList = '
                                         @change="updateMilestoneStatus()"
                                         >
                                     <a v-if="s.instance_type !== \'freeText\'" 
-                                        :href="(s.instance_type === \'kurstermin\'?(getMoodlePath() + \'/calendar/view.php?month&course=\' + '.$COURSE->id.'):(getMoodlePath() + \'/mod/\' + s.instance_type + \'/view.php?id=\'+ s.instance_url_id))" 
+                                        :href="(s.instance_type === \'coursedate\' ? (getMoodlePath() + \'/calendar/view.php?view=day&time=\' + s.time + \'&course=\' + '.$COURSE->id.') : (getMoodlePath() + \'/mod/\' + s.instance_type + \'/view.php?id=\'+ s.instance_url_id))" 
                                         class="resources-selected-name">{{ s.name }}</a>
                                     <span v-if="s.instance_type === \'freeText\'" class="resources-selected-name">{{ s.name }}</span>
                                     <span hidden class="resources-selected-remove remove-btn" data-toggle="tooltip" title="Thema, Material oder Aktivität entfernen">
@@ -577,8 +577,8 @@ $milestoneList = '
                                         :id="s.id"
                                         @change="updateMilestoneStatus()"
                                         >
-                                    <a v-if="s.instance_type !== \'freeText\'" 
-                                        :href="(s.instance_type === \'kurstermin\'?(getMoodlePath() + \'/calendar/view.php?month&course=\' + '.$COURSE->id.'):(getMoodlePath() + \'/mod/\' + s.instance_type + \'/view.php?id=\'+ s.instance_url_id))" 
+                                    <a v-if="s.instance_type !== \'freeText\'"
+                                        :href="(s.instance_type === \'coursedate\' ? (getMoodlePath() + \'/calendar/view.php?view=day&time=\'+ s.time +\'&course=\' + '.$COURSE->id.') : (getMoodlePath() + \'/mod/\' + s.instance_type + \'/view.php?id=\'+ s.instance_url_id))" 
                                         class="resources-selected-name">{{ s.name }}</a>
                                     <span v-if="s.instance_type === \'freeText\'" class="resources-selected-name">{{ s.name }}</span>
                                     <span hidden class="resources-selected-remove remove-btn" data-toggle="tooltip" title="Thema, Material oder Aktivität entfernen">

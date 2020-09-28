@@ -65,7 +65,7 @@ define([
 
                     template: `
                             <div id="policy-container">
-                                <h3 class="my-4">Zustimmung und Wideruf von Richtlinien</h3>
+                                <h3 class="my-4">Übersicht der Richtlinien</h3>
                                 <div v-if="message != ''" class="alert alert-success w-50">
                                     {{ message }}
                                 </div>
@@ -73,8 +73,8 @@ define([
                                     <div class="col-9">
                                         <i v-if="p.status==1" class="fa fa-check ml-3" style="color:green;"></i>
                                         <i v-if="p.status==0" class="fa fa-times ml-3" style="color:red;"></i>
-                                        <a :href="getPolicyLink(p.version)" target="s" class="bold">{{p.name}}:</a> Der Version vom 
-                                        <span>{{ convertTime(p.creation) }}</span>
+                                        <a :href="getPolicyLink(p.version)" target="s" class="bold">{{p.name}}</a><br>
+                                        <span class="pl-3">Der Version vom {{ convertTime(p.creation) }}</span>
                                         <span v-if="p.status==1">
                                             haben Sie am {{ convertTime(p.acceptance) }} zugestimmt.
                                         </span>
