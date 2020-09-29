@@ -304,6 +304,9 @@ define([
                             $('.activity-chart-container').show();
                             $('.filter-chart-container').show();
                         }
+                    },
+                    height: function (h){
+                        this.height = h < 62 ? 62 : h;
                     }
                 },
                 computed: {
