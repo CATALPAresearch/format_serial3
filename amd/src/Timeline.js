@@ -239,7 +239,7 @@ define([
                                     var activityChart = new ChartActivity(d3, dc, crossfilter, moment, activityData, utils, course);
                                     xRange = activityChart.getXRange();
                                     _this.timeFilterChart.registerChart(activityChart);
-
+                                    
                                     logger.add('planing_tool_open', { pageLoaded: true });
                                 }
                             }
@@ -508,6 +508,7 @@ define([
                             .start();
                     },
                     showAdditionalCharts: function () {
+                        this.updateLanes();
                         $('#additionalCharts').show();
                         $('#filter-presets').show();
                         logger.add('milestone_view_switch', { selectedView: 'timeline' });
@@ -706,9 +707,11 @@ define([
                         this.$forceUpdate();
                     },
                     updateLanes: function () {
+                        if (this.milestones.length === 0){ 
+                            return; 
+                        }
                         // Recognize interval overlaps for the milestone start/end time
                         var lanes = [[], [], [], [], []];
-
                         for (var i = 0; i < this.milestones.length; i++) {
                             lanesLoop:
                             for (var lane = 0; lane < lanes.length; lane++) {
@@ -739,8 +742,8 @@ define([
                         this.maxLanes = lanes.filter(function (l) {
                             return l.length > 0 ? true : false;
                         }).length;
-
-                        this.height = this.maxLanes * 24;
+                        
+                        this.height = this.maxLanes === 0 ? 62 : this.maxLanes * 24; // TODO 62 is the default Chart height and should therefore be stored as a constant
                     },
                     showModal: function (milestoneID) {
                         this.selectedMilestone = milestoneID;
@@ -1392,6 +1395,8 @@ define([
                             case "semester":
                                 range = [course.startDate, course.endDate];
                         }
+                        // console.log(typeof this.timeFilterChart['replaceFilter'])
+                        // todo: #310
                         this.timeFilterChart.replaceFilter(dc.filters.RangedFilter(range[0], range[1]));
                         this.timeFilterChart.filterTime();
                     },
@@ -2466,7 +2471,6 @@ define([
                         }
                     },
                     getMilestonePlan: function () {
-                        console.log(88)
                         try {
                             let _this = this;
                             utils.get_ws("userpreferences", {
@@ -2504,14 +2508,12 @@ define([
                                     default: plan = null;
                                 }
                                 if (typeof plan !== "string" && plan === null) return;
-                                console.log(89, plan)
                                 utils.get_ws('getmilestoneplan', {
                                     data: {
                                         'courseid': parseInt(course.id, 10),
                                         'plan': plan
                                     }
                                 }, function (e) {
-                                    console.log(90)
                                     try {
                                         if (typeof e.data === "string" && e.data.length > 0) {
                                             let obj = JSON.parse(e.data);
@@ -2520,15 +2522,18 @@ define([
                                             }
                                             let div = null;
                                             switch (ps) {
-                                                case "planing-style-a": div = 1;
+                                                case "planing-style-a": div = 1; // nur für eine Woche.
                                                     break;
-                                                case "planing-style-b": div = 4;
+                                                case "planing-style-b": div = 4; // für die nächsten 4 Wochen.
                                                     break;
-                                                case "planing-style-c": div = 1;
+                                                case "planing-style-c": div = 1; // für das ganze Semester mit Arbeitspaketen für je eine Woche.
                                                     break;
-                                                case "planing-style-d": div = 4;
+                                                case "planing-style-d": div = 2; // für das ganze Semester mit Arbeitspaketen für je 2 Wochen. 
                                                     break;
-                                                case "planing-style-e": return;
+                                                case "planing-style-e": div = 4; // für das ganze Semester mit Arbeitspaketen für je einen Monat.
+                                                    break;
+                                                default: 
+                                                    return; // keine Angaben
                                             }
 
                                             if (div === 4) {

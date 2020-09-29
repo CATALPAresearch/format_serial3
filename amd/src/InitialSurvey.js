@@ -11,7 +11,7 @@
  * @module     format/ladtopics
  * @package    format_ladtopics
  * @class      InitialSurvey
- * @copyright  2019 Niels Seidel, niels.seidel@fernuni-hagen.de
+ * @copyright  2019 Niels Seidel <niels.seidel@fernuni-hagen.de>
  * @license    MIT
  * @since      3.1
  */
@@ -28,13 +28,8 @@ define([
      * @param utils (Object) Custome util class
      */
     var survey = function (milestoneApp, utils, course) {
-        var biwiCourse = 2;// 3
-        var csCourse = 3;// 2
-        var courseid = parseInt($('#courseid').text(), 10);
-
         
         new Vue({
-            //el: '#planningsurvey',
             el: 'initial-survey',
             data: function () {
                 return {
