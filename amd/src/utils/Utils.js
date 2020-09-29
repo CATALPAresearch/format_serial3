@@ -13,9 +13,9 @@ require.config({
     enforceDefine: false,
     paths: {
         //"d3": [M.cfg.wwwroot + "/course/format/ladtopics/lib/build/d3.v3.min"], // upgrade to v5!
-        "d3": [M.cfg.wwwroot + "/course/format/ladtopics/lib/src/d3.v4"], // upgrade to v5!
+        "d3": [M.cfg.wwwroot + "/course/format/ladtopics/lib/build/d3.v4"], // upgrade to v5!
         "crossfilter": [M.cfg.wwwroot + "/course/format/ladtopics/lib/build/crossfilter.min"],
-        "dc": [M.cfg.wwwroot + "/course/format/ladtopics/lib/src/dc.v3"]
+        "dc": [M.cfg.wwwroot + "/course/format/ladtopics/lib/build/dc.v3"]
     },
     shim: {
         'dc': {
