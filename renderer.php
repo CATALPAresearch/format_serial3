@@ -128,17 +128,21 @@ class format_ladtopics_renderer extends format_section_renderer_base {
                     </div>          
                     <h5>Eingangsbefragung</h5>         
                     <button type="button" @click="modResetPlan()" class="btn btn-danger">Löschen und noch einmal durchführen</button> 
-                    <hr>                     
-                    <h5>Meilensteine</h5>                        
+                    <hr>
+                    <h5>Meilensteine zurücksetzen und löschen</h5>
+                    <button type="button" @click="studResetMS()" class="btn btn-danger">Alle meine Meilensteine löschen</button>                                           
+                    <hr>
+                    <h5>Meilensteine exportieren</h5>
+                    <button type="button" @click="studSaveSelect()" class="btn btn-primary">Als Datei exportieren</button>                                     
+                    <hr>
+                    <h5>Meilensteine importieren</h5>
                     <div class="col mb-4 px-0">
                         <div class="custom-file">
                             <input type="file" class="custom-file-input" @input="modLoadPath" id="modImportedFile" lang="de">
-                            <label id="modLoadPathLabel" class="custom-file-label" for="modImportedFile">Bitte wählen Sie eine Datei aus.</label>
+                            <label id="modLoadPathLabel" class="custom-file-label" for="modImportedFile">Wählen Sie eine Datei für den Meilensteinimport aus.</label>
                         </div>
-                    </div>      
-                    <button type="button" @click="studSaveSelect()" class="btn btn-primary">Speichern</button>                                     
-                    <button type="button" @click="modLoadMilestones()" class="btn btn-secondary">Laden</button>  
-                    <button type="button" @click="studResetMS()" class="btn btn-danger">Zurücksetzen</button>                      
+                    </div>                          
+                    <button type="button" @click="modLoadMilestones()" class="btn btn-secondary">Importieren</button>
                 </div>          
                 <div class="modal-footer">
                     <!-- Footer -->

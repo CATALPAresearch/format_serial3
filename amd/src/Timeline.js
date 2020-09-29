@@ -1238,7 +1238,7 @@ define([
 
                             // update progress
                             this.milestones[i].progress = this.determineMilestoneProgress(this.milestones[i]);
-                            if ((diff < 0 && diff > -4320) && this.milestones[i].progress !== 1) {
+                            if ((diff < 0 && diff > -4320) && this.milestones[i].progress !== 1) { // TODO 4320 should become a constant in the the course object
                                 this.milestones[i].status = 'urgent';
                             }
 
@@ -1405,8 +1405,9 @@ define([
                                 if (b.status === "urgent" && a.status !== "urgent") return 1;
                                 if (a.status === "progress" && b.status !== "progress") return -1;
                                 if (b.status === "progress" && a.status !== "progress") return 1;
-                                if (a.status === "ready" && b.status !== "ready") return -1;
-                                if (b.status === "ready" && a.status !== "ready") return 1;
+                                // commented out due to ticket #309
+                                // if (a.status === "ready" && b.status !== "ready") return -1;
+                                // if (b.status === "ready" && a.status !== "ready") return 1;
                                 if (a.status === "reflected" && b.status !== "reflected") return -1;
                                 if (b.status === "reflected" && a.status !== "reflected") return 1;
                                 if (a.end >= now && b.end < now) return -1;
