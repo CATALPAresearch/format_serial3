@@ -159,6 +159,7 @@ define([
                             progress: 0.0,
                             resources: [],
                             reflections: [],
+                            reflectionModified: 0,
                             yLane: 0,
                             mod: false,
                             fromPlan: false,
@@ -1352,6 +1353,7 @@ define([
                     },
                     submitReflections: function () {
                         this.getSelectedMilestone().status = 'reflected';
+                        this.getSelectedMilestone().reflectionModified = (new Date()).getTime();
                         logger.add('reflections_completed', {
                             milestoneId: this.getSelectedMilestone().id,
                             name: this.getSelectedMilestone().name,

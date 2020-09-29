@@ -9,9 +9,8 @@
  * @since      3.1
  * 
  * @todo
- * - display repetition of activities
- * - provide additional information for each activity using a popover or tooltip
- * - fix empty section names
+ * - provide favorites for strategies
+ * - let users take notes
  */
 
 define([
@@ -19,7 +18,7 @@ define([
     M.cfg.wwwroot + "/course/format/ladtopics/lib/build/vue.min.js"
 ], function ($, Vue) {
 
-    return Vue.component('dashboard-completion',
+    return Vue.component('dashboard-strategy',
         {
             props: ['course', 'milestones', 'log'],
 
@@ -157,9 +156,8 @@ define([
             },
 
             mounted: function () {
-                $(document).ready(function () {
-                    $('#cognitive').tab('show');
-                });
+                this.the_milestones = getReflections(this.milestones);
+                
             },
 
             created: function () {
@@ -185,7 +183,7 @@ define([
                 },
                 getReflections: function (milestones) {
                     return this.milestones.filter(function (m) {
-                        return m.reflections[3].length > 0 ? true : false;
+                        return m.reflections[3].length > 0;
                     });
                 },
                 getMilestones: function () {
@@ -210,13 +208,16 @@ define([
                         strategy: strategy,
                         category: this.strategyById(strategy).category
                     });
+                },
+                getDate: function(t){
+                    let d =  new Date(t);
+                    return d.getDate()+'.'+(d.getMonth()+1)+'.'+d.getFullYear()
                 }
             },
 
             watch: {
                 milestones: function (m) {
-                    //console.log('ee', this.getReflections(m), m)
-                    this.the_milestones = m;//this.getReflections(m);
+                    this.the_milestones = this.getReflections(m);
                 }
             },
 
@@ -600,8 +601,11 @@ define([
                     </div>
                     <div class="col-3 border-left">
                         <div class="bold mb-3">Meine Notizen aus der Reflexion</div>
-                        <div v-for="r in milestones">
-                            <span v-if="r.reflections[3]" class="card p-1 mb-2" style="font-size:0.8em">{{ r.reflections[3] }}</span>
+                        <div v-for="r in the_milestones">
+                            <div class="mb-2">
+                                <span class="card p-1 mb-0" style="font-size:0.8em">{{ r.reflections[3] }}</span>
+                                <small v-if="r.reflectionModified !== undefined" class="form-text text-muted mt-0 pt-0 right">{{ getDate(r.reflectionModified) }}</small>
+                            </div>
                         </div>
                     </div>
                 </div>
