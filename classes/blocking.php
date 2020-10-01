@@ -27,7 +27,7 @@ class blocking
         global $DB, $USER;
         require_login();
         if(isset($_SESSION['policy_accepted']) && $_SESSION['policy_accepted'] === true) return true;        
-        $version = 11;// 3  11
+        $version = 3;// local_niels: 11  aple: 3
         $res = $DB->get_record("tool_policy_acceptances", array("policyversionid" => $version, "userid" => (int)$USER->id ), "timemodified");
         if (isset($res->timemodified) && $res->timemodified > 1000) {
             $_SESSION['policy_accepted'] = true;

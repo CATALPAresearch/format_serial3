@@ -20,6 +20,10 @@ define(['jquery'], function ($) {
                 }
             });
             box.hide();
+
+            // Zeige die Werbebox, die per Default ausgeblendet ist
+            $('.policy-widthdraw-box').show();
+
             let blackpages = '';
             if (M.cfg.wwwroot.includes('127.0.0.1') || M.cfg.wwwroot.includes('localhost')) {
 
