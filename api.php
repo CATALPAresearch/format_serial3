@@ -716,8 +716,8 @@ class format_ladtopics_external extends external_api
 
         // all allowed modules
         $allowed_modules = array("assign", "data", "hvp", "checklist",
-        "url", "studentquiz", "page", "feedback", "forum", "resource",
-        "glossary", "quiz", "usenet", "book"); // TODO: This should be part of the course settings
+        "url", "studentquiz", "page", "feedback", "forum", "resource", "wiki",
+        "glossary", "quiz", "usenet", "book", "usenet"); // TODO: This should be part of the course settings
 
         if (is_array($select)) {
             $addToQuery = "";
