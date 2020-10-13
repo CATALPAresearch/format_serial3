@@ -68,7 +68,9 @@ define([
                             "resource",
                             "glossary",
                             "quiz",
-                            "wiki"
+                            "wiki",
+                            "book",
+                            "usenet"
                         ])
                     }
                 }, function (e) {

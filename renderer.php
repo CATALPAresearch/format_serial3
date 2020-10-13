@@ -1133,19 +1133,7 @@ $modalMilestone = '
 
                     <div class="course-content">
 ';
-        
-    if (format_ladtopics\blocking::tool_policy_accepted() == false) {
-        $url = new moodle_url('/course/format/ladtopics/redirect-blocking.php');
-        // redirect($url);
-        /*
-        return html_writer::start_tag('div', array('class' => 'container chart-container'))
-            //. $content . html_writer::end_tag('div')
-            . html_writer::start_tag('ul', array('class' => 'topics'))
-            ;
-
-        */
-    } 
-
+    
     return 
             html_writer::start_tag('div', array('class' => 'container chart-container')) 
             . $content . html_writer::end_tag('div') 

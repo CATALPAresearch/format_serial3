@@ -545,7 +545,9 @@ define([
                                     "resource",
                                     "glossary",
                                     "quiz",
-                                    "wiki"
+                                    "wiki",
+                                    "book",
+                                    "usenet"
                                 ])
                             }
                         }, function (e) {
@@ -600,7 +602,7 @@ define([
                                 //console.log('debug', JSON.parse(e.debug));
                             } catch (e) {
                                 // eslint-disable-next-line no-console
-                                console.error(e);
+                                console.log("NO SUCCESS");
                             }
                         });
                         this.margins = margins;

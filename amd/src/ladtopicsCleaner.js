@@ -11,6 +11,7 @@ define(['jquery'], function ($) {
     
     return {
         init: function () {
+            console.log('Blocked Version');
             // hide unused div
             let box = $("#region-main-box");
             const h = box.outerHeight();
@@ -22,7 +23,10 @@ define(['jquery'], function ($) {
             box.hide();
 
             // Zeige die Werbebox, die per Default ausgeblendet ist
-            $('.policy-widthdraw-box').show();
+            $(document).ready(function () {
+                $('.policy-withdraw-box').show();
+                $('.policy-withdraw-box').css('diaplay','inline');
+            });
 
             let blackpages = '';
             if (M.cfg.wwwroot.includes('127.0.0.1') || M.cfg.wwwroot.includes('localhost')) {

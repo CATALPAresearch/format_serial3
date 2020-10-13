@@ -41,7 +41,7 @@ define([
                     //protocol: window.location.protocol,
                     //port: window.location.port,
                     host: window.location.host,
-                    pathname: window.location.pathname,
+                    pathname: window.location.href,
                     hash: window.location.hash,
                     tabId: window.name.split('=')[0] === "APLE-MOODLE" ? window.name.split('=')[1] : "unknown"
                 },
@@ -125,10 +125,12 @@ define([
                         entry: JSON.stringify(entry)
                     }
                 },
-                done: function () {},
-                fail: function () {
+                done: function (e) {
+                    console.log(e)
+                },
+                fail: function (e) {
                     // throw(e);
-                    // console.error(e);
+                    console.error(e);
                 }
             }]);
         };
