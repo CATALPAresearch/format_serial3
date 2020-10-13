@@ -25,10 +25,9 @@ class blocking
     public static function tool_policy_accepted()
     {
         global $DB, $USER;         
-        $version = 1;// local_niels: 11  aple: 3 marc: 1
+        $version = 11;// local_niels: 11  aple: 3 marc: 1
         $res = $DB->get_record("tool_policy_acceptances", array("policyversionid" => $version, "userid" => (int)$USER->id ), "status");
         if (isset($res->status) && $res->status == 1) {
-            $_SESSION['policy_accepted'] = true;
             return true;
         }
         return false;
