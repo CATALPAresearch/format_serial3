@@ -55,7 +55,7 @@ define(['jquery'], function ($) {
                     <div class="w-75">
                         Da Sie nicht allen Richtlinien zugestimmt haben, erhalten Sie nur eine eingeschränkte Lernunterstützung.<br />
                         Im Folgenden können Sie den Richtlinien nachträglich zustimmen, sofern Sie wollen.<br />
-                        <button type="button" class="btn btn-primary mt-2" onclick="javascript:window.location.href='${link}'">Übersicht der Richtlinien</button>
+                        <button type="button" class="btn btn-primary mt-2" onclick="javascript:window.location.href='${link}'">Übersicht der Kursrichtlinien</button>
                     </div>
                 </div>
                 `
