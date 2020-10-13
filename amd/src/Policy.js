@@ -64,19 +64,19 @@ define([
                     template: `
                             <div id="policy-container">
                                 <h3 class="my-4">Übersicht der Richtlinien</h3>
-                                <div v-if="message != ''" class="alert alert-success w-50">
+                                <div v-if="message != ''" class="alert alert-success">
                                     {{ message }}
                                 </div>
                                 <div class="row mb-3 border-bottom pb-2" v-for="p in policies">
                                     <div class="col-9">
                                         <i v-if="p.status==1" class="fa fa-check ml-3" style="color:green;"></i>
-                                        <i v-if="p.status==0" class="fa fa-times ml-3" style="color:red;"></i>
+                                        <i v-if="p.status==0 || p.status==null" class="fa fa-times ml-3" style="color:red;"></i>
                                         <a :href="getPolicyLink(p.version)" target="s" class="bold">{{p.name}}</a><br>
                                         <span class="pl-3">Der Version vom {{ convertTime(p.creation) }}</span>
                                         <span v-if="p.status==1">
                                             haben Sie am {{ convertTime(p.acceptance) }} zugestimmt.
                                         </span>
-                                        <span v-if="p.status==0">
+                                        <span v-if="p.status==0 || p.status==null">
                                             haben Sie nicht zugestimmt.
                                         </span>
                                     </div>
@@ -84,7 +84,7 @@ define([
                                         <span v-if="p.status==1">
                                             <a :href="getLink(p,0)" class="right btn btn-sm btn-outline-primary">Zustimmung widerufen</a>
                                         </span>
-                                        <span v-if="p.status==0">
+                                        <span v-if="p.status==0 || p.status==null">
                                             <div class="form-check">
                                                 <input v-model="hasRead[p.version]" class="form-check-input" type="checkbox" value="1" id="defaultCheck1">
                                                 <label class="form-check-label" style="font-size:0.8em;" for="defaultCheck1">
