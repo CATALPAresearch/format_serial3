@@ -32,7 +32,7 @@ define([
         });
 
         return {
-            init: function (policies, message) {
+            init: function (policies, message, backurl) {
                 return new Vue({
 
                     el: 'policy-container',
@@ -41,6 +41,7 @@ define([
                         return {
                             policies: policies,
                             message: message,
+                            backurl: backurl,
                             hasRead:{}
                         }
                     },
@@ -94,6 +95,9 @@ define([
                                             <a :href="getLink(p,1)" :class="hasRead[p.version] ? 'btn btn-sm btn-primary' : 'disabled btn btn-sm btn-primary'">Akzeptieren</a>
                                         </span>
                                     </div>
+                                </div>
+                                <div class="mt-3">
+                                    <button type="button" class="btn btn-primary" onClick="javascript:window.location.href='`+backurl+`'">Zurück</button>
                                 </div>
                             </div>
                         `

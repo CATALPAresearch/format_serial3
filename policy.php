@@ -4,15 +4,31 @@ require_once(dirname(__FILE__) . '/../../../config.php');
 
 $context = context_system::instance();
 global $USER, $PAGE, $DB, $CFG;
+require_login();
 $PAGE->set_context($context);
 $PAGE->set_url($CFG->wwwroot.'/course/format/ladtopics/policy.php');
 $PAGE->set_pagelayout('course');
 $PAGE->set_title("Zustimmung und Richtlinien");
 echo $OUTPUT->header();
 
-
 global $DB, $USER;
 $message = '';
+
+// Track the previous page to go back after the changes.
+$policy_back = $CFG->wwwroot;
+if(isset($_SESSION['policy_back'])){
+    if(isset($_SERVER['HTTP_REFERER']) && !is_null($_SERVER['HTTP_REFERER'])){
+        $policy_back = $_SERVER['HTTP_REFERER'];
+        $_SESSION['policy_back'] = $policy_back;
+    } else {
+        $policy_back = $_SESSION['policy_back'];
+    }
+} else {
+    if(isset($_SERVER['HTTP_REFERER']) && !is_null($_SERVER['HTTP_REFERER'])){
+        $policy_back = $_SERVER['HTTP_REFERER'];
+        $_SESSION['policy_back'] = $policy_back;
+    }
+}
 
 // change policy status
 if(isset($_GET['policy']) && isset($_GET['status']) && isset($_GET['version'])){
@@ -78,6 +94,6 @@ ON p.currentversionid = v.id
 $res = $DB->get_records_sql($query, array((int)$USER->id));
 //get_records("tool_policy_acceptances", array("userid" => (int)$USER->id ));
 echo '<policy-container></policy-container>';
-$PAGE->requires->js_call_amd('format_ladtopics/Policy', 'init', array('policies'=>$res, 'message'=>$message));
+$PAGE->requires->js_call_amd('format_ladtopics/Policy', 'init', array('policies'=>$res, 'message'=>$message, 'backurl'=>$policy_back));
 echo $OUTPUT->footer();
 
