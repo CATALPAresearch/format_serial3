@@ -47,7 +47,7 @@ define(['jquery'], function ($) {
 
             $('.activity.usenet').hide();
 
-            console.log("done");
+            // A field to ask to accept all policies required for LADTopics.
             const link = `${M.cfg.wwwroot}/course/format/ladtopics/policy.php`;
             $('div.ladtopics').prepend(
                 ` 
