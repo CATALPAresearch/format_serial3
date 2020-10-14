@@ -33,8 +33,8 @@ class context {
     protected $_roles;
 
     function __construct($userid, $context){      
-        $this->_context = $context;
         require_login();
+        $this->_context = $context;
         $this->_userid = $userid;
         $this->_roles = get_user_roles($this->_context, $this->_userid);
     }   
