@@ -92,7 +92,7 @@ class context {
         return is_enrolled($this->_context, $this->_userid);
     }
 
-    public function isModerator(){
+    public function isAnyKindOfModerator(){
         if(
             $this->isSiteAdmin() ||
             $this->isCourseCreator() ||

@@ -155,7 +155,9 @@ class format_ladtopics extends format_base {
         
         global $COURSE, $DB, $CFG, $USER;
 
-        if($this->SURVEY_ENABLED === true){             
+        $perm = new format_ladtopics\permission\course($USER->id, $COURSE->id);
+
+        if($this->SURVEY_ENABLED === true && !$perm->isAnyKindOfModerator()){             
             $records = $DB->get_records_sql('SELECT * FROM '.$CFG->prefix.'limesurvey_assigns WHERE course_id = ?', array($COURSE->id));                   
             foreach($records as $record){                
                 if($DB->record_exists_sql('SELECT * FROM '.$CFG->prefix.'limesurvey_submissions WHERE user_id = ? AND survey_id = ?', array($USER->id, $record->survey_id)) === false){
