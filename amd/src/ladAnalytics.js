@@ -34,7 +34,7 @@ define([
                     function(d3){   
                         
                         // Sunburst Component
-                        const sunburst = Vue.component('sunburst',
+                        const graphtree = Vue.component('graphtree',
                             {
                                 props: ['chartData'],
                                 mounted: function(){
@@ -63,22 +63,12 @@ define([
                                             const treeWidth = width - margin * 2;
                                             const treeHeight = height - margin * 2;                                            
                                             // Begin char creation                                            
-                                            // declares a tree layout and assigns the size
-                                            const treemap = d3.tree().size([treeWidth, treeHeight]);
-                                            //  assigns the data to a hierarchy using parent-child relationships                                                                                       
+                                            const treemap = d3.tree().size([treeWidth, treeHeight]);                                                                                  
                                             let nodes = d3.hierarchy(data);                                           
-
-                                            // maps the node data to the tree layout
-                                            nodes = treemap(nodes);                                          
-
-                                            // append the svg obgect to the body of the page
-                                            // appends a 'group' element to 'svg'
-                                            // moves the 'group' element to the top left margin                                            
+                                            nodes = treemap(nodes);                                                                                  
                                             g = svg.append("g")
                                                 .attr("transform",
                                                     "translate(" + margin + "," + margin + ")");
-
-                                            // adds the links between the nodes
                                             var link = g.selectAll(".link")
                                                 .data( nodes.descendants().slice(1))
                                                 .enter().append("path")
@@ -91,11 +81,8 @@ define([
                                                     + " " + d.parent.x + "," +  (d.y + d.parent.y) / 2
                                                     + " " + d.parent.x + "," + d.parent.y;
                                                 });
-
                                             const divTooltipID = 'tooltip_' + Math.random().toString(36).substr(2, 9);
-
-                                            let div = d3.select('body').append("div").attr('id', divTooltipID);			
-                                            
+                                            let div = d3.select('body').append("div").attr('id', divTooltipID);
                                             $(`#${divTooltipID}`).css(
                                                 {
                                                     backgroundColor: 'white',
@@ -104,18 +91,14 @@ define([
                                                     opacity: 0.5
                                                 }
                                             );
-
-                                            // adds each node as a group
                                             var node = g.selectAll(".node")
                                                 .data(nodes.descendants())
                                                 .enter().append("g")
                                                 .attr("class", function(d) { 
-                                                return "node" + 
-                                                    (d.children ? " node--internal" : " node--leaf"); })
+                                                    return "node" + 
+                                                        (d.children ? " node--internal" : " node--leaf"); })
                                                 .attr("transform", function(d) { 
-                                                return "translate(" + d.x + "," + d.y + ")"; });
-
-                                            // adds the circle to the node
+                                                    return "translate(" + d.x + "," + d.y + ")"; });
                                             node.append("circle")
                                                 .attr("r", 10)
                                                 .attr('fill', 
@@ -162,10 +145,6 @@ define([
                                                                     top: `${d3.event.pageY}px`
                                                                 }
                                                             );
-
-                                                            /*
-                                                                .style("left", (d3.event.pageX) + "px")		
-                                                                .style("top", (d3.event.pageY - 28) + "px");*/
                                                             div.transition()		
                                                                 .duration(200)		
                                                                 .style("opacity", .9);
@@ -181,8 +160,6 @@ define([
                                                         );
                                                     }
                                                 );
-
-                                            // adds the text to the node
                                             node.append("text")
                                                 .attr("dy", ".35em")
                                                 .attr("y", function(d) { return d.children ? -20 : 20; })
@@ -220,7 +197,10 @@ define([
                                     currentUser: null
                                 },
                                 components: {
-                                    'sunburst': sunburst
+                                    'graphtree': graphtree
+                                },
+                                mounted: function(){                                    
+                                  
                                 },
                                 computed:{
                                     showHome: function(){
@@ -239,13 +219,7 @@ define([
                                         this.currentUser = user;
                                     },
                                     convertUnix: function(unix){
-                                        let date = new Date(unix * 1000);
-                                        let day = date.getDate();
-                                        let month = date.getMonth();
-                                        let year = date.getFullYear();
-                                        let hours = date.getHours();
-                                        let minutes = date.getMinutes();
-                                        return `${day.toString().length !== 1 ? day : "0" + day}.${month.toString().length !== 1 ? month : "0" + month}.${year} ${hours.toString().length !== 1 ? hours : "0" + hours}:${minutes.toString().length !== 1 ? minutes : "0" + minutes}`;                         
+                                       return  moment.unix(unix).format('DD.MM.YYYY HH:mm');
                                     },
                                     convertMoment: function(date){
                                         return moment(date).format('DD.MM.YYYY');
@@ -295,7 +269,7 @@ define([
                                             let res = '<ul style="list-style-type: none; padding-left: 0px;">';
                                             for(let u in elem.resources){
                                                 const r = elem.resources[u];
-                                                res += `<li>${r.instance_title} <i>${r.instance_type}</i></li>`;
+                                                res += `<li>${r.instance_title} [<i>${this.cleanTitle(r.instance_type)}</i>]</li>`;
                                             }   
                                             res += '</ul>'                                        
 
@@ -353,7 +327,7 @@ define([
                                     <div class="py-2" v-if="showUser">
                                         <div class="container-fluid">
                                             <div class="row">
-                                                <div class="col-8 bg-secondary">
+                                                <div id="userContent" class="col-8 bg-secondary">
                                                     <div v-if="currentUser !== null" class="px-4 py-3" >
                                                         <h2 style="margin-bottom: 0px;"><b>{{currentUser.firstname+" "+currentUser.lastname}}</b></h2>
                                                         <span><<i>{{currentUser.email}}</i>></span>
@@ -375,9 +349,9 @@ define([
                                                                 </tr>                                                       
                                                             </tbody>
                                                         </table>
-                                                        <!-- Sunburst -->
+                                                        <!-- graphtree -->
                                                         <h4>Meilensteine</h4>
-                                                        <sunburst v-bind:chartData="createMSSunburstData()"></sunburst>
+                                                        <graphtree v-bind:chartData="createMSSunburstData()"></graphtree>
                                                         <!-- Milestone list -->
                                                         <h4>Liste aller Meilensteine</h4>
                                                         <div id="mstones" v-if="currentUser.milestones !== null">
