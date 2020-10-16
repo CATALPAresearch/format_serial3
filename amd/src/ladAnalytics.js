@@ -215,8 +215,29 @@ define([
                                             case 'reflected': return 'reflektiert';
                                         }
                                     },
-                                    createMSSunburstData(){
+                                    translatePlaningStyle: function(planingStyle){                                        
+                                        switch(planingStyle){
+                                            case 'planing-style-a': return 'Nur für eine Woche.';                                                                    
+                                            case 'planing-style-b': return 'Für die nächsten 4 Wochen.';                                                                   
+                                            case 'planing-style-c': return 'Für das ganze Semester mit Arbeitspaketen für je eine Woche.';
+                                            case 'planing-style-d': return 'Für das ganze Semester mit Arbeitspaketen für je 2 Wochen.';
+                                            case 'planing-style-e': return 'Für das ganze Semester mit Arbeitspaketen für je einen Monat.';
+                                            case 'planing-style-f': return 'Keine Angaben';
+                                            default:                return 'Unbekannt';
+                                        }
+                                    },
+                                    translateGoal: function(goal){
+                                        switch(goal){
+                                            case 'f1a': return 'Die Prüfung erfolgreich absolvieren.';
+                                            case 'f1b': return 'Orientierung im Themengebiet erlangen.';
+                                            case 'f1c': return 'Meinen eigenen Interessen bzgl. bestimmter Themengebiete nachgehen.';
+                                            case 'f1d': return 'Keine Angaben';
+                                            default: return 'Unbekannt';
+                                        }
+                                    },
+                                    createMSTreeData(){
                                         if(typeof this.currentUser !== "object" || typeof this.currentUser.milestones !== 'object' || typeof this.currentUser.milestones.elements !== "object" || this.currentUser.milestones.elements.length < 1) return null;
+                                        console.log(this.currentUser);
                                         if(typeof +this.currentUser.milestones.modified !== 'number') return null;
                                         const unix = +this.currentUser.milestones.modified;                                        
                                         const time = moment.unix(unix).format('DD.MM.YYYY');
@@ -263,12 +284,10 @@ define([
                                                     name: r.instance_title,
                                                     color: '#957DAD',
                                                     type: 'ressource',
-                                                    tooltip: `${this.cleanTitle(r.instance_title)} [${this.cleanTitle(r.instance_type)}]`
+                                                    tooltip: `${this.cleanTitle(r.instance_title)} [<i>${this.cleanTitle(r.instance_type)}</i>]`
                                                 });
                                             }   
-                                            res += '</ul>'    
-                                            console.log(elem);                                    
-
+                                            res += '</ul>';                            
                                             const result = {
                                                 name: elem.name,                                                                                             
                                                 tooltip: `
@@ -381,10 +400,27 @@ define([
                                                                 </tr>                                                       
                                                             </tbody>
                                                         </table>
+                                                        <h4>Semesterplanung</h4>
+                                                        <table class="table table-responsive">
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td style="border-top-style: none;">Verfolgtes Ziel</td>
+                                                                    <td style="border-top-style: none;">{{ typeof currentUser === "object" && typeof currentUser.initialSurvey === "object" && currentUser.initialSurvey !== null ? translateGoal(currentUser.initialSurvey.objectives) : "-" }}</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td style="border-top-style: none;">Geplante Lernstunden pro Woche</td>
+                                                                    <td style="border-top-style: none;">{{ typeof currentUser === "object" && typeof currentUser.initialSurvey === "object" && currentUser.initialSurvey !== null ? currentUser.initialSurvey.availableTime : "-" }}</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td style="border-top-style: none;">Zeitraum der Lernaktivitätsplanung&nbsp;&nbsp;</td>
+                                                                    <td style="border-top-style: none;">{{ typeof currentUser === "object" && typeof currentUser.initialSurvey === "object" && currentUser.initialSurvey !== null ? translatePlaningStyle(currentUser.initialSurvey.planingStyle) : "-" }}</td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
                                                         <!-- graphtree -->
                                                         <h4>Meilensteine</h4>
                                                         <div class="pb-1">Es sind <b>{{ currentUser.milestones.elements.length }}</b> Meilensteine vorhanden.</div>
-                                                        <graphtree v-bind:chartData="createMSSunburstData()"></graphtree>                                                        
+                                                        <graphtree v-bind:chartData="createMSTreeData()"></graphtree>                                                        
                                                         <!-- Milestone list -->
                                                         <h4>Liste aller Meilensteine</h4>
                                                         <div id="mstones" v-if="currentUser.milestones !== null">
