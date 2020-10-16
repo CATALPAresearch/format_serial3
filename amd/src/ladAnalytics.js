@@ -88,7 +88,7 @@ define([
                                                     backgroundColor: 'white',
                                                     display: 'none',
                                                     padding: '5px 10px',
-                                                    opacity: 0.5
+                                                    opacity: 0.9
                                                 }
                                             );
                                             var node = g.selectAll(".node")
@@ -103,21 +103,17 @@ define([
                                                 .attr("r", 10)
                                                 .attr('fill', 
                                                     function(d){
-                                                        switch(d.data.name){
-                                                            case 'dringlich': return '#FDF7C2';
-                                                            case 'bereit': return '#70A1D7';
-                                                            case 'reflektiert': return '#A1DE93';
-                                                            case 'abgelaufen': return '#FF6961';
-                                                            default: return 'black';
-                                                        }
+                                                        if(d.data.color) return d.data.color;
+                                                        return 'black';
                                                     }
                                                 )
                                                 .attr('stroke-width', '2px')
                                                 .on('mouseover', 
                                                     function(d){                                                        
-                                                        const data = d.data;                                                                                                              
-                                                        if(data.end && data.start && data.obj){                                                           
-                                                            const html = `
+                                                        const data = d.data;   
+                                                        let html = '';                                                                                                           
+                                                        if(data.type === 'milestone'){                                                           
+                                                            html = `
                                                                 <table>
                                                                     <tr>
                                                                         <td>Lernziel:</td>
@@ -136,19 +132,22 @@ define([
                                                                         <td>${data.res}</td>
                                                                     </tr>
                                                             `;
-                                                            div.html(html);
-                                                            $(`#${divTooltipID}`).css(
-                                                                {
-                                                                    display: 'inline-block',
-                                                                    position: 'absolute',
-                                                                    left: `${d3.event.pageX+20}px`,
-                                                                    top: `${d3.event.pageY}px`
-                                                                }
-                                                            );
-                                                            div.transition()		
-                                                                .duration(200)		
-                                                                .style("opacity", .9);
-                                                        }                                                       	
+                                                        } else if(data.type === 'status'){
+                                                            html = `${data.count} Meilenstein(e)`;
+                                                        } else if(data.type === 'ressource'){
+                                                            html = data.instType;
+                                                        } else if(data.type === 'root'){
+                                                            html = `${data.count} Meilenstein(e)`;
+                                                        } 
+                                                        div.html(html);
+                                                        $(`#${divTooltipID}`).css(
+                                                            {
+                                                                display: 'inline-block',
+                                                                position: 'absolute',
+                                                                left: `${d3.event.pageX+20}px`,
+                                                                top: `${d3.event.pageY}px`
+                                                            }
+                                                        );                                                                                                            	
                                                     }
                                                 )
                                                 .on('mouseout', 
@@ -246,30 +245,51 @@ define([
                                         const time = moment.unix(unix).format('DD.MM.YYYY');
                                         const title = `${time}`;
                                         const elements = this.currentUser.milestones.elements;
+                                        let countAll = 0;
+
                                         const urgent = {
                                             name: 'dringlich',
-                                            children: []
+                                            children: [],
+                                            type: 'status',
+                                            color: '#FDF7C2',
+                                            count: 0
                                         }
                                         const ready = {
                                             name: 'bereit',
-                                            children: []
+                                            children: [],
+                                            type: 'status',
+                                            color: '#70A1D7',
+                                            count: 0
                                         }
                                         const missed = {
                                             name: 'abgelaufen',
-                                            children: []
+                                            children: [],
+                                            type: 'status',
+                                            color: '#FF6961',
+                                            count: 0
                                         }
                                         const reflected = {
                                             name: 'reflektiert',
-                                            children: []
-                                        }                                  
+                                            children: [],
+                                            type: 'status',
+                                            color: '#A1DE93',
+                                            count: 0
+                                        }                                
 
                                         for(let i in elements){
-                                            const elem = elements[i];                                              
-                                           
+                                            const elem = elements[i];                                       
+                                            countAll++;
+                                            let resDom = [];
                                             let res = '<ul style="list-style-type: none; padding-left: 0px;">';
                                             for(let u in elem.resources){
                                                 const r = elem.resources[u];
                                                 res += `<li>${r.instance_title} [<i>${this.cleanTitle(r.instance_type)}</i>]</li>`;
+                                                resDom.push({
+                                                    name: r.instance_title,
+                                                    color: '#957DAD',
+                                                    type: 'ressource',
+                                                    instType: this.cleanTitle(r.instance_type)
+                                                });
                                             }   
                                             res += '</ul>'                                        
 
@@ -278,16 +298,23 @@ define([
                                                 obj: elem.objective,
                                                 start: this.convertMoment(elem.start),
                                                 end: this.convertMoment(elem.end),
-                                                res: res
+                                                res: res,
+                                                children: resDom,
+                                                color: '#E2F0CB',
+                                                type: 'milestone'                                  
                                             }
                                             switch(elem.status){
                                                 case 'urgent':      urgent.children.push(result);
+                                                                    urgent.count++;
                                                                     break;
                                                 case 'missed':      missed.children.push(result);
+                                                                    missed.count++;
                                                                     break;
                                                 case 'reflected':   reflected.children.push(result);
+                                                                    reflected.count++;
                                                                     break;
-                                                case 'ready':       reflected.children.push(result);
+                                                case 'ready':       ready.children.push(result);
+                                                                    ready.count++;
                                                                     break;
                                             }
                                         }
@@ -300,7 +327,9 @@ define([
 
                                         return {
                                             name: title,
-                                            children: childs
+                                            children: childs,
+                                            type: 'root',
+                                            count: countAll
                                         }                                  
                                     }                                  
                                 },
@@ -352,6 +381,7 @@ define([
                                                         <!-- graphtree -->
                                                         <h4>Meilensteine</h4>
                                                         <graphtree v-bind:chartData="createMSSunburstData()"></graphtree>
+                                                        <div class="py-3">Es sind <b>{{ currentUser.milestones.elements.length }}</b> Meilensteine vorhanden.</div>
                                                         <!-- Milestone list -->
                                                         <h4>Liste aller Meilensteine</h4>
                                                         <div id="mstones" v-if="currentUser.milestones !== null">
