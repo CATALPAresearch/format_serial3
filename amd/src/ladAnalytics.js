@@ -92,6 +92,19 @@ define([
                                                     + " " + d.parent.x + "," + d.parent.y;
                                                 });
 
+                                            const divTooltipID = 'tooltip_' + Math.random().toString(36).substr(2, 9);
+
+                                            let div = d3.select('body').append("div").attr('id', divTooltipID);			
+                                            
+                                            $(`#${divTooltipID}`).css(
+                                                {
+                                                    backgroundColor: 'white',
+                                                    display: 'none',
+                                                    padding: '5px 10px',
+                                                    opacity: 0.5
+                                                }
+                                            );
+
                                             // adds each node as a group
                                             var node = g.selectAll(".node")
                                                 .data(nodes.descendants())
@@ -105,9 +118,69 @@ define([
                                             // adds the circle to the node
                                             node.append("circle")
                                                 .attr("r", 10)
-                                                .attr('fill', '#fff')
-                                                .attr('stroke', 'steelblue')
-                                                .attr('stroke-width', '3px');
+                                                .attr('fill', 
+                                                    function(d){
+                                                        switch(d.data.name){
+                                                            case 'dringlich': return '#FDF7C2';
+                                                            case 'bereit': return '#70A1D7';
+                                                            case 'reflektiert': return '#A1DE93';
+                                                            case 'abgelaufen': return '#FF6961';
+                                                            default: return 'black';
+                                                        }
+                                                    }
+                                                )
+                                                .attr('stroke-width', '2px')
+                                                .on('mouseover', 
+                                                    function(d){
+                                                        const data = d.data;                                                                                                              
+                                                        if(data.end && data.start && data.obj){ 
+                                                            const html = `
+                                                                <table>
+                                                                    <tr>
+                                                                        <td>Lernziel:</td>
+                                                                        <td>${data.obj}</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>Beginn:</td>
+                                                                        <td>${data.start}</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>Termin:</td>
+                                                                        <td>${data.end}</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td style="vertical-align: top;">Ressourcen:&nbsp;&nbsp;</td>
+                                                                        <td>${data.res}</td>
+                                                                    </tr>
+                                                            `;
+                                                            div.html(html)
+                                                            $(`#${divTooltipID}`).css(
+                                                                {
+                                                                    display: 'inline-block',
+                                                                    position: 'absolute',
+                                                                    left: `${d3.event.pageX}px`,
+                                                                    top: `${d3.event.pageY - 28}px`
+                                                                }
+                                                            );
+
+                                                            /*
+                                                                .style("left", (d3.event.pageX) + "px")		
+                                                                .style("top", (d3.event.pageY - 28) + "px");*/
+                                                            div.transition()		
+                                                                .duration(200)		
+                                                                .style("opacity", .9);
+                                                        }                                                       	
+                                                    }
+                                                )
+                                                .on('mouseout', 
+                                                    function(d){
+                                                        $(`#${divTooltipID}`).css(
+                                                            {
+                                                                display: 'none'
+                                                            }
+                                                        );
+                                                    }
+                                                );
 
                                             // adds the text to the node
                                             node.append("text")
@@ -197,7 +270,7 @@ define([
                                         if(typeof +this.currentUser.milestones.modified !== 'number') return null;
                                         const unix = +this.currentUser.milestones.modified;                                        
                                         const time = moment.unix(unix).format('DD.MM.YYYY');
-                                        const title = `Meilensteine vom ${time}`;
+                                        const title = `${time}`;
                                         const elements = this.currentUser.milestones.elements;
                                         const urgent = {
                                             name: 'dringlich',
@@ -214,18 +287,24 @@ define([
                                         const reflected = {
                                             name: 'reflektiert',
                                             children: []
-                                        }
+                                        }                                  
+
                                         for(let i in elements){
-                                            const elem = elements[i];  
-                                            
-                                            const start = moment(elem.start);
-                                            const end = moment(elem.end);
-                                            const duration = moment.duration(end.diff(start))                                            
-                                            let diff = duration.asDays();
-                                            if(diff < 1) diff = 1;
+                                            const elem = elements[i];                                              
+                                           
+                                            let res = '<ul style="list-style-type: none; padding-left: 0px;">';
+                                            for(let u in elem.resources){
+                                                const r = elem.resources[u];
+                                                res += `<li>${r.instance_title} <i>${r.instance_type}</i></li>`;
+                                            }   
+                                            res += '</ul>'                                        
+
                                             const result = {
                                                 name: elem.name,
-                                                value: 10000
+                                                obj: elem.objective,
+                                                start: this.convertMoment(elem.start),
+                                                end: this.convertMoment(elem.end),
+                                                res: res
                                             }
                                             switch(elem.status){
                                                 case 'urgent':      urgent.children.push(result);
@@ -328,7 +407,7 @@ define([
                                                                                 </tr>
                                                                                 <tr>
                                                                                     <td>Termin</td>
-                                                                                    <td>{{ convertMoment(milestone.start) }}</td>
+                                                                                    <td>{{ convertMoment(milestone.end) }}</td>
                                                                                 </tr>
                                                                                 <tr>
                                                                                     <td>Ressourcen</td>
