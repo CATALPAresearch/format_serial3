@@ -131,9 +131,9 @@ define([
                                                 )
                                                 .attr('stroke-width', '2px')
                                                 .on('mouseover', 
-                                                    function(d){
+                                                    function(d){                                                        
                                                         const data = d.data;                                                                                                              
-                                                        if(data.end && data.start && data.obj){ 
+                                                        if(data.end && data.start && data.obj){                                                           
                                                             const html = `
                                                                 <table>
                                                                     <tr>
@@ -153,13 +153,13 @@ define([
                                                                         <td>${data.res}</td>
                                                                     </tr>
                                                             `;
-                                                            div.html(html)
+                                                            div.html(html);
                                                             $(`#${divTooltipID}`).css(
                                                                 {
                                                                     display: 'inline-block',
                                                                     position: 'absolute',
-                                                                    left: `${d3.event.pageX}px`,
-                                                                    top: `${d3.event.pageY - 28}px`
+                                                                    left: `${d3.event.pageX+20}px`,
+                                                                    top: `${d3.event.pageY}px`
                                                                 }
                                                             );
 
@@ -379,7 +379,7 @@ define([
                                                         <h4>Meilensteine</h4>
                                                         <sunburst v-bind:chartData="createMSSunburstData()"></sunburst>
                                                         <!-- Milestone list -->
-                                                        <h4>Eigene Meilensteine</h4>
+                                                        <h4>Liste aller Meilensteine</h4>
                                                         <div id="mstones" v-if="currentUser.milestones !== null">
                                                             <div class="card" v-for="milestone in currentUser.milestones.elements" v-bind:key="milestone.id">
                                                                 <div class="card-header" v-bind:id="'heading-ms'+milestone.id">
