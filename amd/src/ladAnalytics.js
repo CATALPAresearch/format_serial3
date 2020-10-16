@@ -43,8 +43,7 @@ define([
                                     const svg = d3
                                             .select(`#${this.id}`)
                                             .append('svg')
-                                            .style("width", "100%")
-                                            .style("height", "900px")
+                                            .style("width", "100%")                                            
                                             .style("padding", "10px")
                                             .style("font", "10px sans-serif")
                                             .style("box-sizing", "border-box");
@@ -55,57 +54,68 @@ define([
 
                                     $(document).ready(
                                         function(){
-                                            
                                             // Get Width
                                             const elem = $(`#${_this.id}`).find('svg');   
-                                            width = elem.width(); 
+                                            width = elem.width();
+                                            const height = width / 2;
+                                            svg.style("height", `${height}px`);
+                                            const margin = 50;                                       
+                                            const treeWidth = width - margin * 2;
+                                            const treeHeight = height - margin * 2;                                            
+                                            // Begin char creation                                            
+                                            // declares a tree layout and assigns the size
+                                            const treemap = d3.tree().size([treeWidth, treeHeight]);
+                                            //  assigns the data to a hierarchy using parent-child relationships                                                                                       
+                                            let nodes = d3.hierarchy(data);                                           
 
-                                            // Begin char creation
-                                            const radius = width / 2;
-                                            const partition = data => d3.partition()
-                                                .size([2 * Math.PI, radius])
-                                            (d3.hierarchy(data)
-                                                .sum(d => d.size)
-                                                .sort((a, b) => b.value - a.value)) 
-                                            const root = partition(data);
-                                            const color =  d3.scaleOrdinal().range(d3.quantize(d3.interpolateRainbow, data.children.length + 1))
-                                            const format = d3.format(",d")
-                                            const arc = d3.arc()
-                                            .startAngle(d => d.x0)
-                                            .endAngle(d => d.x1)
-                                            .padAngle(d => Math.min((d.x1 - d.x0) / 2, 0.005))
-                                            .padRadius(radius / 2)
-                                            .innerRadius(d => d.y0)
-                                            .outerRadius(d => d.y1 - 1)
-                                            // Partition
+                                            // maps the node data to the tree layout
+                                            nodes = treemap(nodes);                                          
 
-                                        
-                                            const g = svg.append("g")
-                                                .attr("transform", `translate(${width / 2},${width / 2})`);
-                                            
-                                                g.append("g")
-                                                .attr("fill-opacity", 0.6)
-                                              .selectAll("path")
-                                              .data(root.descendants().filter(d => d.depth))
-                                              .enter().append("path")
-                                                .attr("fill", d => { while (d.depth > 1) d = d.parent; return color(d.data.name); })
-                                                .attr("d", arc)
-                                              .append("title")
-                                                .text(d => `${d.ancestors().map(d => d.data.name).reverse().join("/")}\n${format(d.value)}`);
+                                            // append the svg obgect to the body of the page
+                                            // appends a 'group' element to 'svg'
+                                            // moves the 'group' element to the top left margin                                            
+                                            g = svg.append("g")
+                                                .attr("transform",
+                                                    "translate(" + margin + "," + margin + ")");
+
+                                            // adds the links between the nodes
+                                            var link = g.selectAll(".link")
+                                                .data( nodes.descendants().slice(1))
+                                                .enter().append("path")
+                                                .attr("class", "link")
+                                                .attr('fill', 'none')
+                                                .attr('stroke', 'black')
+                                                .attr("d", function(d) {
+                                                return "M" + d.x + "," + d.y
+                                                    + "C" + d.x + "," + (d.y + d.parent.y) / 2
+                                                    + " " + d.parent.x + "," +  (d.y + d.parent.y) / 2
+                                                    + " " + d.parent.x + "," + d.parent.y;
+                                                });
+
+                                            // adds each node as a group
+                                            var node = g.selectAll(".node")
+                                                .data(nodes.descendants())
+                                                .enter().append("g")
+                                                .attr("class", function(d) { 
+                                                return "node" + 
+                                                    (d.children ? " node--internal" : " node--leaf"); })
+                                                .attr("transform", function(d) { 
+                                                return "translate(" + d.x + "," + d.y + ")"; });
+
+                                            // adds the circle to the node
+                                            node.append("circle")
+                                                .attr("r", 10)
+                                                .attr('fill', '#fff')
+                                                .attr('stroke', 'steelblue')
+                                                .attr('stroke-width', '3px');
+
+                                            // adds the text to the node
+                                            node.append("text")
+                                                .attr("dy", ".35em")
+                                                .attr("y", function(d) { return d.children ? -20 : 20; })
+                                                .style("text-anchor", "middle")
+                                                .text(function(d) { return d.data.name; });
                                           
-                                            g.append("g")
-                                                .attr("pointer-events", "none")
-                                                .attr("text-anchor", "middle")
-                                              .selectAll("text")
-                                              .data(root.descendants().filter(d => d.depth && (d.y0 + d.y1) / 2 * (d.x1 - d.x0) > 10))
-                                              .enter().append("text")
-                                                .attr("transform", function(d) {
-                                                  const x = (d.x0 + d.x1) / 2 * 180 / Math.PI;
-                                                  const y = (d.y0 + d.y1) / 2;
-                                                  return `rotate(${x - 90}) translate(${y},0) rotate(${x < 180 ? 0 : 180})`;
-                                                })
-                                                .attr("dy", "0.35em")
-                                                .text(d => d.data.name);
                                             // End char creation
                                         }
                                     );
