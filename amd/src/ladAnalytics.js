@@ -250,22 +250,7 @@ define([
                                             type: 'status',
                                             color: '#A1DE93',
                                             tooltip: 0
-                                        }   
-                                        
-                                        /*
-                                         let html = '';                                                                                                           
-                                                        if(data.type === 'milestone'){                                                           
-                                                            html = `
-                                                                
-                                                            `;
-                                                        } else if(data.type === 'status'){
-                                                            html = `${data.count} Meilenstein(e)`;
-                                                        } else if(data.type === 'ressource'){
-                                                            html = data.instType;
-                                                        } else if(data.type === 'root'){
-                                                            html = `${data.count} Meilenstein(e)`;
-                                                        } 
-                                        */
+                                        }                                         
 
                                         for(let i in elements){
                                             const elem = elements[i];                                     
@@ -278,15 +263,20 @@ define([
                                                     name: r.instance_title,
                                                     color: '#957DAD',
                                                     type: 'ressource',
-                                                    tooltip: this.cleanTitle(r.instance_type)
+                                                    tooltip: `${this.cleanTitle(r.instance_title)} [${this.cleanTitle(r.instance_type)}]`
                                                 });
                                             }   
-                                            res += '</ul>'                                        
+                                            res += '</ul>'    
+                                            console.log(elem);                                    
 
                                             const result = {
                                                 name: elem.name,                                                                                             
                                                 tooltip: `
                                                     <table>
+                                                        <tr>
+                                                            <td>Titel:</td>
+                                                            <td>${elem.name}</td>
+                                                        </tr>
                                                         <tr>
                                                             <td>Lernziel:</td>
                                                             <td>${elem.objective}</td>
@@ -317,6 +307,9 @@ define([
                                                                     break;
                                                 case 'reflected':   reflected.children.push(result);
                                                                     reflected.count++;
+                                                                    break;
+                                                case 'progress':    ready.children.push(result);
+                                                                    ready.tooltip++;
                                                                     break;
                                                 case 'ready':       ready.children.push(result);
                                                                     ready.tooltip++;
@@ -390,8 +383,8 @@ define([
                                                         </table>
                                                         <!-- graphtree -->
                                                         <h4>Meilensteine</h4>
-                                                        <graphtree v-bind:chartData="createMSSunburstData()"></graphtree>
-                                                        <div class="py-3">Es sind <b>{{ currentUser.milestones.elements.length }}</b> Meilensteine vorhanden.</div>
+                                                        <div class="pb-1">Es sind <b>{{ currentUser.milestones.elements.length }}</b> Meilensteine vorhanden.</div>
+                                                        <graphtree v-bind:chartData="createMSSunburstData()"></graphtree>                                                        
                                                         <!-- Milestone list -->
                                                         <h4>Liste aller Meilensteine</h4>
                                                         <div id="mstones" v-if="currentUser.milestones !== null">
