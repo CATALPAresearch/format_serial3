@@ -92,7 +92,20 @@ if(!isset($_GET['c']) || $DB->count_records('course', array('id' => $_GET['c']))
                 $u->initialSurvey = json_decode($surveyData->value);
             } else {
                 $u->initialSurvey = null;
-            }           
+            }    
+            // LimeSurvey
+            $sql = "SELECT a.id, a.name, a.survey_id, s.complete_date, s.submission_id
+             FROM {$CFG->prefix}limesurvey_submissions AS s
+             INNER JOIN {$CFG->prefix}limesurvey_assigns AS a
+             ON s.survey_id = a.survey_id 
+                AND a.course_id = ? 
+             LIMIT 1";
+            $lime = $DB->get_records_sql($sql, array((int)$courseid));
+            if(is_array($lime) && count($lime) > 0){
+                $u->lime = $lime;
+            } else {
+                $u->lime = [];
+            }                     
             $users[] = $u;
         }         
         // The Array which should be send to vue.

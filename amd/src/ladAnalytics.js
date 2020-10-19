@@ -364,15 +364,16 @@ define([
                                         </button>
                                         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                                             <div class="navbar-nav">
-                                                <a class="nav-item nav-link active" v-on:click="setCurrentPage('home')" href="#"><span class="text-white">Meilensteine</span></a>
-                                                <a class="nav-item nav-link" v-on:click="setCurrentPage('user')" href="#"><span class="text-white">Benutzer</span></a>
+                                                <a class="nav-item nav-link active" v-on:click="setCurrentPage('home')" href="#"><span class="text-white">Gesamtübersicht</span></a>
+                                                <a class="nav-item nav-link" v-on:click="setCurrentPage('user')" href="#"><span class="text-white">Einzelansicht</span></a>
                                                 <a class="nav-item nav-link" href="#"><span class="text-white">xxx</span></a>
                                             </div>
                                         </div>                  
                                     </nav>
                                     <!-- Home Dashboard -->
                                     <div class="py-2 px-1" v-if="showHome">
-                                        home
+                                        <div class="container-fluid">
+                                        </div>
                                     </div>
                                     <!-- User Dashboard -->
                                     <div class="py-2" v-if="showUser">
@@ -414,6 +415,27 @@ define([
                                                                 <tr>
                                                                     <td style="border-top-style: none;">Zeitraum der Lernaktivitätsplanung&nbsp;&nbsp;</td>
                                                                     <td style="border-top-style: none;">{{ typeof currentUser === "object" && typeof currentUser.initialSurvey === "object" && currentUser.initialSurvey !== null ? translatePlaningStyle(currentUser.initialSurvey.planingStyle) : "-" }}</td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                        <h4><b>Abeschlossene Umfragen</b></h4>
+                                                        <table class="table table-responsive">
+                                                            <thead>
+                                                                <tr>
+                                                                    <td scope="col">#</td>
+                                                                    <td scope="col">Umfrage</td>
+                                                                    <td scope="col">Umfragen-ID</td>
+                                                                    <td scope="col">Einreichungs-ID</td>
+                                                                    <td scope="col">Einreichungsdatum</td>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <tr v-for="surv in currentUser.lime" v-bind:key="surv.id" >
+                                                                    <td>{{ surv.id }}</td>
+                                                                    <td>{{ surv.name }}</td>
+                                                                    <td>{{ surv.survey_id }}</td>
+                                                                    <td>{{ surv.submission_id }}</td>
+                                                                    <td>{{ convertUnix(surv.complete_date) }}</td>
                                                                 </tr>
                                                             </tbody>
                                                         </table>
