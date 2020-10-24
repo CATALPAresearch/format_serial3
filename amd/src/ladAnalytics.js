@@ -33,7 +33,159 @@ define([
                     ['d3'],
                     function(d3){   
                         
-                        // Sunburst Component
+                        const piechart = Vue.component('piechart',
+                            {
+                                props: ['chartData', 'color'],
+                                mounted: function(){
+                                    const svg = d3
+                                            .select(`#${this.id}`)
+                                            .append('svg')
+                                            .style("width", "50%")                                           
+                                            .style("font", "10px sans-serif")
+                                            .style("box-sizing", "border-box");                                            
+                                    const _this = this;
+                                    $(document).ready(
+                                        function(){                                                                                      
+                                            const elem = $(`#${_this.id}`).find('svg');   
+                                            const width = elem.width();
+                                            const height = width / 2;
+                                            svg.style("height", `${height}px`);                                  
+                                            const radius = Math.min(width, height) / 2;   
+                                            svg.append("g").attr("transform", "translate(" + width + "," + height + ")");  
+                                            var color = d3.scaleOrdinal().range(_this.color);
+                                            var arc = d3.arc()
+                                                        .outerRadius(radius - 10)
+                                                        .innerRadius(0);                                                                                                            
+                                            var labelArc = d3.arc()
+                                                        .outerRadius(radius - 40)
+                                                        .innerRadius(radius - 40);
+                                            var pie = d3.pie()
+                                                        .sort(null)
+                                                        .value(
+                                                            function(d) {                                                      
+                                                                return d.value; 
+                                                            }
+                                                        );
+                                            var g = svg.selectAll(".arc")
+                                                        .data(pie(_this.chartData))
+                                                        .enter().append("g")
+                                                        .attr("class", "arc")
+                                                        .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+                                            g.append("path")
+                                                        .attr("d", arc)
+                                                        .style("fill", function(d) {                                                           
+                                                            return color(d.index); 
+                                                        });
+                                            g.append("text")
+                                                        .attr("transform", function(d) { return "translate(" + labelArc.centroid(d) + ")"; })
+                                                        .attr("dy", ".35em")
+                                                        .text(function(d) {                                                            
+                                                            return d.data.name+" ("+d.value+")"; 
+                                                        });
+
+                                        }
+                                    );
+                                },
+                                data: function(){
+                                    return {
+                                        id: '_' + Math.random().toString(36).substr(2, 9)
+                                    }
+                                },
+                                computed: {
+                                    svgElement: function(){                                       
+                                        return this.svg.node();
+                                    }
+                                },
+                                template: '<div v-bind:id="id"></div>'
+                            }                        
+                        );
+
+                        // Barchart Component
+                        const barchart = Vue.component('barchart',
+                            {
+                                props: ['chartData', 'max'],
+                                mounted: function(){
+                                    const svg = d3
+                                            .select(`#${this.id}`)
+                                            .append('svg')
+                                            .style("width", "50%")                                           
+                                            .style("font", "10px sans-serif")
+                                            .style("box-sizing", "border-box");
+                                    const _this = this;
+                                    $(document).ready(
+                                        function(){                                           
+                                            // Get Width
+                                            const elem = $(`#${_this.id}`).find('svg');   
+                                            const width = elem.width();
+                                            const height = width / 2;
+                                            svg.style("height", `${height}px`);
+                                            const margin = 30;                                       
+                                            const chartWidth = width - margin * 2;
+                                            const chartHeight = height - margin * 2;   
+                                            svg.append("g").attr("transform", "translate(" + margin + "," + margin + ")");    
+                                            
+                                            var x = d3.scaleBand()
+                                                        .range([0, chartWidth])
+                                                        .padding(0.1);
+
+                                            var y = d3.scaleLinear()
+                                                        .range([chartHeight, 0]);  
+
+                                            var data = _this.chartData;                                            
+                            
+
+                                            data.sort(
+                                                function(a, b){
+                                                    return b.count - a.count;
+                                                }
+                                            );                                            
+
+                                            x.domain(data.map(function(d) { return d.name; }));
+                                            y.domain([0, d3.max(data, function(d) { return d.value; })]);
+
+                                            svg.selectAll(".bar")
+                                                .data(data)
+                                                .enter()
+                                                .append("rect")
+                                                    .attr('fill', 'rgb(55, 58, 60)')
+                                                    .attr("class", "bar")
+                                                    .attr("x", function(d) { 
+                                                            return x(d.name); 
+                                                        }
+                                                    )
+                                                    .attr("width", x.bandwidth())
+                                                    .attr("y", function(d) {                                                         
+                                                        return y(d.value); }
+                                                    )
+                                                    .attr("height", function(d) { return chartHeight - y(d.value); })
+                                                    .attr("transform", "translate(" + margin + "," + margin + ")");      
+
+                                            svg.append("g")
+                                                .attr("transform", "translate(" + margin + "," + (margin + chartHeight) + ")")    
+                                                .call(d3.axisBottom(x));
+                                              
+                                                // add the y Axis
+                                            svg.append("g")
+                                                .attr("transform", "translate(" + margin + "," + margin + ")")   
+                                                .call(d3.axisLeft(y));                                   
+                                        }
+                                    );  
+                                },
+                                data: function(){
+                                    return {
+                                        id: '_' + Math.random().toString(36).substr(2, 9)
+                                    }
+                                },
+                                computed: {
+                                    svgElement: function(){                                       
+                                        return this.svg.node();
+                                    }
+                                },
+                                template: '<div v-bind:id="id"></div>'
+                            }
+                        );
+
+                        // Graphtree Component
                         const graphtree = Vue.component('graphtree',
                             {
                                 props: ['chartData'],
@@ -170,13 +322,95 @@ define([
                                 data: {
                                     users: users,
                                     currentPage: 'user',
-                                    currentUser: null
+                                    currentUser: null,
+                                    completeData: {}
                                 },
                                 components: {
-                                    'graphtree': graphtree
+                                    'graphtree': graphtree,
+                                    'barchart': barchart,
+                                    'piechart': piechart
                                 },
-                                mounted: function(){                                    
-                                  
+                                mounted: function(){     
+                                    var surveys = {};   
+                                    // Milestones
+                                    var milestoneStorage = {
+                                        urgent: 0,                                            
+                                        ready: 0,
+                                        progress: 0,
+                                        missed: 0,
+                                        reflected: 0,
+                                        sum: 0
+                                    };   
+                                    var initSurvey = {
+                                        availTime: {},
+                                        objectives: {},
+                                        planingStyle: {}
+                                    };           
+                                    for(let i in users){
+                                        const user = users[i];
+                                        // LimeSurvey                                        
+                                        if(typeof user.lime === "object"){
+                                            for(let l in user.lime){
+                                                const lime = user.lime[l];
+                                                if(typeof lime === "object"){
+                                                    if(typeof surveys[lime.survey_id] !== "object"){
+                                                        surveys[lime.survey_id] = {
+                                                            id: +lime.id,
+                                                            name: lime.name,
+                                                            survey_id: +lime.survey_id,
+                                                            count: 1
+                                                        }
+                                                    } else {
+                                                        surveys[lime.survey_id]['count']++;
+                                                    }
+                                                }
+                                            }                                            
+                                        }   
+                                        // Milestones                                                                        
+                                        if(typeof user.milestones === 'object' && typeof user.milestones.elements === 'object'){
+                                            const milestones = user.milestones.elements;
+                                            for(let u in milestones){
+                                                const milestone = milestones[u];
+                                                switch(milestone.status){
+                                                    case 'urgent':      milestoneStorage.urgent++;
+                                                                        break;
+                                                    case 'ready':       milestoneStorage.ready++;
+                                                                        break;
+                                                    case 'progress':    milestoneStorage.progress++;
+                                                                        break;
+                                                    case 'missed':      milestoneStorage.missed++;
+                                                                        break;
+                                                    case 'reflected':   milestoneStorage.reflected++;
+                                                                        break;
+                                                }
+                                                milestoneStorage.sum++;
+                                            }
+                                        }
+                                        // Survey
+                                        if(typeof user.initialSurvey === "object"){
+                                            const surv = user.initialSurvey;
+                                            //initSurvey
+                                            if(typeof initSurvey.availTime[user.initialSurvey.availableTime] === "number"){
+                                                initSurvey.availTime[user.initialSurvey.availableTime]++;
+                                            } else {
+                                                initSurvey.availTime[user.initialSurvey.availableTime] = 1;
+                                            }        
+                                            if(typeof initSurvey.objectives[user.initialSurvey.objectives] === "number"){
+                                                initSurvey.objectives[user.initialSurvey.objectives]++;
+                                            } else {
+                                                initSurvey.objectives[user.initialSurvey.objectives] = 1;
+                                            }
+                                            if(typeof initSurvey.planingStyle[user.initialSurvey.planingStyle] === "number"){
+                                                initSurvey.planingStyle[user.initialSurvey.planingStyle]++;
+                                            } else {
+                                                initSurvey.planingStyle[user.initialSurvey.planingStyle] = 1;
+                                            }                                       
+                                        }                                    
+                                    }
+                                    this.completeData['survey'] = initSurvey;
+                                    this.completeData['milestones'] = milestoneStorage;
+                                    this.completeData['lime'] = surveys;   
+                                    this.completeData['users'] = users.length;                                                     
                                 },
                                 computed:{
                                     showHome: function(){
@@ -188,6 +422,198 @@ define([
                                     }
                                 },
                                 methods: {
+                                    getPlaningStyleData: function(){
+                                        let arr = [];
+                                        if(typeof this.completeData['survey']['planingStyle']['planing-style-a'] === "number"){
+                                            let elem = {
+                                                name: 'Nur für eine Woche.',
+                                                value: this.completeData['survey']['planingStyle']['planing-style-a']
+                                            };
+                                            arr.push(elem);
+                                        } else {
+                                            let elem = {
+                                                name: 'Nur für eine Woche.',
+                                                value: 0
+                                            };
+                                            arr.push(elem);
+                                        }
+                                        if(typeof this.completeData['survey']['planingStyle']['planing-style-b'] === "number"){
+                                            let elem = {
+                                                name: 'Für die nächsten 4 Wochen.',
+                                                value: this.completeData['survey']['planingStyle']['planing-style-b']
+                                            };
+                                            arr.push(elem);
+                                        } else {
+                                            let elem = {
+                                                name: 'Für die nächsten 4 Wochen.',
+                                                value: 0
+                                            };
+                                            arr.push(elem);
+                                        }
+                                        if(typeof this.completeData['survey']['planingStyle']['planing-style-c'] === "number"){
+                                            let elem = {
+                                                name: 'Für das ganze Semester mit Arbeitspaketen für je eine Woche.',
+                                                value: this.completeData['survey']['planingStyle']['planing-style-c']
+                                            };
+                                            arr.push(elem);
+                                        } else {
+                                            let elem = {
+                                                name: 'Für das ganze Semester mit Arbeitspaketen für je eine Woche.',
+                                                value: 0
+                                            };
+                                            arr.push(elem);
+                                        }
+                                        if(typeof this.completeData['survey']['planingStyle']['planing-style-d'] === "number"){
+                                            let elem = {
+                                                name: 'Für das ganze Semester mit Arbeitspaketen für je 2 Wochen.',
+                                                value: this.completeData['survey']['planingStyle']['planing-style-d']
+                                            };
+                                            arr.push(elem);
+                                        } else {
+                                            let elem = {
+                                                name: 'Für das ganze Semester mit Arbeitspaketen für je 2 Wochen.',
+                                                value: 0
+                                            };
+                                            arr.push(elem);
+                                        }
+                                        if(typeof this.completeData['survey']['planingStyle']['planing-style-e'] === "number"){
+                                            let elem = {
+                                                name: 'Für das ganze Semester mit Arbeitspaketen für je einen Monat.',
+                                                value: this.completeData['survey']['planingStyle']['planing-style-e']
+                                            };
+                                            arr.push(elem);
+                                        } else {
+                                            let elem = {
+                                                name: 'Für das ganze Semester mit Arbeitspaketen für je einen Monat.',
+                                                value: 0
+                                            };
+                                            arr.push(elem);
+                                        }
+                                        if(typeof this.completeData['survey']['planingStyle']['planing-style-f'] === "number"){
+                                            let elem = {
+                                                name: 'Keine Angaben',
+                                                value: this.completeData['survey']['planingStyle']['planing-style-f']
+                                            };
+                                            arr.push(elem);
+                                        } else {
+                                            let elem = {
+                                                name: 'Keine Angaben',
+                                                value: 0
+                                            };
+                                            arr.push(elem);
+                                        }
+                                        return arr;
+                                    },
+                                    getTimePieData: function(){
+                                        let arr = [];
+                                        if(typeof this.completeData['survey'].availTime === "object"){
+                                            for(let i in this.completeData['survey'].availTime){
+                                                const elem = {
+                                                    name: i,
+                                                    value: this.completeData['survey']['availTime'][i]
+                                                }
+                                                arr.push(elem);
+                                            }
+                                        }
+                                        return arr;
+                                    },
+                                    getPlanPieData: function(){
+                                        let arr = [];
+                                        if(typeof this.completeData['survey'].objectives.f1a === "number"){
+                                            const elem = {
+                                                name: "Prüfung",
+                                                value: this.completeData['survey'].objectives.f1a
+                                            }
+                                            arr.push(elem);
+                                        } else {
+                                            const elem = {
+                                                name: "Prüfung",
+                                                value: 0
+                                            }
+                                            arr.push(elem);
+                                        }
+                                        if(typeof this.completeData['survey'].objectives.f1b === "number"){
+                                            const elem = {
+                                                name: "Orientierung",
+                                                value: this.completeData['survey'].objectives.f1b
+                                            }
+                                            arr.push(elem);
+                                        } else {
+                                            const elem = {
+                                                name: "Orientierung",
+                                                value: 0
+                                            }
+                                            arr.push(elem);
+                                        }
+                                        if(typeof this.completeData['survey'].objectives.f1c === "number"){
+                                            const elem = {
+                                                name: "Interesse",
+                                                value: this.completeData['survey'].objectives.f1c
+                                            }
+                                            arr.push(elem);
+                                        } else {
+                                            const elem = {
+                                                name: "Interesse",
+                                                value: 0
+                                            }
+                                            arr.push(elem);
+                                        }
+                                        if(typeof this.completeData['survey'].objectives.f1d === "number"){
+                                            const elem = {
+                                                name: "Keine Angabe",
+                                                value: this.completeData['survey'].objectives.f1d
+                                            }
+                                            arr.push(elem);
+                                        } else {
+                                            const elem = {
+                                                name: "Keine Angabe",
+                                                value: 0
+                                            }
+                                            arr.push(elem);
+                                        }
+                                        return arr;
+                                    },
+                                    getMileStonePieData: function(){
+                                        let arr = [];                                        
+                                        if(typeof this.completeData['milestones'].urgent === "number"){
+                                            arr.push({
+                                                name: "Dringlich",
+                                                value: this.completeData['milestones'].urgent
+                                            });
+                                        }
+                                        if(typeof this.completeData['milestones'].missed === "number"){
+                                            arr.push({
+                                                name: "Abgelaufen",
+                                                value: this.completeData['milestones'].missed
+                                            });
+                                        }                                       
+                                        if(typeof this.completeData['milestones'].progress === "number" && typeof this.completeData['milestones'].ready === "number"){
+                                            arr.push({
+                                                name: "Bereit",
+                                                value: this.completeData['milestones'].progress + this.completeData['milestones'].ready
+                                            });
+                                        }
+                                        if(typeof this.completeData['milestones'].reflected === "number"){
+                                            arr.push({
+                                                name: "Reflektiert",
+                                                value: this.completeData['milestones'].reflected
+                                            });
+                                        }
+                                        return arr;
+                                    },
+                                    getLimeSurveyData: function(){
+                                        let arr = [];
+                                        if(typeof this.completeData['lime'] === "object"){
+                                            for(let i in this.completeData['lime']){
+                                                const obj = {
+                                                    name: this.completeData['lime'][i].name,
+                                                    value: +this.completeData['lime'][i].count
+                                                }
+                                                arr.push(obj);
+                                            }                                           
+                                        } 
+                                        return arr;
+                                    },
                                     setCurrentPage: function(page){
                                         this.currentPage = page;
                                     },
@@ -216,7 +642,7 @@ define([
                                         }
                                     },
                                     translatePlaningStyle: function(planingStyle){                                        
-                                        switch(planingStyle){
+                                        switch(planingStyle){                                           
                                             case 'planing-style-a': return 'Nur für eine Woche.';                                                                    
                                             case 'planing-style-b': return 'Für die nächsten 4 Wochen.';                                                                   
                                             case 'planing-style-c': return 'Für das ganze Semester mit Arbeitspaketen für je eine Woche.';
@@ -237,7 +663,6 @@ define([
                                     },
                                     createMSTreeData(){
                                         if(typeof this.currentUser !== "object" || typeof this.currentUser.milestones !== 'object' || typeof this.currentUser.milestones.elements !== "object" || this.currentUser.milestones.elements.length < 1) return null;
-                                        console.log(this.currentUser);
                                         if(typeof +this.currentUser.milestones.modified !== 'number') return null;
                                         const unix = +this.currentUser.milestones.modified;                                        
                                         const time = moment.unix(unix).format('DD.MM.YYYY');
@@ -366,13 +791,96 @@ define([
                                             <div class="navbar-nav">
                                                 <a class="nav-item nav-link active" v-on:click="setCurrentPage('home')" href="#"><span class="text-white">Gesamtübersicht</span></a>
                                                 <a class="nav-item nav-link" v-on:click="setCurrentPage('user')" href="#"><span class="text-white">Einzelansicht</span></a>
-                                                <a class="nav-item nav-link" href="#"><span class="text-white">xxx</span></a>
+                                                <!-- <a class="nav-item nav-link" href="#"><span class="text-white">Self-Assessment</span></a> -->
                                             </div>
                                         </div>                  
                                     </nav>
                                     <!-- Home Dashboard -->
-                                    <div class="py-2 px-1" v-if="showHome">
-                                        <div class="container-fluid">
+                                    <div class="py-2 px-1 bg-secondary" v-if="showHome">
+                                        <div class="px-2">
+                                            <h4><b>Eingangsbefragung</b></h4>
+                                            <div><b>Verfolgte Ziele</b></div>
+                                            <piechart v-bind:chartData="getPlanPieData()" v-bind:color="['#FDF7C2', '#FF6961', '#70A1D7', '#A1DE93']"></piechart>
+                                            <table class="table table-responsive">
+                                                <tr>
+                                                    <td>Prüfung</td>
+                                                    <td>Orientierung</td>
+                                                    <td>Interesse</td>
+                                                    <td>Keine Angabe</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-center">{{ completeData['survey'].objectives.f1a ? completeData['survey'].objectives.f1a : 0 }}</td>
+                                                    <td class="text-center">{{ completeData['survey'].objectives.f1b ? completeData['survey'].objectives.f1b : 0 }}</td>
+                                                    <td class="text-center">{{ completeData['survey'].objectives.f1c ? completeData['survey'].objectives.f1c : 0 }}</td>
+                                                    <td class="text-center">{{ completeData['survey'].objectives.f1d ? completeData['survey'].objectives.f1d : 0 }}</td>
+                                                </tr>
+                                            </table>
+                                            <div><b>Geplante Lernstunden pro Woche</b></div>
+                                            <barchart v-bind:chartData="getTimePieData()" v-bind:max="completeData['users']"></barchart>
+                                            <table class="table table-responsive">
+                                                <tr v-for="(count, index) in completeData['survey'].availTime">                                                   
+                                                    <td>{{index}} Stunde(n)</td>
+                                                </tr>
+                                                <tr v-for="(count, index) in completeData['survey'].availTime">
+                                                    <td class="text-center">{{count}}</td>
+                                                </tr>
+                                            </table>
+                                            <div><b>Zeitraum der Lernaktivitätsplanung</b></div>
+                                            <piechart v-bind:chartData="getPlaningStyleData()" v-bind:color="['#8DA290', '#DEE2D9', '#FCF1D8', '#F2CBBB', '#EAEBFF', '#D3EEFF']"></piechart>
+                                            <table class="table table-responsive">
+                                                <tr>
+                                                    <td>Nur für eine Woche.</td>                                                                    
+                                                    <td>Für die nächsten 4 Wochen.</td>                                                               
+                                                    <td>Für das ganze Semester mit Arbeitspaketen für je eine Woche.</td>
+                                                    <td>Für das ganze Semester mit Arbeitspaketen für je 2 Wochen.</td>
+                                                    <td>Für das ganze Semester mit Arbeitspaketen für je einen Monat.</td>
+                                                    <td>Keine Angaben</td>    
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-center">{{ completeData['survey']['planingStyle']['planing-style-a'] ? completeData['survey']['planingStyle']['planing-style-a'] : 0 }}</td>
+                                                    <td class="text-center">{{ completeData['survey']['planingStyle']['planing-style-b'] ? completeData['survey']['planingStyle']['planing-style-b'] : 0 }}</td>
+                                                    <td class="text-center">{{ completeData['survey']['planingStyle']['planing-style-c'] ? completeData['survey']['planingStyle']['planing-style-c'] : 0}}</td>
+                                                    <td class="text-center">{{ completeData['survey']['planingStyle']['planing-style-d'] ? completeData['survey']['planingStyle']['planing-style-d'] : 0}}</td>
+                                                    <td class="text-center">{{ completeData['survey']['planingStyle']['planing-style-e'] ? completeData['survey']['planingStyle']['planing-style-e'] : 0}}</td>
+                                                    <td class="text-center">{{ completeData['survey']['planingStyle']['planing-style-f'] ? completeData['survey']['planingStyle']['planing-style-f'] : 0 }}</td>
+                                                </tr>                                   
+                                            </table>
+                                            <h4><b>LimeSurvey Umfragen</b></h4>
+                                            <barchart v-bind:chartData="getLimeSurveyData()" v-bind:max="completeData['users']"></barchart>
+                                            <table class="table table-responsive">
+                                                <tr>
+                                                    <td>ID</td>
+                                                    <td>Name</td>
+                                                    <td>LS-ID</td>
+                                                    <td>Einreichungen</td>
+                                                </tr>                                                
+                                                <tr v-for="surv in completeData['lime']" v-bind:id="surv.id">
+                                                    <td class="text-center">{{ surv.id }}</td>
+                                                    <td class="text-center">{{ surv.name }}</td>
+                                                    <td class="text-center">{{ surv.survey_id }}</td>
+                                                    <td class="text-center">{{ surv.count }}/{{ completeData['users'] }}</td>
+                                                </tr>
+                                            </table>
+                                            <h4><b>Meilensteine</b></h4>
+                                            <piechart v-bind:chartData="getMileStonePieData()" v-bind:color="['#FDF7C2', '#FF6961', '#70A1D7', '#A1DE93']"></piechart>
+                                            <table class="table table-responsive">
+                                                <tr>
+                                                    <td>Dringlich</td>
+                                                    <td>Bereit</td>
+                                                    <td>Abgelaufen</td>
+                                                    <td>Reflektiert</td>
+                                                    <td>Gesamt</td>
+                                                    <td>Durchschnitt pro Benutzer*in</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-center">{{ completeData['milestones'].urgent }}</td>
+                                                    <td class="text-center">{{ completeData['milestones'].ready + completeData['milestones'].progress }}</td>
+                                                    <td class="text-center">{{ completeData['milestones'].missed }}</td>
+                                                    <td class="text-center">{{ completeData['milestones'].reflected }}</td>
+                                                    <td class="text-center">{{ completeData['milestones'].sum }}</td>
+                                                    <td class="text-center">{{ completeData['milestones'].sum / completeData['users'] }}</td>
+                                                </tr>
+                                            </table>
                                         </div>
                                     </div>
                                     <!-- User Dashboard -->
@@ -401,7 +909,7 @@ define([
                                                                 </tr>                                                       
                                                             </tbody>
                                                         </table>
-                                                        <h4>Semesterplanung</h4>
+                                                        <h4><b>Semesterplanung</b></h4>
                                                         <table class="table table-responsive">
                                                             <tbody>
                                                                 <tr>
@@ -440,7 +948,7 @@ define([
                                                             </tbody>
                                                         </table>
                                                         <!-- graphtree -->
-                                                        <h4>Meilensteine</h4>
+                                                        <h4><b>Meilensteine</b></h4>
                                                         <div class="pb-1">Es sind <b>{{ currentUser.milestones.elements.length }}</b> Meilensteine vorhanden.</div>
                                                         <graphtree v-bind:chartData="createMSTreeData()"></graphtree>                                                        
                                                         <!-- Milestone list -->
@@ -498,7 +1006,7 @@ define([
                                                 <div class="col-4 bg-secondary">
                                                     <div class="form-group py-2">
                                                         <!-- <label for="chooseUser">Benutzer*in</label> -->
-                                                        <select multiple class="form-control" id="chooseUser">
+                                                        <select multiple class="form-control" id="chooseUser" style="min-height:300px;">
                                                             <option v-for="user in users" v-bind:key="user.id" v-on:click="setUser(user)" >{{user.firstname+" "+user.lastname+" ("+user.username+")"}}</option>
                                                         </select>
                                                     </div>
