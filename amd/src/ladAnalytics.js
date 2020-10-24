@@ -796,8 +796,8 @@ define([
                                         </div>                  
                                     </nav>
                                     <!-- Home Dashboard -->
-                                    <div class="py-2 px-1 bg-secondary" v-if="showHome">
-                                        <div class="px-2">
+                                    <div class="my-2 px-1 bg-secondary" v-if="showHome">
+                                        <div class="px-2 pt-2">
                                             <h4><b>Eingangsbefragung</b></h4>
                                             <div><b>Verfolgte Ziele</b></div>
                                             <piechart v-bind:chartData="getPlanPieData()" v-bind:color="['#FDF7C2', '#FF6961', '#70A1D7', '#A1DE93']"></piechart>
