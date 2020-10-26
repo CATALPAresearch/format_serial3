@@ -1038,11 +1038,11 @@ $modalMilestone = '
                                         </span>
                                     </div>
                                     <!-- Pill content -->
-                                    <div class="tab-content" id="pills-tabContent">
+                                    <div class="tab-content col-12 col-md-7 col-lg-7" id="pills-tabContent">
                                         <div class="tab-pane col-12 fade" id="view-timeline" role="tabpanel" aria-labelledby="view-timeline">
                                             ' . $milestoneTimeline . '
                                         </div>
-                                        <div class="tab-pane col-12 fade show active milestone-list" id="view-list" role="tabpanel" aria-labelledby="view-list">
+                                        <div class="tab-pane col-12 fade show active milestone-list" id="view-list" style="max-height: 400px; overflow-y: auto;" role="tabpanel" aria-labelledby="view-list">
                                             ' . $milestoneList . '
                                         </div>
                                         <div class="tab-pane col-12 fade milestone-list" id="view-archive-list" role="tabpanel" aria-labelledby="view-archive-list">
@@ -1079,7 +1079,7 @@ $modalMilestone = '
                                 <div class="col-md-12">
                                     <ul class="nav nav-tabs dashboard-tab">
                                         <li class="nav-item active">
-                                            <a class="nav-link active" v-on:click="log(\'dashboard_completion_open\')" data-toggle="tab" href="#learningstatus" role="tab">Genutzte Lernangebote</a></li>    
+                                            <a class="nav-link active" v-on:click="log(\'dashboard_completion_open\')" data-toggle="tab" href="#learningstatus" role="tab">Genutzte Lernangebote</a></li>
                                         <li hidden class="nav-item ">
                                             <a class="nav-link"v-on:click="log(\'dashboard_time-management_open\')"  data-toggle="tab" href="#timemanagement" role="tab">Zeitmanagement</a></li>
                                         <li class="nav-item">
