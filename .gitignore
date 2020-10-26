@@ -1,5 +1,14 @@
 *.code-workspace
 _trash
-x.html
 test.html
 node_modules
+.vscode*
+.git*
+.gitignore
+.git-ftp-ignore
+*.sh
+git-ftp.sh
+x.html
+x.json
+.tscache
+.vs-code-workspace.code-workspace
