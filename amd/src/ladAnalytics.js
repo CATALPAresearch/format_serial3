@@ -29,6 +29,7 @@ define([
 
         return {
             init: function(users){
+                console.log('init users ',users)
                 require(
                     ['d3'],
                     function(d3){   
@@ -346,6 +347,7 @@ define([
                                         objectives: {},
                                         planingStyle: {}
                                     };           
+                                    console.log('users',users)
                                     for(let i in users){
                                         const user = users[i];
                                         // LimeSurvey                                        
@@ -406,11 +408,17 @@ define([
                                                 initSurvey.planingStyle[user.initialSurvey.planingStyle] = 1;
                                             }                                       
                                         }                                    
-                                    }
+                                    } 
+                                    
                                     this.completeData['survey'] = initSurvey;
                                     this.completeData['milestones'] = milestoneStorage;
                                     this.completeData['lime'] = surveys;   
-                                    this.completeData['users'] = users.length;                                                     
+                                    this.completeData['users'] = users.length;
+                                    console.log('An dieser Stelle kommen bei mir keine Daten an.')
+                                    console.log('init', initSurvey)
+                                    console.log('ms', milestoneStorage)
+                                    console.log('surveys', surveys)
+                                    console.log('users', users.length)
                                 },
                                 computed:{
                                     showHome: function(){
