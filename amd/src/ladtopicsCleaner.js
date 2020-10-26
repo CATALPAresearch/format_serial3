@@ -51,11 +51,11 @@ define(['jquery'], function ($) {
             const link = `${M.cfg.wwwroot}/course/format/ladtopics/policy.php`;
             $('div.ladtopics').prepend(
                 ` 
-                <div class="alert alert-primary my-0" style="cursor:pointer;">
+                <div class="alert alert-primary my-0">
                     <div class="w-75">
-                        Da Sie nicht allen benötigten Richtlinien zugestimmt haben, erhalten Sie nur eine eingeschränkte Lernunterstützung.<br />
-                        Im Folgenden können Sie den Richtlinien nachträglich zustimmen, sofern Sie wollen.<br />
-                        <button type="button" class="btn btn-primary mt-2" onclick="javascript:window.location.href='${link}'">Übersicht der Kursrichtlinien</button>
+                        Da Sie den Untersuchungen im Rahmen des Projektes APLE nicht zugestimmt haben, können wir Ihnen nur die grundlegende Lernunterstützung anbieten.<br />
+                        Falls sich an den Untersuchungen beteiligen möchten, können Sie noch bis Ende Oktober Ihr Zustimmung geben:<br />
+                        <button type="button" class="btn btn-primary mt-2" onclick="javascript:window.location.href='${link}'">Kursrichtlinien einsehen und ggf. zustimmen</button>
                     </div>
                 </div>
                 `
