@@ -25,8 +25,7 @@ class blocking
 
     const policy_version = 3; // local_niels: 11  aple: 3 marc: 1
     const debug = false;
-
-    private static $_whitelist = array(
+    const whitelist = array(
         '127.0.0.1',
         '::1',
         'localhost'
@@ -35,7 +34,7 @@ class blocking
     public static function tool_policy_accepted()
     {
         global $DB, $USER;          
-        if(!self::debug && in_array($_SERVER['REMOTE_ADDR'], self::$_whitelist)) return true;        
+        if(!self::debug && in_array($_SERVER['REMOTE_ADDR'], self::whitelist)) return true;        
         $res = $DB->get_record("tool_policy_acceptances", array("policyversionid" => self::policy_version, "userid" => (int)$USER->id ), "status");
         if (isset($res->status) && $res->status == 1) {
             return true;
