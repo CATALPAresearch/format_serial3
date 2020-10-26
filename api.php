@@ -735,8 +735,9 @@ class format_ladtopics_external extends external_api
                         cm.instance AS instance_id,     
                         m.name AS instance_type, 
                         m.visible AS instance_visible,
-                        f.name AS instance_title,
+                        f.name AS instance_title,                        
                         cm.id AS instance_url_id,
+                        cm.visible AS cm_visibility,
                         cm.course AS course_id, 
                         cm.module AS module_id, 
                         cm.section AS section_id, 
@@ -764,6 +765,7 @@ class format_ladtopics_external extends external_api
                     $res = $DB->get_records_sql($query, $params);
                     $transaction->allow_commit();
                     foreach ($res as $entry) {
+                        if(!$entry->cm_visibility) continue;
                         $pos = -1;
                         // I am not sure whether sizeof() and count() have the same results, but in php 7.2 sizeof() requires an array.
                         if (gettype($entry->section_sequence) === "string" && sizeof($entry->section_sequence) > 0) {
