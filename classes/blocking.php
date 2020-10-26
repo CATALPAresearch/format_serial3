@@ -22,11 +22,21 @@ defined('MOODLE_INTERNAL') || die();
 
 class blocking
 {
+
+    const policy_version = 3; // local_niels: 11  aple: 3 marc: 1
+    const disable_blocking = false;
+    const disable_whitelist = false;
+    const whitelist = array(
+        '127.0.0.1',
+        '::1',
+        'localhost'
+    );
+
     public static function tool_policy_accepted()
     {
-        global $DB, $USER;         
-        $version = 11;// local_niels: 11  aple: 3 marc: 1
-        $res = $DB->get_record("tool_policy_acceptances", array("policyversionid" => $version, "userid" => (int)$USER->id ), "status");
+        global $DB, $USER;             
+        if(self::disable_blocking === true || (self::disable_whitelist === false && in_array($_SERVER['REMOTE_ADDR'], self::whitelist))) return true;        
+        $res = $DB->get_record("tool_policy_acceptances", array("policyversionid" => self::policy_version, "userid" => (int)$USER->id ), "status");
         if (isset($res->status) && $res->status == 1) {
             return true;
         }
