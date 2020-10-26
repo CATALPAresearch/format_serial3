@@ -1,4 +1,5 @@
 <?php
+
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -15,15 +16,18 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version details
- *
- * @package    format
- * @subpackage ladtopics
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * 
+ * @author Marc Burchart <marc.burchart@fernuni-hagen.de>
+ * 
  */
+
+namespace format_ladtopics\permission;
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2020082600;        // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2017050500;        // Requires this Moodle version.
-$plugin->component = 'format_ladtopics';    // Full name of the plugin (used for diagnostics).
+class module extends context {
+    function __construct($userid, $coure_module){
+        $context = \context_module::instance($cm->id);
+        parent::__construct($userid, $context);
+    }
+}
