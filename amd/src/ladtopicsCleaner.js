@@ -54,7 +54,7 @@ define(['jquery'], function ($) {
                 <div class="alert alert-primary my-0">
                     <div class="w-75">
                         Sie haben sich entschieden, den Untersuchungen im Rahmen des Projektes APLE nicht zuzustimmen, weshalb wir Ihnen nur die grundlegende Lernunterstützung anbieten können.<br />
-                        Falls sich an den Untersuchungen beteiligen möchten, um weitere Unterstützungen angeboten zu bekommen, können Sie noch bis Ende Oktober umentscheiden:<br />
+                        Falls Sie sich an den Untersuchungen beteiligen möchten und weitere Lernunterstützung in Form von Lernwerkzeugen in Anspruchen nehmen wollen, können Sie sich noch bis Ende Oktober umentscheiden:<br />
                         <button type="button" class="btn btn-primary mt-2" onclick="javascript:window.location.href='${link}'">Kursrichtlinien einsehen und ggf. zustimmen</button>
                     </div>
                 </div>
