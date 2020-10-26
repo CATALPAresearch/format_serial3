@@ -34,7 +34,7 @@ class blocking
     public static function tool_policy_accepted()
     {
         global $DB, $USER;          
-        if(!self::debug && in_array($_SERVER['REMOTE_ADDR'], self::whitelist)) return true;        
+        if(self::debug === false && in_array($_SERVER['REMOTE_ADDR'], self::whitelist)) return true;        
         $res = $DB->get_record("tool_policy_acceptances", array("policyversionid" => self::policy_version, "userid" => (int)$USER->id ), "status");
         if (isset($res->status) && $res->status == 1) {
             return true;
