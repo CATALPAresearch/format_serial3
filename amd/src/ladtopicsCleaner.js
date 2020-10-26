@@ -46,6 +46,20 @@ define(['jquery'], function ($) {
             });
 
             $('.activity.usenet').hide();
+
+            // A field to ask to accept all policies required for LADTopics.
+            const link = `${M.cfg.wwwroot}/course/format/ladtopics/policy.php`;
+            $('div.ladtopics').prepend(
+                ` 
+                <div class="alert alert-primary my-0" style="cursor:pointer;">
+                    <div class="w-75">
+                        Da Sie nicht allen benötigten Richtlinien zugestimmt haben, erhalten Sie nur eine eingeschränkte Lernunterstützung.<br />
+                        Im Folgenden können Sie den Richtlinien nachträglich zustimmen, sofern Sie wollen.<br />
+                        <button type="button" class="btn btn-primary mt-2" onclick="javascript:window.location.href='${link}'">Übersicht der Kursrichtlinien</button>
+                    </div>
+                </div>
+                `
+            );
         }
     };
 });

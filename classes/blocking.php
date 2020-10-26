@@ -24,16 +24,12 @@ class blocking
 {
     public static function tool_policy_accepted()
     {
-        global $DB, $USER;
-        require_login();
-        //if(isset($_SESSION['policy_accepted'][$policyversionid]) && $_SESSION['policy_accepted'] === true) return true;        
-        $version = 11;// local_niels: 11  aple: 3
+        global $DB, $USER;         
+        $version = 11;// local_niels: 11  aple: 3 marc: 1
         $res = $DB->get_record("tool_policy_acceptances", array("policyversionid" => $version, "userid" => (int)$USER->id ), "status");
         if (isset($res->status) && $res->status == 1) {
-            $_SESSION['policy_accepted'] = true;
             return true;
         }
-        $_SESSION['policy_accepted'] = false;
         return false;
     }
 }
