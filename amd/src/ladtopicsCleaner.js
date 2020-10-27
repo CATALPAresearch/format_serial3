@@ -53,12 +53,19 @@ define(['jquery'], function ($) {
                 ` 
                 <div class="alert alert-primary my-0">
                     <div class="w-75">
-                        Sie haben sich entschieden, den Untersuchungen im Rahmen des Projektes APLE nicht zuzustimmen, weshalb wir Ihnen nur die grundlegende Lernunterstützung anbieten können.<br />
-                        Falls Sie sich an den Untersuchungen beteiligen möchten und weitere Lernunterstützung in Form von Lernwerkzeugen in Anspruchen nehmen wollen, können Sie sich noch bis Ende Oktober umentscheiden:<br />
-                        <button type="button" class="btn btn-primary mt-2" onclick="javascript:window.location.href='${link}'">Kursrichtlinien einsehen und ggf. zustimmen</button>
+                    Im Rahmen des Forschungsprojekts APLE besteht hier für Sie die Möglichkeit, eine adaptive personalisierte Lernumgebung zu nutzen. Die Teilnahme ist freiwillig.<br />
+
+                    Stimmen Sie zu, erhalten Sie zusätzliche Funktionen und profitieren davon für Ihr Selbststudium. Bei den Aktivitäten in Moodle werden dementsprechend Forschungsdaten erhoben. Stimmen Sie nicht zu, nutzen Sie die Lernumgebung ohne zusätzliche adaptive Funktionen. Hier werden nur die standardmäßigen Daten erhoben. Sie können sich bis zum 30.10.2020 entscheiden, ob Sie an diesem Angebot teilhaben möchten. Teil der Forschung ist auch eine Befragung, die etwa 30 Minuten in Anspruch nehmen wird. Die Befragungsergebnisse dienen dazu, die Lernplattform zu verbessern und an die individuellen Bedürfnisse der Lernenden anzupassen.<br />
+
+                    Wir würden uns sehr freuen, wenn Sie uns bei diesem wichtigen Forschungsprojekt unterstützen.
+    
+                    <button type="button" class="btn btn-primary mt-2" onclick="javascript:window.location.href='${link}'">Kursrichtlinien einsehen und ggf. zustimmen</button>
                     </div>
                 </div>
                 `
+
+                // Sie haben sich entschieden, den Untersuchungen im Rahmen des Projektes APLE nicht zuzustimmen, weshalb wir Ihnen nur die grundlegende Lernunterstützung anbieten können.<br />
+                // Falls Sie sich an den Untersuchungen beteiligen möchten und weitere Lernunterstützung in Form von Lernwerkzeugen in Anspruchen nehmen wollen, können Sie sich noch bis Ende Oktober umentscheiden: <br />
             );
         }
     };
