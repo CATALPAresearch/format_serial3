@@ -40,8 +40,10 @@ define(['jquery'], function ($) {
             }
             let blackpages_arr = blackpages.split(',');
             for (var i = 0; i < blackpages_arr.length; i++) {
-                if (blackpages[i].length > 0 && $('li#' + blackpages_arr[i]).length) {
-                    $('#' + blackpages_arr[i]).hide();
+                if (blackpages[i].length > 0) {
+                    if ($('#' + blackpages_arr[i]).length){
+                        $('#' + blackpages_arr[i]).hide();
+                    }
                 }
             }
             
