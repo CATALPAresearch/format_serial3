@@ -1005,7 +1005,8 @@ $modalMilestone = '
                                                             <a class="dropdown-item" v-on:click="log(\'teacher_settings_administration_open\')" data-toggle="modal" data-target="#moderationModal" href="#">
                                                                 <i class="fa fa-clock mr-1"></i>Administration
                                                             </a>
-                                                            <a class="dropdown-item" onClick="javascript:window.open(\''.$CFG->wwwroot.'/course/format/ladtopics/analytics/ladtopics.php?c='.$COURSE->id.'\')" href="#">
+                                                            <a class="dropdown-item" data-toggle="modal" data-target="#reportModal" href="#">
+                                                                <!-- onClick="javascript:window.open(\''.$CFG->wwwroot.'/course/format/ladtopics/analytics/ladtopics.php?c='.$COURSE->id.'\')" -->
                                                                 <i class="fa fa-clock mr-1"></i>Analytics
                                                             </a>':
                                                             '<a class="dropdown-item"  v-on:click="log(\'user_setting_open\')" data-toggle="modal" data-target="#moderationModal" href="#">
@@ -1038,7 +1039,7 @@ $modalMilestone = '
                                         </span>
                                     </div>
                                     <!-- Pill content -->
-                                    <div class="tab-content col-12 col-md-7 col-lg-7" id="pills-tabContent">
+                                    <div class="tab-content col-12 col-md-8 col-lg-8" id="pills-tabContent">
                                         <div class="tab-pane col-12 fade" id="view-timeline" role="tabpanel" aria-labelledby="view-timeline">
                                             ' . $milestoneTimeline . '
                                         </div>
