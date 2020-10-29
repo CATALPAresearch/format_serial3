@@ -2497,6 +2497,7 @@ define([
                                 var result;
                                 try{
                                     result = JSON.parse(survey[0]["value"]);
+                                    if(typeof result !== "object") return;
                                 } catch(error){
                                     return;
                                 }                             
