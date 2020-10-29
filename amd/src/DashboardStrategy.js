@@ -159,13 +159,17 @@ define([
             mounted: function () {
 
                 if (this.storageAvailable('localStorage')) {
-                    try{
-                        this.bookmarked = JSON.parse(localStorage.getItem('ladtopics_strategy_bookmarks'));
-                    }catch(e){
+                    try {
+                        if (localStorage.getItem('ladtopics_strategy_bookmarks') !== null) {
+                            this.bookmarked = JSON.parse(localStorage.getItem('ladtopics_strategy_bookmarks'));
+                        } else {
+                            this.bookmarked = {};
+                        }
+                    } catch (e) {
                         //new Error(e);
                         this.bookmarked = {};
                     }
-                    
+
                 }
                 this.the_milestones = getReflections(this.milestones);
             },
