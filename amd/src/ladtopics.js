@@ -111,6 +111,7 @@ define([
                                             const time = moment(data.warnDate * 1000);
                                             const now = moment();
                                             const diff = `${time.diff(now, 'days')}`;
+                                            if(diff < 0) return;
 
                                             const warnTime = moment(data.warnDate * 1000).format("DD.MM.YYYY hh:mm");
                                             text = `Sie haben noch ${diff} Tage Zeit, um eine Umfrage zur Begleitforschung der Forschungsprojekte APLE / LA-DIVA aufzuschieben. <br />Ab dem ${warnTime} Uhr müssen Sie die Umfrage absolvieren, um wieder auf die Lernumgebung zurgreifen zu können.`;
@@ -131,7 +132,7 @@ define([
                                             </div>
                                             `
                                         );
-
+                                       
                                         $("header").after(obj);
                                     }
                                 }
