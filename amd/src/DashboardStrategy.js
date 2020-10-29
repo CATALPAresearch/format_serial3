@@ -157,8 +157,11 @@ define([
             },
 
             mounted: function () {
+
+                if (this.storageAvailable('localStorage')) {
+                    this.bookmarked = JSON.parse(localStorage.getItem('ladtopics_strategy_bookmarks'));
+                }
                 this.the_milestones = getReflections(this.milestones);
-                
             },
 
             created: function () {
@@ -195,7 +198,7 @@ define([
                     let item = this.strategyCategories.filter(function (category) {
                         return category.id === _this.currentMenuItem;
                     })[0];
-                    return item === undefined ? {id:0, desc:''} : item;
+                    return item === undefined ? { id: 0, desc: '' } : item;
                 },
                 setCurrentMenuItem: function (item) {
                     this.mode = 'category';
@@ -210,25 +213,52 @@ define([
                         category: this.strategyById(strategy).category
                     });
                 },
-                getDate: function(t){
-                    let d =  new Date(t);
-                    return d.getDate()+'.'+(d.getMonth()+1)+'.'+d.getFullYear()
+                getDate: function (t) {
+                    let d = new Date(t);
+                    return d.getDate() + '.' + (d.getMonth() + 1) + '.' + d.getFullYear()
                 },
 
-                strategyIsBookmarked: function(id){ 
-                    if(this.bookmarked[id] === undefined){
+                strategyIsBookmarked: function (id) {
+                    if (this.bookmarked[id] === undefined) {
                         this.bookmarked[id] = false;
                     }
                     return this.bookmarked[id];
                 },
 
-                toggleBookmark: function (id) { 
+                toggleBookmark: function (id) {
                     if (this.bookmarked[id] === undefined) {
                         this.bookmarked[id] = false;
                     }
                     this.bookmarked[id] = !this.bookmarked[id];
                     this.$forceUpdate();
+                    if (this.storageAvailable('localStorage')) {
+                        localStorage.setItem('ladtopics_strategy_bookmarks', JSON.stringify(this.bookmarked));
+                    }
                 },
+                storageAvailable: function (type) {
+                    var storage;
+                    try {
+                        storage = window[type];
+                        var x = '__storage_test__';
+                        storage.setItem(x, x);
+                        storage.removeItem(x);
+                        return true;
+                    }
+                    catch (e) {
+                        return e instanceof DOMException && (
+                            // everything except Firefox
+                            e.code === 22 ||
+                            // Firefox
+                            e.code === 1014 ||
+                            // test name field too, because code might not be present
+                            // everything except Firefox
+                            e.name === 'QuotaExceededError' ||
+                            // Firefox
+                            e.name === 'NS_ERROR_DOM_QUOTA_REACHED') &&
+                            // acknowledge QuotaExceededError only if there's something already stored
+                            (storage && storage.length !== 0);
+                    }
+                }
             },
 
             watch: {
