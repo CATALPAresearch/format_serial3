@@ -74,11 +74,20 @@ if(!isset($_GET['c']) || $DB->count_records('course', array('id' => $_GET['c']))
                 $ms = $DB->get_record_sql($sql);
                 if(is_object($ms)){
                     $u->milestones = new stdClass();
-                    $u->milestones->modified = $ms->timemodified;
-                    $u->milestones->elements = json_decode($ms->milestones);
-                    $u->milestones->count = count($u->milestones->elements);
+                    $mse = json_decode($ms->milestones);
+                    if(!is_array($mse) || $mse === null){
+                        $u->milestones->modified = date();
+                        $u->milestones->elements = array();
+                        $u->milestones->count = 0;
+                    } else {
+                        $u->milestones->modified = $ms->timemodified;
+                        $u->milestones->elements = $mse;
+                        $u->milestones->count = count($u->milestones->elements);
+                    }                  
                 } else {
-                    $u->milestones = null;
+                    $u->milestones->modified = time();
+                    $u->milestones->count = 0;
+                    $u->milestones->elements = array();
                 }
                 // Preferences
                 $surveyDone = $DB->get_record("user_preferences", array(
@@ -90,9 +99,20 @@ if(!isset($_GET['c']) || $DB->count_records('course', array('id' => $_GET['c']))
                     'userid'=>(int)$user->id
                 ));
                 if($surveyDone !== false && is_object($surveyData) && isset($surveyData->value)){
-                    $u->initialSurvey = json_decode($surveyData->value);
+                    $data = json_decode($surveyData->value);
+                    if($data === null){
+                        $u->initialSurvey = new stdClass();
+                        $u->initialSurvey->planingStyle = 'unknown';
+                        $u->initialSurvey->objectives = 'f1d';
+                        $u->initialSurvey->availableTime = -1;
+                    } else {
+                        $u->initialSurvey = $data;
+                    }
                 } else {
-                    $u->initialSurvey = null;
+                    $u->initialSurvey = new stdClass();
+                    $u->initialSurvey->planingStyle = 'unknown';
+                    $u->initialSurvey->objectives = 'f1d';
+                    $u->initialSurvey->availableTime = -1;
                 }    
                 // LimeSurvey
                 $sql = 'SELECT a.id, a.name, a.survey_id, s.complete_date, s.submission_id
@@ -105,7 +125,7 @@ if(!isset($_GET['c']) || $DB->count_records('course', array('id' => $_GET['c']))
                 if(is_array($lime) && count($lime) > 0){
                     $u->lime = $lime;
                 } else {
-                    $u->lime = [];
+                    $u->lime = array();
                 }                     
                 $users[] = $u;
             }     
