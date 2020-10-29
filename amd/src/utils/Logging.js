@@ -126,7 +126,7 @@ define([
                     }
                 },
                 done: function (e) {
-                    console.log(e)
+                    //console.log(e)
                 },
                 fail: function (e) {
                     // throw(e);

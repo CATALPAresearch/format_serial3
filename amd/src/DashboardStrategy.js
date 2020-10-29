@@ -159,7 +159,13 @@ define([
             mounted: function () {
 
                 if (this.storageAvailable('localStorage')) {
-                    this.bookmarked = JSON.parse(localStorage.getItem('ladtopics_strategy_bookmarks'));
+                    try{
+                        this.bookmarked = JSON.parse(localStorage.getItem('ladtopics_strategy_bookmarks'));
+                    }catch(e){
+                        //new Error(e);
+                        this.bookmarked = {};
+                    }
+                    
                 }
                 this.the_milestones = getReflections(this.milestones);
             },
