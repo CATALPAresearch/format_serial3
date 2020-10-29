@@ -1208,8 +1208,9 @@ define([
                     },
                     updateMilestones: function () {
                         this.sortMilestones();
+                        const ms = this.milestones;
                         // Update Milestones to the database using the webservice
-                        var _this = this;
+                        /*var _this = this;
                         let ms = _this.milestones.filter(
                             function (element) {
                                 if (element.mod !== true) {
@@ -1218,7 +1219,7 @@ define([
                                 if (typeof element.mod === "undefined") element.mod = false;
                                 return false;
                             }
-                        );
+                        );*/
                         utils.get_ws('setmilestones', {
                             data: {
                                 'courseid': parseInt(course.id, 10),
