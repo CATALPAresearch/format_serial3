@@ -392,20 +392,20 @@ define([
                                         if(typeof user.initialSurvey === "object"){
                                             const surv = user.initialSurvey;
                                             //initSurvey
-                                            if(typeof initSurvey.availTime[user.initialSurvey.availableTime] === "number"){
-                                                initSurvey.availTime[user.initialSurvey.availableTime]++;
+                                            if(typeof initSurvey.availTime[surv.availableTime] === "number"){
+                                                initSurvey.availTime[surv.availableTime]++;
                                             } else {
-                                                initSurvey.availTime[user.initialSurvey.availableTime] = 1;
+                                                initSurvey.availTime[surv.availableTime] = 1;
                                             }        
-                                            if(typeof initSurvey.objectives[user.initialSurvey.objectives] === "number"){
-                                                initSurvey.objectives[user.initialSurvey.objectives]++;
+                                            if(typeof initSurvey.objectives[surv.objectives] === "number"){
+                                                initSurvey.objectives[surv.objectives]++;
                                             } else {
-                                                initSurvey.objectives[user.initialSurvey.objectives] = 1;
+                                                initSurvey.objectives[surv.objectives] = 1;
                                             }
-                                            if(typeof initSurvey.planingStyle[user.initialSurvey.planingStyle] === "number"){
-                                                initSurvey.planingStyle[user.initialSurvey.planingStyle]++;
+                                            if(typeof initSurvey.planingStyle[surv.planingStyle] === "number"){
+                                                initSurvey.planingStyle[surv.planingStyle]++;
                                             } else {
-                                                initSurvey.planingStyle[user.initialSurvey.planingStyle] = 1;
+                                                initSurvey.planingStyle[surv.planingStyle] = 1;
                                             }                                       
                                         }                                    
                                     } 
