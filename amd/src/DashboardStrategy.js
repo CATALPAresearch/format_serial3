@@ -4,12 +4,12 @@
  * @module     format/ladtopics
  * @class      DashboardCompletion
  * @copyright  2020 Niels Seidel <niels.seidel@fernuni-hagen.de>
- * @description xxx
+ * @description 
  * @license    MIT
  * @since      3.1
  * 
  * @todo
- * - provide favorites for strategies
+ * - save bookmarks
  * - let users take notes
  */
 
@@ -27,6 +27,7 @@ define([
                     currentStrategy: null,
                     currentMenuItem: 'organisation',
                     mode: 'category',
+                    bookmarked: {},
                     the_milestones: [],
                     moodlePath: M.cfg.wwwroot,
                     strategyCategories: [
@@ -212,7 +213,22 @@ define([
                 getDate: function(t){
                     let d =  new Date(t);
                     return d.getDate()+'.'+(d.getMonth()+1)+'.'+d.getFullYear()
-                }
+                },
+
+                strategyIsBookmarked: function(id){ 
+                    if(this.bookmarked[id] === undefined){
+                        this.bookmarked[id] = false;
+                    }
+                    return this.bookmarked[id];
+                },
+
+                toggleBookmark: function (id) { 
+                    if (this.bookmarked[id] === undefined) {
+                        this.bookmarked[id] = false;
+                    }
+                    this.bookmarked[id] = !this.bookmarked[id];
+                    this.$forceUpdate();
+                },
             },
 
             watch: {
@@ -236,6 +252,7 @@ define([
                                         <li v-for="s in strategiesByCategory(pc.id)" :style="currentStrategy==s.id ? 'background-color:lightblue;' : ''" :class="currentStrategy == s.id ? 'nav-item active' : 'nav-item'">
                                             <a v-if="s.subheading !== true" class="bl-2 pl-1 ml-4 nav-link py-0" v-on:click.prevent="setCurrentStrategy(s.id)" style="cursor:pointer;">
                                                 <span>{{s.name}}</span>
+                                                <i v-if="strategyIsBookmarked(s.id)" class="ml-1 pb-2 fa fa-circle" style="color:#008fac; font-size:0.6em;"></i>
                                             </a>
                                             <span v-if="s.subheading" class="pl-1 ml-2">{{s.name}}</span>
                                         </li>
@@ -250,7 +267,11 @@ define([
                             <div>{{ getSelectedMenuItem().desc }}</div>
                         </div>
                         <div v-if="mode=='strategy'">
-                            <div class="bold">{{ getSelectedStrategy().name }}</div>
+                            <div class="bold">
+                                {{ getSelectedStrategy().name }}
+                                <i v-if="!strategyIsBookmarked(getSelectedStrategy().id)" v-on:click="toggleBookmark(getSelectedStrategy().id)" class="fa fa-bookmark strategy-bookmarked" style="color:#aaa;" title="Diese Lernstrategie vormerken"></i>
+                                <i v-if="strategyIsBookmarked(getSelectedStrategy().id)" v-on:click="toggleBookmark(getSelectedStrategy().id)" class="fa fa-bookmark strategy-not-bookmarked" style="color:#008fac;" title="Vormerkung der Lernstrategie aufheben"></i>
+                            </div>
                             <div v-if="currentStrategy=='crossreading'">
                                 Elaborationsstrategien werden eingesetzt, um ein erweitertes Wissen zu generieren. Lernende bedienen sich dabei
                                 meist der bereits internalisierten Schemata und Wissensbasen und nutzen z. B. vertraute Abläufe, um Querbezüge herzustellen. vgl.
