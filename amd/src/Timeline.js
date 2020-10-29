@@ -2487,13 +2487,19 @@ define([
                                 if (typeof u.response !== "string" || u.response.length <= 0) return;
                                 let survey = JSON.parse(u.response);
 
-                                if (
+                                if(
                                     !survey[0].hasOwnProperty("value") ||
                                     survey[0]["value"] === '0' ||
                                     typeof survey[0]["value"] !== 'string' ||
-                                    survey[0]["value"].length === 0)
-                                    return
-                                let result = JSON.parse(survey[0]["value"]);
+                                    survey[0]["value"].length === 0
+                                ) return;
+
+                                var result;
+                                try{
+                                    result = JSON.parse(survey[0]["value"]);
+                                } catch(error){
+                                    return;
+                                }                             
                                 let plan = result.objectives.toLowerCase();
                                 let ps = result.planingStyle.toLowerCase();
                                 let sr = {
