@@ -1005,8 +1005,8 @@ $modalMilestone = '
                                                             <a class="dropdown-item" v-on:click="log(\'teacher_settings_administration_open\')" data-toggle="modal" data-target="#moderationModal" href="#">
                                                                 <i class="fa fa-clock mr-1"></i>Administration
                                                             </a>
-                                                            <a class="dropdown-item" data-toggle="modal" data-target="#reportModal" href="#">
-                                                                <!-- onClick="javascript:window.open(\''.$CFG->wwwroot.'/course/format/ladtopics/analytics/ladtopics.php?c='.$COURSE->id.'\')" -->
+                                                            <a onClick="javascript:window.open(\''.$CFG->wwwroot.'/course/format/ladtopics/analytics/ladtopics.php?c='.$COURSE->id.'\')" class="dropdown-item" data-toggle="modal" data-target="#reportModal" href="#">
+                                                                <!--  -->
                                                                 <i class="fa fa-clock mr-1"></i>Analytics
                                                             </a>':
                                                             '<a class="dropdown-item"  v-on:click="log(\'user_setting_open\')" data-toggle="modal" data-target="#moderationModal" href="#">
