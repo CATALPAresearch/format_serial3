@@ -81,7 +81,7 @@ class context {
                 return true;
             }
         }
-        return true;
+        return false;
     }
 
     public function hasViewCapability(){
@@ -92,14 +92,13 @@ class context {
         return is_enrolled($this->_context, $this->_userid);
     }
 
-    public function isAnyKindOfModerator(){
+    public function isAnyKindOfModerator(){      
         if(
             $this->isSiteAdmin() ||
-            $this->isCourseCreator() ||
             $this->isManager() ||
-            $this->isModerator() ||
-            $this->isTeacher() ||
-            $this->isEditingTeacher()
+            $this->isCourseCreator() || 
+            $this->isEditingTeacher() ||          
+            $this->isTeacher()            
         ){
             return true;
         }
