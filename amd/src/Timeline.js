@@ -982,6 +982,48 @@ define([
                         this.updateMilestoneStatus();
                         this.updateChart(this.range);
                     },
+                    updateMilestoneResource: function(milestone){  
+                        this.updateMilestoneStatus();                                        
+                        if(typeof milestone.reflections === "object" && milestone.reflections.length > 0) return;    
+                        let allRessourcesChecked = true;
+                        for(let i in milestone.resources){
+                            const res = milestone.resources[i];
+                            if(res.checked !== true) allRessourcesChecked = false;
+                        }
+                        const t = new Date();
+                        const diff = moment(t).diff(moment(milestone.end), 'minutes');                                               
+                        if(allRessourcesChecked){                            
+                            if(diff > 0){
+                                $('#currentMilestoneTab').popover("dispose");
+                                $('#archiveMilestoneTab').popover("dispose");                               
+                                $('#currentMilestoneTab').popover({
+                                    animation: true,
+                                    trigger: 'manual',
+                                    placement: 'top',
+                                    content: 'Ein Meilenstein wurde hier hin verschoben!'             
+                                });
+                                $('#currentMilestoneTab').popover("show");
+                                setTimeout(function(){
+                                    $('#currentMilestoneTab').popover("dispose");
+                                }, 3000);
+                            }
+                        } else {
+                            if(diff > 0){
+                                $('#currentMilestoneTab').popover("dispose");
+                                $('#archiveMilestoneTab').popover("dispose");                             
+                                $('#archiveMilestoneTab').popover({
+                                    animation: true,
+                                    trigger: 'manual',
+                                    placement: 'top',
+                                    content: 'Ein Meilenstein wurde hier hin verschoben!'             
+                                });
+                                $('#archiveMilestoneTab').popover("show");                               
+                                setTimeout(function(){
+                                    $('#archiveMilestoneTab').popover("dispose");
+                                }, 3000);
+                            }
+                        }                       
+                    },
                     removeMilestone: function () {
                         this.closeModal(false);
                         $('div.modal-backdrop.show').remove();
