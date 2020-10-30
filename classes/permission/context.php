@@ -77,7 +77,7 @@ class context {
 
     public function findRole($shortname){
         foreach($this->_roles as $role){
-            if(isset($role->shortname) && strtolower($role->shortname) === strtolower($name)){
+            if(isset($role->shortname) && strtolower($role->shortname) === strtolower($shortname)){
                 return true;
             }
         }
