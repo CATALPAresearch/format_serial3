@@ -103,7 +103,7 @@ define([
                             if (typeof e === "object" && e !== null) {
                                 if (typeof e.data === "string") {
                                     const data = JSON.parse(e.data);
-                                    if (data.warnSurvey === true) {
+                                    if (data.warnSurvey === true) {                                       
 
                                         let text = "Sie haben noch offene Umfragen zur Begleitforschung der Forschungsprojekte APLE / LA-DIVA.";
 
@@ -111,11 +111,12 @@ define([
                                             const time = moment(data.warnDate * 1000);
                                             const now = moment();
                                             const diff = `${time.diff(now, 'days')}`;
-
-                                            const warnTime = moment(data.warnDate * 1000).format("DD.MM.YYYY hh:mm");
-                                            text = `Sie haben noch ${diff} Tage Zeit, um eine Umfrage zur Begleitforschung der Forschungsprojekte APLE / LA-DIVA aufzuschieben. <br />Ab dem ${warnTime} Uhr müssen Sie die Umfrage absolvieren, um wieder auf die Lernumgebung zurgreifen zu können.`;
+                                            if(diff >= 0){
+                                                const warnTime = moment(data.warnDate * 1000).format("DD.MM.YYYY hh:mm");
+                                                text = `Sie haben noch ${diff} Tage Zeit, um eine Umfrage zur Begleitforschung der Forschungsprojekte APLE / LA-DIVA aufzuschieben. <br />Ab dem ${warnTime} Uhr müssen Sie die Umfrage absolvieren, um wieder auf die Lernumgebung zurgreifen zu können.`;
+                                            }                                            
                                         }
-
+                                        
                                         //const link = `${window.location.protocol}//${window.location.hostname}/course/format/ladtopics/survey.php?c=${courseid}`;
                                         const curl = window.location.href;
                                         const split = curl.substr(0, curl.indexOf("view"));
@@ -131,7 +132,7 @@ define([
                                             </div>
                                             `
                                         );
-
+                                       
                                         $("header").after(obj);
                                     }
                                 }
