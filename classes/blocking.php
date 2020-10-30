@@ -29,7 +29,8 @@ class blocking
     const whitelist = array(
         '127.0.0.1',
         '::1',
-        'localhost'
+        'localhost',
+        //'132.176.117.197' reverse setting for testing 
     );
 
     public static function tool_policy_accepted()

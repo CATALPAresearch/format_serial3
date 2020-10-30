@@ -1296,7 +1296,7 @@ define([
                     updateMilestones: function () {
                         //this.sortMilestones();
                         // Update Milestones to the database using the webservice
-                        var _this = this;
+                        /*var _this = this;
                         let ms = _this.milestones.filter(
                             function (element) {
                                 if (element.mod !== true) {
@@ -1305,7 +1305,7 @@ define([
                                 if (typeof element.mod === "undefined") element.mod = false;
                                 return false;
                             }
-                        );
+                        );*/
                         utils.get_ws('setmilestones', {
                             data: {
                                 'courseid': parseInt(course.id, 10),
@@ -2573,13 +2573,20 @@ define([
                                 if (typeof u.response !== "string" || u.response.length <= 0) return;
                                 let survey = JSON.parse(u.response);
 
-                                if (
+                                if(
                                     !survey[0].hasOwnProperty("value") ||
                                     survey[0]["value"] === '0' ||
                                     typeof survey[0]["value"] !== 'string' ||
-                                    survey[0]["value"].length === 0)
-                                    return
-                                let result = JSON.parse(survey[0]["value"]);
+                                    survey[0]["value"].length === 0
+                                ) return;
+
+                                var result;
+                                try{
+                                    result = JSON.parse(survey[0]["value"]);
+                                    if(typeof result !== "object") return;
+                                } catch(error){
+                                    return;
+                                }                             
                                 let plan = result.objectives.toLowerCase();
                                 let ps = result.planingStyle.toLowerCase();
                                 let sr = {
