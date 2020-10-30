@@ -1306,6 +1306,7 @@ define([
                                 return false;
                             }
                         );*/
+                        const ms = this.milestones;
                         utils.get_ws('setmilestones', {
                             data: {
                                 'courseid': parseInt(course.id, 10),
