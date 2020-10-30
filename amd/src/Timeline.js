@@ -340,18 +340,34 @@ define([
                         return false;
                     },
                     archivedMilestones: function () {
-                        return this.milestones.filter(
+                        const ms = this.milestones.filter(
                             function (f) {
                                 return f.status === "missed" || f.status === "reflected" && f.hide !== true;
                             }
                         );
+                        ms.sort(
+                            function(a,b){                            
+                                let x = new Date(a.end);
+                                let y = new Date(b.end);                                                       
+                                return y - x;
+                            }
+                        );
+                        return ms;
                     },
                     remainingMilestones: function () {
-                        return this.milestones.filter(
+                        const ms = this.milestones.filter(
                             function (f) {
                                 return f.status !== "missed" && f.status !== "reflected" && f.hide !== true;
                             }
+                        );                       
+                        ms.sort(
+                            function(a,b){ 
+                                let x = new Date(a.end);
+                                let y = new Date(b.end);                                                       
+                                return x - y;
+                            }
                         );
+                        return ms;
                     },
                     dayOfSelectedMilestone: {
                         get: function () {
@@ -1236,7 +1252,7 @@ define([
                         return resourceProgress;
                     },
                     updateMilestones: function () {
-                        this.sortMilestones();
+                        //this.sortMilestones();
                         // Update Milestones to the database using the webservice
                         var _this = this;
                         let ms = _this.milestones.filter(
