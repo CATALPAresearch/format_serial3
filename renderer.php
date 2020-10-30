@@ -488,7 +488,7 @@ $milestoneArchiveList = '
                                         v-model="s.checked" 
                                         :id="s.id"
                                         :disabled = "m.status === \'reflected\'"
-                                        @change="updateMilestoneStatus()"
+                                        @change="updateMilestoneResource(m)"
                                         >
                                     <a v-if="s.instance_type !== \'freeText\'" 
                                         :href="(s.instance_type === \'coursedate\' ? (getMoodlePath() + \'/calendar/view.php?view=day&time=\' + s.time + \'&course=\' + '.$COURSE->id.') : (getMoodlePath() + \'/mod/\' + s.instance_type + \'/view.php?id=\'+ s.instance_url_id))" 
@@ -579,7 +579,7 @@ $milestoneList = '
                                         title="Setzen Sie das Häkchen, wenn Sie dieses Lernangebot bereits bearbeitet haben."
                                         v-model="s.checked" 
                                         :id="s.id"
-                                        @change="updateMilestoneStatus()"
+                                        @change="updateMilestoneResource(m)"
                                         >
                                     <a v-if="s.instance_type !== \'freeText\'"
                                         :href="(s.instance_type === \'coursedate\' ? (getMoodlePath() + \'/calendar/view.php?view=day&time=\'+ s.time +\'&course=\' + '.$COURSE->id.') : (getMoodlePath() + \'/mod/\' + s.instance_type + \'/view.php?id=\'+ s.instance_url_id))" 
@@ -799,16 +799,17 @@ $modalMilestone = '
                 <button id="close-modal" @click="closeModal()" type="button" class="close" data-dismiss="modal"
                     aria-label="Close">
                     <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
+                </button>                
+            </div>                       
             <div class="modal-body">
                 <div class="row">
                     <div class="col-12">
                         Mit einem Meilenstein planen Sie eines Ihrer Lern- oder Arbeitsziele, welches zu
                         einem selbst gewählten Termin erreicht werden soll.
                     </div>
-                </div>
-                <hr />
+                </div> 
+                <div>Ablageort: <b>{{ archiveWarning ? "Archiv" : "Aktuelle Meilensteine" }}</b></div>                
+                <hr />                              
                 <div class="form-group row">
                     <label for="inputMSname" class="col-sm-2 col-form-label">Titel *</label>
                     <div class="col-sm-10">
@@ -891,7 +892,7 @@ $modalMilestone = '
                             <button class="btn btn-sm btn-default mt-1" v-on:click="addFreeTextRescource()">Andere Lernmaterialien hinzufügen</button>
                         </div>
                     </div>
-                </div>
+                </div>               
                 <hr />
                 <div hidden class="row">
                     <div class="col-md">
@@ -901,8 +902,8 @@ $modalMilestone = '
                             Reflexion beginnen
                         </button>
                     </div>
-                </div>
-                <!-- Save new milestone-->
+                </div>                
+                <!-- Save new milestone-->                
                 <div class="row row-smooth">
                     <div class="col-md">
                         <div>
@@ -974,7 +975,7 @@ $modalMilestone = '
                                                         </li>
                                                         <li v-if="milestones.length > 0" class="nav-item">
                                                             <a 
-                                                                class="nav-link active" @click="hideAdditionalCharts(\'list\')" id="milestone-list-tab" data-toggle="pill" href="#view-list" role="tab" aria-controls="view-list" aria-selected="false">
+                                                                class="nav-link active" id="currentMilestoneTab" @click="hideAdditionalCharts(\'list\')" id="milestone-list-tab" data-toggle="pill" href="#view-list" role="tab" aria-controls="view-list" aria-selected="false">
                                                                 <i hidden class="fa fa-list"></i> Aktuelle Meilensteine <span>({{remainingMilestones.length}})</span>
                                                             </a>                                                            
                                                         </li>
@@ -986,7 +987,7 @@ $modalMilestone = '
                                                         </li>
                                                         <li v-if="milestones.length > 0" class="nav-item">
                                                             <a 
-                                                                class="nav-link" @click="hideAdditionalCharts(\'archive\')" id="milestone-archive-list-tab" data-toggle="pill" href="#view-archive-list" role="tab" aria-controls="view-archive-list" aria-selected="false">
+                                                                class="nav-link" id="archiveMilestoneTab" @click="hideAdditionalCharts(\'archive\')" id="milestone-archive-list-tab" data-toggle="pill" href="#view-archive-list" role="tab" aria-controls="view-archive-list" aria-selected="false">
                                                                 <i hidden class="fa fa-list"></i> Archiv <span>({{archivedMilestones.length}})</span>
                                                             </a>
                                                         </li>                                                                                                        
