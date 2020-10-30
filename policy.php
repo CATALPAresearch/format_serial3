@@ -17,14 +17,14 @@ $message = '';
 // Track the previous page to go back after the changes.
 $policy_back = $CFG->wwwroot;
 if(isset($_SESSION['policy_back'])){
-    if(isset($_SERVER['HTTP_REFERER']) && !is_null($_SERVER['HTTP_REFERER'])){
+    if(isset($_SERVER['HTTP_REFERER']) && !is_null($_SERVER['HTTP_REFERER']) && strpos($_SERVER['HTTP_REFERER'], 'policy.php') === false){
         $policy_back = $_SERVER['HTTP_REFERER'];
         $_SESSION['policy_back'] = $policy_back;
     } else {
         $policy_back = $_SESSION['policy_back'];
     }
 } else {
-    if(isset($_SERVER['HTTP_REFERER']) && !is_null($_SERVER['HTTP_REFERER'])){
+    if(isset($_SERVER['HTTP_REFERER']) && !is_null($_SERVER['HTTP_REFERER']) && strpos($_SERVER['HTTP_REFERER'], 'policy.php') === false){
         $policy_back = $_SERVER['HTTP_REFERER'];
         $_SESSION['policy_back'] = $policy_back;
     }
