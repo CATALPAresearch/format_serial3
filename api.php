@@ -64,9 +64,13 @@ class format_ladtopics_external extends external_api
     }
 
     public static function limesurvey($courseid){
-        global $CFG, $DB, $USER;
-        $out = array();       
+        global $CFG, $DB, $USER; 
         try{
+            $out = array(); 
+
+            $perm = new format_ladtopics\permission\course($USER->id, $courseid);  
+            if($perm->isAnyKindOfModerator()) return array('data' => json_encode($out));
+
             $out['warnSurvey'] = false;
             $records = $DB->get_records_sql('SELECT * FROM '.$CFG->prefix.'limesurvey_assigns WHERE course_id = ?', array($courseid));
             foreach($records as $record){
