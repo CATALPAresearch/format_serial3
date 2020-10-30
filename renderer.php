@@ -799,16 +799,17 @@ $modalMilestone = '
                 <button id="close-modal" @click="closeModal()" type="button" class="close" data-dismiss="modal"
                     aria-label="Close">
                     <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
+                </button>                
+            </div>                       
             <div class="modal-body">
                 <div class="row">
                     <div class="col-12">
                         Mit einem Meilenstein planen Sie eines Ihrer Lern- oder Arbeitsziele, welches zu
                         einem selbst gewählten Termin erreicht werden soll.
                     </div>
-                </div>
-                <hr />
+                </div> 
+                <div>Ablageort: <b>{{ archiveWarning ? "Archiv" : "Aktuelle Meilensteine" }}</b></div>                
+                <hr />                              
                 <div class="form-group row">
                     <label for="inputMSname" class="col-sm-2 col-form-label">Titel *</label>
                     <div class="col-sm-10">
@@ -891,7 +892,7 @@ $modalMilestone = '
                             <button class="btn btn-sm btn-default mt-1" v-on:click="addFreeTextRescource()">Andere Lernmaterialien hinzufügen</button>
                         </div>
                     </div>
-                </div>
+                </div>               
                 <hr />
                 <div hidden class="row">
                     <div class="col-md">
@@ -901,8 +902,8 @@ $modalMilestone = '
                             Reflexion beginnen
                         </button>
                     </div>
-                </div>
-                <!-- Save new milestone-->
+                </div>                
+                <!-- Save new milestone-->                
                 <div class="row row-smooth">
                     <div class="col-md">
                         <div>

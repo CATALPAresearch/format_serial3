@@ -310,6 +310,35 @@ define([
                     }
                 },
                 computed: {
+                    archiveWarning: function(){
+                        const ms = this.getSelectedMilestone(); 
+                        let overTime = false;                                                    
+                        if((typeof ms.end === "string" && ms.end.length > 0) || typeof ms.end === "object"){
+                            const t = new Date();
+                            const diff = moment(t).diff(moment(ms.end), 'minutes');
+                            if(diff > 0){
+                                overTime = true;
+                            }
+                        }  
+                        let allSelected = true;
+                        if(typeof ms.resources === "object" && ms.resources.length > 0){
+                            for(let i in ms.resources){
+                                const mys = ms.resources[i];
+                                if(mys.checked === false) allSelected = false;
+                            }
+                        } else {
+                            allSelected = false;
+                        }                        
+                        if(allSelected){                            
+                            if(typeof ms.reflections !== "object" || ms.reflections.length <= 0) {                                
+                                return false;
+                            }
+                            return true;
+                        } else if(overTime){                                                                       
+                            return true;
+                        }                         
+                        return false;
+                    },
                     archivedMilestones: function () {
                         return this.milestones.filter(
                             function (f) {
@@ -1407,7 +1436,7 @@ define([
                             function (a, b) {
                                 let x = new Date(a.end);
                                 let y = new Date(b.end);
-                                let now = new Date();
+                                /*let now = new Date();
                                 if (a.status === "urgent" && b.status !== "urgent") return -1;
                                 if (b.status === "urgent" && a.status !== "urgent") return 1;
                                 if (a.status === "progress" && b.status !== "progress") return -1;
@@ -1419,7 +1448,7 @@ define([
                                 if (b.status === "reflected" && a.status !== "reflected") return 1;
                                 if (a.end >= now && b.end < now) return -1;
                                 if (b.end >= now && a.end < now) return 1;
-                                if (x < now && y < now) return y - x;
+                                if (x < now && y < now) return y - x;*/
                                 return x - y;
                             }
                         );
