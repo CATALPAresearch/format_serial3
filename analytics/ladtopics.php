@@ -49,8 +49,13 @@ if(!isset($_GET['c']) || $DB->count_records('course', array('id' => $_GET['c']))
         $context = $permission->getCourseContext();
         $enrollments = get_enrolled_users($context);       
         $users = array();
+        $stop = 0;
         try{
             foreach($enrollments as $user){  
+                $stop++;
+                if($stop>20){
+                break;
+                }
                 try{
                     $u = new stdClass();
                     $u->id = $user->id;
