@@ -65,9 +65,8 @@ class format_ladtopics_external extends external_api
 
     public static function limesurvey($courseid){
         global $CFG, $DB, $USER; 
-        try{
-            $out = array(); 
-
+        $out = array(); 
+        try{           
             $perm = new format_ladtopics\permission\course($USER->id, $courseid);  
             if($perm->isAnyKindOfModerator()) return array('data' => json_encode($out));
 
