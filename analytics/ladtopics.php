@@ -50,6 +50,7 @@ if(!isset($_GET['c']) || $DB->count_records('course', array('id' => $_GET['c']))
         $enrollments = get_enrolled_users($context);       
         $users = array();
         try{
+            set_time_limit(120);
             foreach($enrollments as $user){  
                 try{
                     $u = new stdClass();
