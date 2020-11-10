@@ -54,9 +54,9 @@ if(!isset($_GET['c']) || $DB->count_records('course', array('id' => $_GET['c']))
             set_time_limit(120);
             foreach($enrollments as $user){  
                 $stop++;
-                if($stop>20){
-                break;
-                }
+                //if($stop>20){
+                //break;
+                //}
                 try{
                     $u = new stdClass();
                     $u->id = $user->id;
