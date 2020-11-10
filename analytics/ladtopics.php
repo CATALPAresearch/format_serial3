@@ -78,7 +78,7 @@ if(!isset($_GET['c']) || $DB->count_records('course', array('id' => $_GET['c']))
                             AND t.userid = ' . (int)$user->id . '
                         ORDER BY t.timemodified DESC
                         LIMIT 1';
-                    $ms = $DB->get_record_sql($sql);               
+                    //$ms = $DB->get_record_sql($sql);               
                     if(is_object($ms)){
                         $u->milestones = new stdClass();
                         $mse = json_decode($ms->milestones);                    
@@ -128,7 +128,7 @@ if(!isset($_GET['c']) || $DB->count_records('course', array('id' => $_GET['c']))
                      ON s.survey_id = a.survey_id 
                         AND a.course_id = ? 
                      LIMIT 1';
-                    $lime = $DB->get_records_sql($sql, array((int)$courseid));
+                    //$lime = $DB->get_records_sql($sql, array((int)$courseid));
                     if(is_array($lime) && count($lime) > 0){
                         $u->lime = $lime;
                     } else {
