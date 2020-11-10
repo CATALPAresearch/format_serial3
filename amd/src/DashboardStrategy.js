@@ -20,7 +20,7 @@ define([
 
     return Vue.component('dashboard-strategy',
         {
-            props: ['course', 'milestones', 'log'],
+            props: ['course', 'log', 'milestones'],
 
             data: function () {
                 return {
@@ -181,6 +181,11 @@ define([
             },
 
             methods: {
+                updateReflections: function(m){
+                    this.milestones = m;
+                    this.the_milestones = this.getReflections(m);
+                    console.log('got update')
+                },
                 strategiesByCategory: function (cat) {
                     return this.strategies.filter(function (s) {
                         return s.category === cat ? true : false;
@@ -196,8 +201,9 @@ define([
                         this.strategyById(this.currentStrategy) : { name: '', desc: '' };
                 },
                 getReflections: function (milestones) {
+                    console.log(this.milestones)
                     return this.milestones.filter(function (m) {
-                        return m.reflections[3].length > 0;
+                        return m.reflections.length > 0 ? m.reflections[3].length > 0 : 0;
                     });
                 },
                 getMilestones: function () {
@@ -272,10 +278,12 @@ define([
             },
 
             watch: {
-                milestones: function (m) {
+                milestones: function (m, oldVal) {
+                    this.milestones = m;
                     this.the_milestones = this.getReflections(m);
                 }
             },
+
 
             template: `
             <div>
@@ -662,10 +670,15 @@ define([
                     </div>
                     <div class="col-3 border-left">
                         <div class="bold mb-3">Meine Notizen aus der Reflexion</div>
-                        <div v-for="r in the_milestones">
-                            <div class="mb-2">
-                                <span class="card p-1 mb-0" style="font-size:0.8em">{{ r.reflections[3] }}</span>
-                                <small v-if="r.reflectionModified !== undefined" class="form-text text-muted mt-0 pt-0 right">{{ getDate(r.reflectionModified) }}</small>
+                        <div style="overflow-y: auto; overflow-x:hidden;"> 
+                            <div v-for="r in the_milestones">
+                                <div class="mb-2 ml-1 row">
+                                <small v-if="r.name !== undefined" class="form-text text-muted ml-0 pl-0 mt-0 pt-0">{{ r.name }}</small>
+                                <small v-if="r.reflectionModified !== undefined" class="form-text text-muted ml-0 pl-0 mt-0 pt-0">&nbsp;({{ getDate(r.reflectionModified) }})</small>
+                                <span class="col-12 card p-1 mb-0" style="font-size:0.8em">{{ r.reflections[3] }}</span>
+                                    
+                                
+                                </div>
                             </div>
                         </div>
                     </div>

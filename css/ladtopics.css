@@ -1188,14 +1188,21 @@ span.autocompletion, .tooglecompletion {
   border-top: solid 2px #83878b;
 }
 
-.dashboard-tab .nav-link, .dashboard-tab .nav>li>a {
-  font-size: 1em;
-  padding: 2px 4px;
-  margin-left: 4px;
+.dashboard-tab {
+  border-bottom: none !important;
 }
 
-ul.dashboard-tab li.nav-item a.active {
-  background-color: #b7bcc2;
+.dashboard-tab .nav-link {
+  font-size: 1em;
+  padding: 2px 4px;
+  margin-right: 4px;
+  border: none;
+  border-bottom: solid 3px #fff;
+}
+
+ul.dashboard-tab.nav-tabs .nav-link.active, ul.dashboard-tab li.nav-item a.active, ul.dashboard-tab .nav-link:hover {
+  border: none;
+  border-bottom: solid 3px #008fac;
 }
 
 .completion-rect {

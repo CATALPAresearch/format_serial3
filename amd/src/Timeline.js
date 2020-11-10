@@ -1448,6 +1448,7 @@ define([
                         }
                     },
                     submitReflections: function () {
+                        this.$refs.childDashboardStrategy.updateReflections(this.milestones);
                         this.getSelectedMilestone().status = 'reflected';
                         this.getSelectedMilestone().reflectionModified = (new Date()).getTime();
                         logger.add('reflections_completed', {
