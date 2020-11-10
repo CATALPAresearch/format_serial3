@@ -51,6 +51,7 @@ if(!isset($_GET['c']) || $DB->count_records('course', array('id' => $_GET['c']))
         $users = array();
         $stop = 0;
         try{
+            set_time_limit(120);
             foreach($enrollments as $user){  
                 $stop++;
                 if($stop>20){
