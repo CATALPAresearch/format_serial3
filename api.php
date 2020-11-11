@@ -55,6 +55,131 @@ function get_meta($courseID)
 
 class format_ladtopics_external extends external_api
 {
+    // Analytics
+
+    public static function analytics_parameters(){
+        return new external_function_parameters(
+            array(
+                'courseid' => new external_value(PARAM_INT, 'course id')
+            )
+        );
+    }
+
+    public static function analytics($courseid){
+        $out = array();
+        try{
+            $permission = new format_ladtopics\permission\course((int)$USER->id, $courseid);   
+            if(!$permission->isAnyKindOfModerator()) throw new Exception("No permission");
+            $context = $permission->getCourseContext();
+            $enrollments = get_enrolled_users($context);
+            $users = array();
+            foreach($enrollments as $user){
+                try{
+                    $u = new stdClass();
+                    // Get the personal informations
+                    $u->id = $user->id;
+                    $u->firstname = ucfirst(strtolower($user->firstname));
+                    $u->lastname = ucfirst(strtolower($user->lastname));
+                    $u->username = $user->username;
+                    $u->email = strtolower($user->email);
+                    $u->lang = $user->lang;
+                    $u->deleted = $user->deleted;
+                    $u->suspended = $user->suspended;
+                    $u->firstaccess = $user->firstaccess;
+                    $u->lastaccess = $user->lastaccess;
+                    // Get milestones from the person
+                    $sql = 'SELECT t.milestones, t.settings, t.timemodified 
+                            FROM '.$CFG->prefix.'ladtopics_milestones AS t
+                            WHERE   
+                                t.course = ' . (int)$courseid . ' 
+                                AND t.userid = ' . (int)$user->id . '
+                            ORDER BY t.timemodified DESC
+                            LIMIT 1';
+                    $ms = $DB->get_record_sql($sql);
+                    if($ms !== false && is_object($ms)){
+                        $u->milestones = new stdClass();
+                        $mse = json_decode($ms->milestones);
+                        if(!is_array($mse) || is_null($mse)){
+                            $u->milestones->modified = date();
+                            $u->milestones->elements = array();
+                            $u->milestones->count = 0;
+                        } else {
+                            $u->milestones->modified = $ms->timemodified;
+                            $u->milestones->elements = $mse;
+                            $u->milestones->count = count($u->milestones->elements);
+                        } 
+                    } else {
+                        $u->milestones->modified = time();
+                        $u->milestones->count = 0;
+                        $u->milestones->elements = array();
+                    }
+                    // Get the planing
+                    // Preferences
+                    $surveyDone = $DB->get_record("user_preferences", array(
+                        'name' => 'ladtopics_survey_done-course-' . (int)$courseid,
+                        'userid'=>(int)$user->id
+                    ));
+                    $surveyData = $DB->get_record("user_preferences", array(
+                        'name' => 'ladtopics_survey_results-course-' . (int)$courseid,
+                        'userid'=>(int)$user->id
+                    ));
+                    if($surveyDone !== false && is_object($surveyData) && isset($surveyData->value)){
+                        $data = json_decode($surveyData->value);
+                        if($data === null){
+                            $u->initialSurvey = new stdClass();
+                            $u->initialSurvey->planingStyle = 'unknown';
+                            $u->initialSurvey->objectives = 'f1d';
+                            $u->initialSurvey->availableTime = -1;
+                        } else {
+                            $u->initialSurvey = $data;
+                        }
+                    } else {
+                        $u->initialSurvey = new stdClass();
+                        $u->initialSurvey->planingStyle = 'unknown';
+                        $u->initialSurvey->objectives = 'f1d';
+                        $u->initialSurvey->availableTime = -1;
+                    }    
+                    // Get the lime survey data
+                    $sql = 'SELECT a.id, a.name, a.survey_id, s.complete_date, s.submission_id
+                     FROM '.$CFG->prefix.'limesurvey_submissions AS s
+                     INNER JOIN '.$CFG->prefix.'limesurvey_assigns AS a
+                     ON s.survey_id = a.survey_id 
+                        AND a.course_id = ? 
+                     LIMIT 1';
+                    $lime = $DB->get_records_sql($sql, array((int)$courseid));
+                    if(is_array($lime) && count($lime) > 0){
+                        $u->lime = $lime;
+                    } else {
+                        $u->lime = array();
+                    } 
+                    // Add user to the array
+                    $users[] = $u;
+                } catch(Exception $uex){
+                    continue;
+                }               
+            }
+            $out['users'] = $users;
+        } catch(Exception $ex){
+            $out['debug'] = $ex->getMessage();
+        }   
+        return array('data' => json_encode($out));     
+    }
+
+    public static function analytics_is_allowed_from_ajax(){
+        return true;
+    }
+
+    public static function analytics_returns(){
+        return new external_single_structure(
+            array(
+                'data' => new external_value(PARAM_RAW, 'data')
+            )
+        );
+    }
+
+
+    // End Analytics   
+    
     public static function limesurvey_parameters(){
         return new external_function_parameters(
             array(
