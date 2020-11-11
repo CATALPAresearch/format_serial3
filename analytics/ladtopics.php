@@ -44,8 +44,8 @@ if(!isset($_GET['c']) || $DB->count_records('course', array('id' => $_GET['c']))
     } else {
         // Zugriff gewährt
         echo $OUTPUT->header();
-        echo '<analytics-dashboard></analytics-dashboard>';        
-        // The Array which should be send to vue.
+        echo '<analytics-dashboard></analytics-dashboard>';  
+        $PAGE->requires->js_call_amd('format_ladtopics/ladAnalytics', 'init', array('course' => $courseid));      
         echo $OUTPUT->footer();
     }
 }

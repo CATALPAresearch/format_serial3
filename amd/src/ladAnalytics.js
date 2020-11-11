@@ -335,6 +335,15 @@ define([
                                     'piechart': piechart
                                 },
                                 mounted: function(){     
+
+                                    //getAPIData: function(method, param = {}){
+
+                                    console.log("hi");
+
+                                    return;
+
+
+
                                     var surveys = {};   
                                     // Milestones
                                     var milestoneStorage = {
@@ -433,6 +442,23 @@ define([
                                     }
                                 },
                                 methods: {
+                                    getAPIData: function(method, param = {}){
+                                        return new Promise(
+                                            function(resolve, reject){
+                                                ajax.call([{
+                                                    methodname: 'format_ladtopics_'+method,
+                                                    args: param,
+                                                    timeout: 3000,
+                                                    done: function(data){                                                                
+                                                        return resolve(data);
+                                                    },
+                                                    fail: function(error){                                                                
+                                                        return reject(error);
+                                                    }                  
+                                                }]);                                
+                                            }
+                                        );
+                                    },
                                     getPlaningStyleData: function(){
                                         let arr = [];
                                         if(typeof this.completeData['survey']['planingStyle']['planing-style-a'] === "number"){
