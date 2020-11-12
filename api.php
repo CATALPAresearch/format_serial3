@@ -89,6 +89,7 @@ class format_ladtopics_external extends external_api
                     $u->firstaccess = $user->firstaccess;
                     $u->lastaccess = $user->lastaccess;
                     // Get milestones from the person
+                    /*
                     $sql = 'SELECT t.milestones, t.settings, t.timemodified 
                             FROM '.$CFG->prefix.'ladtopics_milestones AS t
                             WHERE   
@@ -114,8 +115,11 @@ class format_ladtopics_external extends external_api
                         $u->milestones->count = 0;
                         $u->milestones->elements = array();
                     }
+                    */
+
                     // Get the planing
                     // Preferences
+                    /*
                     $surveyDone = $DB->get_record("user_preferences", array(
                         'name' => 'ladtopics_survey_done-course-' . (int)$courseid,
                         'userid'=>(int)$user->id
@@ -139,8 +143,10 @@ class format_ladtopics_external extends external_api
                         $u->initialSurvey->planingStyle = 'unknown';
                         $u->initialSurvey->objectives = 'f1d';
                         $u->initialSurvey->availableTime = -1;
-                    }    
+                    }
+                    */   
                     // Get the lime survey data
+                    /*
                     $sql = 'SELECT a.id, a.name, a.survey_id, s.complete_date, s.submission_id
                      FROM '.$CFG->prefix.'limesurvey_submissions AS s
                      INNER JOIN '.$CFG->prefix.'limesurvey_assigns AS a
@@ -153,6 +159,8 @@ class format_ladtopics_external extends external_api
                     } else {
                         $u->lime = array();
                     } 
+                    */
+
                     // Add user to the array
                     $users[] = $u;
                 } catch(Exception $uex){
