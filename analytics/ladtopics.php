@@ -29,6 +29,7 @@ require_login();
 
 $PAGE->set_pagelayout('course');
 $PAGE->set_title(get_string('surveyTitle', 'format_ladtopics'));
+$PAGE->set_title('Analytics');
 $PAGE->set_heading(get_string('surveyHeadline', 'format_ladtopics'));
 
 if(!isset($_GET['c']) || $DB->count_records('course', array('id' => $_GET['c'])) !== 1){
