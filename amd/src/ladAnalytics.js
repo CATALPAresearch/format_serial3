@@ -835,7 +835,7 @@ define([
                                         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                                             <div class="navbar-nav">
                                                 <a class="nav-item nav-link active" v-on:click="setCurrentPage('home')" href="#"><span class="text-white">Gesamtübersicht</span></a>
-                                                <a class="nav-item nav-link" v-on:click="setCurrentPage('user')" href="#"><span class="text-white">Einzelansicht</span></a>
+                                                <a hidden class="nav-item nav-link" v-on:click="setCurrentPage('user')" href="#"><span class="text-white">Einzelansicht</span></a>
                                                 <!-- <a class="nav-item nav-link" href="#"><span class="text-white">Self-Assessment</span></a> -->
                                             </div>
                                         </div>                  
@@ -929,7 +929,7 @@ define([
                                         </div>
                                     </div>
                                     <!-- User Dashboard -->
-                                    <div class="py-2" v-if="showUser">
+                                    <div hidden class="py-2">
                                         <div class="container-fluid">
                                             <div class="row">
                                                 <div id="userContent" class="col-8 bg-secondary">
