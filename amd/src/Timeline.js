@@ -2011,6 +2011,7 @@ define([
                             ));
                             Promise.all(todo).then(
                                 (resolve) => {
+                                    this.resetMilestones();
                                     location.reload();
                                 },
                                 (reject) => {
