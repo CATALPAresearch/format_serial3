@@ -349,6 +349,7 @@ define([
                                                 console.warn("Could not fetch data.");
                                                 return;
                                             }
+                                            console.log('userdaten',dobj)
                                             _this.users = dobj;
                                             const users = dobj;
                                             var surveys = {};   
