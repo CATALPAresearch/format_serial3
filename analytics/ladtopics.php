@@ -42,7 +42,7 @@ if(!isset($_GET['c']) || $DB->count_records('course', array('id' => $_GET['c']))
         // Keine Berechtigung
         redirect(new moodle_url("/"), 'Sie haben keine Berechtigung das Dashboard einzusehen!', null, \core\output\notification::NOTIFY_WARNING);
     } else {
-        // Zugriff gewährt
+        // Zugriff gewährt!
         echo $OUTPUT->header();
         echo '<analytics-dashboard></analytics-dashboard>';  
         $PAGE->requires->js_call_amd('format_ladtopics/ladAnalytics', 'init', array('course' => $courseid));      

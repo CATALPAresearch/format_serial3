@@ -68,6 +68,7 @@ class format_ladtopics_external extends external_api
     public static function analytics($courseid){
         $out = array();
         try{
+            global $USER, $CFG, $DB;
             $permission = new format_ladtopics\permission\course((int)$USER->id, $courseid);   
             if(!$permission->isAnyKindOfModerator()) throw new Exception("No permission");
             $context = $permission->getCourseContext();
@@ -176,8 +177,7 @@ class format_ladtopics_external extends external_api
             )
         );
     }
-
-
+    
     // End Analytics   
     
     public static function limesurvey_parameters(){

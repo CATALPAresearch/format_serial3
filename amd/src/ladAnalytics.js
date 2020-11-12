@@ -7,10 +7,11 @@
 
 define([
     'jquery',
+    'core/ajax',
     M.cfg.wwwroot + "/course/format/ladtopics/lib/build/vue.min.js",
     M.cfg.wwwroot + "/course/format/ladtopics/lib/build/moment-with-locales.min.js"    
 ],
-    function($, Vue, moment){  
+    function($, ajax, Vue, moment){  
         
         require.config({
             enforceDefine: false,
@@ -28,8 +29,7 @@ define([
         $('#page-content').css('margin-top', "57px");
 
         return {
-            init: function(users){
-                console.log('init users ',users)
+            init: function(courseid){
                 require(
                     ['d3'],
                     function(d3){   
@@ -324,7 +324,8 @@ define([
                             {
                                 el: 'analytics-dashboard',
                                 data: {
-                                    users: users,
+                                    courseid: +courseid,
+                                    users: [],
                                     currentPage: 'user',
                                     currentUser: null,
                                     completeData: {}
@@ -334,106 +335,112 @@ define([
                                     'barchart': barchart,
                                     'piechart': piechart
                                 },
-                                mounted: function(){     
-
-                                    //getAPIData: function(method, param = {}){
-
-                                    console.log("hi");
-
-                                    return;
-
-
-
-                                    var surveys = {};   
-                                    // Milestones
-                                    var milestoneStorage = {
-                                        urgent: 0,                                            
-                                        ready: 0,
-                                        progress: 0,
-                                        missed: 0,
-                                        reflected: 0,
-                                        sum: 0
-                                    };   
-                                    var initSurvey = {
-                                        availTime: {},
-                                        objectives: {},
-                                        planingStyle: {}
-                                    };           
-                                    console.log('users',users)
-                                    for(let i in users){
-                                        const user = users[i];
-                                        // LimeSurvey                                        
-                                        if(typeof user.lime === "object"){
-                                            for(let l in user.lime){
-                                                const lime = user.lime[l];
-                                                if(typeof lime === "object"){
-                                                    if(typeof surveys[lime.survey_id] !== "object"){
-                                                        surveys[lime.survey_id] = {
-                                                            id: +lime.id,
-                                                            name: lime.name,
-                                                            survey_id: +lime.survey_id,
-                                                            count: 1
+                                mounted: function(){   
+                                    const _this = this;
+                                    this.getAPIData('analytics', {courseid: this.courseid}).then(
+                                        function(resolve){
+                                            const data = resolve;
+                                            if(typeof data !== "object" || typeof data.data !== "string" && data.data.length <= 0) {
+                                                console.warn("Could not fetch data.");
+                                                return;
+                                            }
+                                            const dobj = JSON.parse(data.data);
+                                            if(typeof dobj !== "object" || typeof dobj.users !== "object"){
+                                                console.warn("Could not fetch data.");
+                                                return;
+                                            }
+                                            _this.users = dobj.users;
+                                            const users = dobj.users;
+                                            var surveys = {};   
+                                            // Milestones
+                                            var milestoneStorage = {
+                                                urgent: 0,                                            
+                                                ready: 0,
+                                                progress: 0,
+                                                missed: 0,
+                                                reflected: 0,
+                                                sum: 0
+                                            };   
+                                            var initSurvey = {
+                                                availTime: {},
+                                                objectives: {},
+                                                planingStyle: {}
+                                            };        
+                                            for(let i in users){
+                                                const user = users[i];
+                                                // LimeSurvey                                        
+                                                if(typeof user.lime === "object"){
+                                                    for(let l in user.lime){
+                                                        const lime = user.lime[l];
+                                                        if(typeof lime === "object"){
+                                                            if(typeof surveys[lime.survey_id] !== "object"){
+                                                                surveys[lime.survey_id] = {
+                                                                    id: +lime.id,
+                                                                    name: lime.name,
+                                                                    survey_id: +lime.survey_id,
+                                                                    count: 1
+                                                                }
+                                                            } else {
+                                                                surveys[lime.survey_id]['count']++;
+                                                            }
                                                         }
-                                                    } else {
-                                                        surveys[lime.survey_id]['count']++;
+                                                    }                                            
+                                                }   
+                                                // Milestones                                                                        
+                                                if(typeof user.milestones === 'object' && typeof user.milestones.elements === 'object'){
+                                                    const milestones = user.milestones.elements;
+                                                    for(let u in milestones){
+                                                        const milestone = milestones[u];
+                                                        switch(milestone.status){
+                                                            case 'urgent':      milestoneStorage.urgent++;
+                                                                                break;
+                                                            case 'ready':       milestoneStorage.ready++;
+                                                                                break;
+                                                            case 'progress':    milestoneStorage.progress++;
+                                                                                break;
+                                                            case 'missed':      milestoneStorage.missed++;
+                                                                                break;
+                                                            case 'reflected':   milestoneStorage.reflected++;
+                                                                                break;
+                                                        }
+                                                        milestoneStorage.sum++;
                                                     }
                                                 }
-                                            }                                            
-                                        }   
-                                        // Milestones                                                                        
-                                        if(typeof user.milestones === 'object' && typeof user.milestones.elements === 'object'){
-                                            const milestones = user.milestones.elements;
-                                            for(let u in milestones){
-                                                const milestone = milestones[u];
-                                                switch(milestone.status){
-                                                    case 'urgent':      milestoneStorage.urgent++;
-                                                                        break;
-                                                    case 'ready':       milestoneStorage.ready++;
-                                                                        break;
-                                                    case 'progress':    milestoneStorage.progress++;
-                                                                        break;
-                                                    case 'missed':      milestoneStorage.missed++;
-                                                                        break;
-                                                    case 'reflected':   milestoneStorage.reflected++;
-                                                                        break;
-                                                }
-                                                milestoneStorage.sum++;
-                                            }
+                                                // Survey
+                                                if(typeof user.initialSurvey === "object"){
+                                                    const surv = user.initialSurvey;
+                                                    //initSurvey
+                                                    if(typeof initSurvey.availTime[surv.availableTime] === "number"){
+                                                        initSurvey.availTime[surv.availableTime]++;
+                                                    } else {
+                                                        initSurvey.availTime[surv.availableTime] = 1;
+                                                    }        
+                                                    if(typeof initSurvey.objectives[surv.objectives] === "number"){
+                                                        initSurvey.objectives[surv.objectives]++;
+                                                    } else {
+                                                        initSurvey.objectives[surv.objectives] = 1;
+                                                    }
+                                                    if(typeof initSurvey.planingStyle[surv.planingStyle] === "number"){
+                                                        initSurvey.planingStyle[surv.planingStyle]++;
+                                                    } else {
+                                                        initSurvey.planingStyle[surv.planingStyle] = 1;
+                                                    }                                       
+                                                }                                    
+                                            } 
+                                            
+                                            _this.completeData['survey'] = initSurvey;
+                                            _this.completeData['milestones'] = milestoneStorage;
+                                            _this.completeData['lime'] = surveys;   
+                                            _this.completeData['users'] = users.length;
+                                        },
+                                        function(reject){
+
                                         }
-                                        // Survey
-                                        if(typeof user.initialSurvey === "object"){
-                                            const surv = user.initialSurvey;
-                                            //initSurvey
-                                            if(typeof initSurvey.availTime[surv.availableTime] === "number"){
-                                                initSurvey.availTime[surv.availableTime]++;
-                                            } else {
-                                                initSurvey.availTime[surv.availableTime] = 1;
-                                            }        
-                                            if(typeof initSurvey.objectives[surv.objectives] === "number"){
-                                                initSurvey.objectives[surv.objectives]++;
-                                            } else {
-                                                initSurvey.objectives[surv.objectives] = 1;
-                                            }
-                                            if(typeof initSurvey.planingStyle[surv.planingStyle] === "number"){
-                                                initSurvey.planingStyle[surv.planingStyle]++;
-                                            } else {
-                                                initSurvey.planingStyle[surv.planingStyle] = 1;
-                                            }                                       
-                                        }                                    
-                                    } 
-                                    
-                                    this.completeData['survey'] = initSurvey;
-                                    this.completeData['milestones'] = milestoneStorage;
-                                    this.completeData['lime'] = surveys;   
-                                    this.completeData['users'] = users.length;
-                                    console.log('An dieser Stelle kommen bei mir keine Daten an.')
-                                    console.log('init', initSurvey)
-                                    console.log('ms', milestoneStorage)
-                                    console.log('surveys', surveys)
-                                    console.log('users', users.length)
+                                    );
+                                                                   
                                 },
                                 computed:{
-                                    showHome: function(){
+                                    showHome: function(){                                        
                                         return this.currentPage === 'home';
                                     },
                                     showUser: function()
@@ -855,11 +862,11 @@ define([
                                             <div><b>Geplante Lernstunden pro Woche</b></div>
                                             <barchart v-bind:chartData="getTimePieData()" v-bind:max="completeData['users']"></barchart>
                                             <table class="table table-responsive">
-                                                <tr v-for="(count, index) in completeData['survey'].availTime">                                                   
-                                                    <td>{{index}} Stunde(n)</td>
+                                                <tr>                                                   
+                                                    <td v-for="(count, index) in completeData['survey'].availTime">{{index}} Stunde(n)</td>
                                                 </tr>
-                                                <tr v-for="(count, index) in completeData['survey'].availTime">
-                                                    <td class="text-center">{{count}}</td>
+                                                <tr>
+                                                    <td v-for="(count, index) in completeData['survey'].availTime" class="text-center">{{count}}</td>
                                                 </tr>
                                             </table>
                                             <div><b>Zeitraum der Lernaktivitätsplanung</b></div>
