@@ -345,12 +345,12 @@ define([
                                                 return;
                                             }
                                             const dobj = JSON.parse(data.data);
-                                            if(typeof dobj !== "object" || typeof dobj.users !== "object"){
+                                            if (typeof dobj !== "object") { //  || typeof dobj.users !== "object")
                                                 console.warn("Could not fetch data.");
                                                 return;
                                             }
-                                            _this.users = dobj.users;
-                                            const users = dobj.users;
+                                            _this.users = dobj;
+                                            const users = dobj;
                                             var surveys = {};   
                                             // Milestones
                                             var milestoneStorage = {
