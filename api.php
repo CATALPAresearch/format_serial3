@@ -79,13 +79,13 @@ class format_ladtopics_external extends external_api
                     $u = new stdClass();
                     // Get the personal informations
                     $u->id = $user->id;
-                    $u->firstname = ucfirst(strtolower($user->firstname));
+                    /*$u->firstname = ucfirst(strtolower($user->firstname));
                     $u->lastname = ucfirst(strtolower($user->lastname));
                     $u->username = $user->username;
                     $u->email = strtolower($user->email);
                     $u->lang = $user->lang;
                     $u->deleted = $user->deleted;
-                    $u->suspended = $user->suspended;
+                    $u->suspended = $user->suspended;*/
                     $u->firstaccess = $user->firstaccess;
                     $u->lastaccess = $user->lastaccess;
                     // Get milestones from the person
@@ -171,7 +171,7 @@ class format_ladtopics_external extends external_api
         } catch(Exception $ex){
             $out['debug'] = $ex->getMessage();
         }   
-        return array('data' => json_encode(sizeof($users)));     
+        return array('data' => json_encode($users));     
     }
 
     public static function analytics_is_allowed_from_ajax(){
