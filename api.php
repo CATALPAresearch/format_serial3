@@ -89,7 +89,7 @@ class format_ladtopics_external extends external_api
                     $u->firstaccess = $user->firstaccess;
                     $u->lastaccess = $user->lastaccess;
                     // Get milestones from the person
-                    /*
+                    
                     $sql = 'SELECT t.milestones, t.settings, t.timemodified 
                             FROM '.$CFG->prefix.'ladtopics_milestones AS t
                             WHERE   
@@ -115,7 +115,7 @@ class format_ladtopics_external extends external_api
                         $u->milestones->count = 0;
                         $u->milestones->elements = array();
                     }
-                    */
+                    
 
                     // Get the planing
                     // Preferences
