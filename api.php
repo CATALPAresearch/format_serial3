@@ -171,7 +171,7 @@ class format_ladtopics_external extends external_api
         } catch(Exception $ex){
             $out['debug'] = $ex->getMessage();
         }   
-        return array('data' => json_encode($out));     
+        return array('data' => json_encode(sizeof($users)));     
     }
 
     public static function analytics_is_allowed_from_ajax(){
