@@ -790,7 +790,7 @@ $modalMilestone = '
                     <div class="modal-header-completion-label">
                         {{ (getSelectedMilestone().progress * 100) }}%</div>
                 </div>
-                <h5 class="modal-title" id="MilestoneModalLabel">Meilenstein:
+                <h5 class="modal-title" id="MilestoneModalLabel">{{ archiveWarning ? "Archivierter Meilenstein" : "Aktueller Meilenstein" }}:
                     {{ getSelectedMilestone().name }}</h5>
                 <span v-if="getSelectedMilestone().name !== \'\'">
                     <i @click="removeMilestone()" class="fa fa-trash ms-remove"
@@ -808,7 +808,6 @@ $modalMilestone = '
                         einem selbst gewählten Termin erreicht werden soll.
                     </div>
                 </div> 
-                <div>Ablageort: <b>{{ archiveWarning ? "Archiv" : "Aktuelle Meilensteine" }}</b></div>                
                 <hr />                              
                 <div class="form-group row">
                     <label for="inputMSname" class="col-sm-2 col-form-label">Titel *</label>
