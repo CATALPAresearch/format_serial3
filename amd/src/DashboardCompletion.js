@@ -70,7 +70,6 @@ define([
                         });
                     };
                     this.sections = groupBy(data, 'section');
-                    // console.log(this.sections);
                 },
                 setCurrent: function (id, section) {
                     this.current = { id: id, section: section };
@@ -98,7 +97,6 @@ define([
                             }
                         }
                     }
-                    console.log('resources ',this.milestoneResources)
                 },
                 isPartOfMilestone: function (instance) {
                     return this.milestoneResources.indexOf(parseInt(instance, 10)) !== -1 ? true : false;
@@ -109,13 +107,13 @@ define([
                 }
             },
 
-            watch: {
+            /*watch: {
                 milestones: function (m, oldVal) {
                     //console.log('update ms')
                     //this.milestones = m;
                     //this.milestoneResources = this.getMilestoneResources(m);
                 }
-            },
+            },*/
 
             template: `
                 <div id="dashboard-completion">
