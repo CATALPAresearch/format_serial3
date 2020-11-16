@@ -1320,6 +1320,7 @@ define([
                         });
                     },
                     updateMilestoneStatus: function () {
+                        this.$refs.childDashboardCompletion.updateResources(this.milestones);
                         if (this.milestones === null || this.milestones === undefined) {
                             return;
                         }

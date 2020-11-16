@@ -1096,7 +1096,7 @@ $modalMilestone = '
                                     <br>
                                     <div class="tab-content" style="display:block;">
                                         <div class="tab-pane fade show active" id="learningstatus" role="tabpanel">
-                                            <dashboard-completion v-on:log="log" v-bind:course="course"></dashboard-completion>
+                                            <dashboard-completion ref="childDashboardCompletion" v-on:log="log" v-bind:course="course" v-bind:milestones="milestones"></dashboard-completion>
                                         </div>    
                                         <div class="tab-pane fade" id="timemanagement" role="tabpanel">Zeitmanagement</div>
                                         <div class="tab-pane fade" id="communication" role="tabpanel">Kommunikation</div>

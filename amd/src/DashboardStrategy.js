@@ -201,7 +201,6 @@ define([
                         this.strategyById(this.currentStrategy) : { name: '', desc: '' };
                 },
                 getReflections: function (milestones) {
-                    console.log(this.milestones)
                     return this.milestones.filter(function (m) {
                         return m.reflections.length > 0 ? m.reflections[3].length > 0 : 0;
                     });
@@ -300,7 +299,7 @@ define([
                                         <li v-for="s in strategiesByCategory(pc.id)" :style="currentStrategy==s.id ? 'background-color:lightblue;' : ''" :class="currentStrategy == s.id ? 'nav-item active' : 'nav-item'">
                                             <a v-if="s.subheading !== true" class="bl-2 pl-1 ml-4 nav-link py-0" v-on:click.prevent="setCurrentStrategy(s.id)" style="cursor:pointer;">
                                                 <span>{{s.name}}</span>
-                                                <i v-if="strategyIsBookmarked(s.id)" class="ml-1 pb-2 fa fa-circle" style="color:#008fac; font-size:0.6em;"></i>
+                                                <i v-if="strategyIsBookmarked(s.id)" class="ml-1 pb-2 fa fa-star" style="color:#008fac; font-size:0.6em;"></i>
                                             </a>
                                             <span v-if="s.subheading" class="pl-1 ml-2">{{s.name}}</span>
                                         </li>
@@ -317,8 +316,8 @@ define([
                         <div v-if="mode=='strategy'">
                             <div class="bold">
                                 {{ getSelectedStrategy().name }}
-                                <i v-if="!strategyIsBookmarked(getSelectedStrategy().id)" v-on:click="toggleBookmark(getSelectedStrategy().id)" class="fa fa-bookmark strategy-bookmarked" style="color:#aaa;" title="Diese Lernstrategie vormerken"></i>
-                                <i v-if="strategyIsBookmarked(getSelectedStrategy().id)" v-on:click="toggleBookmark(getSelectedStrategy().id)" class="fa fa-bookmark strategy-not-bookmarked" style="color:#008fac;" title="Vormerkung der Lernstrategie aufheben"></i>
+                                <i v-if="!strategyIsBookmarked(getSelectedStrategy().id)" v-on:click="toggleBookmark(getSelectedStrategy().id)" class="fa fa-star strategy-bookmarked" style="color:#aaa;" title="Diese Lernstrategie vormerken"></i>
+                                <i v-if="strategyIsBookmarked(getSelectedStrategy().id)" v-on:click="toggleBookmark(getSelectedStrategy().id)" class="fa fa-star strategy-not-bookmarked" style="color:#008fac;" title="Vormerkung der Lernstrategie aufheben"></i>
                             </div>
                             <div v-if="currentStrategy=='crossreading'">
                                 Elaborationsstrategien werden eingesetzt, um ein erweitertes Wissen zu generieren. Lernende bedienen sich dabei

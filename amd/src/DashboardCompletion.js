@@ -24,13 +24,14 @@ define([
     Utils = new Utils();
     return Vue.component('dashboard-completion',
         {
-            props: ['course', 'log'],
+            props: ['course', 'log', 'milestones'],
 
             data: function () {
                 return {
                     sections: [],
                     info: '',
-                    current: { id: 0, section: 0 }
+                    current: { id: 0, section: 0 },
+                    milestoneResources: [],
                 };
             },
 
@@ -49,9 +50,14 @@ define([
                         console.error(e);
                     }
                 });
+                this.getMilestoneResources();
             },
 
             methods: {
+                updateResources: function (m) {
+                    this.milestones = m;
+                    this.getMilestoneResources();
+                },
                 draw: function (data) {
                     var groupBy = function (data, key) {
                         var arr = [];
@@ -81,9 +87,33 @@ define([
                     instance = instance == undefined ? this.getCurrent() : instance;
                     return instance.completion === 0 ? '<i class="fa fa-times-square"></i>Nicht abgeschlossen' : '<i class="fa fa-check"></i> Abgeschlossen';
                 },
+                getMilestoneResources: function () {
+                    this.milestoneResources = [];
+                    for (var i = 0; this.milestones.length; i++) {
+                        
+                        for (j = 0; j < this.milestones[i].resources.length; j++) {
+                            let id = parseInt(this.milestones[i].resources[j].instance_id, 10);
+                            if(id !== undefined){
+                                this.milestoneResources.push(id);
+                            }
+                        }
+                    }
+                    console.log('resources ',this.milestoneResources)
+                },
+                isPartOfMilestone: function (instance) {
+                    return this.milestoneResources.indexOf(parseInt(instance, 10)) !== -1 ? true : false;
+                },
                 trackClick: function () {
                     let instance = this.getCurrent();
                     this.$emit('log', 'dashboard_completion_item_click', { type: instance.type, instance: instance.id });
+                }
+            },
+
+            watch: {
+                milestones: function (m, oldVal) {
+                    //console.log('update ms')
+                    //this.milestones = m;
+                    //this.milestoneResources = this.getMilestoneResources(m);
                 }
             },
 
@@ -94,7 +124,7 @@ define([
                         <div class="col-3" style="font-size:0.9em">{{ section[0].sectionname }}</div>
                         <div class="col-9">
                             <span v-for="(m, index) in section">
-                                <a v-bind:href="getLink()" v-on:click="trackClick()" v-if="m.type !== 'label' && m.type !== 'headline'" :class="m.completion==1 ? \'rect-green completion-rect\' : \'rect-blue completion-rect\'" @mouseover="setCurrent(index, sIndex)"></a>
+                                <a v-bind:href="getLink()" :style="isPartOfMilestone(m.instance) ? 'border-bottom: 4px solid #333;':''" v-on:click="trackClick()" v-if="m.type !== 'label' && m.type !== 'headline'" :class="m.completion==1 ? \'rect-green completion-rect\' : \'rect-blue completion-rect\'" @mouseover="setCurrent(index, sIndex)"></a>
                             </span>
                         </div>
                     </div>
