@@ -89,7 +89,6 @@ define([
                 getMilestoneResources: function () {
                     this.milestoneResources = [];
                     for (var i = 0; this.milestones.length; i++) {
-                        
                         for (j = 0; j < this.milestones[i].resources.length; j++) {
                             let id = parseInt(this.milestones[i].resources[j].instance_id, 10);
                             if(id !== undefined){

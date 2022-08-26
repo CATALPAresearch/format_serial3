@@ -1,3 +1,5 @@
+Note: *yFbv6wMRnUwgFYC
+
 LAD Topics is a *Learning Analytics Dashboard* for Moodle courses. The dashboard presents moodle activities on a timeline and enables the user to define milestones. Each milestone is associated with learning objectes, a deadline, certain course ressources and learning strategies to be applied.
 
 **Roadmap**

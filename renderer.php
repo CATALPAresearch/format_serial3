@@ -1080,7 +1080,9 @@ $modalMilestone = '
                                 <div class="col-md-12">
                                     <ul class="nav nav-tabs dashboard-tab">
                                         <li class="nav-item active">
-                                            <a class="nav-link active" v-on:click="log(\'dashboard_completion_open\')" data-toggle="tab" href="#learningstatus" role="tab">Genutzte Lernangebote</a></li>
+                                            <a class="nav-link active" v-on:click="log(\'dashboard_overview_open\')" data-toggle="tab" href="#learningoverview" role="tab">Übersicht</a></li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" v-on:click="log(\'dashboard_completion_open\')" data-toggle="tab" href="#learningstatus" role="tab">Genutzte Lernangebote</a></li>
                                         <li hidden class="nav-item ">
                                             <a class="nav-link"v-on:click="log(\'dashboard_time-management_open\')"  data-toggle="tab" href="#timemanagement" role="tab">Zeitmanagement</a></li>
                                         <li class="nav-item">
@@ -1095,7 +1097,10 @@ $modalMilestone = '
                                     </ul>
                                     <br>
                                     <div class="tab-content" style="display:block;">
-                                        <div class="tab-pane fade show active" id="learningstatus" role="tabpanel">
+                                        <div class="tab-pane fade show active" id="learningoverview" role="tabpanel">
+                                            <dashboard-overview ref="childDashboardOverview" v-on:log="log" v-bind:course="course" v-bind:milestones="milestones"></dashboard-overview>
+                                        </div> 
+                                        <div class="tab-pane fade" id="learningstatus" role="tabpanel">
                                             <dashboard-completion ref="childDashboardCompletion" v-on:log="log" v-bind:course="course" v-bind:milestones="milestones"></dashboard-completion>
                                         </div>    
                                         <div class="tab-pane fade" id="timemanagement" role="tabpanel">Zeitmanagement</div>

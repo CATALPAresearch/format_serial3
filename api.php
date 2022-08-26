@@ -1523,6 +1523,333 @@ class format_ladtopics_external extends external_api
     }
 
 
+    /**
+     * 
+     * 
+     * /
+     */
+
+    /**
+     * Interface to obtain all activities completion and progress
+     */
+    public static function overview_parameters()
+    {
+        //  VALUE_REQUIRED, VALUE_OPTIONAL, or VALUE_DEFAULT. If not mentioned, a value is VALUE_REQUIRED
+        return new external_function_parameters(
+            array(
+                'courseid' => new external_value(PARAM_INT, 'course id')
+            )
+        );
+    }
+    
+    public static function overview_is_allowed_from_ajax()
+    {
+        return true;
+    }
+
+    public static function overview_returns()
+    {
+        return new external_single_structure(
+            array(
+                    'activities' => new external_value(PARAM_RAW, ''),
+                    'completions' => new external_value(PARAM_RAW, '')
+                )
+        );
+    }
+    public static function overview($data)
+    {
+        global $CFG, $DB, $USER, $COURSE;
+        $userid = (int)$USER->id;
+        $courseid = $data;
+        $meta = get_meta($courseid);
+        
+        // Step 1: obtain all course activities
+        $modinfo = get_fast_modinfo($courseid, -1);
+        $sections = $modinfo->get_sections();
+        $activities = array();
+        foreach ($modinfo->instances as $module => $instances) {
+            $modulename = get_string('pluginname', $module);
+            foreach ($instances as $index => $cm) {
+                $activities[] = array(
+                        'type'       => $module,
+                        'modulename' => $modulename,
+                        'id'         => $cm->id,
+                        'instance'   => $cm->instance,
+                        'name'       => format_string($cm->name),
+                        'expected'   => $cm->completionexpected,
+                        'section'    => $cm->sectionnum,
+                        'sectionname'=> get_section_name($courseid, $cm->sectionnum),
+                        'position'   => array_search($cm->id, $sections[$cm->sectionnum]),
+                        'url'        => method_exists($cm->url, 'out') ? $cm->url->out() : '',
+                        'context'    => $cm->context,
+                        'icon'       => $cm->get_icon_url(),
+                        'available'  => $cm->available,
+                        'completion' => 0,
+                    );
+            }
+        }
+
+        // Step 2:get all submissions of an user in a course
+        $submissions = array();
+        $params = array('courseid' => $courseid, 'userid' => $userid);
+
+        // Queries to deliver instance IDs of activities with submissions by user.
+        $queries = array(
+            'assign' => "SELECT c.id
+                        FROM {assign_submission} s, {assign} a, {modules} m, {course_modules} c
+                        WHERE s.userid = :userid
+                            AND s.latest = 1
+                            AND s.status = 'submitted'
+                            AND s.assignment = a.id
+                            AND a.course = :courseid
+                            AND m.name = 'assign'
+                            AND m.id = c.module
+                            AND c.instance = a.id",
+            'workshop' => "SELECT DISTINCT c.id
+                            FROM {workshop_submissions} s, {workshop} w, {modules} m, {course_modules} c
+                            WHERE s.authorid = :userid
+                            AND s.workshopid = w.id
+                            AND w.course = :courseid
+                            AND m.name = 'workshop'
+                            AND m.id = c.module
+                            AND c.instance = w.id",
+        );
+
+        foreach ($queries as $moduletype => $query) {
+            $results = $DB->get_records_sql($query, $params);
+            foreach ($results as $cmid => $obj) {
+                $submissions[] = $cmid;
+            }
+        }
+
+        // => $submissions TODO: Here is something missing. We don't do anything with the submission. Do we need to do something here?
+
+        // Step 3: get completions
+        $completions = array();
+        $completion = new completion_info($COURSE);
+        // $completion->is_enabled($cm) TODO: We nee to check this
+        $cm = new stdClass();
+
+        foreach ($activities as $activity) {
+            $cm->id = $activity['id'];
+            $activitycompletion = $completion->get_data($cm, true, $userid);
+            $activity['completion'] = $activitycompletion->completionstate;
+            // TODO: Determine activities whos completion shall not be visible ("Abschluss wird nicht angezeigt")
+            /*
+            $activity['status'] = $activitycompletion->status;
+            $activity['criteria'] = $completiondata->criteria;
+            $activity['hidden'] = $completiondata->hidden;
+            */
+
+            $completions[$activity['id']] = $activity;
+            if ($completions[$activity['id']] === COMPLETION_INCOMPLETE && in_array($activity['id'], $submissions)) {
+                $completions[$activity['id']] = 'submitted';
+            }
+        }
+
+        
+        // Step 4: Get scores 
+        $query_activities = array(
+            'assign' => "SELECT
+                    m.name activity,
+                    a.id activity_id,
+                    cm.id module_id,
+                    cm.section, (SELECT count(*) FROM {course_modules} cmm JOIN {modules} m ON m.id = cmm.module WHERE m.name = 'assign' AND cmm.course = cm.course AND cmm.section = cm.section) count,
+                    a.grade max_score, 
+                    ag.grade achieved_score,
+                    asub.timemodified  submission_time,
+                    ag.timemodified grading_time
+                FROM {assign} a
+                LEFT JOIN {assign_grades} ag ON a.id = ag.assignment
+                LEFT JOIN {assign_submission} asub ON a.id = asub.assignment
+                LEFT JOIN {course_modules} cm ON a.id = cm.instance
+                LEFT JOIN {modules} m ON m.id = cm.module 
+                WHERE 
+                    a.course = :courseid AND 
+                    ag.userid = :userid AND 
+                    asub.status = 'submitted' AND 
+                    asub.latest = 1 AND 
+                    m.name = 'assign'
+                ;",
+            'quiz' => "SELECT
+                    m.name activity,
+                    q.id activity_id,
+                    cm.id module_id,
+                    cm.section,
+                    (select count(*) from {course_modules} cmm JOIN {modules} m ON m.id = cmm.module WHERE m.name = 'quiz' AND cmm.course=cm.course AND cmm.section = cm.section) count,
+                    q.grade max_score, 
+                    qsub.sumgrades*100 achieved_score,
+                    qsub.timemodified  submission_time,
+                    qsub.timemodified grading_time
+                FROM {quiz} q
+                LEFT JOIN {quiz_attempts} qsub ON q.id = qsub.quiz
+                LEFT JOIN {course_modules} cm ON q.id = cm.instance
+                LEFT JOIN {modules} m ON m.id = cm.module 
+                WHERE 
+                    q.course = :courseid AND 
+                    qsub.userid = :userid AND
+                    qsub.state = 'finished' AND
+                    m.name = 'quiz'
+            ;"
+            //,'test' => "SELECT * FROM {assign} WHERE course = :courseid"
+        );
+
+        $debug = [];
+        $res = [];
+        foreach ($query_activities as $moduletype => $query) {
+            $debug[] = $moduletype;
+            try{ 
+                $transaction = $DB->start_delegated_transaction();
+                $resultset = $DB->get_records_sql($query, $params);
+                $transaction->allow_commit();
+                if(is_array($resultset) || count($resultset) > 0){
+                    $res[$moduletype] = $resultset;
+                    //$debug[] = $resultset;
+                }else{
+                    $res[$moduletype] = [];
+                    $debug[] = var_dump($resultset);
+                }
+            }catch(Exception $e){
+                $res[$moduletype] = [];
+                $debug[] = $e;
+            }
+        }
+        $debug[] = "resultset";
+        $debug[] = $res;
+
+        
+        // Step 5: add scores to completion
+        foreach($completions as $sec => $activity){
+            foreach($res as $type => $result){
+                //$debug[] = [$activity['type'], (int)$activity['instance'], (int)$res[$type][$type]->activity_id, array_key_exists('quiz', $result)];
+                if($activity['type'] == 'assign' && array_key_exists('assign', $res[$type])){ 
+                    if($activity['instance'] == $res[$type][$type]->activity_id){
+                        $completions[$sec]['achieved_score'] = $res[$type][$type]->achieved_score;
+                        $completions[$sec]['max_score'] = $res[$type][$type]->max_score;
+                        $completions[$sec]['count'] = $res[$type][$type]->count;
+                        $completions[$sec]['submission_time'] = $res[$type][$type]->submission_time;
+                    }
+                }
+                $debug[] = $res[$type];
+                if($activity['type'] == 'quiz' && array_key_exists('quiz', $res[$type])){  
+                    if($activity['instance'] == $res[$type][$type]->activity_id){
+                        $debug[] = 'inside';
+                        $completions[$sec]['achieved_score'] = $res[$type][$type]->achieved_score;
+                        $completions[$sec]['max_score'] = $res[$type][$type]->max_score;
+                        $completions[$sec]['count'] = $res[$type][$type]->count;
+                        $completions[$sec]['submission_time'] = $res[$type][$type]->submission_time;
+                        $completions[$sec]['name'] = 'quiz';
+                    }
+                }
+            }
+        }
+        
+        return array(
+            'activities' => json_encode($debug), 
+            'completions' => json_encode($completions)
+        );
+        
+    }
+     
+
+    /**
+     * Reflections 
+     **/
+    public static function reflectionRead_parameters()
+    {
+        //  VALUE_REQUIRED, VALUE_OPTIONAL, or VALUE_DEFAULT. If not mentioned, a value is VALUE_REQUIRED
+        return new external_function_parameters(
+            array(
+                'courseid' => new external_value(PARAM_INT, 'course id'),
+            )
+        );
+    }
+    
+    public static function reflectionRead_is_allowed_from_ajax(){ return true; }
+
+    public static function reflectionRead_returns()
+    {
+        return new external_single_structure(
+            array(
+                    'debug' => new external_value(PARAM_RAW, ''),
+                    'data' => new external_value(PARAM_RAW, '')
+                )
+        );
+    }
+    public static function reflectionRead($data)
+    {
+        global $CFG, $DB, $USER, $COURSE;
+        $debug = [];
+        $userid = (int)$USER->id;
+        $courseid = $data;
+        $transaction = $DB->start_delegated_transaction();
+        $res = $DB->get_records_sql(
+            "SELECT * FROM {ladtopics_reflections} WHERE course=:course AND user=:user ORDER BY timecreated ASC;", 
+            array("course" => (int)$courseid, "user" => (int)$userid));
+        $transaction->allow_commit();
+        
+        return array(
+            'data' => json_encode($res), 
+            'debug' => json_encode($debug)
+        );
+    }
+
+
+    public static function reflectionCreate_parameters()
+    {
+        //  VALUE_REQUIRED, VALUE_OPTIONAL, or VALUE_DEFAULT. If not mentioned, a value is VALUE_REQUIRED
+        return new external_function_parameters(
+            array(
+                'data' =>
+                    new external_single_structure(
+                        array(
+                            'course' => new external_value(PARAM_INT, 'course id'),
+                            'section' => new external_value(PARAM_INT, 'section id'),
+                            'reflection' => new external_value(PARAM_TEXT, 'reflection text submitted by the learner')
+                    )
+                )
+            )
+        );
+    }
+    
+    public static function reflectionCreate_is_allowed_from_ajax(){ return true; }
+
+    public static function reflectionCreate_returns()
+    {
+        return new external_single_structure(
+            array(
+                    'debug' => new external_value(PARAM_RAW, '')
+                )
+        );
+    }
+    public static function reflectionCreate($data)
+    {
+        global $CFG, $DB, $USER, $COURSE;
+        $debug = [];
+        $userid = (int)$USER->id;
+        $date = date_create();
+        
+        $r = new stdClass();
+        $r->user = (int)$userid;
+        $r->course = (int)$data['course'];
+        $r->section = $data['section'];
+        $r->reflection = $data['reflection'];
+        $r->timecreated = date_timestamp_get($date);
+        $r->timemodified = date_timestamp_get($date);
+        
+        $transaction = $DB->start_delegated_transaction();
+        $res = $DB->insert_record("ladtopics_reflections", $r);
+        $transaction->allow_commit();
+        
+        return array(
+            'debug' => json_encode($data)
+        );
+    }
+
+
+
+
+
 
 
     /**

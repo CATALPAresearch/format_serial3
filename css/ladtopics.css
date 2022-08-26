@@ -1256,3 +1256,12 @@ button.ms-add {
   background-color: #008fac !important;
   border-style: none;
 }
+
+
+
+
+
+/* 2022 Dashboard */
+#select-goa .fa-caret-down::before {
+  content: "\f0d7";
+}

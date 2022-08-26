@@ -9,7 +9,7 @@
  */
 
 
-$functions = array( // completionProgress
+$functions = array( 
         'format_ladtopics_analytics' => array(
                 'classname'   => 'format_ladtopics_external',
                 'methodname'  => 'analytics',
@@ -26,6 +26,31 @@ $functions = array( // completionProgress
                 'type'        => 'read',
                 'ajax'        => true 
         ),
+        'format_ladtopics_overview' => array(
+                'classname'   => 'format_ladtopics_external',
+                'methodname'  => 'overview',
+                'classpath'   => 'course/format/ladtopics/api.php',
+                'description' => 'Obtain the plugin name',
+                'type'        => 'read',
+                'ajax'        => true 
+        ),
+        'format_ladtopics_reflectionread' => array(
+                'classname'   => 'format_ladtopics_external',
+                'methodname'  => 'reflectionRead',
+                'classpath'   => 'course/format/ladtopics/api.php',
+                'description' => 'Obtain the plugin name',
+                'type'        => 'read',
+                'ajax'        => true 
+        ),
+        'format_ladtopics_reflectioncreate' => array(
+                'classname'   => 'format_ladtopics_external',
+                'methodname'  => 'reflectionCreate',
+                'classpath'   => 'course/format/ladtopics/api.php',
+                'description' => 'Obtain the plugin name',
+                'type'        => 'read',
+                'ajax'        => true 
+        ),
+                
         'format_ladtopics_limesurvey' => array(
                 'classname'   => 'format_ladtopics_external',
                 'methodname'  => 'limesurvey',

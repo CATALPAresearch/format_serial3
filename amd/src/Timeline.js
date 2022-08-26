@@ -24,9 +24,10 @@ define([
     'core/ajax',
     M.cfg.wwwroot + "/course/format/ladtopics/lib/build/vue.min.js",
     M.cfg.wwwroot + "/course/format/ladtopics/amd/src/MilestoneCalendarExport.js",
+    M.cfg.wwwroot + "/course/format/ladtopics/amd/src/DashboardOverview.js",
     M.cfg.wwwroot + "/course/format/ladtopics/amd/src/DashboardCompletion.js",
     M.cfg.wwwroot + "/course/format/ladtopics/amd/src/DashboardStrategy.js"
-], function ($, ajax, Vue, MilestoneCalendarExport, DashboardCompletion, DashboardStrategy) {
+], function ($, ajax, Vue, MilestoneCalendarExport, DashboardOverview, DashboardCompletion, DashboardStrategy) {
 
     var Timeline = function (d3, dc, crossfilter, moment, utils, introJs, logger, ChartTimeFilter, ChartActivity, InitialSurvey, vDP, vDPde, ErrorHandler) {
 
@@ -108,6 +109,7 @@ define([
                 components: {
                     'datepicker': vDP,
                     'milestone-calendar-export': MilestoneCalendarExport,
+                    'dashboard-overview': DashboardOverview,
                     'dashboard-completion': DashboardCompletion,
                     'dashboard-strategy': DashboardStrategy
                     // 'survey': surveyForm
@@ -1321,6 +1323,7 @@ define([
                     },
                     updateMilestoneStatus: function () {
                         this.$refs.childDashboardCompletion.updateResources(this.milestones);
+                        this.$refs.childDashboardOverview.updateResources(this.milestones);
                         if (this.milestones === null || this.milestones === undefined) {
                             return;
                         }
