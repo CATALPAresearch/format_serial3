@@ -1589,36 +1589,8 @@ class format_ladtopics_external extends external_api
             }
         }
 
-        // Step 2:get all submissions of an user in a course
-        $submissions = array();
         
-        
-        $params = array('courseid' => $courseid, 'userid' => $userid);
-        /*
-        // Queries to deliver instance IDs of activities with submissions by user.
-        $queries = array(
-            'assign' => "SELECT c.id
-                        FROM {assign_submission} s, {assign} a, {modules} m, {course_modules} c
-                        WHERE s.userid = :userid
-                            AND s.latest = 1
-                            AND s.status = 'submitted'
-                            AND s.assignment = a.id
-                            AND a.course = :courseid
-                            AND m.name = 'assign'
-                            AND m.id = c.module
-                            AND c.instance = a.id"
-        );
-
-        foreach ($queries as $moduletype => $query) {
-            $results = $DB->get_records_sql($query, $params);
-            foreach ($results as $cmid => $obj) {
-                $submissions[] = $cmid;
-            }
-        }
-        */
-        // => $submissions TODO: Here is something missing. We don't do anything with the submission. Do we need to do something here?
-
-        // Step 3: get completions
+        // Step 2: get completions
         $completions = array();
         $completion = new completion_info($COURSE);
         // $completion->is_enabled($cm) TODO: We nee to check this
@@ -1627,21 +1599,11 @@ class format_ladtopics_external extends external_api
         foreach ($activities as $activity) {
             $cm->id = $activity['id'];
             $activitycompletion = $completion->get_data($cm, true, $userid);
-            $activity['completion'] = $activitycompletion->completionstate;
-            // TODO: Determine activities whos completion shall not be visible ("Abschluss wird nicht angezeigt")
-            //$activity['status'] = $activitycompletion->status;
-            //$activity['criteria'] = $completiondata->criteria;
-            //$activity['hidden'] = $completiondata->hidden;
-            
-
             $completions[$activity['id']] = $activity;
-            /*if ($completions[$activity['id']] === COMPLETION_INCOMPLETE && in_array($activity['id'], $submissions)) {
-                $completions[$activity['id']] = 'submitted';
-            }*/
         }
         
         
-        // Step 4: Get scores 
+        // Step 3: Get scores 
         $query_activities = array(
             'assign' => "SELECT
                     m.name activity,
@@ -1687,7 +1649,9 @@ class format_ladtopics_external extends external_api
             //,'test' => "SELECT * FROM {assign} WHERE course = :courseid"
         );
 
+
         $debug = [];
+        $params = array('courseid' => $courseid, 'userid' => $userid);
         $res = [];
         foreach ($query_activities as $moduletype => $query) {
             $debug[] = $moduletype;
@@ -1711,7 +1675,7 @@ class format_ladtopics_external extends external_api
         $debug[] = $res;
 
         
-        // Step 5: add scores to completion
+        // Step 4: add scores to completion
         foreach($completions as $sec => $activity){
             foreach($res as $type => $result){
                 //$debug[] = [$activity['type'], (int)$activity['instance'], (int)$res[$type][$type]->activity_id, array_key_exists('quiz', $result)];
