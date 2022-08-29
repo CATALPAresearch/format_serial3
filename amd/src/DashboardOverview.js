@@ -28,6 +28,11 @@
 
             data: function () {
                 return {
+                    color: {
+                        orange: '#e79c63',
+                        green: '#88c2b7',
+                        yellow: '#e7c87a'
+                    },
                     sections: [],
                     sectionnames: [],
                     activities: [],
@@ -37,7 +42,28 @@
                     stats: [],
                     sumScores: {},
                     reflections: [],
-                    currentReflectionSection: 0
+                    currentReflectionSection: 0,
+                    currentGoal: 'mastery',
+                    goals: {
+                        mastery: {
+                            assign_completion: { low: 61, med: 90 },
+                            assign_score: { low: 61, med: 90 },
+                            quiz_completion: { low: 50, med: 90 },
+                            quiz_score: { low: 60, med: 300 },
+                        },
+                        passing: {
+                            assign_completion: { low: 30, med: 80 },
+                            assign_score: { low: 50, med: 80 },
+                            quiz_completion: { low: 30, med: 80 },
+                            quiz_score: { low: 50, med: 80 },
+                        },
+                        overview: {
+                            assign_completion: { low: 10, med: 40 },
+                            assign_score: { low: 40, med: 70 },
+                            quiz_completion: { low: 10, med: 40 },
+                            quiz_score: { low: 50, med: 70 },
+                        }
+                    }
                 };
             },
 
@@ -185,17 +211,20 @@
                     return 0;
                 },
                 getBarColor: function(type, ratio){
-                    console.log('ratio',ratio)
-                    if(ratio < 33){
-                        return '#e79c63'; // orange
-                    }else if(ratio > 80){
-                        return '#88c2b7'; // green
+                    if(ratio < this.goals[this.currentGoal][type].low){
+                        return this.color.orange; // orange
+                    }else if(ratio > this.goals[this.currentGoal][type].med){
+                        return this.color.green; // green
                     }else{
-                        return '#e7c87a'; // yellow
+                        return this.color.yellow; // yellow
                     }
                 },
                 setCurrentReflectionSection: function(id){ 
                     this.currentReflectionSection = id; 
+                },
+                switchGoal(event) {
+                    this.currentGoal = event.target.value;
+                    this.$forceUpdate();
                 },
                 loadReflection: function(){
                     var _this = this;
@@ -227,6 +256,31 @@
                             console.log(e);
                         }
                     });
+                },
+                sectionMinimumAchived:  function(sectionId){
+                    var res = this.stats.filter(function(d){ return d.id == sectionId})[0];
+                    var quiz_ratio = res.hasOwnProperty('quiz') ? res.quiz.complete / res.quiz.count * 100 : 0;
+                    var assign_ratio = res.hasOwnProperty('assign') ? res.assign.complete / res.assign.count * 100 : 0;
+                    console.log('bam', res.hasOwnProperty('quiz') ? res.quiz.complete +'__'+ res.quiz.count : 0);
+                    console.log(res);
+                    return quiz_ratio > 10 && assign_ratio > 10 || quiz_ratio > 30 || assign_ratio > 30 ? true : false; 
+                },
+                getNumberOfReflectedSections: function(){
+                    var _this = this;
+                    var t = [];
+                    for(var ref in this.reflections){
+                        t.push(this.reflections[ref].section);
+                    }
+                    t = [...new Set(t)];
+                    return t.length;
+                },
+                reflectionOfSectionDone: function(section){
+                    for(var ref in this.reflections){
+                        if(parseInt(this.reflections[ref].section, 10) == section){
+                            return true;
+                        }
+                    }
+                    return false;
                 }
             },
 
@@ -239,11 +293,12 @@
                             <label for="select-goal">Mein Ziel:</label>
                             <select 
                                 id="select-goal" 
+                                @change="switchGoal($event)"
                                 class="pt-1 pb-1 fa-caret-down" aria-label=".form-select-sm example" 
                                 style="display:inline-block;border:none;background-color:#ddeeff;width:120px;height:20px;font-weigth:bold;font-size:12px;">
-                                <option selected value="1">den Kurs meistern</option>
-                                <option value="2">den Kurs bestehen</option>
-                                <option value="3">einen Überblick erhalten</option>
+                                <option selected value="mastery">den Kurs meistern</option>
+                                <option value="passing">den Kurs bestehen</option>
+                                <option value="overview">einen Überblick erhalten</option>
                             </select>
                         </div>
                         <div class="col-2"></div>
@@ -294,7 +349,7 @@
                                 <span :style="'position:absolute;background-color:'+getBarColor(\'quiz_score\', getRatio(section.quiz.achieved_score, section.quiz.max_score))+';display:block;height:100%;width:'+ getRatio(section.quiz.achieved_score, section.quiz.max_score, 100) +'%;'">
                                 </span>
                                 <span class="p-1" style="z-index:10;position:absolute;color:#333;font-size:0.7rem;vertical-align:middle;display:block;height:100%;">
-                                    {{ Math.round(getRatio(section.quiz.achieved_score, section.quiz.max_score), 0) }}% korrekt xxx
+                                    {{ Math.round(getRatio(section.quiz.achieved_score, section.quiz.max_score), 100) }}% korrekt
                                 </span>
                             </span>
                         </div>
@@ -319,7 +374,7 @@
                            <!-- Reflection task -->
                            <div 
                                 class="btn btn-default" 
-                                style="display:block; width:130px; height:30px; background-color:#ddd; color:#222;"
+                                :style="'display:block; width:130px; height:30px; color:#222; background-color:' + (sectionMinimumAchived(section.id) ? (reflectionOfSectionDone(section.id) ? color.green : color.orange) : '#ddd') +';' "
                                 data-toggle="modal" 
                                 data-target="#refelctionModal" 
                                 @click="setCurrentReflectionSection(section.id)">
@@ -332,7 +387,7 @@
                         <span class="col-2">xxx Minuten gelesen</span>
                         <span class="col-2">{{ getRatio(sumScores.quiz.complete, sumScores.quiz.count) }}% erledigt<br></span>
                         <span class="col-2">{{ getRatio(sumScores.assign.complete, sumScores.assign.count) }}% erledigt<br></span>
-                        <span class="col-2">xxx/xxx</span>  
+                        <span class="col-2">{{ getNumberOfReflectedSections() }}/{{ sectionnames.length }} erledigt</span>  
                     </div>
                     <div class="right col-8 small mt-3 mr-3">
                         Beachten Sie auch die anderen Lernmaterialien wie die <a href="#">Virtuellen Treffen</a>, <a href="#">Praktischen Übungen</a> und <a href="#">Prüfungsvorbereitungen</a>

@@ -1591,8 +1591,10 @@ class format_ladtopics_external extends external_api
 
         // Step 2:get all submissions of an user in a course
         $submissions = array();
+        
+        
         $params = array('courseid' => $courseid, 'userid' => $userid);
-
+        /*
         // Queries to deliver instance IDs of activities with submissions by user.
         $queries = array(
             'assign' => "SELECT c.id
@@ -1604,15 +1606,7 @@ class format_ladtopics_external extends external_api
                             AND a.course = :courseid
                             AND m.name = 'assign'
                             AND m.id = c.module
-                            AND c.instance = a.id",
-            'workshop' => "SELECT DISTINCT c.id
-                            FROM {workshop_submissions} s, {workshop} w, {modules} m, {course_modules} c
-                            WHERE s.authorid = :userid
-                            AND s.workshopid = w.id
-                            AND w.course = :courseid
-                            AND m.name = 'workshop'
-                            AND m.id = c.module
-                            AND c.instance = w.id",
+                            AND c.instance = a.id"
         );
 
         foreach ($queries as $moduletype => $query) {
@@ -1621,7 +1615,7 @@ class format_ladtopics_external extends external_api
                 $submissions[] = $cmid;
             }
         }
-
+        */
         // => $submissions TODO: Here is something missing. We don't do anything with the submission. Do we need to do something here?
 
         // Step 3: get completions
@@ -1635,18 +1629,17 @@ class format_ladtopics_external extends external_api
             $activitycompletion = $completion->get_data($cm, true, $userid);
             $activity['completion'] = $activitycompletion->completionstate;
             // TODO: Determine activities whos completion shall not be visible ("Abschluss wird nicht angezeigt")
-            /*
-            $activity['status'] = $activitycompletion->status;
-            $activity['criteria'] = $completiondata->criteria;
-            $activity['hidden'] = $completiondata->hidden;
-            */
+            //$activity['status'] = $activitycompletion->status;
+            //$activity['criteria'] = $completiondata->criteria;
+            //$activity['hidden'] = $completiondata->hidden;
+            
 
             $completions[$activity['id']] = $activity;
-            if ($completions[$activity['id']] === COMPLETION_INCOMPLETE && in_array($activity['id'], $submissions)) {
+            /*if ($completions[$activity['id']] === COMPLETION_INCOMPLETE && in_array($activity['id'], $submissions)) {
                 $completions[$activity['id']] = 'submitted';
-            }
+            }*/
         }
-
+        
         
         // Step 4: Get scores 
         $query_activities = array(
