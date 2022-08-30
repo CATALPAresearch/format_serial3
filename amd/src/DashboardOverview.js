@@ -4,21 +4,18 @@
  * @module     format/ladtopics
  * @package    format_ladtopics
  * @class      DashboardOverview
- * @copyright  2020 Niels Seidel, niels.seidel@fernuni-hagen.de
- * @description Shows per course section a row of rectangles indicating the completion of assigned activities.
+ * @copyright  2022 Niels Seidel, niels.seidel@fernuni-hagen.de
+ * @description Provides an overview of course activities in terms of their completion and achieved scrores. Additionally stude
  * @license    MIT
  * @since      3.1
  * 
  * @todo
- * - display repetition of activities
- * - provide additional information for each activity using a popover or tooltip
- * - fix empty section names
+ 
  */
 
  define([
     'jquery',
     M.cfg.wwwroot + "/course/format/ladtopics/lib/build/vue.min.js",
-    // 'd3v4',
     M.cfg.wwwroot + "/course/format/ladtopics/amd/src/utils/Utils.js"
 ], function ($, Vue, Utils) {
     Utils = new Utils();
@@ -290,16 +287,22 @@
                     <p class="w-75"></p>
                     <div class="row mb-3 form-group">
                         <div class="col-3">
-                            <label for="select-goal">Mein Ziel:</label>
-                            <select 
-                                id="select-goal" 
-                                @change="switchGoal($event)"
-                                class="pt-1 pb-1 fa-caret-down" aria-label=".form-select-sm example" 
-                                style="display:inline-block;border:none;background-color:#ddeeff;width:120px;height:20px;font-weigth:bold;font-size:12px;">
-                                <option selected value="mastery">den Kurs meistern</option>
-                                <option value="passing">den Kurs bestehen</option>
-                                <option value="overview">einen Überblick erhalten</option>
-                            </select>
+                            <label for="select-goal" style="font-size:11px;">Mein Ziel ist es </label>
+                            <div style="background-color:#ddeeff; color:#333; display:inline-block; width:140px; height:20px;">
+                                <select 
+                                    id="select-goal" 
+                                    @change="switchGoal($event)"
+                                    class="pt-1 pb-1 fa-caret-down lad-select mr-0" 
+                                    aria-label=".form-select-sm example" 
+                                    style="display:inline-block; color:#333; border:none;width:128px;height:20px;font-weigth:bold;font-size:11px;">
+                                    <option selected value="mastery">den Kurs zu meistern</option>
+                                    <option value="passing">den Kurs zu bestehen</option>
+                                    <option value="overview">einen Überblick zu bekommen</option>
+                                </select>
+                                <i 
+                                    class="fa fa-caret fa-caret-down mr-0" 
+                                    style="color:#333; padding-right:2px; font:FontAwesome; height:20px; text-rendering: auto;-moz-osx-font-smoothing: grayscale;"></i>
+                            </div>
                         </div>
                         <div class="col-2"></div>
                         <div class="col-4 form-group">
@@ -409,13 +412,45 @@
                                 </div>
                                 <div class="modal-body">
                                     <div class="mb-3 lead">
-                                    This assignment is designed to help you pause for a moment and think about your learning progress in the Devices and Processes unit. It is important that you answer these questions truthfully so that you can properly direct your learning.<br>
+                                    <!-- 
+                                    This assignment is designed to help you pause for a moment and think about your learning progress in the Devices and Processes unit. 
+                                    It is important that you answer these questions truthfully so that you can properly direct your learning.
+                                    -->
+                                    Diese Aufgabe soll Ihnen helfen einen Moment innezuhalten und über Ihren Lernfortschritt in der Kurseinheit xxx nachzudenken. 
+                                    Es ist wichtig, dass Sie diese Aufgaben wahrheitsgemäß beantworten damit Sie Ihr Lernen danach ausrichten können.
+                                    <br>
                                     <ul>
-                                    <li>After completing various self-assessment tasks and receiving feedback, are you satisfied with the results? Did you develop knowledge of the topic consistent with your learning goals?</li>
-                                    <li>Is it necessary to re-study Devices and Processes unit? Is there a need to change the current way of learning and planning, to better cope with the next learning chapter (allocate more time for learning, employ different approach, study material with more attention...)?</li>
-                                    <li>Can you name any problem that has hindered your results and knowledge (lack of time, poor planning, prior knowledge, inability to understand a particular concept...)? Did you discover any faults in what you had previously believed to be right? Can you overcome it for the next unit?</li>
+                                    <li>
+                                    <!-- 
+                                        After completing various self-assessment tasks and receiving feedback, are you satisfied with the results? 
+                                        Did you develop knowledge of the topic consistent with your learning goals? 
+                                    -->
+                                        Sind Sie nach dem Abschluss mehrerer Selfsttest- oder Einsendeaufgaben mit den Ergebnissen zufrieden?
+                                        Konnten Sie Ihr Wissen zum Thema der Kurseinheit im hins
+                                    </li>
+                                    <li>
+                                    <!-- 
+                                        Is it necessary to re-study Devices and Processes unit? 
+                                        Is there a need to change the current way of learning and planning, 
+                                        to better cope with the next learning chapter (allocate more time for 
+                                        learning, employ different approach, study material with more attention...)?
+                                    -->
+                                        Ist es notwendig, die Kurseinheit noch einmal zu wiederholen? 
+                                        Ist es erforderlich, die derzeitige Vorgehensweise beim Lernen und Planen zu ändern, um die anderen Kurseinheiten besser bewältigen zu können 
+                                        (mehr Zeit für das Lernen einplanen, eine andere Lernstrategie wählen, das Material mit mehr Aufmerksamkeit studieren...)?
+                                        </li>
+                                    <li>
+                                    <!--
+                                        Can you name any problem that has hindered your results and knowledge 
+                                        (lack of time, poor planning, prior knowledge, inability to understand a particular concept...)? 
+                                        Did you discover any faults in what you had previously believed to be right? Can you overcome it for the next unit?
+                                    -->
+                                    Können Sie ein Problem nennen, das Ihre Lernergebnisse und Ihren Wissenserwerb beeinträchtigt haben (Zeitmangel, schlechte Planung, Vorwissen, Unfähigkeit, ein bestimmtes Konzept zu verstehen...)? 
+                                    Haben Sie Fehler in dem entdeckt, was Sie bisher für richtig hielten? Können Sie diese bei der nächsten Kurseinheit beheben?
+                                        </li>
                                     </ul>
-                                    Write a short note of no more than 300 words (approximately 100 per question) to this questions and submit it in the box provided below.
+                                    <!-- Write a short note of no more than 300 words (approximately 100 per question) to this questions and submit it in the box provided below.   -->
+                                    Schreiben Sie eine kurze Notiz von nicht mehr als 300 Wörtern (ca. 100 Wörter pro Frage) zu diesen Fragen in das folgende Textfeld.
                                     </div>
                                     <textarea v-model="reflection" class="mt-2" style="width:100%; min-height:150px;font-size:20px;padding:10px;"></textarea>
                                     
@@ -440,3 +475,5 @@
             `
         });
 });
+
+
