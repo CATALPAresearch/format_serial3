@@ -324,60 +324,63 @@
                         </div>
                     </div>
                     <div class="row col-10 mb-2">    
-                        <span class="col-2" style="text-align:right;"><strong>Kurseinheit</strong></span>
-                        <span class="col-2"><strong>Kurstext lesen und verstehen</strong></span>
-                        <span class="col-2"><strong>Selbsttests lösen und Lerninhalte anwenden</strong></span>
-                        <span class="col-2"><strong>Einsendeaufgaben bearbeiten, um in der Klausur Zeit sparen</strong></span>
-                        <span class="col-2"><strong>Abschlussreflexion bearbeiten und besser in der Klausur abschneiden</strong></span>    
+                        <span class="col-3" style="text-align:right;"><strong>Kurseinheit</strong></span>
+                        <span class="col-2"><strong>Kurstext</strong> lesen und verstehen</span>
+                        <span class="col-2"><strong>Selbsttests</strong> lösen und Lerninhalte anwenden</span>
+                        <span class="col-2"><strong>Einsendeaufgaben</strong> bearbeiten, um in der Klausur Zeit sparen</span>
+                        <span class="col-2"><strong>Abschlussreflexion</strong> bearbeiten und besser in der Klausur abschneiden</span>    
                     </div>
                     <div v-for="(section, sIndex) in stats" class="row col-10 mb-0">
-                        <div class="col-2 mb-1" style="border: solid #111 0pt;text-align:right;">
+                        <div class="col-3 mb-1" style="border: solid #111 0pt;text-align:right;">
                             <!-- Course Unit -->
                             {{ section.sectionname }}
                         </div>
                         <div class="col-2 mb-1" style="border: solid #111 0pt;">
                             <!-- Longpage -->
                             -
+                            <span v-if="section.longpage == null">-</span>
                         </div>
                         <div class="col-2 mb-1" style="border: solid #111 0pt;">
                             <!-- Self Assessment -->
-                            <span v-if="section.quiz" class="mb-1" style="display:block;position:relative;width:100px;height:15px;background-color:#eee;">
+                            <span v-if="section.quiz" class="mb-1" style="display:block;position:relative;width:100%;height:15px;background-color:#eee;">
                                 <span :style="'position:absolute;background-color:'+getBarColor(\'quiz_completion\', getRatio(section.quiz.complete, section.quiz.count))+';display:block;height:100%;width:'+ getRatio(section.quiz.complete, section.quiz.count, 100) +'%;'">
                                 </span>
                                 <span class="p-1" style="z-index:10;position:absolute;color:#333;font-size:0.7rem;vertical-align:middle;display:block;height:100%;">
                                     {{ section.quiz.complete }} von {{ section.quiz.count }} bearbeitet
                                 </span>
                             </span>
-                            <span v-if="section.quiz" class="mb-1" style="display:block;position:relative;width:100px;height:15px;background-color:#eee;">
+                            <span v-if="section.quiz" class="mb-1" style="display:block;position:relative;width:100%;height:15px;background-color:#eee;">
                                 <span :style="'position:absolute;background-color:'+getBarColor(\'quiz_score\', getRatio(section.quiz.achieved_score, section.quiz.max_score))+';display:block;height:100%;width:'+ getRatio(section.quiz.achieved_score, section.quiz.max_score, 100) +'%;'">
                                 </span>
                                 <span class="p-1" style="z-index:10;position:absolute;color:#333;font-size:0.7rem;vertical-align:middle;display:block;height:100%;">
                                     {{ Math.round(getRatio(section.quiz.achieved_score, section.quiz.max_score), 100) }}% korrekt
                                 </span>
                             </span>
+                            <span v-if="section.quiz == null">-</span>
                         </div>
                         <div class="col-2 mb-1" style="border: solid #111 0pt; height:40px;">
                             <!-- Submission tasks -->
-                            <span v-if="section.assign" class="mb-1" style="display:block;position:relative;width:100px;height:15px;background-color:#eee;">
+                            <span v-if="section.assign" class="mb-1" style="display:block;position:relative;width:100%;height:15px;background-color:#eee;">
                                 <span :style="'position:absolute;background-color:'+getBarColor(\'assign_completion\', getRatio(section.assign.complete, section.assign.count))+';display:block;height:100%;width:'+ getRatio(section.assign.complete, section.assign.count, 100) +'%;'">
                                 </span>
                                 <span class="p-1" style="z-index:10;position:absolute;color:#333;font-size:0.7rem;vertical-align:middle;display:block;height:100%;">
                                     {{ section.assign.complete }} von {{ section.assign.count }} bearbeitet
                                 </span>
                             </span>
-                            <span v-if="section.assign" class="mb-1" style="display:block;position:relative;width:100px;height:15px;background-color:#eee;">
+                            <span v-if="section.assign" class="mb-1" style="display:block;position:relative;width:100%;height:15px;background-color:#eee;">
                                 <span :style="'position:absolute;background-color:'+getBarColor(\'assign_score\', getRatio(section.assign.achieved_score, section.assign.max_score))+';display:block;height:100%;width:'+ getRatio(section.assign.achieved_score, section.assign.max_score, 100) +'%;'">
                                 </span>
                                 <span class="p-1" style="z-index:10;position:absolute;color:#333;font-size:0.7rem;vertical-align:middle;display:block;height:100%;">
                                     {{ Math.round(getRatio(section.assign.achieved_score, section.assign.max_score), 0) }}% korrekt
                                 </span>
                             </span>
+                            <span v-if="section.assign == null">-</span>
                         </div>
                         <div class="col-2 mb-1" style="border: solid #111 0pt;">
                            <!-- Reflection task -->
                            <div 
                                 class="btn btn-default" 
-                                :style="'display:block; width:130px; height:30px; color:#222; background-color:' + (sectionMinimumAchived(section.id) ? (reflectionOfSectionDone(section.id) ? color.green : color.orange) : '#ddd') +';' "
+                                :style="'display:block; width:100%; height:30px; color:#222; background-color:' + (sectionMinimumAchived(section.id) ? (reflectionOfSectionDone(section.id) ? color.green : color.orange) : '#ddd') +';' "
                                 data-toggle="modal" 
                                 data-target="#refelctionModal" 
                                 @click="setCurrentReflectionSection(section.id)">
@@ -386,7 +389,7 @@
                         </div>
                     </div>
                     <div class="row col-10 mb-3" style="">
-                        <span class="col-2">Lernfortschritt insgesamt</span>
+                        <span class="col-3"></span>
                         <span class="col-2">xxx Minuten gelesen</span>
                         <span class="col-2">{{ getRatio(sumScores.quiz.complete, sumScores.quiz.count) }}% erledigt<br></span>
                         <span class="col-2">{{ getRatio(sumScores.assign.complete, sumScores.assign.count) }}% erledigt<br></span>
