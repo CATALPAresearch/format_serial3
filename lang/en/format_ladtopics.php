@@ -53,3 +53,9 @@ $string['surveyLink'] = "Link";
 $string['surveyDone'] = "Completed";
 $string['surveyRequired'] = "Required";
 $string['surveyPending'] = "Outstanding";
+
+
+$string['dashboardsectionexclude'] = "Sections to exclude from the dashoard (e.g. 3,6,7,12)";
+$string['dashboardsectionexclude_help'] = 'todo';
+$string['dashboardsectionexclude_link'] = 'todo';
+$string['dashboardsectionexclude_desc'] = 'todo';

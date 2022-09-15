@@ -1529,6 +1529,10 @@ class format_ladtopics_external extends external_api
      * /
      */
 
+    
+
+    
+
     /**
      * Interface to obtain all activities completion and progress
      */

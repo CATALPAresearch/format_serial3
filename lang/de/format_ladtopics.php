@@ -40,3 +40,10 @@ $string['surveyLink'] = "Link";
 $string['surveyDone'] = "Teilgenommen";
 $string['surveyRequired'] = "Erforderlich";
 $string['surveyPending'] = "Ausstehend";
+
+
+$string['dashboardsectionexclude'] = "Abschnitte, die im Dashboard ausgeschlossen werden solten (z.B. 3,6,7,12)";
+$string['dashboardsectionexclude_help'] = 'todo';
+$string['dashboardsectionexclude_link'] = 'todo';
+$string['dashboardsectionexclude_desc'] = 'todo';
+

@@ -31,6 +31,7 @@
                         yellow: '#e7c87a'
                     },
                     sections: [],
+                    dashboardsectionexclude: [],
                     sectionnames: [],
                     activities: [],
                     info: '',
@@ -71,9 +72,18 @@
                     'courseid': parseInt(this.course.id, 10)
                 }, function (e) {
                     try {
-                        console.log('input activities::', JSON.parse(e.activities));
-                        console.log('input completions::', JSON.parse(e.completions));
+                        //console.log('input activities::', JSON.parse(e.activities));
+                        //console.log('input completions::', JSON.parse(e.completions));
+
+                        _this.dashboardsectionexclude = $('#dashboardsectionexclude').text().replace(' ','').split(',');
+                        //_this.dashboardsectionexclude = _this.dashboardsectionexclude.isArray() ? _this.dashboardsectionexclude : [];
+                        _this.dashboardsectionexclude = _this.dashboardsectionexclude.map(function(d){ return parseInt(d, 10); });
                         _this.sections = _this.groupBy(JSON.parse(e.completions), 'section');
+                        console.log('ss',_this.sections);
+                        //_this.sections = _this.sections.filter(function(d, index){  
+                        //    return _this.dashboardsectionexclude.includes(index) == false; 
+                        //});
+                        console.log('ss2',_this.sections);
                         _this.stats = _this.calcStats();
                     } catch (e) {
                         // eslint-disable-next-line no-console
@@ -95,45 +105,17 @@
                         return el !== null;
                     });
                 },
-                getSectionName: function(index){
-
-                },
-                setCurrent: function (id, section) {
-                    this.current = { id: id, section: section };
-                    this.$emit('log', 'dashboard_overview_item_hover', { url: this.getLink(), completion: this.getCurrent().completion });
-                },
-                getCurrent: function () {
-                    return this.sections[this.current.section][this.current.id];
-                },
-                getLink: function (instance) {
-                    instance = instance == undefined ? this.getCurrent() : instance;
-                    return M.cfg.wwwroot + '/mod/' + instance.type + '/view.php?id=' + instance.id;
-                },
-                getStatus: function (instance) {
-                    instance = instance == undefined ? this.getCurrent() : instance;
-                    return instance.completion === 0 ? '<i class="fa fa-times-square"></i>Nicht abgeschlossen' : '<i class="fa fa-check"></i> Abgeschlossen';
-                },
-                getMilestoneResources: function () {
-                    this.milestoneResources = {};
-                    for (var i = 0; this.milestones.length; i++) {
-                        for (j = 0; j < this.milestones[i].resources.length; j++) {
-                            let id = parseInt(this.milestones[i].resources[j].instance_id, 10);
-                            if(id !== undefined){
-                                this.milestoneResources.push(id);
-                            }
-                        }
-                    }
-                },
-                isPartOfMilestone: function (instance) {
-                    return this.milestoneResources.indexOf(parseInt(instance, 10)) !== -1 ? true : false;
-                },
                 trackClick: function () {
-                    let instance = this.getCurrent();
-                    this.$emit('log', 'dashboard_overview_item_click', { type: instance.type, instance: instance.id });
+                    //let instance = this.getCurrent();
+                    //this.$emit('log', 'dashboard_overview_item_click', { type: instance.type, instance: instance.id });
                 },
                 calcStats: function(){
                     stats = [];
                     for(var j = 0; j < this.sections.length; j++){
+                        if(this.dashboardsectionexclude.includes(j)){
+                            console.log('ssssksdlskdl')
+                          //  continue;
+                        }
                         var section = this.sections[j];
                         for(var i = 0; i < section.length; i++){
                             if(stats[section[i].section] == undefined){
@@ -196,7 +178,7 @@
                         }
                         out.push(el);
                     } 
-                    console.log('calccc: ', out)   
+                    console.log('calc__: ', out)   
                     this.sumScores = sum;
                     return out;
                 },
@@ -258,8 +240,8 @@
                     var res = this.stats.filter(function(d){ return d.id == sectionId})[0];
                     var quiz_ratio = res.hasOwnProperty('quiz') ? res.quiz.complete / res.quiz.count * 100 : 0;
                     var assign_ratio = res.hasOwnProperty('assign') ? res.assign.complete / res.assign.count * 100 : 0;
-                    console.log('bam', res.hasOwnProperty('quiz') ? res.quiz.complete +'__'+ res.quiz.count : 0);
-                    console.log(res);
+                    //console.log('bam', res.hasOwnProperty('quiz') ? res.quiz.complete +'__'+ res.quiz.count : 0);
+                    //console.log(res);
                     return quiz_ratio > 10 && assign_ratio > 10 || quiz_ratio > 30 || assign_ratio > 30 ? true : false; 
                 },
                 getNumberOfReflectedSections: function(){
@@ -377,8 +359,8 @@
                             <span v-if="section.assign == null">-</span>
                         </div>
                         <div class="col-2 mb-1" style="border: solid #111 0pt;">
-                           <!-- Reflection task -->
-                           <div 
+                        <!-- Reflection task -->
+                        <div 
                                 class="btn btn-default" 
                                 :style="'display:block; width:100%; height:30px; color:#222; background-color:' + (sectionMinimumAchived(section.id) ? (reflectionOfSectionDone(section.id) ? color.green : color.orange) : '#ddd') +';' "
                                 data-toggle="modal" 
@@ -395,8 +377,16 @@
                         <span class="col-2">{{ getRatio(sumScores.assign.complete, sumScores.assign.count) }}% erledigt<br></span>
                         <span class="col-2">{{ getNumberOfReflectedSections() }}/{{ sectionnames.length }} erledigt</span>  
                     </div>
-                    <div class="right col-8 small mt-3 mr-3">
+                    <div hidden class="right col-8 small mt-3 mr-3 mb-3">
                         Beachten Sie auch die anderen Lernmaterialien wie die <a href="#">Virtuellen Treffen</a>, <a href="#">Praktischen Übungen</a> und <a href="#">Prüfungsvorbereitungen</a>
+                    </div>
+                    <div style="margin: 50px 0;" class="col-10 d-flex justify-content-center">
+                        <button 
+                            type="button" 
+                            style="border-radius:10px; font-weight:bold; color:#fff;"
+                            class="btn btn-warning btn-lg">
+                            Ich helfe das Lernen zu verbessern
+                        </button>
                     </div>
                     
 

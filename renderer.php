@@ -104,6 +104,7 @@ class format_ladtopics_renderer extends format_section_renderer_base {
      */
     protected function start_section_list() {
         global $CFG, $DB, $PAGE, $COURSE;
+        $format_options = format_base::instance($PAGE->course)->get_format_options();
         require_once($CFG->libdir.'/completionlib.php');
         //$completion=new completion_info($COURSE);
         //$rr = $completion->get_completions(3);
@@ -1098,6 +1099,7 @@ $modalMilestone = '
                                     <br>
                                     <div class="tab-content" style="display:block;">
                                         <div class="tab-pane fade show active" id="learningoverview" role="tabpanel">
+                                            <div id="dashboardsectionexclude" hidden>'.  $format_options["dashboardsectionexclude"] .'</div>
                                             <dashboard-overview ref="childDashboardOverview" v-on:log="log" v-bind:course="course" v-bind:milestones="milestones"></dashboard-overview>
                                         </div> 
                                         <div class="tab-pane fade" id="learningstatus" role="tabpanel">
