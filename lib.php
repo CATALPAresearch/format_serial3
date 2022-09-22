@@ -303,15 +303,7 @@ class format_ladtopics extends format_base {
                 ),
                 'dashboardsectionexclude' => array(
                     'label' => get_string('dashboardsectionexclude', 'format_ladtopics'),
-                    //'help' => 'dashboardsectionexclude',//get_string('dashboardsectionexclude_help', 'format_ladtopics'),
-                    //'help_component' => 'moodle',//get_string('dashboardsectionexclude_desc', 'format_ladtopics'),
                     'element_type' => 'text'
-                    /*'element_attributes' => array(
-                        array(
-                            0 => new lang_string('hiddensectionscollapsed'),
-                            1 => new lang_string('hiddensectionsinvisible')
-                        )
-                    ),*/
                 ),
             );
             $courseformatoptions = array_merge_recursive($courseformatoptions, $courseformatoptionsedit);

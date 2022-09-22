@@ -21,7 +21,7 @@
     Utils = new Utils();
     return Vue.component('dashboard-overview',
         {
-            props: ['course', 'log', 'milestones'],
+            props: ['course', 'log'],
 
             data: function () {
                 return {
@@ -36,7 +36,6 @@
                     activities: [],
                     info: '',
                     current: { id: 0, section: 0 },
-                    milestoneResources: [],
                     stats: [],
                     sumScores: {},
                     reflections: [],
@@ -44,18 +43,24 @@
                     currentGoal: 'mastery',
                     goals: {
                         mastery: {
+                            page_completion: { low: 50, med: 90 },
+                            page_score: { low: 0, med: 0 },
                             assign_completion: { low: 61, med: 90 },
                             assign_score: { low: 61, med: 90 },
                             quiz_completion: { low: 50, med: 90 },
-                            quiz_score: { low: 60, med: 300 },
+                            quiz_score: { low: 60, med: 100 },
                         },
                         passing: {
+                            page_completion: { low: 50, med: 90 },
+                            page_score: { low: 0, med: 0 },
                             assign_completion: { low: 30, med: 80 },
                             assign_score: { low: 50, med: 80 },
                             quiz_completion: { low: 30, med: 80 },
                             quiz_score: { low: 50, med: 80 },
                         },
                         overview: {
+                            page_completion: { low: 50, med: 90 },
+                            page_score: { low: 0, med: 0 },
                             assign_completion: { low: 10, med: 40 },
                             assign_score: { low: 40, med: 70 },
                             quiz_completion: { low: 10, med: 40 },
@@ -72,19 +77,22 @@
                     'courseid': parseInt(this.course.id, 10)
                 }, function (e) {
                     try {
-                        //console.log('input activities::', JSON.parse(e.activities));
-                        //console.log('input completions::', JSON.parse(e.completions));
+                        console.log('input activities::', JSON.parse(e.activities));
+                        console.log('input completions::', JSON.parse(e.completions));
 
-                        _this.dashboardsectionexclude = $('#dashboardsectionexclude').text().replace(' ','').split(',');
-                        //_this.dashboardsectionexclude = _this.dashboardsectionexclude.isArray() ? _this.dashboardsectionexclude : [];
-                        _this.dashboardsectionexclude = _this.dashboardsectionexclude.map(function(d){ return parseInt(d, 10); });
                         _this.sections = _this.groupBy(JSON.parse(e.completions), 'section');
-                        console.log('ss',_this.sections);
+                        _this.stats = _this.calcStats();
+
+                        //_this.dashboardsectionexclude = $('#dashboardsectionexclude').text().replace(' ','').split(',');
+                        //_this.dashboardsectionexclude = _this.dashboardsectionexclude.isArray() ? _this.dashboardsectionexclude : [];
+                        //_this.dashboardsectionexclude = _this.dashboardsectionexclude.map(function(d){ return parseInt(d, 10); });
+                        
+                        //console.log('ss',_this.sections);
                         //_this.sections = _this.sections.filter(function(d, index){  
                         //    return _this.dashboardsectionexclude.includes(index) == false; 
                         //});
-                        console.log('ss2',_this.sections);
-                        _this.stats = _this.calcStats();
+                        //console.log('ss2',_this.sections);
+                        
                     } catch (e) {
                         // eslint-disable-next-line no-console
                         console.error(e);
@@ -112,10 +120,6 @@
                 calcStats: function(){
                     stats = [];
                     for(var j = 0; j < this.sections.length; j++){
-                        if(this.dashboardsectionexclude.includes(j)){
-                            console.log('ssssksdlskdl')
-                          //  continue;
-                        }
                         var section = this.sections[j];
                         for(var i = 0; i < section.length; i++){
                             if(stats[section[i].section] == undefined){
@@ -138,31 +142,35 @@
                             stats[section[i].section][section[i].type].complete += section[i].submission_time != null ? 1 : 0;
                         }
                     }
+                    stats = stats.filter(function(n){return n; });
+                    this.sectionnames = this.sectionnames.filter(function(n){return n; });
                     //
                     let out = [];
-                    let sum = { assign: {count: 0, complete: 0, achieved_score:0, max_score:0 }, quiz: {count: 0, complete: 0, achieved_score:0, max_score:0 } };
+                    let sum = { 
+                        page: {count: 0, complete: 0, achieved_score:0, max_score:0 }, 
+                        quiz: {count: 0, complete: 0, achieved_score:0, max_score:0 }, 
+                        assign: {count: 0, complete: 0, achieved_score:0, max_score:0 } 
+                    };
                     for(var i = 0; i < stats.length; i++){
-                        el = {
+                        var el = {
                             sectionname: this.sectionnames[i].replace(':',':\n'),
                             id: i
                         };
-                        if(stats[i].page){
-                            el.page = {
-                                count: stats[i].page.count, 
-                                complete: stats[i].page.complete
-                            };
+                        if (stats[i] == null){
+                            continue;
                         }
-                        if(stats[i].assign){
-                            el.assign = {
-                                count: stats[i].assign.count, 
-                                complete: stats[i].assign.complete,
-                                achieved_score: stats[i].assign.achieved_score,
-                                max_score: stats[i].assign.max_score
-                            };
-                            sum.assign.count += stats[i].assign.count;
-                            sum.assign.complete += stats[i].assign.complete;
-                            sum.assign.achieved_score += stats[i].assign.achieved_score;
-                            sum.assign.max_score += stats[i].assign.max_score;
+                        if(stats[i].quiz){ // xxx for demo only // if(stats[i].page){
+                            el.page = {
+                                count: stats[i].quiz.count, 
+                                complete: stats[i].quiz.complete,
+                                //achieved_score: stats[i].quiz.achieved_score,
+                                //max_score: stats[i].quiz.max_score
+                            }
+                            sum.page.count += stats[i].quiz.count;
+                            sum.page.complete += stats[i].quiz.complete;
+                            //sum.page.achieved_score += stats[i].quiz.achieved_score;
+                            //sum.page.max_score += stats[i].quiz.max_score;
+                            
                         }
                         if(stats[i].quiz){
                             el.quiz = {
@@ -176,6 +184,19 @@
                             sum.quiz.achieved_score += stats[i].quiz.achieved_score;
                             sum.quiz.max_score += stats[i].quiz.max_score;
                         }
+                        if(stats[i].assign){
+                            el.assign = {
+                                count: stats[i].assign.count, 
+                                complete: stats[i].assign.complete,
+                                achieved_score: stats[i].assign.achieved_score,
+                                max_score: stats[i].assign.max_score
+                            };
+                            sum.assign.count += stats[i].assign.count;
+                            sum.assign.complete += stats[i].assign.complete;
+                            sum.assign.achieved_score += stats[i].assign.achieved_score;
+                            sum.assign.max_score += stats[i].assign.max_score;
+                        }
+                        
                         out.push(el);
                     } 
                     console.log('calc__: ', out)   
@@ -265,7 +286,7 @@
 
             template: `
             <div id="dashboard-overview">
-                    <h3 hidden>Semesterübersicht</h3>
+                    <h3>Semesterübersicht</h3>
                     <p class="w-75"></p>
                     <div class="row mb-3 form-group">
                         <div class="col-3">
@@ -312,15 +333,22 @@
                         <span class="col-2"><strong>Einsendeaufgaben</strong> bearbeiten, um in der Klausur Zeit sparen</span>
                         <span class="col-2"><strong>Abschlussreflexion</strong> bearbeiten und besser in der Klausur abschneiden</span>    
                     </div>
-                    <div v-for="(section, sIndex) in stats" class="row col-10 mb-0">
+                    
+                    <div v-for="section in stats" class="row col-10 mb-0">
                         <div class="col-3 mb-1" style="border: solid #111 0pt;text-align:right;">
                             <!-- Course Unit -->
                             {{ section.sectionname }}
                         </div>
                         <div class="col-2 mb-1" style="border: solid #111 0pt;">
                             <!-- Longpage -->
-                            -
-                            <span v-if="section.longpage == null">-</span>
+                            <span v-if="section.page" class="mb-1" style="display:block;position:relative;width:100%;height:15px;background-color:#eee;">
+                                <span :style="'position:absolute;background-color:'+getBarColor(\'page_completion\', getRatio(section.page.complete, section.page.count))+';display:block;height:100%;width:'+ getRatio(section.page.complete, section.page.count, 100) +'%;'">
+                                </span>
+                                <span class="p-1" style="z-index:10;position:absolute;color:#333;font-size:0.7rem;vertical-align:middle;display:block;height:100%;">
+                                    {{ section.page.complete }} von {{ section.page.count }} bearbeitet
+                                </span>
+                            </span>
+                            <span v-if="section.page == null">-</span>
                         </div>
                         <div class="col-2 mb-1" style="border: solid #111 0pt;">
                             <!-- Self Assessment -->
@@ -372,16 +400,16 @@
                     </div>
                     <div class="row col-10 mb-3" style="">
                         <span class="col-3"></span>
-                        <span class="col-2">xxx Minuten gelesen</span>
+                        <span class="col-2">{{ getRatio(sumScores.page.complete, sumScores.page.count) }}% gelesen</span>
                         <span class="col-2">{{ getRatio(sumScores.quiz.complete, sumScores.quiz.count) }}% erledigt<br></span>
                         <span class="col-2">{{ getRatio(sumScores.assign.complete, sumScores.assign.count) }}% erledigt<br></span>
                         <span class="col-2">{{ getNumberOfReflectedSections() }}/{{ sectionnames.length }} erledigt</span>  
                     </div>
-                    <div hidden class="right col-8 small mt-3 mr-3 mb-3">
+                    <div class="right col-8 small mt-3 mr-3 mb-3">
                         Beachten Sie auch die anderen Lernmaterialien wie die <a href="#">Virtuellen Treffen</a>, <a href="#">Praktischen Übungen</a> und <a href="#">Prüfungsvorbereitungen</a>
                     </div>
-                    <div style="margin: 50px 0;" class="col-10 d-flex justify-content-center">
-                        <button 
+                    <div hidden style="margin: 50px 0;" class="col-10 d-flex justify-content-center">
+                        <button
                             type="button" 
                             style="border-radius:10px; font-weight:bold; color:#fff;"
                             class="btn btn-warning btn-lg">

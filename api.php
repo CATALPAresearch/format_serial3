@@ -1649,10 +1649,48 @@ class format_ladtopics_external extends external_api
                     qsub.userid = :userid AND
                     qsub.state = 'finished' AND
                     m.name = 'quiz'
+            ;",
+            'longpage' => "SELECT DISTINCT
+                m.name activity,
+                l.id activity_id,
+                cm.id module_id,
+                cm.section,
+                (select count(section) from mdl_longpage_reading_progress lrp) count,
+                '0' AS max_score,
+                '0' AS achieved_score,
+                '0' AS submission_time,
+                '0' AS grading_time
+                FROM mdl_longpage l
+                JOIN mdl_longpage_reading_progress lrp ON l.id = lrp.longpageid
+                LEFT JOIN mdl_course_modules cm ON l.id = cm.instance
+                LEFT JOIN mdl_modules m ON m.id = cm.module 
+                WHERE 
+                l.course = :courseid AND 
+                lrp.userid= :userid AND 
+                m.name = 'longpage'
             ;"
-            //,'test' => "SELECT * FROM {assign} WHERE course = :courseid"
-        );
+            /*
+SELECT
+m.name activity,
+l.id activity_id,
+lrp.longpageid longpageid,
+cm.id module_id,
+cm.section,
+lrp.userid,
+(select count(section) from mdl_longpage_reading_progress lrp) count
 
+FROM mdl_longpage l
+JOIN mdl_longpage_reading_progress lrp ON l.id = lrp.longpageid
+LEFT JOIN mdl_course_modules cm ON l.id = cm.instance
+LEFT JOIN mdl_modules m ON m.id = cm.module 
+WHERE 
+lrp.userid=2 AND 
+lrp.longpageid=2 AND
+m.name = 'longpage'
+;
+        */
+            
+        );
 
         $debug = [];
         $params = array('courseid' => $courseid, 'userid' => $userid);

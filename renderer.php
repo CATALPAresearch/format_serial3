@@ -1082,10 +1082,10 @@ $modalMilestone = '
                                     <ul class="nav nav-tabs dashboard-tab">
                                         <li class="nav-item active">
                                             <a class="nav-link active" v-on:click="log(\'dashboard_overview_open\')" data-toggle="tab" href="#learningoverview" role="tab">Übersicht</a></li>
-                                        <li class="nav-item">
+                                        <li hidden class="nav-item">
                                             <a class="nav-link" v-on:click="log(\'dashboard_completion_open\')" data-toggle="tab" href="#learningstatus" role="tab">Genutzte Lernangebote</a></li>
                                         <li hidden class="nav-item ">
-                                            <a class="nav-link"v-on:click="log(\'dashboard_time-management_open\')"  data-toggle="tab" href="#timemanagement" role="tab">Zeitmanagement</a></li>
+                                            <a class="nav-link" v-on:click="log(\'dashboard_time-management_open\')" data-toggle="tab" href="#timemanagement" role="tab">Zeitmanagement</a></li>
                                         <li class="nav-item">
                                             <a class="nav-link" v-on:click="log(\'dashboard_strategy_open\')" data-toggle="tab" href="#strategy" role="tab">Lernen gestalten</a>
                                         </li>
@@ -1099,8 +1099,8 @@ $modalMilestone = '
                                     <br>
                                     <div class="tab-content" style="display:block;">
                                         <div class="tab-pane fade show active" id="learningoverview" role="tabpanel">
-                                            <div id="dashboardsectionexclude" hidden>'.  $format_options["dashboardsectionexclude"] .'</div>
-                                            <dashboard-overview ref="childDashboardOverview" v-on:log="log" v-bind:course="course" v-bind:milestones="milestones"></dashboard-overview>
+                                            <dashboard-overview ref="childDashboardOverview" v-on:log="log" v-bind:course="course"></dashboard-overview>
+                                            <div id="dashboardsectionexclude">' . $format_options["dashboardsectionexclude"] . '</div>
                                         </div> 
                                         <div class="tab-pane fade" id="learningstatus" role="tabpanel">
                                             <dashboard-completion ref="childDashboardCompletion" v-on:log="log" v-bind:course="course" v-bind:milestones="milestones"></dashboard-completion>

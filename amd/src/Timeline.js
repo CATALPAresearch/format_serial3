@@ -1323,7 +1323,7 @@ define([
                     },
                     updateMilestoneStatus: function () {
                         this.$refs.childDashboardCompletion.updateResources(this.milestones);
-                        this.$refs.childDashboardOverview.updateResources(this.milestones);
+                        //this.$refs.childDashboardOverview.updateResources(this.milestones);
                         if (this.milestones === null || this.milestones === undefined) {
                             return;
                         }
