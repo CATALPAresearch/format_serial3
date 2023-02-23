@@ -49,11 +49,69 @@ if (($marker >=0) && has_capability('moodle/course:setcurrentsection', $context)
 // Make sure section 0 is created.
 course_create_sections_if_missing($course, 0);
 
+/*
 if (format_ladtopics\blocking::tool_policy_accepted()) {
     $PAGE->requires->js_call_amd('format_ladtopics/ladtopics', 'init', array('courseid'=>$course->id));//, array(array('courseid'=>$course->id, 'user'=>$user_data)));
 } else{
     $PAGE->requires->js_call_amd('format_ladtopics/ladtopicsCleaner', 'init');
 }
+*/
+
+
+/**
+ * A Attribute to store if the user is a moderator for the course
+ */
+$_moderator = null;
+$courseid;
+$found;
+$islogged;
+
+/**
+ * A Method to test if the user is a moderator for the course
+ */
+
+function checkModeratorStatus(){
+    try{
+        global $USER, $COURSE;
+        $context = context_course::instance($COURSE->id);
+        $loggedIn = isloggedin();
+        $roles = get_user_roles($context, $USER->id);
+        $found = false;
+        if(is_siteadmin($USER->id)){
+            return true;
+        }
+        foreach($roles as $key => $value){
+            if(isset($value->shortname)){
+                if($value->shortname === "manager" || $value->shortname === "coursecreator" || $value->shortname === "teacher" || $value->shortname === "editingteacher"){
+                    $found = true;
+                    break;
+                }
+            }
+        }
+        if($found === true && $loggedIn === true){
+            return true;
+        }
+        return false;
+    } catch(Exception $ex){
+        var_dump($ex);
+        return false;
+    }
+}
+
+
+
+$PAGE->requires->js_call_amd('format_ladtopics/app-lazy', 'init', [
+    'courseid' => $COURSE->id,
+    'fullPluginName' => 'format_ladtopics',
+    'userid' => $USER->id,
+    'isModerator' => checkModeratorStatus(),
+    'policyAccepted' => format_ladtopics\blocking::tool_policy_accepted()
+]);
+
+echo html_writer::start_tag('div', array('class' => ''))
+    . '<div id="app"></div>' . html_writer::end_tag('div')
+;
+
 $renderer = $PAGE->get_renderer('format_ladtopics');
 
 if (!empty($displaysection)) {

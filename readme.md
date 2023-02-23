@@ -75,6 +75,10 @@ amd/src/Assessment.js: This the major file where your assment dashboard has to b
 
 A good sheet sheet: http://tech.solin.eu/doku.php?id=moodle:course_construction
 
+## Valerie
+Development:
+
+
 
 
 ## Contributors

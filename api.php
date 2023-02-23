@@ -33,16 +33,21 @@ function get_meta($courseID)
         foreach ($roles as $key => $value) {
             if (isset($value->shortname)) {
                 switch ($value->shortname) {
-                    case 'teacher':         $obj->user->teacher = true;
-                                            break;
-                    case 'editingteacher':  $obj->user->editingteacher = true;
-                                            break;
-                    case 'coursecreator':   $obj->user->coursecreator = true;
-                                            break;
-                    case 'manager':         $obj->user->manager = true;
-                                            break;
-                    case 'student':         $obj->user->student = true;
-                                            break;
+                    case 'teacher':
+                        $obj->user->teacher = true;
+                        break;
+                    case 'editingteacher':
+                        $obj->user->editingteacher = true;
+                        break;
+                    case 'coursecreator':
+                        $obj->user->coursecreator = true;
+                        break;
+                    case 'manager':
+                        $obj->user->manager = true;
+                        break;
+                    case 'student':
+                        $obj->user->student = true;
+                        break;
                 }
                 $obj->user->roles[] = $value->shortname;
             }
@@ -57,7 +62,8 @@ class format_ladtopics_external extends external_api
 {
     // Analytics
 
-    public static function analytics_parameters(){
+    public static function analytics_parameters()
+    {
         return new external_function_parameters(
             array(
                 'courseid' => new external_value(PARAM_INT, 'course id')
@@ -65,17 +71,18 @@ class format_ladtopics_external extends external_api
         );
     }
 
-    public static function analytics($courseid){
+    public static function analytics($courseid)
+    {
         $out = array();
-        try{
+        try {
             global $USER, $CFG, $DB;
-            $permission = new format_ladtopics\permission\course((int)$USER->id, $courseid);   
-            if(!$permission->isAnyKindOfModerator()) throw new Exception("No permission");
+            $permission = new format_ladtopics\permission\course((int)$USER->id, $courseid);
+            if (!$permission->isAnyKindOfModerator()) throw new Exception("No permission");
             $context = $permission->getCourseContext();
             $enrollments = get_enrolled_users($context);
             $users = array();
-            foreach($enrollments as $user){
-                try{
+            foreach ($enrollments as $user) {
+                try {
                     $u = new stdClass();
                     // Get the personal informations
                     $u->id = $user->id;
@@ -89,19 +96,19 @@ class format_ladtopics_external extends external_api
                     $u->firstaccess = $user->firstaccess;
                     $u->lastaccess = $user->lastaccess;
                     // Get milestones from the person
-                    
+
                     $sql = 'SELECT t.milestones, t.settings, t.timemodified 
-                            FROM '.$CFG->prefix.'ladtopics_milestones AS t
+                            FROM ' . $CFG->prefix . 'ladtopics_milestones AS t
                             WHERE   
                                 t.course = ' . (int)$courseid . ' 
                                 AND t.userid = ' . (int)$user->id . '
                             ORDER BY t.timemodified DESC
                             LIMIT 1';
                     $ms = $DB->get_record_sql($sql);
-                    if($ms !== false && is_object($ms)){
+                    if ($ms !== false && is_object($ms)) {
                         $u->milestones = new stdClass();
                         $mse = json_decode($ms->milestones);
-                        if(!is_array($mse) || is_null($mse)){
+                        if (!is_array($mse) || is_null($mse)) {
                             $u->milestones->modified = date();
                             $u->milestones->elements = array();
                             $u->milestones->count = 0;
@@ -109,28 +116,28 @@ class format_ladtopics_external extends external_api
                             $u->milestones->modified = $ms->timemodified;
                             $u->milestones->elements = $mse;
                             $u->milestones->count = count($u->milestones->elements);
-                        } 
+                        }
                     } else {
                         $u->milestones->modified = time();
                         $u->milestones->count = 0;
                         $u->milestones->elements = array();
                     }
-                    
+
 
                     // Get the planing
                     // Preferences
-                    
+
                     $surveyDone = $DB->get_record("user_preferences", array(
                         'name' => 'ladtopics_survey_done-course-' . (int)$courseid,
-                        'userid'=>(int)$user->id
+                        'userid' => (int)$user->id
                     ));
                     $surveyData = $DB->get_record("user_preferences", array(
                         'name' => 'ladtopics_survey_results-course-' . (int)$courseid,
-                        'userid'=>(int)$user->id
+                        'userid' => (int)$user->id
                     ));
-                    if($surveyDone !== false && is_object($surveyData) && isset($surveyData->value)){
+                    if ($surveyDone !== false && is_object($surveyData) && isset($surveyData->value)) {
                         $data = json_decode($surveyData->value);
-                        if($data === null){
+                        if ($data === null) {
                             $u->initialSurvey = new stdClass();
                             $u->initialSurvey->planingStyle = 'unknown';
                             $u->initialSurvey->objectives = 'f1d';
@@ -144,51 +151,54 @@ class format_ladtopics_external extends external_api
                         $u->initialSurvey->objectives = 'f1d';
                         $u->initialSurvey->availableTime = -1;
                     }
-                      
+
                     // Get the lime survey data
-                    
+
                     $sql = 'SELECT a.id, a.name, a.survey_id, s.complete_date, s.submission_id
-                     FROM '.$CFG->prefix.'limesurvey_submissions AS s
-                     INNER JOIN '.$CFG->prefix.'limesurvey_assigns AS a
+                     FROM ' . $CFG->prefix . 'limesurvey_submissions AS s
+                     INNER JOIN ' . $CFG->prefix . 'limesurvey_assigns AS a
                      ON s.survey_id = a.survey_id 
                         AND a.course_id = ? 
                      LIMIT 1';
                     $lime = $DB->get_records_sql($sql, array((int)$courseid));
-                    if(is_array($lime) && count($lime) > 0){
+                    if (is_array($lime) && count($lime) > 0) {
                         $u->lime = $lime;
                     } else {
                         $u->lime = array();
-                    } 
-                    
+                    }
+
 
                     // Add user to the array
                     $users[] = $u;
-                } catch(Exception $uex){
+                } catch (Exception $uex) {
                     continue;
-                }               
+                }
             }
             $out['users'] = $users;
-        } catch(Exception $ex){
+        } catch (Exception $ex) {
             $out['debug'] = $ex->getMessage();
-        }   
-        return array('data' => json_encode($users));     
+        }
+        return array('data' => json_encode($users));
     }
 
-    public static function analytics_is_allowed_from_ajax(){
+    public static function analytics_is_allowed_from_ajax()
+    {
         return true;
     }
 
-    public static function analytics_returns(){
+    public static function analytics_returns()
+    {
         return new external_single_structure(
             array(
                 'data' => new external_value(PARAM_RAW, 'data')
             )
         );
     }
-    
-    // End Analytics   
-    
-    public static function limesurvey_parameters(){
+
+    // End Analytics
+
+    public static function limesurvey_parameters()
+    {
         return new external_function_parameters(
             array(
                 'courseid' => new external_value(PARAM_INT, 'course id')
@@ -196,66 +206,69 @@ class format_ladtopics_external extends external_api
         );
     }
 
-    public static function limesurvey($courseid){
-        global $CFG, $DB, $USER; 
-        $out = array(); 
-        try{           
-            $perm = new format_ladtopics\permission\course($USER->id, $courseid);  
-            if($perm->isAnyKindOfModerator()) return array('data' => json_encode($out));
+    public static function limesurvey($courseid)
+    {
+        global $CFG, $DB, $USER;
+        $out = array();
+        try {
+            $perm = new format_ladtopics\permission\course($USER->id, $courseid);
+            if ($perm->isAnyKindOfModerator()) return array('data' => json_encode($out));
 
             $out['warnSurvey'] = false;
-            $records = $DB->get_records_sql('SELECT * FROM '.$CFG->prefix.'limesurvey_assigns WHERE course_id = ?', array($courseid));
-            foreach($records as $record){
+            $records = $DB->get_records_sql('SELECT * FROM ' . $CFG->prefix . 'limesurvey_assigns WHERE course_id = ?', array($courseid));
+            foreach ($records as $record) {
 
-                if(isset($record->startdate) && is_int(+$record->startdate) && !is_null($record->startdate)) {            
-                    if(time() < $record->startdate) {
+                if (isset($record->startdate) && is_int(+$record->startdate) && !is_null($record->startdate)) {
+                    if (time() < $record->startdate) {
                         continue;
                     }
                 }
 
-                if(isset($record->stopdate) && is_int(+$record->stopdate) && !is_null($record->stopdate)){
-                    if(time() > $record->stopdate) {
+                if (isset($record->stopdate) && is_int(+$record->stopdate) && !is_null($record->stopdate)) {
+                    if (time() > $record->stopdate) {
                         continue;
                     };
                 }
 
-                if($DB->record_exists_sql('SELECT * FROM '.$CFG->prefix.'limesurvey_submissions WHERE user_id = ? AND survey_id = ?', array($USER->id, $record->survey_id)) === false){
-                    $out['warnSurvey'] = true;    
-                    
-                    if(isset($record->warndate) && is_int(+$record->warndate) && !is_null($record->warndate)){
+                if ($DB->record_exists_sql('SELECT * FROM ' . $CFG->prefix . 'limesurvey_submissions WHERE user_id = ? AND survey_id = ?', array($USER->id, $record->survey_id)) === false) {
+                    $out['warnSurvey'] = true;
+
+                    if (isset($record->warndate) && is_int(+$record->warndate) && !is_null($record->warndate)) {
                         $warn = $record->warndate;
-                        if(isset($out['warnDate'])){
-                            if($warn < $out['warnDate']){
+                        if (isset($out['warnDate'])) {
+                            if ($warn < $out['warnDate']) {
                                 $out['warnDate'] = $warn;
                             }
                         } else {
                             $out['warnDate'] = $warn;
                         }
-                    }        
+                    }
 
                     //$url = new moodle_url('/course/format/ladtopics/survey.php', array('c' => $courseid));
-                    //$out['link'] = $url->__toString();              
+                    //$out['link'] = $url->__toString();
                 }
             }
-        } catch(Exception $ex){
+        } catch (Exception $ex) {
             $out['debug'] = $ex->getMessage();
         }
         return array('data' => json_encode($out));
     }
 
-    public static function limesurvey_is_allowed_from_ajax(){
+    public static function limesurvey_is_allowed_from_ajax()
+    {
         return true;
     }
 
-    public static function limesurvey_returns(){
+    public static function limesurvey_returns()
+    {
         return new external_single_structure(
             array(
                 'data' => new external_value(PARAM_RAW, 'data')
             )
         );
     }
-    
-    
+
+
     public static function statistics_parameters()
     {
         return new external_function_parameters(
@@ -293,9 +306,9 @@ class format_ladtopics_external extends external_api
                 $uo->email = $user->email;
                 // milesones
                 $transaction = $DB->start_delegated_transaction();
-                $sql='
+                $sql = '
                     SELECT t.milestones, t.settings, t.timemodified 
-                    FROM '.$CFG->prefix.'ladtopics_milestones AS t
+                    FROM ' . $CFG->prefix . 'ladtopics_milestones AS t
                     WHERE   
                         t.course = ' . (int)$courseid . ' 
                         AND t.userid = ' . (int)$user->id . '
@@ -306,9 +319,9 @@ class format_ladtopics_external extends external_api
                 $transaction->allow_commit();
                 // numbers
                 $transaction = $DB->start_delegated_transaction();
-                $sql='
+                $sql = '
                     SELECT t.timemodified 
-                    FROM '.$CFG->prefix.'ladtopics_milestones AS t
+                    FROM ' . $CFG->prefix . 'ladtopics_milestones AS t
                     WHERE   
                         t.course = ' . (int)$courseid . ' 
                         AND t.userid = ' . (int)$user->id . '
@@ -320,14 +333,14 @@ class format_ladtopics_external extends external_api
                 $transaction = $DB->start_delegated_transaction();
                 $resSD = $DB->get_record("user_preferences", array(
                     'name' => 'ladtopics_survey_done-course-' . (int)$courseid,
-                    'userid'=>(int)$user->id
+                    'userid' => (int)$user->id
                 ));
                 $transaction->allow_commit();
                 $uo->surveyDone = $resSD;
                 $transaction = $DB->start_delegated_transaction();
                 $res = $DB->get_record("user_preferences", array(
                     'name' => 'ladtopics_survey_results-course-' . (int)$courseid,
-                    'userid'=>(int)$user->id
+                    'userid' => (int)$user->id
                 ));
                 $transaction->allow_commit();
                 $uo->survey = $res;
@@ -415,7 +428,7 @@ class format_ladtopics_external extends external_api
             )
         );
     }
-    
+
     // sss
 
     public static function sendmail_parameters()
@@ -458,7 +471,7 @@ class format_ladtopics_external extends external_api
             )
         );
     }
-    
+
     public static function getalluser_parameters()
     {
         return new external_function_parameters(
@@ -481,7 +494,7 @@ class format_ladtopics_external extends external_api
             }
             $enrolled = get_enrolled_users($context->course->context);
             $array = array();
-            foreach ($enrolled as $key=>$value) {
+            foreach ($enrolled as $key => $value) {
                 if (!isset($value->id)) {
                     continue;
                 }
@@ -500,10 +513,10 @@ class format_ladtopics_external extends external_api
                 if (isset($value->lastname) && strlen($value->lastname) > 0) {
                     $name = ucfirst(strtolower($value->lastname));
                     if (isset($value->middlename) && strlen($value->middlename) > 0) {
-                        $name = ucfirst(strtolower($value->middlename))." ".$name;
+                        $name = ucfirst(strtolower($value->middlename)) . " " . $name;
                     }
                     if (isset($value->firstname) && strlen($value->firstname) > 0) {
-                        $name = ucfirst(strtolower($value->firstname))." ".$name;
+                        $name = ucfirst(strtolower($value->firstname)) . " " . $name;
                     }
                     $user->name = $name;
                 }
@@ -545,7 +558,7 @@ class format_ladtopics_external extends external_api
             array('courseid' => new external_value(PARAM_INT, 'id of course', VALUE_OPTIONAL))
         );
     }
-    
+
     public static function name_is_allowed_from_ajax()
     {
         return true;
@@ -555,8 +568,8 @@ class format_ladtopics_external extends external_api
     {
         return new external_single_structure(
             array(
-                    'data' => new external_value(PARAM_TEXT, 'Plugin name')
-                )
+                'data' => new external_value(PARAM_TEXT, 'Plugin name')
+            )
         );
     }
     public static function name($data)
@@ -605,11 +618,11 @@ class format_ladtopics_external extends external_api
             if (!is_null($data->milestones)) {
                 $date = new DateTime();
                 $r = new stdClass();
-                $r->userid=(int)$userid;
-                $r->course=(int)$data->courseid;
-                $r->milestones=$data->milestones;
-                $r->settings=[];
-                $r->timemodified=(int)$date->getTimestamp();
+                $r->userid = (int)$userid;
+                $r->course = (int)$data->courseid;
+                $r->milestones = $data->milestones;
+                $r->settings = [];
+                $r->timemodified = (int)$date->getTimestamp();
                 $transaction = $DB->start_delegated_transaction();
                 $res = $DB->insert_record("ladtopics_milestones", $r);
                 $transaction->allow_commit();
@@ -624,11 +637,11 @@ class format_ladtopics_external extends external_api
                     $r->name = $field . '-course-' . (int)$courseid;
                     $exists = $DB->record_exists('user_preferences', array(
                         'name' => $field . '-course-' . (int)$courseid,
-                        'userid'=>$userid
+                        'userid' => $userid
                     ));
-                    $res='nix';
+                    $res = 'nix';
                     if ($exists != true) {
-                        $r->value=$value == null ? 0 : $value;
+                        $r->value = $value == null ? 0 : $value;
                         $transaction = $DB->start_delegated_transaction();
                         $res = $DB->insert_records("user_preferences", array($r));
                         $transaction->allow_commit();
@@ -654,8 +667,8 @@ class format_ladtopics_external extends external_api
     {
         return new external_single_structure(
             array(
-                    'data' => new external_value(PARAM_RAW, 'data')
-                )
+                'data' => new external_value(PARAM_RAW, 'data')
+            )
         );
     }
 
@@ -663,8 +676,8 @@ class format_ladtopics_external extends external_api
     {
         return true;
     }
-     
-   
+
+
     /**
      * Get calendar data
      */
@@ -681,8 +694,8 @@ class format_ladtopics_external extends external_api
     {
         return new external_single_structure(
             array(
-                    'data' => new external_value(PARAM_RAW, 'data')
-                )
+                'data' => new external_value(PARAM_RAW, 'data')
+            )
         );
     }
     public static function getcalendar($data)
@@ -692,30 +705,30 @@ class format_ladtopics_external extends external_api
         $cid = (int)$data;
         $uid = (int)$USER->id;
         $sql = '
-            SELECT * FROM '.$CFG->prefix.'event
-            WHERE ('.$CFG->prefix.'event.eventtype = \'site\') 
-            OR ('.$CFG->prefix.'event.eventtype = \'user\' AND '.$CFG->prefix.'event.userid = '.$uid.')
-            OR ('.$CFG->prefix.'event.eventtype = \'group\'
-                AND '.$CFG->prefix.'event.courseid = '.$cid.'
-                AND '.$CFG->prefix.'event.groupid in 
-                (SELECT '.$CFG->prefix.'groups.id 
-                    FROM '.$CFG->prefix.'groups
-                    INNER JOIN '.$CFG->prefix.'groups_members
-                    ON '.$CFG->prefix.'groups.id = '.$CFG->prefix.'groups_members.groupid
-                WHERE '.$CFG->prefix.'groups_members.userid = '.$uid.')
+            SELECT * FROM ' . $CFG->prefix . 'event
+            WHERE (' . $CFG->prefix . 'event.eventtype = \'site\') 
+            OR (' . $CFG->prefix . 'event.eventtype = \'user\' AND ' . $CFG->prefix . 'event.userid = ' . $uid . ')
+            OR (' . $CFG->prefix . 'event.eventtype = \'group\'
+                AND ' . $CFG->prefix . 'event.courseid = ' . $cid . '
+                AND ' . $CFG->prefix . 'event.groupid in 
+                (SELECT ' . $CFG->prefix . 'groups.id 
+                    FROM ' . $CFG->prefix . 'groups
+                    INNER JOIN ' . $CFG->prefix . 'groups_members
+                    ON ' . $CFG->prefix . 'groups.id = ' . $CFG->prefix . 'groups_members.groupid
+                WHERE ' . $CFG->prefix . 'groups_members.userid = ' . $uid . ')
             )
-            OR ('.$CFG->prefix.'event.eventtype = \'course\' AND '.$CFG->prefix.'event.courseid = '.$cid.')
-            OR ('.$CFG->prefix.'event.eventtype = \'category\' AND '.$CFG->prefix.'event.categoryid in
-   		        (SELECT '.$CFG->prefix.'course_categories.id
-                    FROM '.$CFG->prefix.'course_categories
-                    INNER JOIN '.$CFG->prefix.'course
-                    ON '.$CFG->prefix.'course_categories.id = '.$CFG->prefix.'course.category
-                WHERE '.$CFG->prefix.'course.id = '.$cid.')
+            OR (' . $CFG->prefix . 'event.eventtype = \'course\' AND ' . $CFG->prefix . 'event.courseid = ' . $cid . ')
+            OR (' . $CFG->prefix . 'event.eventtype = \'category\' AND ' . $CFG->prefix . 'event.categoryid in
+   		        (SELECT ' . $CFG->prefix . 'course_categories.id
+                    FROM ' . $CFG->prefix . 'course_categories
+                    INNER JOIN ' . $CFG->prefix . 'course
+                    ON ' . $CFG->prefix . 'course_categories.id = ' . $CFG->prefix . 'course.category
+                WHERE ' . $CFG->prefix . 'course.id = ' . $cid . ')
             )
-            ORDER BY '.$CFG->prefix.'event.timestart ASC';
+            ORDER BY ' . $CFG->prefix . 'event.timestart ASC';
         $data = $DB->get_records_sql($sql);
         $transaction->allow_commit();
-        return array('data'=>json_encode($data));
+        return array('data' => json_encode($data));
     }
     public static function getcalendar_is_allowed_from_ajax()
     {
@@ -739,9 +752,9 @@ class format_ladtopics_external extends external_api
     {
         return new external_single_structure(
             array(
-                    'data' => new external_value(PARAM_RAW, 'data'),
-                    'user' => new external_value(PARAM_RAW, 'data')
-                )
+                'data' => new external_value(PARAM_RAW, 'data'),
+                'user' => new external_value(PARAM_RAW, 'data')
+            )
         );
     }
     public static function logstore($data)
@@ -749,7 +762,7 @@ class format_ladtopics_external extends external_api
         global $CFG, $DB, $USER;
 
         $transaction = $DB->start_delegated_transaction();
-        $query ='SELECT * FROM ' . $CFG->prefix . 'logstore_standard_log 
+        $query = 'SELECT * FROM ' . $CFG->prefix . 'logstore_standard_log 
             WHERE userid=' . $USER->id . ' AND 
         ( 
             component=\'mod_glossary\' OR 
@@ -761,12 +774,12 @@ class format_ladtopics_external extends external_api
         );';
         $data = $DB->get_records_sql($query);
         $transaction->allow_commit();
-        $arr=array();
+        $arr = array();
         foreach ($data as $bu) {
             $entry = array(
                 'utc' => $bu->timecreated,
                 'action_type' => $bu->component,
-                'action'=> $bu->action//,
+                'action' => $bu->action //,
                 //'data' => json_encode($bu),
             );
             array_push($arr, $entry);
@@ -780,19 +793,19 @@ class format_ladtopics_external extends external_api
             'lastname' =>  $USER->lastname,
             'userid' =>  $USER->id
         );
-        
-        return array('data'=>json_encode($arr), 'user'=>json_encode($user_data));
+
+        return array('data' => json_encode($arr), 'user' => json_encode($user_data));
     }
     public static function logstore_is_allowed_from_ajax()
     {
         return true;
     }
-    
+
 
     /*
      * Get course structure
      **/
-     
+
 
     /*
   public static function logger_parameters() {
@@ -811,7 +824,7 @@ class format_ladtopics_external extends external_api
        );
     }
     */
-     
+
     public static function coursestructure_parameters()
     {
         //  VALUE_REQUIRED, VALUE_OPTIONAL, or VALUE_DEFAULT. If not mentioned, a value is VALUE_REQUIRED
@@ -819,14 +832,14 @@ class format_ladtopics_external extends external_api
             array(
                 'courseid' => new external_value(PARAM_INT, 'course id'),
                 'select' =>
-                new external_single_structure(
-                    array(
-                        'modules' => new external_value(PARAM_RAW, 'modules'),
-                        'sectionid' => new external_value(PARAM_INT, 'section id', VALUE_OPTIONAL),
-                        'moduleid' => new external_value(PARAM_INT, 'module id', VALUE_OPTIONAL)
-                    ),
-                    'select special items'
-                )
+                    new external_single_structure(
+                        array(
+                            'modules' => new external_value(PARAM_RAW, 'modules'),
+                            'sectionid' => new external_value(PARAM_INT, 'section id', VALUE_OPTIONAL),
+                            'moduleid' => new external_value(PARAM_INT, 'module id', VALUE_OPTIONAL)
+                        ),
+                        'select special items'
+                    )
             )
         );
     }
@@ -846,14 +859,16 @@ class format_ladtopics_external extends external_api
     public static function coursestructure($courseid, $select)
     {
         global $CFG, $DB, $USER;
-        
+
         $out_data = array();
         $out_debug = array();
 
         // all allowed modules
-        $allowed_modules = array("assign", "data", "hvp", "checklist",
-        "url", "studentquiz", "page", "feedback", "forum", "resource", "wiki",
-        "glossary", "quiz", "usenet", "book", "usenet"); // TODO: This should be part of the course settings
+        $allowed_modules = array(
+            "assign", "data", "hvp", "checklist",
+            "url", "studentquiz", "page", "feedback", "forum", "resource", "wiki",
+            "glossary", "quiz", "usenet", "book", "usenet"
+        ); // TODO: This should be part of the course settings
 
         if (is_array($select)) {
             $addToQuery = "";
@@ -880,12 +895,12 @@ class format_ladtopics_external extends external_api
                         cs.name AS section_name,
                         cs.sequence AS section_sequence,
                         cs.section AS section_pos
-                        FROM '.$CFG->prefix.'course_modules AS cm
-                        JOIN '.$CFG->prefix.'modules AS m 
+                        FROM ' . $CFG->prefix . 'course_modules AS cm
+                        JOIN ' . $CFG->prefix . 'modules AS m 
                         ON m.id = cm.module
-                        JOIN '.$CFG->prefix.'course_sections AS cs 
+                        JOIN ' . $CFG->prefix . 'course_sections AS cs 
                         ON cs.id = cm.section
-                        RIGHT OUTER JOIN '.$CFG->prefix.$value.' AS f
+                        RIGHT OUTER JOIN ' . $CFG->prefix . $value . ' AS f
                         ON cm.instance = f.id 
                         WHERE cm.course = ? AND cs.course = ? AND f.course = ? AND m.name = ?
                     ';
@@ -901,7 +916,7 @@ class format_ladtopics_external extends external_api
                     $res = $DB->get_records_sql($query, $params);
                     $transaction->allow_commit();
                     foreach ($res as $entry) {
-                        if(!$entry->cm_visibility) continue;
+                        if (!$entry->cm_visibility) continue;
                         $pos = -1;
                         // I am not sure whether sizeof() and count() have the same results, but in php 7.2 sizeof() requires an array.
                         if (gettype($entry->section_sequence) === "string" && sizeof($entry->section_sequence) > 0) {
@@ -930,7 +945,7 @@ class format_ladtopics_external extends external_api
                 }
             }
         }
-        return array('data'=>json_encode($out_data), 'debug'=>json_encode($out_debug));
+        return array('data' => json_encode($out_data), 'debug' => json_encode($out_debug));
     }
 
     public static function coursestructure_is_allowed_from_ajax()
@@ -941,18 +956,17 @@ class format_ladtopics_external extends external_api
     /**
      * Collects log data from the client
      */
-    public static function logger_parameters()
-    {
+    public static function logger_parameters() {
         return new external_function_parameters(
             array(
                 'data' =>
                     new external_single_structure(
                         array(
-                        'courseid' => new external_value(PARAM_INT, 'id of course', VALUE_OPTIONAL),
-                        'utc' => new external_value(PARAM_INT, 'utc time', VALUE_OPTIONAL),
-                        'action' => new external_value(PARAM_TEXT, 'action', VALUE_OPTIONAL),
-                        'entry' => new external_value(PARAM_RAW, 'log data', VALUE_OPTIONAL)
-                    )
+                            'courseid' => new external_value(PARAM_INT, 'id of course', VALUE_OPTIONAL),
+                            'utc' => new external_value(PARAM_INT, 'utc time', VALUE_OPTIONAL),
+                            'action' => new external_value(PARAM_TEXT, 'action', VALUE_OPTIONAL),
+                            'entry' => new external_value(PARAM_RAW, 'log data', VALUE_OPTIONAL)
+                        )
                     )
             )
         );
@@ -960,48 +974,109 @@ class format_ladtopics_external extends external_api
     public static function logger_returns()
     {
         return new external_single_structure(
-            array( 'response' => new external_value(PARAM_RAW, 'Server respons to the incomming log') )
+            array(
+                'success' => new external_value(PARAM_BOOL, ''),
+                'data' => new external_value(PARAM_RAW, '')
+            )
         );
     }
     public static function logger($data)
     {
         global $CFG, $DB, $USER;
-        
+
         $r = new stdClass();
-        $r->name='format_ladtopics';
-        $r->component='format_ladtopics';
-        $r->eventname='\format_ladtopics\event\\' . $data['action'];
-        $r->action=$data['action'];
-        $r->target='course_format';
-        $r->objecttable='ladtopics';
-        $r->objectid=0;
-        $r->crud='r';
-        $r->edulevel=2;
-        $r->contextid=120;
-        $r->contextlevel=70;
-        $r->contextinstanceid=86;
-        $r->userid=$USER->id;
-        $r->courseid=(int)$data['courseid'];
+        $r->name = 'format_ladtopics';
+        $r->component = 'format_ladtopics';
+        $r->eventname = '\format_ladtopics\event\\' . $data['action'];
+        $r->action = $data['action'];
+        $r->target = 'course_format';
+        $r->objecttable = 'ladtopics';
+        $r->objectid = 0;
+        $r->crud = 'r';
+        $r->edulevel = 2;
+        $r->contextid = 120;
+        $r->contextlevel = 70;
+        $r->contextinstanceid = 86;
+        $r->userid = $USER->id;
+        $r->courseid = (int)$data['courseid'];
         //$r->relateduserid=NULL;
-        $r->anonymous=0;
-        $r->other=$data['entry'];
-        $r->timecreated=$data['utc'];
-        $r->origin='web';
-        $r->ip=$_SERVER['REMOTE_ADDR'];
+        $r->anonymous = 0;
+        $r->other = $data['entry'];
+        $r->timecreated = $data['utc'];
+        $r->origin = 'web';
+        $r->ip = $_SERVER['REMOTE_ADDR'];
         //$r->realuserid=NULL;
-        
+
         $transaction = $DB->start_delegated_transaction();
         $res = $DB->insert_records("logstore_standard_log", array($r));
         $transaction->allow_commit();
-        
-        return array('response'=> json_encode('hello'));
+
+        return array(
+            'success' => true,
+            'data' => json_encode($res)
+        );
     }
     public static function logger_is_allowed_from_ajax()
     {
         return true;
     }
 
-    
+
+    /**
+     * get current goal
+     */
+    public static function get_goal_parameters() {
+        return new external_function_parameters(
+            array(
+                'data' =>
+                    new external_single_structure(
+                        array(
+                            'courseid' => new external_value(PARAM_INT, 'id of course', VALUE_OPTIONAL)
+                        )
+                    )
+            )
+        );
+    }
+    public static function get_goal($course)
+    {
+        global $DB, $USER;
+
+        $res = $DB->get_record_sql(
+            "SELECT other
+            FROM {logstore_standard_log}
+            WHERE 
+            component = 'format_ladtopics' AND
+            action = 'change_goal' AND
+            courseid = :courseid AND
+            userid = :userid
+            ORDER BY timecreated desc
+            LIMIT 1
+            ;",
+            [
+                'courseid' => $course['courseid'],
+                'userid' => $USER->id
+            ]);
+
+        return array(
+            'success' => true,
+            'data' => json_encode($res->other)
+        );
+    }
+    public static function get_goal_returns()
+    {
+        return new external_single_structure(
+            array(
+                'success' => new external_value(PARAM_BOOL, ''),
+                'data' => new external_value(PARAM_RAW, '')
+            )
+        );
+    }
+    public static function get_goal_is_allowed_from_ajax()
+    {
+        return true;
+    }
+
+
 
     /**
      * Dump log data from the client
@@ -1013,9 +1088,9 @@ class format_ladtopics_external extends external_api
                 'data' =>
                     new external_single_structure(
                         array(
-                        'courseid' => new external_value(PARAM_INT, 'id of course', VALUE_OPTIONAL),
-                        'userid' => new external_value(PARAM_INT, 'id of course', VALUE_OPTIONAL)
-                    )
+                            'courseid' => new external_value(PARAM_INT, 'id of course', VALUE_OPTIONAL),
+                            'userid' => new external_value(PARAM_INT, 'id of course', VALUE_OPTIONAL)
+                        )
                     )
             )
         );
@@ -1023,15 +1098,15 @@ class format_ladtopics_external extends external_api
     public static function dumplog_returns()
     {
         return new external_single_structure(
-            array( 'response' => new external_value(PARAM_RAW, 'Server respons to the incomming log') )
+            array('response' => new external_value(PARAM_RAW, 'Server respons to the incomming log'))
         );
     }
     public static function dumplog($data)
     {
         global $CFG, $DB, $USER;
-        
+
         $transaction = $DB->start_delegated_transaction();
-        $query ='SELECT * FROM ' . $CFG->prefix . 'logstore_standard_log 
+        $query = 'SELECT * FROM ' . $CFG->prefix . 'logstore_standard_log 
             WHERE userid=' . $USER->id . ' AND 
             ( 
                 component=\'mod_glossary\' OR 
@@ -1043,20 +1118,20 @@ class format_ladtopics_external extends external_api
             );';
         $data = $DB->get_records_sql($query);
         $transaction->allow_commit();
-        $arr=array();
+        $arr = array();
         foreach ($data as $bu) {
             $entry = array(
                 'utc' => $bu->timecreated,
                 'action_type' => $bu->component,
-                'action'=> $bu->action//,
+                'action' => $bu->action //,
                 //'data' => json_encode($bu),
             );
             array_push($arr, $entry);
         }
         // log cleaning
 
-        
-        return array('response'=>json_encode($arr));
+
+        return array('response' => json_encode($arr));
     }
     public static function dumplog_is_allowed_from_ajax()
     {
@@ -1077,9 +1152,9 @@ class format_ladtopics_external extends external_api
                 'data' =>
                     new external_single_structure(
                         array(
-                        'courseid' => new external_value(PARAM_INT, 'id of course', VALUE_OPTIONAL)
-                        //'userid' => new external_value(PARAM_INT, 'utc time', VALUE_OPTIONAL)
-                    )
+                            'courseid' => new external_value(PARAM_INT, 'id of course', VALUE_OPTIONAL)
+                            //'userid' => new external_value(PARAM_INT, 'utc time', VALUE_OPTIONAL)
+                        )
                     )
             )
         );
@@ -1087,7 +1162,7 @@ class format_ladtopics_external extends external_api
     public static function getmilestones_returns()
     {
         return new external_single_structure(
-            array( 'milestones' => new external_value(PARAM_RAW, 'Server respons to the incomming log') )
+            array('milestones' => new external_value(PARAM_RAW, 'Server respons to the incomming log'))
         );
     }
     public static function getmilestones($data)
@@ -1095,9 +1170,9 @@ class format_ladtopics_external extends external_api
         global $CFG, $DB, $USER;
         (int)$data['userid'] = $USER->id;
         $transaction = $DB->start_delegated_transaction();
-        $sql='
+        $sql = '
             SELECT t.milestones, t.settings, t.timemodified 
-            FROM '.$CFG->prefix.'ladtopics_milestones AS t
+            FROM ' . $CFG->prefix . 'ladtopics_milestones AS t
             WHERE   
                 t.course = ' . $data['courseid'] . ' 
                 AND t.userid = ' . (int)$data['userid'] . '
@@ -1107,10 +1182,10 @@ class format_ladtopics_external extends external_api
         $res = $DB->get_record_sql($sql);
         $transaction->allow_commit();
 
-        return array('milestones'=> json_encode(array(
-            'settings'=>$res->settings,
-            'milestones'=>$res->milestones,
-            'utc'=>$res->timemodified
+        return array('milestones' => json_encode(array(
+            'settings' => $res->settings,
+            'milestones' => $res->milestones,
+            'utc' => $res->timemodified
         )));
     }
     public static function getmilestones_is_allowed_from_ajax()
@@ -1130,11 +1205,11 @@ class format_ladtopics_external extends external_api
                 'data' =>
                     new external_single_structure(
                         array(
-                        'courseid' => new external_value(PARAM_INT, 'id of course', VALUE_OPTIONAL),
-                        //'userid' => new external_value(PARAM_INT, 'user id', VALUE_OPTIONAL),
-                        'milestones' => new external_value(PARAM_RAW, 'milestones', VALUE_OPTIONAL),
-                        'settings' => new external_value(PARAM_RAW, 'settings', VALUE_OPTIONAL)
-                    )
+                            'courseid' => new external_value(PARAM_INT, 'id of course', VALUE_OPTIONAL),
+                            //'userid' => new external_value(PARAM_INT, 'user id', VALUE_OPTIONAL),
+                            'milestones' => new external_value(PARAM_RAW, 'milestones', VALUE_OPTIONAL),
+                            'settings' => new external_value(PARAM_RAW, 'settings', VALUE_OPTIONAL)
+                        )
                     )
             )
         );
@@ -1142,7 +1217,7 @@ class format_ladtopics_external extends external_api
     public static function setmilestones_returns()
     {
         return new external_single_structure(
-            array( 'response' => new external_value(PARAM_RAW, 'Server respons to the incomming log') )
+            array('response' => new external_value(PARAM_RAW, 'Server respons to the incomming log'))
         );
     }
 
@@ -1152,24 +1227,24 @@ class format_ladtopics_external extends external_api
 
         $date = new DateTime();
         $data['userid'] = (int)$USER->id;
-        
+
         $r = new stdClass();
-        $r->userid=(int)$data['userid'];
-        $r->course=(int)$data['courseid'];
-        $r->milestones=$data['milestones'];
-        $r->settings=$data['settings'];
-        $r->timemodified=(int)$date->getTimestamp();
+        $r->userid = (int)$data['userid'];
+        $r->course = (int)$data['courseid'];
+        $r->milestones = $data['milestones'];
+        $r->settings = $data['settings'];
+        $r->timemodified = (int)$date->getTimestamp();
 
         $transaction = $DB->start_delegated_transaction();
         $res = $DB->insert_records("ladtopics_milestones", array($r));
         $sql = '
-            INSERT INTO '. $CFG->prefix .'ladtopics_milestones (user,course,milestones,settings,timemodified) 
-            VALUES (' . (int)$data['userid'] . ',' . (int)$data['courseid'] . ',\'' . $data['milestones'] . '\',\'' . $data['settings']. '\',' . (int)$date->getTimestamp() . ')
+            INSERT INTO ' . $CFG->prefix . 'ladtopics_milestones (user,course,milestones,settings,timemodified) 
+            VALUES (' . (int)$data['userid'] . ',' . (int)$data['courseid'] . ',\'' . $data['milestones'] . '\',\'' . $data['settings'] . '\',' . (int)$date->getTimestamp() . ')
             ;';
         //$res = $DB->execute($sql);
         $transaction->allow_commit();
 
-        return array('response'=> json_encode(array($res, $data)));
+        return array('response' => json_encode(array($res, $data)));
     }
     public static function setmilestones_is_allowed_from_ajax()
     {
@@ -1199,7 +1274,7 @@ class format_ladtopics_external extends external_api
             array('data' => new external_value(PARAM_RAW, 'Server respons to the incomming log'))
         );
     }
-    
+
     public static function getmilestoneplan($param)
     {
         global $CFG, $DB, $USER;
@@ -1207,9 +1282,9 @@ class format_ladtopics_external extends external_api
         $params = array();
         $params[] = (int)$param['courseid'];
         $params[] = $param['plan'];
-        $sql='
+        $sql = '
             SELECT milestones 
-            FROM '.$CFG->prefix.'ladtopics_milestone_plans AS t
+            FROM ' . $CFG->prefix . 'ladtopics_milestone_plans AS t
             WHERE   
                 t.course = ? 
                 AND t.plan = ?
@@ -1219,9 +1294,9 @@ class format_ladtopics_external extends external_api
         $res = $DB->get_record_sql($sql, $params);
         $transaction->allow_commit();
         if (isset($res->milestones)) {
-            return array('data'=> $res->milestones);
+            return array('data' => $res->milestones);
         } else {
-            return array('data'=> []);
+            return array('data' => []);
         }
     }
     public static function getmilestoneplan_is_allowed_from_ajax()
@@ -1240,10 +1315,10 @@ class format_ladtopics_external extends external_api
                 'data' =>
                     new external_single_structure(
                         array(
-                        'courseid' => new external_value(PARAM_INT, 'id of course'),
-                        'milestones' => new external_value(PARAM_RAW, 'milestones'),
-                        'plan' => new external_value(PARAM_TEXT, 'plan')
-                    )
+                            'courseid' => new external_value(PARAM_INT, 'id of course'),
+                            'milestones' => new external_value(PARAM_RAW, 'milestones'),
+                            'plan' => new external_value(PARAM_TEXT, 'plan')
+                        )
                     )
             )
         );
@@ -1256,7 +1331,7 @@ class format_ladtopics_external extends external_api
             )
         );
     }
-    
+
     public static function setmilestoneplan($param)
     {
         try {
@@ -1274,7 +1349,7 @@ class format_ladtopics_external extends external_api
                 $c->created = (int)$date->getTimestamp();
                 $c->plan = $param['plan'];
                 $c->milestones = $param['milestones'];
-                $sql = 'SELECT id FROM '.$CFG->prefix.'ladtopics_milestone_plans WHERE course = ? AND plan = ? LIMIT 1';
+                $sql = 'SELECT id FROM ' . $CFG->prefix . 'ladtopics_milestone_plans WHERE course = ? AND plan = ? LIMIT 1';
                 $transaction = $DB->start_delegated_transaction();
                 $params = array();
                 $params[] = (int)$meta->course->id;
@@ -1304,9 +1379,9 @@ class format_ladtopics_external extends external_api
                 $data['success'] = false;
                 $data['debug'] = "Keine Berechtigung";
             }
-            return array('data'=>json_encode($data));
+            return array('data' => json_encode($data));
         } catch (Exception $e) {
-            return array('data'=>json_encode(array('success' => false, 'debug' => json_encode($e))));
+            return array('data' => json_encode(array('success' => false, 'debug' => json_encode($e))));
         }
     }
 
@@ -1328,11 +1403,11 @@ class format_ladtopics_external extends external_api
                 'data' =>
                     new external_single_structure(
                         array(
-                        'courseid' => new external_value(PARAM_INT, 'id of course', VALUE_OPTIONAL),
-                        'fieldname' => new external_value(PARAM_TEXT, 'Name of the field'),
-                        'setget' => new external_value(PARAM_TEXT, 'Get or Set'),
-                        'value' => new external_value(PARAM_TEXT, 'Value of field', VALUE_OPTIONAL)
-                    )
+                            'courseid' => new external_value(PARAM_INT, 'id of course', VALUE_OPTIONAL),
+                            'fieldname' => new external_value(PARAM_TEXT, 'Name of the field'),
+                            'setget' => new external_value(PARAM_TEXT, 'Get or Set'),
+                            'value' => new external_value(PARAM_TEXT, 'Value of field', VALUE_OPTIONAL)
+                        )
                     )
             )
         );
@@ -1340,33 +1415,33 @@ class format_ladtopics_external extends external_api
     public static function userpreferences_returns()
     {
         return new external_single_structure(
-            array( 'response' => new external_value(PARAM_RAW, 'Server respons to the incomming log') )
+            array('response' => new external_value(PARAM_RAW, 'Server respons to the incomming log'))
         );
     }
     public static function userpreferences($data)
     {
         global $CFG, $DB, $USER;
         $userid = (int)$USER->id;
-        
+
         $r = new stdClass();
         $r->userid = $userid;
         $r->name = $data['fieldname'] . '-course-' . $data['courseid'];
         $exists = $DB->record_exists('user_preferences', array(
-                'name' => $data['fieldname'] . '-course-' . $data['courseid'],
-                'userid'=>$userid
-            ));
-        $res='nix';
+            'name' => $data['fieldname'] . '-course-' . $data['courseid'],
+            'userid' => $userid
+        ));
+        $res = 'nix';
         if ($exists != true) {
-            $r->value=$data['value'] == null ? 0 : $data['value'];
+            $r->value = $data['value'] == null ? 0 : $data['value'];
             $transaction = $DB->start_delegated_transaction();
             $res = $DB->insert_records("user_preferences", array($r));
             $transaction->allow_commit();
         } elseif ($exists == true && $data['setget'] == 'get') {
             $transaction = $DB->start_delegated_transaction();
             $res = $DB->get_record("user_preferences", array(
-                    'name' => $data['fieldname'] . '-course-' . $data['courseid'],
-                    'userid'=>$userid
-                ));
+                'name' => $data['fieldname'] . '-course-' . $data['courseid'],
+                'userid' => $userid
+            ));
             $transaction->allow_commit();
         } elseif ($exists == true && $data['setget'] == 'set') {
             //$transaction = $DB->start_delegated_transaction();
@@ -1379,16 +1454,16 @@ class format_ladtopics_external extends external_api
             $transaction = $DB->start_delegated_transaction();
             //$res = $DB->set_record("user_preferences", array($r));
             $res = $DB->set_field("user_preferences", 'value', $data['value'], array(
-                    'userid' => $userid,
-                    'name' => $data['fieldname'] . '-course-' . $data['courseid']
-                ));
+                'userid' => $userid,
+                'name' => $data['fieldname'] . '-course-' . $data['courseid']
+            ));
             //$sql = 'UPDATE '. $CFG->prefix .'user_preferences SET value=\''. $data['value'] .'\' WHERE name=\'ladtopics_survey_done\' ;';
             //$res = $DB->set_records_sql($sql);
             $transaction->allow_commit();
         }
-        
 
-        return array('response'=> json_encode(array($res)));
+
+        return array('response' => json_encode(array($res)));
     }
     public static function userpreferences_is_allowed_from_ajax()
     {
@@ -1410,7 +1485,7 @@ class format_ladtopics_external extends external_api
             )
         );
     }
-    
+
     public static function completionprogress_is_allowed_from_ajax()
     {
         return true;
@@ -1420,9 +1495,9 @@ class format_ladtopics_external extends external_api
     {
         return new external_single_structure(
             array(
-                    'activities' => new external_value(PARAM_RAW, ''),
-                    'completions' => new external_value(PARAM_RAW, '')
-                )
+                'activities' => new external_value(PARAM_RAW, ''),
+                'completions' => new external_value(PARAM_RAW, '')
+            )
         );
     }
     public static function completionprogress($data)
@@ -1431,7 +1506,7 @@ class format_ladtopics_external extends external_api
         $userid = (int)$USER->id;
         $courseid = $data;
         $meta = get_meta($courseid);
-        
+
         // Step 1: obtain all course activities
         $modinfo = get_fast_modinfo($courseid, -1);
         $sections = $modinfo->get_sections();
@@ -1440,21 +1515,21 @@ class format_ladtopics_external extends external_api
             $modulename = get_string('pluginname', $module);
             foreach ($instances as $index => $cm) {
                 $activities[] = array(
-                        'type'       => $module,
-                        'modulename' => $modulename,
-                        'id'         => $cm->id,
-                        'instance'   => $cm->instance,
-                        'name'       => format_string($cm->name),
-                        'expected'   => $cm->completionexpected,
-                        'section'    => $cm->sectionnum,
-                        'sectionname'=> get_section_name($courseid, $cm->sectionnum),
-                        'position'   => array_search($cm->id, $sections[$cm->sectionnum]),
-                        'url'        => method_exists($cm->url, 'out') ? $cm->url->out() : '',
-                        'context'    => $cm->context,
-                        'icon'       => $cm->get_icon_url(),
-                        'available'  => $cm->available,
-                        'completion' => 0,
-                    );
+                    'type'       => $module,
+                    'modulename' => $modulename,
+                    'id'         => $cm->id,
+                    'instance'   => $cm->instance,
+                    'name'       => format_string($cm->name),
+                    'expected'   => $cm->completionexpected,
+                    'section'    => $cm->sectionnum,
+                    'sectionname' => get_section_name($courseid, $cm->sectionnum),
+                    'position'   => array_search($cm->id, $sections[$cm->sectionnum]),
+                    'url'        => method_exists($cm->url, 'out') ? $cm->url->out() : '',
+                    'context'    => $cm->context,
+                    'icon'       => $cm->get_icon_url(),
+                    'available'  => $cm->available,
+                    'completion' => 0,
+                );
             }
         }
 
@@ -1524,14 +1599,65 @@ class format_ladtopics_external extends external_api
 
 
     /**
-     * 
-     * 
+     *
+     *
      * /
      */
 
-    
 
-    
+    /**
+     * Interface to get survey data of the individual user
+     */
+    public static function get_surveys_parameters()
+    {
+        //  VALUE_REQUIRED, VALUE_OPTIONAL, or VALUE_DEFAULT. If not mentioned, a value is VALUE_REQUIRED
+        return new external_function_parameters(
+            array(
+                'courseid' => new external_value(PARAM_INT, 'course id'),
+                'moduleid' => new external_value(PARAM_INT, 'course id')
+            )
+        );
+    }
+    public static function get_surveys($courseid, $moduleid)
+    {
+        global $DB, $USER;
+
+        $res = $DB->get_record_sql(
+            "SELECT qr.submitted 
+            FROM {questionnaire_response} qr
+            JOIN {course_modules} cm ON qr.questionnaireid = cm.instance
+            WHERE
+            cm.id=:moduleid AND
+            cm.course=:courseid AND
+            qr.userid=:userid AND 
+            qr.complete='y'",
+            [
+                "courseid" => (int)$courseid,
+                "moduleid" => (int)$moduleid,
+                "userid" => (int)$USER->id
+            ]
+        );
+
+        return array(
+            'success' => true,
+            'data' => json_encode($res)
+        );
+    }
+    public static function get_surveys_returns()
+    {
+        return new external_single_structure(
+            array(
+                'success' => new external_value(PARAM_BOOL, 'Success Variable'),
+                'data' => new external_value(PARAM_RAW, 'Data output')
+            )
+        );
+    }
+    public static function get_surveys_is_allowed_from_ajax()
+    {
+        return true;
+    }
+
+
 
     /**
      * Interface to obtain all activities completion and progress
@@ -1545,7 +1671,7 @@ class format_ladtopics_external extends external_api
             )
         );
     }
-    
+
     public static function overview_is_allowed_from_ajax()
     {
         return true;
@@ -1555,9 +1681,9 @@ class format_ladtopics_external extends external_api
     {
         return new external_single_structure(
             array(
-                    'activities' => new external_value(PARAM_RAW, ''),
-                    'completions' => new external_value(PARAM_RAW, '')
-                )
+                'success' => new external_value(PARAM_BOOL, 'Success Variable'),
+                'data' => new external_value(PARAM_RAW, 'Data output')
+            )
         );
     }
     public static function overview($data)
@@ -1565,35 +1691,37 @@ class format_ladtopics_external extends external_api
         global $CFG, $DB, $USER, $COURSE;
         $userid = (int)$USER->id;
         $courseid = $data;
+        $debug = [];
         $meta = get_meta($courseid);
-        
+
         // Step 1: obtain all course activities
-        $modinfo = get_fast_modinfo($courseid, -1);
+        $modinfo = get_fast_modinfo($courseid, $userid);
         $sections = $modinfo->get_sections();
         $activities = array();
         foreach ($modinfo->instances as $module => $instances) {
             $modulename = get_string('pluginname', $module);
             foreach ($instances as $index => $cm) {
                 $activities[] = array(
-                        'type'       => $module,
-                        'modulename' => $modulename,
-                        'id'         => $cm->id,
-                        'instance'   => $cm->instance,
-                        'name'       => format_string($cm->name),
-                        'expected'   => $cm->completionexpected,
-                        'section'    => $cm->sectionnum,
-                        'sectionname'=> get_section_name($courseid, $cm->sectionnum),
-                        'position'   => array_search($cm->id, $sections[$cm->sectionnum]),
-                        'url'        => method_exists($cm->url, 'out') ? $cm->url->out() : '',
-                        'context'    => $cm->context,
-                        'icon'       => $cm->get_icon_url(),
-                        'available'  => $cm->available,
-                        'completion' => 0,
-                    );
+                    'type'       => $module,
+                    'modulename' => $modulename,
+                    'id'         => $cm->id,
+                    'instance'   => $cm->instance,
+                    'name'       => format_string($cm->name),
+                    'expected'   => $cm->completionexpected,
+                    'section'    => $cm->sectionnum,
+                    'sectionname' => get_section_name($courseid, $cm->sectionnum),
+                    'position'   => array_search($cm->id, $sections[$cm->sectionnum]),
+                    'url'        => method_exists($cm->url, 'out') ? $cm->url->out() : '',
+                    'context'    => $cm->context,
+                    'icon'       => $cm->get_icon_url(),
+                    'available'  => $cm->available,
+                    'completion' => 0,
+                    'visible' => $cm->visible,
+                );
             }
         }
 
-        
+
         // Step 2: get completions
         $completions = array();
         $completion = new completion_info($COURSE);
@@ -1605,15 +1733,16 @@ class format_ladtopics_external extends external_api
             $activitycompletion = $completion->get_data($cm, true, $userid);
             $completions[$activity['id']] = $activity;
         }
-        
-        
-        // Step 3: Get scores 
+
+
+        // Step 3: Get scores
         $query_activities = array(
             'assign' => "SELECT
                     m.name activity,
                     a.id activity_id,
                     cm.id module_id,
-                    cm.section, (SELECT count(*) FROM {course_modules} cmm JOIN {modules} m ON m.id = cmm.module WHERE m.name = 'assign' AND cmm.course = cm.course AND cmm.section = cm.section) count,
+                    cm.section, 
+                    (SELECT count(*) FROM {course_modules} cmm JOIN {modules} m ON m.id = cmm.module WHERE m.name = 'assign' AND cmm.course = cm.course AND cmm.section = cm.section) count,
                     a.grade max_score, 
                     ag.grade achieved_score,
                     asub.timemodified  submission_time,
@@ -1637,7 +1766,7 @@ class format_ladtopics_external extends external_api
                     cm.section,
                     (select count(*) from {course_modules} cmm JOIN {modules} m ON m.id = cmm.module WHERE m.name = 'quiz' AND cmm.course=cm.course AND cmm.section = cm.section) count,
                     q.grade max_score, 
-                    qsub.sumgrades*100 achieved_score,
+                    qsub.sumgrades*10 achieved_score,
                     qsub.timemodified  submission_time,
                     qsub.timemodified grading_time
                 FROM {quiz} q
@@ -1650,109 +1779,129 @@ class format_ladtopics_external extends external_api
                     qsub.state = 'finished' AND
                     m.name = 'quiz'
             ;",
-            'longpage' => "SELECT DISTINCT
-                m.name activity,
-                l.id activity_id,
-                cm.id module_id,
-                cm.section,
-                (select count(section) from mdl_longpage_reading_progress lrp) count,
-                '0' AS max_score,
-                '0' AS achieved_score,
-                '0' AS submission_time,
-                '0' AS grading_time
-                FROM mdl_longpage l
-                JOIN mdl_longpage_reading_progress lrp ON l.id = lrp.longpageid
-                LEFT JOIN mdl_course_modules cm ON l.id = cm.instance
-                LEFT JOIN mdl_modules m ON m.id = cm.module 
+            'longpage' => "SELECT DISTINCT 
+                    m.name activity,
+                    l.id activity_id,
+                    cm.id module_id,
+                    cm.section,
+                    COUNT(DISTINCT lrp.section) complete,
+                    AVG(lrp.sectioncount) count,
+                    '0' AS max_score,
+                    '0' AS achieved_score,
+                    MAX(lrp.timemodified) AS submission_time,
+                    '0' AS grading_time
+                    FROM {longpage} l
+                    JOIN {longpage_reading_progress} lrp ON l.id = lrp.longpageid
+                    RIGHT JOIN {course_modules} cm ON l.id = cm.instance
+                    RIGHT JOIN {modules} m ON m.id = cm.module 
+                    WHERE 
+                    l.course = :courseid AND
+                    lrp.userid= :userid AND 
+                    m.name = 'longpage'
+                    Group by m.name, l.id, cm.id, cm.section 
+            ;",
+            'hypervideo' => "SELECT DISTINCT 
+                    m.name activity,
+                    h.id activity_id,
+                    cm.id module_id,
+                    cm.section,
+                    SUM(hl.duration) count, 
+                    COUNT(DISTINCT hl.values) * 2 complete, -- static parameter - attention
+                    '0' AS max_score,
+                    '0' AS achieved_score,
+                    MAX(hl.timemodified) AS submission_time,
+                    '0' AS grading_time
+                FROM {hypervideo} h
+                JOIN {hypervideo_log} hl ON h.id = hl.hypervideo
+                RIGHT JOIN {course_modules} cm ON h.id = cm.instance
+                RIGHT JOIN {modules} m ON m.id = cm.module 
                 WHERE 
-                l.course = :courseid AND 
-                lrp.userid= :userid AND 
-                m.name = 'longpage'
+                    h.course = :courseid AND
+                    hl.userid = :userid AND 
+                    hl.actions = 'playback' AND
+                    m.name = 'hypervideo'
+                GROUP BY m.name, h.id, cm.id, cm.section
             ;"
-            /*
-SELECT
+        );
+        /*
+SELECT distinct
 m.name activity,
 l.id activity_id,
-lrp.longpageid longpageid,
 cm.id module_id,
 cm.section,
-lrp.userid,
-(select count(section) from mdl_longpage_reading_progress lrp) count
-
+COUNT(distinct lrp.section) / AVG(lrp.sectioncount) count,
+'0' AS max_score,
+'0' AS achieved_score,
+MAX(lrp.timemodified) AS submission_time,
+'0' AS grading_time
 FROM mdl_longpage l
 JOIN mdl_longpage_reading_progress lrp ON l.id = lrp.longpageid
-LEFT JOIN mdl_course_modules cm ON l.id = cm.instance
-LEFT JOIN mdl_modules m ON m.id = cm.module 
-WHERE 
-lrp.userid=2 AND 
-lrp.longpageid=2 AND
+RIGHT JOIN mdl_course_modules cm ON l.id = cm.instance
+RIGHT JOIN mdl_modules m ON m.id = cm.module
+WHERE
+lrp.userid=2 AND
+-- lrp.longpageid=1 AND
 m.name = 'longpage'
+Group by cm.id
+
+
+
+
+;
 ;
         */
-            
-        );
 
-        $debug = [];
+
+
         $params = array('courseid' => $courseid, 'userid' => $userid);
         $res = [];
         foreach ($query_activities as $moduletype => $query) {
-            $debug[] = $moduletype;
-            try{ 
-                $transaction = $DB->start_delegated_transaction();
-                $resultset = $DB->get_records_sql($query, $params);
-                $transaction->allow_commit();
-                if(is_array($resultset) || count($resultset) > 0){
-                    $res[$moduletype] = $resultset;
-                    //$debug[] = $resultset;
-                }else{
-                    $res[$moduletype] = [];
-                    $debug[] = var_dump($resultset);
+            try {
+                $resultset = $DB->get_recordset_sql($query, $params);
+                foreach ($resultset as $key => $value) {
+                    if (!property_exists('value', 'activity')) {
+                        $res[] = $value;
+                    }
                 }
-            }catch(Exception $e){
-                $res[$moduletype] = [];
+            } catch (Exception $e) {
+                //$res[$moduletype] = [];
                 $debug[] = $e;
             }
         }
-        $debug[] = "resultset";
+        $debug[] = "---resultset----";
         $debug[] = $res;
 
-        
+
         // Step 4: add scores to completion
-        foreach($completions as $sec => $activity){
-            foreach($res as $type => $result){
-                //$debug[] = [$activity['type'], (int)$activity['instance'], (int)$res[$type][$type]->activity_id, array_key_exists('quiz', $result)];
-                if($activity['type'] == 'assign' && array_key_exists('assign', $res[$type])){ 
-                    if($activity['instance'] == $res[$type][$type]->activity_id){
-                        $completions[$sec]['achieved_score'] = $res[$type][$type]->achieved_score;
-                        $completions[$sec]['max_score'] = $res[$type][$type]->max_score;
-                        $completions[$sec]['count'] = $res[$type][$type]->count;
-                        $completions[$sec]['submission_time'] = $res[$type][$type]->submission_time;
+        foreach ($completions as $sec => $activity) {
+            foreach ($res as $type => $item) {
+                //$debug[] = $item;
+                if ($activity['type'] == $item->activity && $activity['instance'] == $item->activity_id) {
+                    $completions[$sec]['achieved_score'] = $item->achieved_score;
+                    $completions[$sec]['max_score'] = $item->max_score;
+                    $completions[$sec]['count'] = $item->count;
+                    $completions[$sec]['submission_time'] = $item->submission_time;
+                    $completions[$sec]['name'] = $activity['type'];
+                    if ($item->complete) {
+                        $completions[$sec]['complete'] = $item->complete;
                     }
-                }
-                $debug[] = $res[$type];
-                if($activity['type'] == 'quiz' && array_key_exists('quiz', $res[$type])){  
-                    if($activity['instance'] == $res[$type][$type]->activity_id){
-                        $debug[] = 'inside';
-                        $completions[$sec]['achieved_score'] = $res[$type][$type]->achieved_score;
-                        $completions[$sec]['max_score'] = $res[$type][$type]->max_score;
-                        $completions[$sec]['count'] = $res[$type][$type]->count;
-                        $completions[$sec]['submission_time'] = $res[$type][$type]->submission_time;
-                        $completions[$sec]['name'] = 'quiz';
-                    }
+                    $debug[] = $completions[$sec];
                 }
             }
         }
-        
+
         return array(
-            'activities' => json_encode($debug), 
-            'completions' => json_encode($completions)
+            'success' => true,
+            'data' => json_encode(array(
+                'debug' => json_encode($debug),
+                'completions' => json_encode($completions)
+            ))
         );
-        
     }
-     
+
 
     /**
-     * Reflections 
+     * Reflections
      **/
     public static function reflectionRead_parameters()
     {
@@ -1763,33 +1912,39 @@ m.name = 'longpage'
             )
         );
     }
-    
-    public static function reflectionRead_is_allowed_from_ajax(){ return true; }
+
+    public static function reflectionRead_is_allowed_from_ajax()
+    {
+        return true;
+    }
 
     public static function reflectionRead_returns()
     {
         return new external_single_structure(
             array(
-                    'debug' => new external_value(PARAM_RAW, ''),
-                    'data' => new external_value(PARAM_RAW, '')
-                )
+                'success' => new external_value(PARAM_BOOL, ''),
+                'data' => new external_value(PARAM_RAW, '')
+            )
         );
     }
     public static function reflectionRead($data)
     {
-        global $CFG, $DB, $USER, $COURSE;
+        global $DB, $USER;
         $debug = [];
         $userid = (int)$USER->id;
         $courseid = $data;
         $transaction = $DB->start_delegated_transaction();
         $res = $DB->get_records_sql(
-            "SELECT * FROM {ladtopics_reflections} WHERE course=:course AND user=:user ORDER BY timecreated ASC;", 
-            array("course" => (int)$courseid, "user" => (int)$userid));
+            "SELECT * FROM {ladtopics_reflections} WHERE courseid=:course AND userid=:user ORDER BY timecreated ASC",
+            array("course" => (int)$courseid, "user" => (int)$userid)
+        );
         $transaction->allow_commit();
-        
+
+        // TODO json_encode($debug)
+
         return array(
-            'data' => json_encode($res), 
-            'debug' => json_encode($debug)
+            'success' => true,
+            'data' => json_encode($res)
         );
     }
 
@@ -1805,20 +1960,24 @@ m.name = 'longpage'
                             'course' => new external_value(PARAM_INT, 'course id'),
                             'section' => new external_value(PARAM_INT, 'section id'),
                             'reflection' => new external_value(PARAM_TEXT, 'reflection text submitted by the learner')
+                        )
                     )
-                )
             )
         );
     }
-    
-    public static function reflectionCreate_is_allowed_from_ajax(){ return true; }
+
+    public static function reflectionCreate_is_allowed_from_ajax()
+    {
+        return true;
+    }
 
     public static function reflectionCreate_returns()
     {
         return new external_single_structure(
             array(
-                    'debug' => new external_value(PARAM_RAW, '')
-                )
+                'success' => new external_value(PARAM_BOOL, ''),
+                'data' => new external_value(PARAM_RAW, '')
+            )
         );
     }
     public static function reflectionCreate($data)
@@ -1827,21 +1986,22 @@ m.name = 'longpage'
         $debug = [];
         $userid = (int)$USER->id;
         $date = date_create();
-        
+
         $r = new stdClass();
-        $r->user = (int)$userid;
-        $r->course = (int)$data['course'];
+        $r->userid = (int)$userid;
+        $r->courseid = (int)$data['course'];
         $r->section = $data['section'];
         $r->reflection = $data['reflection'];
         $r->timecreated = date_timestamp_get($date);
         $r->timemodified = date_timestamp_get($date);
-        
+
         $transaction = $DB->start_delegated_transaction();
         $res = $DB->insert_record("ladtopics_reflections", $r);
         $transaction->allow_commit();
-        
+
         return array(
-            'debug' => json_encode($data)
+            'success' => true,
+            'data' => json_encode($data)
         );
     }
 
@@ -1852,18 +2012,19 @@ m.name = 'longpage'
 
 
     /**
-         * Get policy Acceptance
-         */
+     * Get policy Acceptance
+     */
     public static function policyacceptance_parameters()
     {
         return new external_function_parameters(
             array(
-               'policyversion' => new external_value(PARAM_INT, 'id of user', VALUE_OPTIONAL)
+                'policyversion' => new external_value(PARAM_INT, 'id of user', VALUE_OPTIONAL)
             )
         );
     }
 
-    public static function policyacceptance_returns(){
+    public static function policyacceptance_returns()
+    {
         return new external_single_structure(
             array('data' => new external_value(PARAM_RAW, 'data'))
         );
@@ -1872,15 +2033,16 @@ m.name = 'longpage'
     public static function policyacceptance($data)
     {
         global $CFG, $DB, $USER;
-        
+
         $transaction = $DB->start_delegated_transaction();
-        $res = $DB->get_record("tool_policy_acceptances", array("policyversionid" => (int)$data, "userid" => (int)$USER->id ), "timemodified" );
+        $res = $DB->get_record("tool_policy_acceptances", array("policyversionid" => (int)$data, "userid" => (int)$USER->id), "timemodified");
         $transaction->allow_commit();
-        
-        return array('data' => json_encode($res) );
+
+        return array('data' => json_encode($res));
     }
-    
-    public static function policyacceptance_is_allowed_from_ajax(){
+
+    public static function policyacceptance_is_allowed_from_ajax()
+    {
         return true;
     }
 }// end class
