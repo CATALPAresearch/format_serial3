@@ -2005,12 +2005,6 @@ Group by cm.id
         );
     }
 
-
-
-
-
-
-
     /**
      * Get policy Acceptance
      */
@@ -2045,4 +2039,110 @@ Group by cm.id
     {
         return true;
     }
+
+	/**
+	 * Interface to save dashboard settings for a user
+	 */
+	public static function saveDashboardSettings_parameters()
+	{
+		return new external_function_parameters([
+			'userid' => new external_value(PARAM_INT, 'user id'),
+			'course' => new external_value(PARAM_INT, 'id of course'),
+			'settings' => new external_value(PARAM_TEXT, 'settings', VALUE_OPTIONAL)
+		]);
+	}
+
+	public static function saveDashboardSettings_returns()
+	{
+		return new external_single_structure(
+			array(
+				'success' => new external_value(PARAM_BOOL, 'Success Variable'),
+				'data' => new external_value(PARAM_TEXT, 'Data output')
+			)
+		);
+	}
+
+	public static function saveDashboardSettings($userid, $course, $settings)
+	{
+		global $DB;
+
+		$params = [
+			'userid' => $userid,
+			'course' => $course,
+			'settings' => $settings,
+		];
+
+		$record = $DB->get_record('ladtopics_dashboard', array('userid' =>  (int) $userid, 'course' => (int)$course));
+
+		if ($record) {
+			$record->settings = $settings;
+			$DB->update_record('ladtopics_dashboard', $record);
+		} else {
+			$record = new stdClass();
+			$record->userid =  (int) $userid;
+			$record->course =  (int) $course;
+			$record->settings = $settings;
+			$DB->insert_record('ladtopics_dashboard', $record);
+
+		}
+
+		return array(
+			'success' => true,
+			'data' => json_encode($params)
+		);
+	}
+
+	public static function saveDashboardSettings_is_allowed_from_ajax()
+	{
+		return true;
+	}
+
+	/**
+	 * Interface to get dashboard settings for a user
+	 */
+	public static function fetchDashboardSettings_parameters()
+	{
+		//  VALUE_REQUIRED, VALUE_OPTIONAL, or VALUE_DEFAULT. If not mentioned, a value is VALUE_REQUIRED
+		return new external_function_parameters([
+			'userid' => new external_value(PARAM_INT, 'user id'),
+			'course' => new external_value(PARAM_INT, 'id of course'),
+		]);
+	}
+
+	public static function fetchDashboardSettings_is_allowed_from_ajax()
+	{
+		return true;
+	}
+
+	public static function fetchDashboardSettings_returns()
+	{
+		return new external_single_structure(
+			array(
+				'success' => new external_value(PARAM_BOOL, 'Success Variable'),
+				'data' => new external_value(PARAM_RAW, 'Data output')
+			)
+		);
+	}
+
+	public static function fetchDashboardSettings($userid, $course)
+	{
+		global $DB;
+
+		$res = $DB->get_record_sql(
+			"SELECT settings
+            FROM {ladtopics_dashboard}
+            WHERE
+            	userid=:userid AND
+            	course=:course",
+			[
+				"course" => (int)$course,
+				"userid" => (int)$userid
+			]
+		);
+		
+		return array(
+            'success' => true,
+            'data' => json_encode($res)
+        );
+	}
 }// end class

@@ -14,7 +14,7 @@
             </div>
         </div>
         <grid-layout
-            :layout="layout"
+            :layout="data"
             :col-num="12"
             :row-height="30"
             :is-draggable="draggable"
@@ -23,7 +23,7 @@
             :use-css-transforms="true"
         >
             <grid-item
-                v-for="(item, index) in layout"
+                v-for="(item, index) in data"
                 :key="index"
                 :static="item.static"
                 :x="item.x"
@@ -54,6 +54,8 @@ import { GridLayout, GridItem } from './js/vue-grid-layout.umd.min';
 import BarChartAdvanced from "./components/BarChartAdvanced.vue";
 import CircleChart from "./components/CircleChart.vue";
 
+import { mapState } from 'vuex';
+
 
 export default {
     components: { GridLayout, GridItem, AppDeadlines, BarChartAdvanced, CircleChart, IndicatorDisplay, MenuBar, SubjectProgress, TodoList, QuizStatistics },
@@ -67,13 +69,14 @@ export default {
             logger: null,
             surveyRequired: true,
             surveyLink: '',
-            layout: [
-                {"x":0,"y":0,"w":6,"h":10,"i":"1", c: SubjectProgress, isComponent: true, resizable: true},
-                {"x":6,"y":0,"w":6,"h":10,"i":"2", c: IndicatorDisplay, isComponent: true, resizable: true},
-                {"x":0,"y":10,"w":3,"h":10,"i":"3", c: TodoList, isComponent: true, resizable: true},
-                {"x":3,"y":10,"w":3,"h":10,"i":"4", c: AppDeadlines, isComponent: true, resizable: true},
+            defaultLayout: [
+                {"x":0,"y":0,"w":6,"h":10,"i":"1", c: 'SubjectProgress', isComponent: true, resizable: true},
+                {"x":6,"y":0,"w":6,"h":10,"i":"2", c: 'IndicatorDisplay', isComponent: true, resizable: true},
+                {"x":0,"y":10,"w":3,"h":10,"i":"3", c: 'TodoList', isComponent: true, resizable: true},
+                {"x":3,"y":10,"w":3,"h":10,"i":"4", c: 'AppDeadlines', isComponent: true, resizable: true},
                 {"x":6,"y":10,"w":6,"h":10,"i":"7", "name": 'Quiz Statistics', c: QuizStatistics, isComponent: true, resizable: true},
             ],
+            layout: [],
             draggable: false,
             resizable: false,
             index: 0,
@@ -81,17 +84,19 @@ export default {
             editMode: false,
             allComponents: [
                 {"x":0,"y":0,"w":6,"h":10,"i":"1", "name": 'Fortschrittbalken', "value": 'progress', c: SubjectProgress, isComponent: true, resizable: true},
-                {"x":6,"y":0,"w":6,"h":10,"i":"2", "name": 'Indikatoren', c: IndicatorDisplay, isComponent: true, resizable: true},
-                {"x":0,"y":10,"w":3,"h":10,"i":"3", "name": 'To-Do Liste', c: TodoList, isComponent: true, resizable: true},
-                {"x":3,"y":10,"w":3,"h":10,"i":"4", "name": 'Deadlines', c: AppDeadlines, isComponent: true, resizable: true},
-                {"x":6,"y":10,"w":6,"h":10,"i":"5", "name": 'Bar Chart', c: BarChartAdvanced, isComponent: true, resizable: true},
-                {"x":0,"y":20,"w":3,"h":10,"i":"6", "name": 'Circle Chart', c: CircleChart, isComponent: true, resizable: true},
-                {"x":6,"y":10,"w":6,"h":10,"i":"7", "name": 'Quiz Statistics', c: QuizStatistics, isComponent: true, resizable: true},
+                {"x":6,"y":0,"w":6,"h":10,"i":"2", "name": 'Indikatoren', c: 'IndicatorDisplay', isComponent: true, resizable: true},
+                {"x":0,"y":10,"w":3,"h":10,"i":"3", "name": 'To-Do Liste', c: 'TodoList', isComponent: true, resizable: true},
+                {"x":3,"y":10,"w":3,"h":10,"i":"4", "name": 'Deadlines', c: 'AppDeadlines', isComponent: true, resizable: true},
+                {"x":6,"y":10,"w":6,"h":10,"i":"5", "name": 'Bar Chart', c: 'BarChartAdvanced', isComponent: true, resizable: true},
+                {"x":0,"y":20,"w":3,"h":10,"i":"6", "name": 'Circle Chart', c: 'CircleChart', isComponent: true, resizable: true},
+                {"x":6,"y":10,"w":6,"h":10,"i":"7", "name": 'Quiz Statistics', c: 'QuizStatistics', isComponent: true, resizable: true},
             ],
         };
     },
 
     mounted: function () {
+        this.loadDashboard();
+
         this.courseid = this.$store.state.courseid;
 
         this.context.courseId = this.$store.state.courseid; // TODO
@@ -107,6 +112,19 @@ export default {
         filteredComponents () {
             return this.allComponents.filter(({ i: id1 }) => !this.layout.some(({ i: id2 }) => id2 === id1));
         },
+
+        data () {
+            if (this.dashboardSettings && this.dashboardSettings.length > 0) {
+                // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+                this.layout = this.dashboardSettings
+            } else {
+                // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+                this.layout = this.defaultLayout
+            }
+            return this.layout
+        },
+
+        ...mapState(['dashboardSettings']),
     },
 
     methods: {
@@ -133,8 +151,13 @@ export default {
             }
         },
 
-        saveDashboard () {
-            console.log("hier sollte das dashbaord für das nächste öffnen gespeichert werden")
+        loadDashboard: function () {
+            this.$store.dispatch('fetchDashboardSettings');
+        },
+
+        saveDashboard () { // onSave()
+            let settings = JSON.stringify(this.layout)
+            this.$store.dispatch('saveDashboardSettings', settings)
             this.toggleEditMode()
         },
     }

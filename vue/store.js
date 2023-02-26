@@ -24,8 +24,9 @@ export const store = new Vuex.Store({
             type: 'primary',
             message: 'unknown'
         },
-        confValue: ''
-    },
+        confValue: '',
+        dashboardSettings: [],
+        },
     //strict: process.env.NODE_ENV !== 'production',
     mutations: {
         setCourseid(state, val){
@@ -72,6 +73,9 @@ export const store = new Vuex.Store({
                     state.message = "unknown";
                 }
             );
+        },
+        setDashboardSettings(state, ajaxdata) {
+            state.dashboardSettings = ajaxdata;
         }
     },
     getters: {
@@ -113,7 +117,10 @@ export const store = new Vuex.Store({
         },
         getCMID: function(state){
             return state.courseModuleID;
-        }
+        },
+        getDashboardSettings: function(state){
+            return state.dashboardSettings;
+        },
     },
     actions: {
         async loadComponentStrings(context) {
@@ -139,6 +146,59 @@ export const store = new Vuex.Store({
                 moodleStorage.set(cacheKey, JSON.stringify(strings));
             }
         },
+
+        /**
+         * Saves a learning goal.
+         *
+         * @param context
+         * @param settings
+         *
+         * @returns {Promise<void>}
+         */
+        async saveDashboardSettings(context, settings) {
+            const payload = {
+                userid: Number(context.state.userid),
+                course: Number(context.state.courseid),
+                settings: settings
+            };
+            console.log(settings);
+            console.log("Payload: ", payload);
+            try {
+                const response =  await ajax('format_ladtopics_saveDashboardSettings', payload);
+                console.log("response: ", response);
+                // commit('setDashboardSettings', response.data);
+            } catch (error) {
+                console.error(error);
+            }
+        },
+
+        /**
+         * Fetch dashbaord settings.
+         *
+         * @param context
+         * @param payload
+         *
+         * @returns {Promise<void>}
+         */
+        async fetchDashboardSettings(context) {
+            const payload = {
+                userid: Number(context.state.userid),
+                course: Number(context.state.courseid),
+            };
+            const response =  await ajax('format_ladtopics_fetchDashboardSettings', payload);
+
+            if (response.success) {
+                response.data = JSON.parse(response.data);
+                console.log('input settings::', JSON.parse(response.data.settings));
+                context.commit('setDashboardSettings',  JSON.parse(response.data.settings));
+            } else {
+                if (response.data) {
+                    console.log('Faulty response of webservice /overview/', response.data);
+                } else {
+                    console.log('No connection to webservice /overview/');
+                }
+            }
+        },
     }
 });
 
@@ -148,9 +208,7 @@ export const store = new Vuex.Store({
 export async function ajax(method, args) {
     const request = {
         methodname: method,
-        args: Object.assign({
-            coursemoduleid: store.state.courseModuleID
-        }, args),
+        args: args,
     };
 
     try {
