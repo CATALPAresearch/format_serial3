@@ -2083,7 +2083,6 @@ Group by cm.id
 			$record->course =  (int) $course;
 			$record->settings = $settings;
 			$DB->insert_record('ladtopics_dashboard', $record);
-
 		}
 
 		return array(
@@ -2139,10 +2138,198 @@ Group by cm.id
 				"userid" => (int)$userid
 			]
 		);
+
+		if (!$res) {
+			$success = false;
+		} else {
+			$success = true;
+		}
 		
 		return array(
-            'success' => true,
+            'success' => $success,
             'data' => json_encode($res)
         );
+	}
+
+
+	/**
+	 * Interface to add new to-do items to a users task list
+	 */
+	public static function addTodoItem_parameters()
+	{
+		return new external_function_parameters([
+			'course' => new external_value(PARAM_INT, 'task name'),
+			'task' => new external_value(PARAM_RAW, 'task description'),
+			'completed' => new external_value(PARAM_INT, 'task completion status'),
+		]);
+	}
+
+	public static function addTodoItem_is_allowed_from_ajax()
+	{
+		return true;
+	}
+
+	public static function addTodoItem_returns()
+	{
+		return new external_single_structure([
+			'success' => new external_value(PARAM_BOOL, 'success flag'),
+			'data' => new external_value(PARAM_RAW, 'id of new item')
+		]);
+	}
+
+	public static function addTodoItem($course, $task, $completed)
+	{
+		global $DB, $USER;
+
+//		$date = date_create();
+
+		$record = new stdClass();
+		$record->userid = (int)$USER->id;
+		$record->course = (int)$course;
+		$record->task = s($task);
+//		$record->timecreated = date_timestamp_get($date);
+//		$record->timemodified = date_timestamp_get($date);
+		$record->completed = $completed;
+
+		$res = $DB->insert_record("ladtopics_todo", $record);
+
+		// set success flag and message for response
+		return [
+			'success' => true,
+			'data' => $res
+		];
+	}
+
+	/**
+	 * Interface to toggle a to-do item
+	 */
+	public static function toggleTodoItem_parameters()
+	{
+		return new external_function_parameters([
+			'id' => new external_value(PARAM_INT, 'user id'),
+		]);
+	}
+
+	public static function toggleTodoItem_is_allowed_from_ajax()
+	{
+		return true;
+	}
+
+	public static function toggleTodoItem_returns()
+	{
+		return new external_single_structure([
+			'success' => new external_value(PARAM_BOOL, 'success flag'),
+			'data' => new external_value(PARAM_RAW, 'message for user')
+		]);
+	}
+
+	public static function toggleTodoItem($id)
+	{
+		// update task status in database
+		global $DB;
+
+		$record = $DB->get_record('ladtopics_todo', ['id' => (int) $id]);
+
+		if ($record) {
+			$record->completed = !$record->completed;
+			$success = $DB->update_record('ladtopics_todo', $record);
+		} else {
+			$success = false;
+		}
+
+		// set success flag and message for response
+		return [
+			'success' => true,
+			'data' => $success
+		];
+	}
+
+	/**
+	 * Interface to delete a to-do item
+	 */
+	public static function deleteTodoItem_parameters()
+	{
+		return new external_function_parameters([
+			'id' => new external_value(PARAM_INT, 'user id'),
+		]);
+	}
+
+	public static function deleteTodoItem_is_allowed_from_ajax()
+	{
+		return true;
+	}
+
+	public static function deleteTodoItem_returns()
+	{
+		return new external_single_structure([
+			'success' => new external_value(PARAM_BOOL, 'success flag'),
+		]);
+	}
+
+	public static function deleteTodoItem($id)
+	{
+		// delete task from database
+		global $DB;
+
+		$DB->delete_records('ladtopics_todo', ['id' => $id]);
+
+		// set success flag and message for response
+		return [
+			'success' => true,
+		];
+	}
+
+	/**
+	 * Interface to fetch all to-do items for a user
+	 */
+	public static function getTodoItems_parameters()
+	{
+		return new external_function_parameters([
+			'userid' => new external_value(PARAM_INT, 'user id'),
+			'course' => new external_value(PARAM_INT, 'id of course'),
+		]);
+	}
+
+	public static function getTodoItems_is_allowed_from_ajax()
+	{
+		return true;
+	}
+
+	public static function getTodoItems_returns()
+	{
+		return new external_single_structure(
+			array(
+				'success' => new external_value(PARAM_BOOL, 'Success Variable'),
+				'data' => new external_value(PARAM_RAW, 'Data output')
+			)
+		);
+	}
+
+	public static function getTodoItems($userid, $course)
+	{
+		global $DB;
+
+		$res = $DB->get_records_sql(
+			"SELECT *
+            FROM {ladtopics_todo}
+            WHERE
+            	userid=:userid AND
+            	course=:course",
+			[
+				"course" => (int)$course,
+				"userid" => (int)$userid
+			]
+		);
+
+		if (!$res) {
+			$success = false;
+		} else {
+			$success = true;
+		}
+
+		return array(
+			'success' => $success,
+			'data' => json_encode($res)
+		);
 	}
 }// end class

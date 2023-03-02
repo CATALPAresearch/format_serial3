@@ -193,7 +193,7 @@ export const store = new Vuex.Store({
                 context.commit('setDashboardSettings',  JSON.parse(response.data.settings));
             } else {
                 if (response.data) {
-                    console.log('Faulty response of webservice /overview/', response.data);
+                    console.log('No dashboard settings stored');
                 } else {
                     console.log('No connection to webservice /overview/');
                 }

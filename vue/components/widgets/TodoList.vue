@@ -1,102 +1,127 @@
 <template>
-  <div class="py-3">
-    <h3 class="heading-underline pb-1">
-      <i class="fa fa-sticky-note-o mr-2" aria-hidden="true"></i>
-      To-Do Liste
-    </h3>
-    <div class="py-2">
-      <ul v-for="(item, index) in reversedItems" :key="index" class="p-0">
-        <li class="checkbox-items" :data-status="item.completed">
-          <div class="d-flex">
-            <input type="checkbox" :data-id="item.id" :id="item.id" @click="toggleItem(item)" :checked="item.completed" class="mr-2"/>
-            <label :class="{'item-completed': item.completed}" class="m-0" :data-id="item.id" :for="item.id" >{{ item.name }}</label>
-          </div>
-          <button type="button" class="close" aria-label="Deletes item" :data-id="item.id" @click="deleteItem(item)">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </li>
-      </ul>
+    <div class="position-relative h-100 d-flex flex-column">
+        <widget-heading title="To-Do Liste" icon="fa-sticky-note-o" info-content="ToDo Liste"></widget-heading>
+        <ul class="todo__items flex-shrink-1 p-0 mb-6">
+            <li v-for="(item, index) in items" :key="index" class="todo__checkbox-items pt-1 pb-2">
+                <div class="d-flex" @click="toggleItem(item)">
+                    <input type="checkbox" :checked="item.completed == 1" class="mr-2"/>
+                    <span :class="{'item-completed': item.completed == 1}" class="m-0">{{ item.task }}</span>
+                </div>
+                <button type="button" class="close d-flex mt-2" aria-label="Deletes item" @click="deleteItem(item)">
+                    <i class="fa fa-close todo__close-icon" aria-hidden="true"></i>
+                </button>
+            </li>
+        </ul>
+        <div class="todo__add-item input-group control-group">
+            <input type="text" v-model="newItem" @keyup.enter="addItem" class="form-control" :placeholder="placeholderAddItem"  />
+            <button type="submit" class="btn btn-primary" @click="addItem" :disabled="newItem.length === 0">
+                Add item
+            </button>
+        </div>
     </div>
-    <div>
-      <div class="input-group control-group">
-        <input v-model="newItem" @keyup.enter="addItem" type="text" class="form-control" :placeholder="placeholderAddItem"  />
-        <button type="submit" class="btn btn-primary" @click="addItem" :disabled="newItem.length === 0">
-<!--          <i class="fa fa-plus" aria-hidden="true"></i>-->
-          Add item
-        </button>
-      </div>
-    </div>
-  </div>
 </template>
 
 <script>
-// import {get_string} from 'core/str';
-
+import {ajax} from '../../store';
+import WidgetHeading from "../WidgetHeading.vue";
 
 export default {
-  name: "TodoList",
+    name: "TodoList",
 
-  data() {
-    return {
-      items: [
-        {
-          id: 1,
-          name: 'KE1 lesen',
-          completed: false,
+    components: {WidgetHeading},
+
+    data() {
+        return {
+            items: [],
+            newItem: '',
+            placeholderAddItem: 'Neues Item hinzufügen..',
+            userid: Number(this.$store.getters.getUserid),
+            course: Number(this.$store.getters.getCourseid),
+        }
+    },
+
+    async mounted() {
+        await this.fetchItems();
+    },
+
+    methods: {
+        async toggleItem (item) {
+            item.completed = 1 - item.completed
+
+            await ajax('format_ladtopics_toggleTodoItem', {
+                id: item.id,
+            });
         },
-        {
-          id: 2,
-          name: 'Selbsttestaufgabe 1 lösen',
-          completed: true,
+
+        async deleteItem(item) {
+            this.items = this.items.filter((newItem) => newItem.task !== item.task);
+
+            await ajax('format_ladtopics_deleteTodoItem', {
+                id: item.id,
+            });
         },
-      ],
-      newItem: '',
-      placeholderAddItem: 'Neues Item hinzufügen..',
+
+        async addItem () {
+            const newItem = {
+                course: this.course,
+                task: this.newItem,
+                completed: 0,
+            }
+            const response = await ajax('format_ladtopics_addTodoItem', newItem);
+
+            if (response.success) {
+                newItem.id = response.data
+                this.items.push(newItem)
+                this.newItem = ''
+            } else {
+                if (response.data) {
+                    console.log('Faulty response of webservice /getTodoItems/', response.data);
+                } else {
+                    console.log('No connection to webservice /getTodoItems/');
+                }
+            }
+        },
+
+        async fetchItems() {
+            const response =  await ajax('format_ladtopics_getTodoItems', {
+                userid: this.userid,
+                course: this.course,
+            });
+            if (response.success) {
+                response.data = JSON.parse(response.data)
+                this.items = Object.values(response.data)
+            } else {
+                this.items = []
+            }
+        },
     }
-  },
-  props: {
-    location: String
-  },
-
-  computed: {
-    reversedItems() {
-      return this.items.slice(0).reverse();
-    },
-  },
-
-  methods: {
-    toggleItem (item) {
-      item.completed = !item.completed
-    },
-
-    deleteItem(item) {
-      this.items = this.items.filter((newItem) => newItem.name !== item.name);
-    },
-
-    addItem () {
-      this.items.push({
-        id: this.items.length + 1,
-        name: this.newItem,
-        completed: false,
-      });
-      this.newItem = '';
-    },
-  }
 }
 </script>
 
 <style lang="scss" scoped>
-.checkbox-items {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
+.todo {
+    &__items {
+        overflow-y: auto;
+    }
 
-.item-completed {
-  text-decoration: line-through;
-}
+    &__checkbox-items {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        cursor: pointer;
+    }
 
-.heading-underline {
-  border-bottom: 1px solid #dee2e6;
+    &__item-completed {
+        text-decoration: line-through;
+    }
+
+    &__close-icon {
+        font-size: 12px;
+    }
+
+    &__add-item {
+        position: absolute;
+        bottom: 0;
+    }
 }
 </style>
