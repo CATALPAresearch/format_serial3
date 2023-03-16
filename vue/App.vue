@@ -1,14 +1,14 @@
 <template>
     <div>
         <div class="d-flex justify-content-between">
-            <h2 class="main__title">{{ title }}</h2>
+            <h2 class="main__title">{{ strings.dashboardTitle }}</h2>
             <div class="d-flex justify-content-end align-items-center">
                 <div class="form-group d-flex align-items-center m-0">
                     <select v-if="editMode" id="addDashboardItems" class="form-control mr-2" @change="addItem($event)">
-                        <option value="addNewItem">Dashboarditem hinzufügen</option>
+                        <option value="addNewItem">{{ strings.dashboardAddItem }}</option>
                         <option v-for="(component, index) in filteredComponents" :key="index" :value="component.i">{{ component.name }}</option>
                     </select>
-                    <button v-if="editMode" class="btn btn-primary btn-edit" @click="saveDashboard">Speichern</button>
+                    <button v-if="editMode" class="btn btn-primary btn-edit" @click="saveDashboard">{{ strings.save }}</button>
                 </div>
                 <menu-bar @editmode="toggleEditMode"></menu-bar>
             </div>
@@ -34,7 +34,9 @@
                 :is-resizable="resizable"
                 class="border p-3"
             >
-                <span v-if="editMode" class="remove" @click="removeItem(item.i)">x</span>
+                <span v-if="editMode" class="remove" @click="removeItem(item.i)" title="Element aus Dashboard entfernen">
+                     <i class="fa fa-close"></i>
+                </span>
                 <component v-if="item.isComponent" :is="item.c"></component>
             </grid-item>
         </grid-layout>
@@ -48,7 +50,9 @@ import IndicatorDisplay from "./components/widgets/IndicatorDisplay.vue";
 import MenuBar from "./components/MenuBar.vue";
 import QuizStatistics from "./components/widgets/QuizStatistics.vue";
 import SubjectProgress from "./components/widgets/SubjectProgress.vue";
+import AppTimeline from "./components/widgets/Timeline.vue";
 import TodoList from "./components/widgets/TodoList.vue";
+import AppMotivation from "./components/widgets/Motivation.vue";
 
 import { GridLayout, GridItem } from './js/vue-grid-layout.umd.min';
 import BarChartAdvanced from "./components/BarChartAdvanced.vue";
@@ -58,11 +62,10 @@ import { mapState } from 'vuex';
 
 
 export default {
-    components: { GridLayout, GridItem, AppDeadlines, BarChartAdvanced, CircleChart, IndicatorDisplay, MenuBar, SubjectProgress, TodoList, QuizStatistics },
+    components: { GridLayout, GridItem, AppDeadlines, AppMotivation, AppTimeline, BarChartAdvanced, CircleChart, IndicatorDisplay, MenuBar, SubjectProgress, TodoList, QuizStatistics },
 
     data () {
         return {
-            title: "Learner Dashboard",
             name: 'LAD topics',
             courseid: -1,
             context: {},
@@ -70,11 +73,11 @@ export default {
             surveyRequired: true,
             surveyLink: '',
             defaultLayout: [
-                {"x":0,"y":0,"w":6,"h":10,"i":"1", c: 'SubjectProgress', isComponent: true, resizable: true},
-                {"x":6,"y":0,"w":6,"h":10,"i":"2", c: 'IndicatorDisplay', isComponent: true, resizable: true},
-                {"x":0,"y":10,"w":3,"h":10,"i":"3", c: 'TodoList', isComponent: true, resizable: true},
-                {"x":3,"y":10,"w":3,"h":10,"i":"4", c: 'AppDeadlines', isComponent: true, resizable: true},
-                {"x":6,"y":10,"w":6,"h":10,"i":"7", "name": 'Quiz Statistics', c: QuizStatistics, isComponent: true, resizable: true},
+                {"x":0,"y":0,"w":6,"h":10,"i":"1", "name": 'Fortschrittbalken', c: SubjectProgress, isComponent: true, resizable: true},
+                {"x":6,"y":0,"w":6,"h":10,"i":"7", "name": 'Quiz Statistics', c: 'QuizStatistics', isComponent: true, resizable: true},
+                {"x":0,"y":10,"w":3,"h":10,"i":"3", "name": 'To-Do Liste', c: 'TodoList', isComponent: true, resizable: true},
+                {"x":3,"y":10,"w":3,"h":10,"i":"4", "name": 'Deadlines', c: 'AppDeadlines', isComponent: true, resizable: true},
+                {"x":6,"y":0,"w":6,"h":10,"i":"2", "name": 'Indikatoren', c: 'IndicatorDisplay', isComponent: true, resizable: true},
             ],
             layout: [],
             draggable: false,
@@ -83,13 +86,15 @@ export default {
             isClicked: false,
             editMode: false,
             allComponents: [
-                {"x":0,"y":0,"w":6,"h":10,"i":"1", "name": 'Fortschrittbalken', "value": 'progress', c: SubjectProgress, isComponent: true, resizable: true},
+                {"x":0,"y":0,"w":6,"h":10,"i":"1", "name": 'Fortschrittbalken', c: SubjectProgress, isComponent: true, resizable: true},
                 {"x":6,"y":0,"w":6,"h":10,"i":"2", "name": 'Indikatoren', c: 'IndicatorDisplay', isComponent: true, resizable: true},
                 {"x":0,"y":10,"w":3,"h":10,"i":"3", "name": 'To-Do Liste', c: 'TodoList', isComponent: true, resizable: true},
                 {"x":3,"y":10,"w":3,"h":10,"i":"4", "name": 'Deadlines', c: 'AppDeadlines', isComponent: true, resizable: true},
                 {"x":6,"y":10,"w":6,"h":10,"i":"5", "name": 'Bar Chart', c: 'BarChartAdvanced', isComponent: true, resizable: true},
                 {"x":0,"y":20,"w":3,"h":10,"i":"6", "name": 'Circle Chart', c: 'CircleChart', isComponent: true, resizable: true},
                 {"x":6,"y":10,"w":6,"h":10,"i":"7", "name": 'Quiz Statistics', c: 'QuizStatistics', isComponent: true, resizable: true},
+                {"x":6,"y":10,"w":6,"h":10,"i":"9", "name": 'Zeitleiste', c: 'AppTimeline', isComponent: true, resizable: true},
+                {"x":6,"y":10,"w":6,"h":10,"i":"10", "name": 'Motivation', c: 'AppMotivation', isComponent: true, resizable: true},
             ],
         };
     },
@@ -124,7 +129,7 @@ export default {
             return this.layout
         },
 
-        ...mapState(['dashboardSettings']),
+        ...mapState(['dashboardSettings', 'strings']),
     },
 
     methods: {
@@ -208,6 +213,11 @@ export default {
     right: 8px;
     top: 0;
     cursor: pointer;
+    color: #666666;
+
+    &:hover {
+        color: black;
+    }
 }
 
 .btn-edit {
