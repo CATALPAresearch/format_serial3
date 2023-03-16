@@ -5,7 +5,7 @@
             <li v-for="(item, index) in items" :key="index" class="todo__checkbox-items pt-1 pb-2">
                 <div class="d-flex" @click="toggleItem(item)">
                     <input type="checkbox" :checked="item.completed == 1" class="mr-2"/>
-                    <span :class="{'item-completed': item.completed == 1}" class="m-0">{{ item.task }}</span>
+                    <span :class="{'todo__item-completed': item.completed == 1}" class="m-0">{{ item.task }}</span>
                 </div>
                 <button type="button" class="close d-flex mt-2" aria-label="Deletes item" @click="deleteItem(item)">
                     <i class="fa fa-close todo__close-icon" aria-hidden="true"></i>

@@ -1,18 +1,17 @@
 <template>
-    <div class="py-3">
+    <div>
         <widget-heading title="Progress" icon="fa-hourglass-o" :info-content="info"></widget-heading>
         <div id="dashboard-completion">
-            <div class="section-selection mr-2" :class="currentSection === 0 ? 'section-selection--current' : ''" @click="setSection(0)">
+            <div class="section-selection mr-2" :class="currentSection === -1 ? 'section-selection--current' : ''" @click="setCurrentSection(-1)">
                 <p class="my-1">All</p>
                 <div class="progress mb-2">
-    <!--                    bootstrap allows for mulitple colors in progress bar -> e.g. green for strong topics, red for weak -->
                     <div class="progress-bar" role="progressbar" :style="{'width': calculateProgress + '%'}" :aria-valuenow="calculateProgress" aria-valuemin="0" aria-valuemax="100">{{ calculateProgress }}%</div>
                 </div>
             </div>
 
             <div class="w-100 mb-4">
-                <div v-for="(section, index) in sections.slice(1, sections.length)" :key="index" :style="{'width': calculateWidth(sections.length) + '%'}" class="d-inline-block" @click="setSection(index + 1)">
-                    <div class="section-selection mr-2" :class="currentSection === index + 1 ? 'section-selection--current' : ''">
+                <div v-for="(section, index) in allSections" :key="index" :style="{'width': calculateWidth(allSections.length) + '%'}" class="d-inline-block" @click="setCurrentSection(index)">
+                    <div class="section-selection mr-2" :class="currentSection === index ? 'section-selection--current' : ''">
                         <p class="section-names mb-1 small" :title="section[0].sectionname">{{ section[0].sectionname }}</p>
                         <div class="progress">
                             <div class="progress-bar" role="progressbar" :style="{'width': calculateSectionProgress(section) + '%'}" :aria-valuenow="calculateSectionProgress(section)" aria-valuemin="0" aria-valuemax="100"></div>
@@ -24,14 +23,18 @@
             <div v-for="(type, aIndex) in activityNames" :key="aIndex" class="row">
                 <span class="col-3">{{ activities[type][0].modulename }}</span>
                 <div class="col-9">
-                    <span v-for="(activity, aCount) in currentActivities[type]" :key="aCount">
-                        <button type="button" data-container="body" data-toggle="popover" data-trigger="click" data-html="true" data-placement="top" :data-content="getPopoverContent(type, activity)" class="subject-progress__popover" :title="getPopoverContent(type, activity)" @click="onClick(type, activity)">
-                            <div :class="activity.completion === 1 ? 'rect-green completion-rect' : 'rect-blue completion-rect'"></div>
-                        </button>
+                    <span v-for="(activity, aCount) in currentActivities[type]" :key="aCount" class="position-relative">
+                         <button type="button" data-toggle="popover" data-placement="bottom" class="panel-heading subject-progress__popover" :title="activity.name" v-popover-html="popoverContent(type, activity)">
+                            <span :class="{
+                                    'rect-grey completion-rect': activity.completion === 0,
+                                    'rect-blue completion-rect': activity.completion === 1,
+                                    'rect-yellow completion-rect': activity.rating === 2,
+                                    'rect-green completion-rect': activity.rating === 3
+                                }" :title="activity.name"></span>
+                         </button>
                     </span>
                 </div>
             </div>
-
         </div>
     </div>
 </template>
@@ -39,23 +42,65 @@
 <script>
 import Communication from '../../scripts/communication';
 import WidgetHeading from "../WidgetHeading.vue";
-
+import PopoverContent from "../PopoverContent.vue";
+import Vue from 'vue';
+import { mapGetters, mapState  } from 'vuex';
+import $ from 'jquery';
+// const $ = require("jquery");
 
 
 export default {
     name: "SubjectProgress",
 
-    components: {WidgetHeading},
+    components: { WidgetHeading },
+
+    directives: {
+        popoverHtml: {
+            bind: function(el, binding) {
+                $(el).popover({
+                    html: true,
+                    sanitize: false,
+                    content: function() {
+                        return binding.value;
+                    }
+                });
+
+
+                $(el).on('shown.bs.popover', function() {
+                    var popover = $(el).siblings('.popover');
+                    popover.on('click', function(event) {
+                        event.stopPropagation();
+                    });
+
+                    $(document).on('click.popover', function(event) {
+                        var isClickInsidePopover = $(event.target).closest('.popover').length > 0;
+                        var isClickOnPopoverButton = $(event.target).is($(el));
+                        if (!isClickInsidePopover && !isClickOnPopoverButton) {
+                            $(el).popover('hide');
+                            $(document).off('click.popover');
+                        }
+                    });
+                });
+
+                $(el).on('hidden.bs.popover', function() {
+                    var popover = $(el).siblings('.popover');
+                    popover.off('click');
+                });
+            },
+            unbind: function(el) {
+                $(el).popover('dispose');
+                $(el).off('shown.bs.popover');
+                $(el).off('hidden.bs.popover');
+            }
+        }
+    },
 
     data: function () {
         return {
             total: 0,
-            currentSection: 0,
             activities: null,
             currentActivities: null,
-            sections: [],
             info: 'Informationen über das Widget',
-            // current: { id: 0, section: 0 },
             sectionnames: [],
             activityNames: [],
             stats: [],
@@ -65,16 +110,31 @@ export default {
                 assign: { count: 0, complete: 0, achieved_score: 0, max_score: 0 },
                 hypervideo: { count: 0, complete: 0, achieved_score: 0, max_score: 0 }
             },
+            popoverComponent: null
         };
+    },
+
+    watch: {
+        currentSection: function(val) {
+            if (val === -1) {
+                this.currentActivities = this.activities;
+            } else {
+                this.currentActivities = this.groupBy(this.allSections[this.currentSection], 'type')
+            }
+        }
     },
 
     mounted: function () {
         this.loadCourseData();
+
+        import('../PopoverContent.vue').then(component => {
+            this.popoverComponent = Vue.extend(component.default);
+        });
     },
 
     computed: {
         calculateProgress() {
-            const x = this.sections.map(a => a.filter(({ completion }) => completion === 1 ).length)
+            const x = this.allSections.map(a => a.filter(({ completion }) => completion === 1 ).length)
             const sum = x.reduce((total, current) => {
                 return total + current;
             }, 0)
@@ -82,16 +142,41 @@ export default {
             return Math.floor(sum/this.total*100)
         },
 
-        getCurrentActivities() {
-            if (this.currentSection === 0) {
-                return this.activities
-            } else {
-                return this.groupBy(this.sections[this.currentSection], 'type')
-            }
-        },
+        ...mapState(['currentSection', 'allSections', 'sectionNames']),
+        ...mapGetters(['getCurrentSection', 'getAllSections', 'getSectionNames']),
     },
 
     methods: {
+        popoverContent (type, activity) {
+            if (this.popoverComponent) {
+                const PopoverComponent = Vue.extend(this.popoverComponent)
+                const popover = new PopoverComponent({
+                    propsData: {
+                        activity: activity
+                    }
+                }).$mount()
+
+                popover.$on('completion-updated', completionStatus => {
+                    for (var j = 0; j < this.allSections.length; j++) {
+                        var section = this.allSections[j];
+                        for (var i = 0; i < section.length; i++) {
+                            if (this.allSections[j][i].id === activity.id) {
+                                this.allSections[j][i].completion = completionStatus ? 1 : 0
+                            }
+                        }
+                    }
+
+                    for (var z = 0; z < this.activities[type].length; z++) {
+                        if (this.activities[type][z].id === activity.id) {
+                            this.activities[type][z].completion = completionStatus ? 1 : 0
+                        }
+                    }
+                });
+
+                return popover.$el
+            }
+        },
+
         calculateSectionProgress (section) {
             const sum = section.filter(({ completion }) => completion === 1 ).length
             const total = section.length
@@ -99,11 +184,11 @@ export default {
         },
 
         onClick (type, activity) {
-            for (var j = 0; j < this.sections.length; j++) {
-                var section = this.sections[j];
+            for (var j = 0; j < this.allSections.length; j++) {
+                var section = this.allSections[j];
                 for (var i = 0; i < section.length; i++) {
-                    if (this.sections[j][i].id === activity.id) {
-                        this.sections[j][i].completion = 1
+                    if (this.allSections[j][i].id === activity.id) {
+                        this.allSections[j][i].completion = 1
                     }
                 }
             }
@@ -116,43 +201,28 @@ export default {
         },
 
         calculateWidth(items) {
-            return 100 / (items - 1)
+            return 100 / items
         },
 
         getTotalActivites () {
-            const y = this.sections.map(a => a.length)
+            const y = this.allSections.map(a => a.length)
             return y.reduce((total, current) => {
                 return total + current;
             }, 0)
         },
 
-        setSection(index) {
-            this.currentSection = index
-            this.currentActivities = this.getCurrentActivities
+        setCurrentSection(section) {
+            this.$store.commit('setCurrentSection', section);
         },
 
-        setCurrent: function (id, section) {
-            this.current = { id: id, section: section };
-            // this.$emit('log', 'dashboard_completion_item_hover', { url: this.getLink(), completion: this.getCurrent().completion });
-        },
+        // setCurrent: function (id, section) {
+        //     this.current = { id: id, section: section };
+        //     // this.$emit('log', 'dashboard_completion_item_hover', { url: this.getLink(), completion: this.getCurrent().completion });
+        // },
 
         // getCurrent: function () {
         //     return this.sections[this.currentSection][this.current.id];
         // },
-        //
-        // getLink: function (instance) {
-        //     instance = instance == undefined ? this.getCurrent() : instance;
-        //     return M.cfg.wwwroot + '/mod/' + instance.type + '/view.php?id=' + instance.id;
-        // },
-
-        getPopoverContent (type, activity) {
-            const x = this.activities[type];
-            for (var j = 0; j < x.length; j++) {
-                if (x[j].id === activity.id) {
-                    return `Hallo ${x[j].name}`
-                }
-            }
-        },
 
         loadCourseData: async function () {
             const response = await Communication.webservice(
@@ -164,16 +234,24 @@ export default {
                 console.log('input debug::', JSON.parse(response.data.debug));
                 console.log('input completions::', JSON.parse(response.data.completions));
 
-                this.sections = this.groupBy(JSON.parse(response.data.completions), 'section');
-                console.log('sections', this.sections)
+                const sections = this.groupBy(JSON.parse(response.data.completions), 'section');
+                this.$store.commit('setAllSections', sections);
+                console.log('sections', this.allSections)
                 console.log('stats', this.calcStats())
                 this.stats = this.calcStats();
+
+                const sectionNames = this.stats.map(obj => ({
+                    id: obj.id,
+                    name: obj.sectionname
+                }))
+
+                this.$store.commit('setSectionNames', sectionNames);
+                console.log('sectionNames: ', this.sectionNames)
 
                 this.activities = this.groupBy(JSON.parse(response.data.completions), 'type');
                 this.currentActivities = this.activities
                 this.total = this.getTotalActivites()
                 console.log('activities', this.activities)
-                console.log("section names: ", this.sectionnames)
 
                 this.activityNames = Object.keys(this.activities)
             } else {
@@ -205,8 +283,8 @@ export default {
 
         calcStats: function () {
             let stats = [];
-            for (var j = 0; j < this.sections.length; j++) {
-                var section = this.sections[j];
+            for (var j = 0; j < this.allSections.length; j++) {
+                var section = this.allSections[j];
                 for (var i = 0; i < section.length; i++) {
                     if (section[i].visible == '0') {
                         continue;
@@ -325,12 +403,20 @@ export default {
         margin-right: 1px;
     }
 
+    .rect-grey {
+        background-color: #CED4DA;
+    }
+
     .rect-blue {
         background-color: #136aaf;
     }
 
     .rect-green {
         background-color: #89da59;
+    }
+
+    .rect-yellow {
+        background-color: yellow;
     }
 
     .completion-rect:hover {
@@ -366,4 +452,17 @@ export default {
             outline-offset: 2px;
         }
     }
+
+.button {
+    border: none;
+    background: none;
+    padding: 0;
+}
+
+.container {
+    margin-top: 10px;
+}
+.my-popover-content {
+    display:none;
+}
 </style>
