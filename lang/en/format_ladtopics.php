@@ -59,3 +59,18 @@ $string['dashboardsectionexclude'] = "Sections to exclude from the dashoard (e.g
 $string['dashboardsectionexclude_help'] = 'todo';
 $string['dashboardsectionexclude_link'] = 'todo';
 $string['dashboardsectionexclude_desc'] = 'todo';
+
+
+// General
+$string['save'] = 'Save';
+$string['cancel'] = 'Cancel';
+$string['edit'] = 'Edit';
+$string['delete'] = 'Delete';
+
+$string['todoAddNewItem'] = 'Add new item..';
+$string['dashboardTitle'] = 'Learner Dashboard';
+$string['dashboardAddItem'] = 'Add dashboard item';
+
+$string['informationTitle'] = 'Informationen über das Learner Dashboard';
+$string['informationContent'] = 'Hier werden alle Hintergründe und Fragen zu dem Gebrauch des Learner Dashboards beantwortet';
+

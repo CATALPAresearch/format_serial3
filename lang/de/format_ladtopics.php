@@ -47,3 +47,18 @@ $string['dashboardsectionexclude_help'] = 'todo';
 $string['dashboardsectionexclude_link'] = 'todo';
 $string['dashboardsectionexclude_desc'] = 'todo';
 
+
+// General
+$string['save'] = 'Speichern';
+$string['cancel'] = 'Abbrechen';
+$string['edit'] = 'Bearbeiten';
+$string['delete'] = 'Löschen';
+
+
+// Learner Dashboard
+$string['todoAddNewItem'] = 'Neues Item hinzufügen..';
+$string['dashboardTitle'] = 'Learner Dashboard';
+$string['dashboardAddItem'] = 'Dashboarditem hinzufügen';
+
+$string['informationTitle'] = 'Informationen über das Learner Dashboard';
+$string['informationContent'] = 'Hier werden alle Hintergründe und Fragen zu dem Gebrauch des Learner Dashboards beantwortet';
