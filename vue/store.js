@@ -26,7 +26,11 @@ export const store = new Vuex.Store({
         },
         confValue: '',
         dashboardSettings: [],
-        },
+        currentSection: -1,
+        sectionNames: [],
+        allSections: [],
+    },
+
     //strict: process.env.NODE_ENV !== 'production',
     mutations: {
         setCourseid(state, val){
@@ -76,8 +80,18 @@ export const store = new Vuex.Store({
         },
         setDashboardSettings(state, ajaxdata) {
             state.dashboardSettings = ajaxdata;
+        },
+        setCurrentSection(state, section) {
+            state.currentSection = section;
+        },
+        setAllSections(state, sections) {
+            state.allSections = sections;
+        },
+        setSectionNames(state, names) {
+            state.sectionNames = names;
         }
     },
+
     getters: {
         getCourseid: function(state){
             return state.courseid;
@@ -121,8 +135,23 @@ export const store = new Vuex.Store({
         getDashboardSettings: function(state){
             return state.dashboardSettings;
         },
+        getCurrentSection: function(state){
+            return state.currentSection;
+        },
+        getAllSections: function(state){
+            return state.allSections;
+        },
+        getSectionNames: function(state){
+            return state.sectionNames;
+        },
     },
     actions: {
+        /**
+         * Fetches the i18n data for the current language.
+         *
+         * @param context
+         * @returns {Promise<void>}
+         */
         async loadComponentStrings(context) {
             const lang = $('html').attr('lang').replace(/-/g, '_');
             const cacheKey = 'format_ladtopics/strings/' + lang;

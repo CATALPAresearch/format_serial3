@@ -243,4 +243,67 @@ $functions = [
 		'loginrequired' => true,
 		'ajax' => true,
 	],
+	'format_ladtopics_getQuizAnalytics' => [
+		'classname' => 'format_ladtopics_external',
+		'methodname' => 'getQuizAnalytics',
+		'classpath' => 'course/format/ladtopics/api.php',
+		'description' => 'Get student quiz data',
+		'type' => 'read',
+		'ajax' => true,
+		'loginrequired' => true
+	],
+	'format_ladtopics_getQuizzes' => [
+		'classname' => 'format_ladtopics_external',
+		'methodname' => 'getQuizzes',
+		'classpath' => 'course/format/ladtopics/api.php',
+		'description' => 'Get student quiz data',
+		'type' => 'read',
+		'ajax' => true,
+		'loginrequired' => true
+	],
+	'format_ladtopics_getAssignments' => [
+		'classname' => 'format_ladtopics_external',
+		'methodname' => 'getAssignments',
+		'classpath' => 'course/format/ladtopics/api.php',
+		'description' => 'Get student assignment data',
+		'type' => 'read',
+		'ajax' => true,
+		'loginrequired' => true
+	],
+//	'format_ladtopics_getCompletionStatus' => [
+//		'classname' => 'format_ladtopics_external',
+//		'methodname' => 'getCompletionStatus',
+//		'classpath' => 'course/format/ladtopics/api.php',
+//		'description' => 'Get the completion status of activities',
+//		'type' => 'read',
+//		'ajax' => true,
+//		'loginrequired' => true
+//	],
+	'format_ladtopics_setCompletionStatus' => [
+		'classname' => 'format_ladtopics_external',
+		'methodname' => 'setCompletionStatus',
+		'classpath' => 'course/format/ladtopics/api.php',
+		'description' => 'Set the completion status of activities',
+		'type' => 'write',
+		'ajax' => true,
+		'loginrequired' => true
+	],
+	'format_ladtopics_getUserUnderstanding' => [
+		'classname' => 'format_ladtopics_external',
+		'methodname' => 'getUserUnderstanding',
+		'classpath' => 'course/format/ladtopics/api.php',
+		'description' => 'Set the completion status of activities',
+		'type' => 'read',
+		'ajax' => true,
+		'loginrequired' => true
+	],
+	'format_ladtopics_setUserUnderstanding' => [
+		'classname' => 'format_ladtopics_external',
+		'methodname' => 'setUserUnderstanding',
+		'classpath' => 'course/format/ladtopics/api.php',
+		'description' => 'Set the completion status of activities',
+		'type' => 'write',
+		'ajax' => true,
+		'loginrequired' => true
+	],
 ];
