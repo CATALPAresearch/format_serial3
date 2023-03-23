@@ -2592,4 +2592,52 @@ Group by cm.id
 	}
 
 
+	/**
+	 * Get assignment and quiz dates
+	 */
+	public static function getDeadlines_parameters()
+	{
+		return new external_function_parameters([
+			'courseid' => new external_value(PARAM_INT, 'id of course'),
+		]);
+	}
+
+	public static function getDeadlines_is_allowed_from_ajax()
+	{
+		return true;
+	}
+
+	public static function getDeadlines_returns()
+	{
+		return new external_single_structure(
+			array(
+				'data' => new external_value(PARAM_RAW, 'Data output')
+			)
+		);
+	}
+
+	public static function getDeadlines($courseid)
+	{
+		global $DB;
+
+		if (empty($courseid) || !is_int($courseid)) {
+			error_log("Invalid course ID: " . $courseid);
+			return null;
+		}
+
+		$sql = "SELECT a.id, a.allowsubmissionsfromdate AS timestart, a.name, a.duedate AS timeclose, 'assignment' AS type
+        FROM {assign} a
+        WHERE a.course = :course AND a.duedate != 0
+        UNION
+        SELECT q.id, q.timeopen AS timestart, q.name, q.timeclose, 'quiz' AS type
+        FROM {quiz} q
+        WHERE q.course = :courseid AND q.timeclose != 0";
+
+		$params = array('courseid' => $courseid, 'course' => $courseid);
+		$dates = $DB->get_records_sql($sql, $params);
+
+		return array(
+			'data' => json_encode($dates)
+		);
+	}
 }// end class

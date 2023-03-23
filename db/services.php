@@ -306,4 +306,13 @@ $functions = [
 		'ajax' => true,
 		'loginrequired' => true
 	],
+	'format_ladtopics_getDeadlines' => [
+		'classname' => 'format_ladtopics_external',
+		'methodname' => 'getDeadlines',
+		'classpath' => 'course/format/ladtopics/api.php',
+		'description' => 'Get due dates of assignments and quizzes',
+		'type' => 'write',
+		'ajax' => true,
+		'loginrequired' => true
+	],
 ];
