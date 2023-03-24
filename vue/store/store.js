@@ -5,9 +5,15 @@ import moodleStorage from 'core/localstorage';
 import Notification from 'core/notification';
 import $ from 'jquery';
 
+import taskList from './taskList';
+
 Vue.use(Vuex);
 
 export const store = new Vuex.Store({
+    modules: {
+        taskList,
+    },
+
     state: {
         pluginName: '',
         courseModuleID: 0,
@@ -89,7 +95,7 @@ export const store = new Vuex.Store({
         },
         setSectionNames(state, names) {
             state.sectionNames = names;
-        }
+        },
     },
 
     getters: {

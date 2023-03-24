@@ -44,7 +44,7 @@ import Communication from '../../scripts/communication';
 import WidgetHeading from "../WidgetHeading.vue";
 import PopoverContent from "../PopoverContent.vue";
 import Vue from 'vue';
-import { mapGetters, mapState  } from 'vuex';
+import { mapActions, mapGetters, mapState  } from 'vuex';
 import $ from 'jquery';
 // const $ = require("jquery");
 
@@ -147,6 +147,8 @@ export default {
     },
 
     methods: {
+        ...mapActions('taskList', ['addItem']),
+
         popoverContent (type, activity) {
             if (this.popoverComponent) {
                 const PopoverComponent = Vue.extend(this.popoverComponent)
@@ -171,6 +173,10 @@ export default {
                             this.activities[type][z].completion = completionStatus ? 1 : 0
                         }
                     }
+                });
+
+                popover.$on('add-to-task-list', task => {
+                    this.addItem(task)
                 });
 
                 return popover.$el

@@ -4,14 +4,14 @@
         <div class="todo__items flex-shrink-1 mb-6">
             <ul class="p-0 pl-1">
                 <li v-for="(item, index) in uncompletedItems" :key="index" class="todo__checkbox-items pt-1">
-                    <div class="d-flex todo__toggle-item" @click="toggleItem(item)">
-                        <input type="checkbox" :checked="item.completed == 1" class="mr-2"/>
-                        <span :class="{'todo__item-completed': item.completed == 1}" class="m-0">{{ item.task }}</span>
+                    <div class="d-flex todo__toggle-item">
+                        <input type="checkbox" class="mr-2" @click="toggleItem(item)"/>
+                        <span class="m-0">{{ item.task }}</span>
                     </div>
                     <div class="d-flex align-items-center mr-3">
                         <div v-if="item.duedate && item.duedate != 0" class="flex-shrink-0">{{ item.duedate }}</div>
                         <input type="date" v-model="item.duedate" class="form-control p-0 mx-2 todo__change-date" @change="updateDate(item)"/>
-                        <button type="button" class="close d-flex" aria-label="Deletes item" @click="deleteItem(item)">
+                        <button type="button" class="close d-flex" aria-label="Deletes item" @click="deleteTask(item)">
                             <i class="fa fa-close todo__close-icon" aria-hidden="true"></i>
                         </button>
                     </div>
@@ -27,13 +27,14 @@
                 <div class="card card-body w-100 pr-0 pl-1 py-2">
                     <ul class="mr-3 mb-0 p-0">
                         <li v-for="(item, index) in completedItems" :key="index" class="todo__checkbox-items pt-1 pb-1">
-                            <div class="d-flex todo__toggle-item" @click="toggleItem(item)">
-                                <input type="checkbox" :checked="item.completed == 1" class="mr-2"/>
-                                <span :class="{'todo__item-completed': item.completed == 1}" class="m-0">{{ item.task }}</span>
+                            <div class="d-flex todo__toggle-item">
+                                <input type="checkbox" class="mr-2" @click="toggleItem(item)" checked />
+                                <span class="todo__item-completed m-0">{{ item.task }}</span>
                             </div>
                             <div class="d-flex align-items-center">
+                                <div v-if="item.duedate && item.duedate != 0" class="flex-shrink-0">{{ item.duedate }}</div>
                                 <input type="date" v-model="item.duedate" class="form-control p-0 mx-2 todo__change-date" @change="updateDate(item)"/>
-                                <button type="button" class="close d-flex" aria-label="Deletes item" @click="deleteItem(item)">
+                                <button type="button" class="close d-flex" aria-label="Deletes item" @click="deleteTask(item)">
                                     <i class="fa fa-close todo__close-icon" aria-hidden="true"></i>
                                 </button>
                             </div>
@@ -45,16 +46,16 @@
 
         <div class="todo__add-item w-100">
             <div class="input-group control-group">
-                <input type="text" v-model="newItem" @keyup.enter="addItem" class="form-control flex-grow-1" :placeholder="placeholderAddItem"  />
+                <input type="text" v-model="newItem" @keyup.enter="addTask" class="form-control flex-grow-1" :placeholder="placeholderAddItem"  />
                 <input type="date" v-model="newDate" class="form-control flex-grow-0 todo__add-date" />
-                <button type="submit" class="btn btn-primary todo__add-icon" @click="addItem" :disabled="newItem.length === 0">+</button>
+                <button type="submit" class="btn btn-primary todo__add-icon" @click="addTask" :disabled="newItem.length === 0">+</button>
             </div>
         </div>
     </div>
 </template>
 
 <script>
-import {ajax} from '../../store';
+import { mapActions, mapGetters } from 'vuex';
 import WidgetHeading from '../WidgetHeading.vue';
 
 export default {
@@ -64,107 +65,61 @@ export default {
 
     data() {
         return {
-            items: [],
             newItem: '',
             newDate: '',
             placeholderAddItem: 'Neues Item hinzufügen..',
-            userid: Number(this.$store.getters.getUserid),
-            course: Number(this.$store.getters.getCourseid),
             showCompletedItems: false,
         };
     },
 
     async mounted() {
-        await this.getItems();
-        await this.getDeadlines();
+         await this.getItems();
     },
 
     computed: {
+        ...mapGetters('taskList', ['items']),
+
         completedItems() {
             return this.items.filter(item => item.completed == 1);
         },
 
         uncompletedItems() {
             return this.items.filter(item => item.completed == 0);
-        }
+        },
     },
 
     methods: {
-        formatDate (timestamp) {
-            const date = new Date(Number(timestamp) * 1000); // convert to milliseconds
-            const formatter = new Intl.DateTimeFormat('de-DE', {
-                year: 'numeric',
-                month: '2-digit',
-                day: 'numeric',
-                hour: 'numeric',
-                minute: 'numeric',
-            });
-            return formatter.format(date);
-        },
+        ...mapActions('taskList', ['getItems', 'addItem', 'updateDate', 'deleteItem', 'toggleTask']),
 
-        toggleCompletedItemsModal() {
-            this.showCompletedItems = !this.showCompletedItems;
-        },
+        // isChecked (item) {
+        //     console.log(item.task)
+        //     console.log(item.completed)
+        //     console.log(item.completed === 1)
+        //     return item.completed === 1
+        // },
 
         updateDate (item) {
-            this.updateItem(item)
+            this.updateDate(item)
         },
 
         toggleItem (item) {
-            item.completed = 1 - item.completed
-            this.updateItem(item)
+            this.toggleTask(item)
         },
 
-        async updateItem (item) {
-            await ajax('format_ladtopics_toggleTodoItem', {
-                id: item.id,
-                duedate: item.duedate
-            });
+        deleteTask(item) {
+            this.deleteItem(item);
         },
 
-        async deleteItem(item) {
-            this.items = this.items.filter((newItem) => newItem.task !== item.task);
-
-            await ajax('format_ladtopics_deleteTodoItem', {
-                id: item.id,
-            });
-        },
-
-        async addItem () {
+        addTask () {
             const newItem = {
-                course: this.course,
+                course: 4,
                 task: this.newItem,
                 completed: 0,
                 duedate: this.newDate,
             }
-            const response = await ajax('format_ladtopics_addTodoItem', newItem);
-
-            if (response.success) {
-                newItem.id = response.data
-                this.items.push(newItem)
-                this.newItem = ''
-                this.newDate = ''
-            } else {
-                if (response.data) {
-                    console.log('Faulty response of webservice /getTodoItems/', response.data);
-                } else {
-                    console.log('No connection to webservice /getTodoItems/');
-                }
-            }
-        },
-
-        async getItems() {
-            const response =  await ajax('format_ladtopics_getTodoItems', {
-                userid: this.userid,
-                course: this.course,
-            });
-            if (response.success) {
-                response.data = JSON.parse(response.data)
-                this.items = Object.values(response.data)
-            } else {
-                this.items = []
-            }
-            console.log("in get task list item", this.items)
+            this.addItem(newItem)
+            this.newItem = ''
+            this.newDate = ''
         },
     }
 }

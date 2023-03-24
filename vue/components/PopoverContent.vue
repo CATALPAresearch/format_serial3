@@ -4,6 +4,10 @@
             <input class="form-check-input" type="checkbox" value="" id="completed" v-model="completed" @change="toggleCompletion">
             <label class="form-check-label" for="completed">Abgeschlossen</label>
         </div>
+        <div class="form-check mt-2">
+            <input class="form-check-input" type="checkbox" value="" id="task" v-model="addToTaskList" @change="toggleAddToTaskList">
+            <label class="form-check-label" for="completed">Add to task list</label>
+        </div>
 
         <p class="mb-1 mt-2">Rate your understanding of the material:</p>
         <div class="row ml-1">
@@ -37,7 +41,7 @@
 </template>
 
 <script>
-import {ajax} from '../store';
+import {ajax} from '../store/store';
 
 
 export default {
@@ -51,6 +55,7 @@ export default {
         return {
             rating: null,
             completed: false,
+            addToTaskList: false,
         };
     },
 
@@ -95,6 +100,19 @@ export default {
                 completed: this.completed,
             })
             this.$emit('completion-updated', this.completed)
+        },
+
+        toggleAddToTaskList () {
+            if (this.addToTaskList) {
+                this.$emit('add-to-task-list', {
+                    course: 4,
+                    task: this.activity.name,
+                    completed: this.completed ? 1 : 0,
+                    duedate: null,
+                });
+            } else {
+                // @TODO delete activity from task list again
+            }
         }
     }
 }
