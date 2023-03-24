@@ -51,18 +51,17 @@ import MenuBar from "./components/MenuBar.vue";
 import QuizStatistics from "./components/widgets/QuizStatistics.vue";
 import SubjectProgress from "./components/widgets/SubjectProgress.vue";
 import AppTimeline from "./components/widgets/Timeline.vue";
-import TodoList from "./components/widgets/TodoList.vue";
+import TaskList from "./components/widgets/TaskList.vue";
 import AppMotivation from "./components/widgets/Motivation.vue";
 
 import { GridLayout, GridItem } from './js/vue-grid-layout.umd.min';
-import BarChartAdvanced from "./components/BarChartAdvanced.vue";
 import CircleChart from "./components/CircleChart.vue";
 
 import { mapState } from 'vuex';
 
 
 export default {
-    components: { GridLayout, GridItem, AppDeadlines, AppMotivation, AppTimeline, BarChartAdvanced, CircleChart, IndicatorDisplay, MenuBar, SubjectProgress, TodoList, QuizStatistics },
+    components: { GridLayout, GridItem, AppDeadlines, AppMotivation, AppTimeline, CircleChart, IndicatorDisplay, MenuBar, SubjectProgress, TaskList, QuizStatistics },
 
     data () {
         return {
@@ -73,9 +72,9 @@ export default {
             surveyRequired: true,
             surveyLink: '',
             defaultLayout: [
-                {"x":0,"y":0,"w":6,"h":10,"i":"1", "name": 'Fortschrittbalken', c: SubjectProgress, isComponent: true, resizable: true},
+                {"x":0,"y":0,"w":6,"h":10,"i":"1", "name": 'Fortschrittbalken', c: 'SubjectProgress', isComponent: true, resizable: true},
                 {"x":6,"y":0,"w":6,"h":10,"i":"7", "name": 'Quiz Statistics', c: 'QuizStatistics', isComponent: true, resizable: true},
-                {"x":0,"y":10,"w":3,"h":10,"i":"3", "name": 'To-Do Liste', c: 'TodoList', isComponent: true, resizable: true},
+                {"x":0,"y":10,"w":3,"h":10,"i":"3", "name": 'Aufgabenliste', c: 'TaskList', isComponent: true, resizable: true},
                 {"x":3,"y":10,"w":3,"h":10,"i":"4", "name": 'Deadlines', c: 'AppDeadlines', isComponent: true, resizable: true},
                 {"x":6,"y":0,"w":6,"h":10,"i":"2", "name": 'Indikatoren', c: 'IndicatorDisplay', isComponent: true, resizable: true},
             ],
@@ -86,13 +85,12 @@ export default {
             isClicked: false,
             editMode: false,
             allComponents: [
-                {"x":0,"y":0,"w":6,"h":10,"i":"1", "name": 'Fortschrittbalken', c: SubjectProgress, isComponent: true, resizable: true},
+                {"x":0,"y":0,"w":6,"h":10,"i":"1", "name": 'Fortschrittbalken', c: 'SubjectProgress', isComponent: true, resizable: true},
                 {"x":6,"y":0,"w":6,"h":10,"i":"2", "name": 'Indikatoren', c: 'IndicatorDisplay', isComponent: true, resizable: true},
-                {"x":0,"y":10,"w":3,"h":10,"i":"3", "name": 'To-Do Liste', c: 'TodoList', isComponent: true, resizable: true},
-                {"x":3,"y":10,"w":3,"h":10,"i":"4", "name": 'Deadlines', c: 'AppDeadlines', isComponent: true, resizable: true},
-                {"x":6,"y":10,"w":6,"h":10,"i":"5", "name": 'Bar Chart', c: 'BarChartAdvanced', isComponent: true, resizable: true},
+                {"x":0,"y":10,"w":3,"h":10,"i":"3", "name": 'Aufgabenliste', c: 'TaskList', isComponent: true, resizable: true},
+                {"x":3,"y":10,"w":3,"h":10,"i":"4", "name": 'Termine', c: 'AppDeadlines', isComponent: true, resizable: true},
                 {"x":0,"y":20,"w":3,"h":10,"i":"6", "name": 'Circle Chart', c: 'CircleChart', isComponent: true, resizable: true},
-                {"x":6,"y":10,"w":6,"h":10,"i":"7", "name": 'Quiz Statistics', c: 'QuizStatistics', isComponent: true, resizable: true},
+                {"x":6,"y":10,"w":6,"h":10,"i":"7", "name": 'Bewertungen', c: 'QuizStatistics', isComponent: true, resizable: true},
                 {"x":6,"y":10,"w":6,"h":10,"i":"9", "name": 'Zeitleiste', c: 'AppTimeline', isComponent: true, resizable: true},
                 {"x":6,"y":10,"w":6,"h":10,"i":"10", "name": 'Motivation', c: 'AppMotivation', isComponent: true, resizable: true},
             ],
