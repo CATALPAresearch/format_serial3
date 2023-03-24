@@ -16,14 +16,6 @@
                         </button>
                     </div>
                 </li>
-                <li v-for="(deadline, index) in deadlines" :key="index" class="todo__checkbox-items pt-1">
-                    <div class="d-flex todo__toggle-item">
-                        <span class="m-0 ml-3">{{ deadline.name }}</span>
-                    </div>
-                    <div class="d-flex align-items-center mr-3">
-                        <div class="flex-shrink-0">{{ formatDate(deadline.timestart) }} <span v-if="deadline.endDate">- {{ deadline.endDate }}</span></div>
-                    </div>
-                </li>
             </ul>
 
             <a type="button" class="todo__toggle w-100 pl-1" data-toggle="collapse" href="#checkedItems" role="button" aria-expanded="false" aria-controls="checkedItems">
@@ -63,10 +55,10 @@
 
 <script>
 import {ajax} from '../../store';
-import WidgetHeading from "../WidgetHeading.vue";
+import WidgetHeading from '../WidgetHeading.vue';
 
 export default {
-    name: "TaskList",
+    name: 'TaskList',
 
     components: {WidgetHeading},
 
@@ -79,8 +71,7 @@ export default {
             userid: Number(this.$store.getters.getUserid),
             course: Number(this.$store.getters.getCourseid),
             showCompletedItems: false,
-            deadlines: [],
-        }
+        };
     },
 
     async mounted() {
@@ -106,7 +97,7 @@ export default {
                 month: '2-digit',
                 day: 'numeric',
                 hour: 'numeric',
-                minute: 'numeric'
+                minute: 'numeric',
             });
             return formatter.format(date);
         },
@@ -175,16 +166,6 @@ export default {
             }
             console.log("in get task list item", this.items)
         },
-
-        async getDeadlines() {
-            const res = await ajax('format_ladtopics_getcalendar', {
-                courseid: 4,
-            });
-
-            console.log("official deadlines")
-            this.deadlines = JSON.parse(res.data)
-            console.log(this.deadlines)
-        }
     }
 }
 </script>
