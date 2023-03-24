@@ -2153,6 +2153,7 @@ Group by cm.id
 			'course' => new external_value(PARAM_INT, 'task name'),
 			'task' => new external_value(PARAM_RAW, 'task description'),
 			'completed' => new external_value(PARAM_INT, 'task completion status'),
+			'duedate' => new external_value(PARAM_RAW, 'task due date'),
 		]);
 	}
 
@@ -2169,7 +2170,7 @@ Group by cm.id
 		]);
 	}
 
-	public static function addTodoItem($course, $task, $completed)
+	public static function addTodoItem($course, $task, $completed, $duedate)
 	{
 		global $DB, $USER;
 
@@ -2179,8 +2180,8 @@ Group by cm.id
 		$record->userid = (int)$USER->id;
 		$record->course = (int)$course;
 		$record->task = s($task);
-//		$record->timecreated = date_timestamp_get($date);
-		$record->timemodified = date_timestamp_get($date);
+		$record->duedate = strtotime($duedate);
+		$record->timemodified = time();
 		$record->completed = $completed;
 
 		$res = $DB->insert_record("ladtopics_todo", $record);
@@ -2199,6 +2200,8 @@ Group by cm.id
 	{
 		return new external_function_parameters([
 			'id' => new external_value(PARAM_INT, 'user id'),
+			'duedate' => new external_value(PARAM_RAW, 'task due date'),
+			'completed' => new external_value(PARAM_RAW, 'completion status of task'),
 		]);
 	}
 
@@ -2215,7 +2218,7 @@ Group by cm.id
 		]);
 	}
 
-	public static function toggleTodoItem($id)
+	public static function toggleTodoItem($id, $duedate, $completed)
 	{
 		// update task status in database
 		global $DB;
@@ -2223,7 +2226,8 @@ Group by cm.id
 		$record = $DB->get_record('ladtopics_todo', ['id' => (int) $id]);
 
 		if ($record) {
-			$record->completed = !$record->completed;
+			$record->completed = $completed;
+			$record->duedate = strtotime($duedate);
 			$success = $DB->update_record('ladtopics_todo', $record);
 		} else {
 			$success = false;
@@ -2317,6 +2321,12 @@ Group by cm.id
 			$success = false;
 		} else {
 			$success = true;
+
+			foreach ($res as &$todo) {
+				if ($todo->duedate != 0) {
+					$todo->duedate = date('Y-m-d', $todo->duedate);
+				}
+			}
 		}
 
 		return array(

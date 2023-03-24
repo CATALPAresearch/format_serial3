@@ -10,12 +10,13 @@
             </select>
         </div>
         <ul class="deadline-items flex-shrink-1 m-0 p-0" style="max-height: 100%;">
-            <li v-for="(deadline, index) in filteredDeadlines" :key="index" class="deadline p-2 mb-1 mr-1">
+            <li v-for="(deadline, index) in filteredDeadlines" :key="index" :class="{ 'deadline': true, 'p-2': true, 'mb-1': true, 'mr-1': true, 'border-today': isDueToday(deadline) }">
                 <a v-if="deadline.url" :href="deadline.url">
                     <p class="mb-2">
                         <span v-if="deadline.timestart">{{ formatDate(deadline.timestart) }}</span>
                         <span v-if="deadline.timeclose != deadline.timestart">- {{ formatDate(deadline.timeclose) }}</span>
                     </p>
+                    <i class="icon fa fa-calendar fa-fw" aria-hidden="true"></i>
                     <span>{{ deadline.name }}</span>
                 </a>
                 <div v-else>
@@ -23,6 +24,9 @@
                         <span v-if="deadline.timestart">{{ formatDate(deadline.timestart) }}</span>
                         <span v-if="deadline.timeclose != deadline.timestart">- {{ formatDate(deadline.timeclose) }}</span>
                     </p>
+                    <i v-if="deadline.type === 'calendar'" class="icon fa fa-calendar fa-fw" aria-hidden="true"></i>
+                    <img v-if="deadline.type === 'quiz'" class="icon" alt="" aria-hidden="true" src="http://localhost/theme/image.php/boost/quiz/1679696176/icon">
+                    <img v-if="deadline.type === 'assignment'" class="icon" alt="" aria-hidden="true" src="http://localhost/theme/image.php/boost/assign/1679696176/icon">
                     <span>{{ deadline.name }}</span>
                 </div>
             </li>
@@ -31,7 +35,7 @@
 </template>
 
 <script>
-import {ajax} from '../../store';
+import {ajax} from '../../store/store';
 import WidgetHeading from "../WidgetHeading.vue";
 
 
@@ -68,7 +72,7 @@ export default {
                 );
             }
 
-            deadlines = deadlines.filter((deadline) => deadline.timeclose >= Date.now() / 1000);
+            deadlines = deadlines.filter((deadline) => deadline.timeclose > Date.now() / 1000);
 
             deadlines.sort((a, b) => {
                 if (a.timeclose < b.timeclose) return -1;
@@ -94,8 +98,6 @@ export default {
                 url: item.url,
                 type: 'calendar'
             }));
-
-            console.log("deadlines: ", this.deadlines)
         },
 
         async getAssignmentData() {
@@ -104,7 +106,6 @@ export default {
             });
             const data = JSON.parse(dates.data)
             this.assignments = Object.keys(data).map(key => data[key]);
-            console.log("assigments: ", this.assignments)
         },
 
         formatDate (timestamp) {
@@ -117,7 +118,13 @@ export default {
                 minute: 'numeric'
             });
             return formatter.format(date);
-        }
+        },
+
+        isDueToday(deadline) {
+            const deadlineDate = new Date(deadline.timeclose * 1000);
+            const today = new Date();
+            return deadlineDate.setHours(0,0,0,0) === today.setHours(0,0,0,0);
+        },
     }
 }
 </script>
@@ -130,6 +137,10 @@ export default {
 
 .deadline-items {
     overflow-y: auto;
+}
+
+.border-today {
+    border: 2px solid #64A0D6;
 }
 
 /* Scrollbar */
