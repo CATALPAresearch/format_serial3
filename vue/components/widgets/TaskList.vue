@@ -3,13 +3,13 @@
         <widget-heading title="Aufgaben" icon="fa-sticky-note-o" info-content="ToDo Liste"></widget-heading>
         <div class="todo__items flex-shrink-1 mb-6">
             <ul class="p-0 pl-1">
-                <li v-for="(item, index) in uncompletedItems" :key="index" class="todo__checkbox-items pt-1">
+                <li v-for="item in uncompletedItems" :key="item.id" class="todo__checkbox-items pt-1">
                     <div class="d-flex todo__toggle-item">
-                        <input type="checkbox" class="mr-2" @click="toggleItem(item)"/>
+                        <input type="checkbox" :checked="item.completed === 1" class="mr-2" @click="toggleTask(item)"/>
                         <span class="m-0">{{ item.task }}</span>
                     </div>
                     <div class="d-flex align-items-center mr-3">
-                        <div v-if="item.duedate && item.duedate != 0" class="flex-shrink-0">{{ item.duedate }}</div>
+                        <div v-if="item.duedate && item.duedate != 0" class="flex-shrink-0">{{  new Date(item.duedate).toLocaleDateString('de-DE') }}</div>
                         <input type="date" v-model="item.duedate" class="form-control p-0 mx-2 todo__change-date" @change="updateDate(item)"/>
                         <button type="button" class="close d-flex" aria-label="Deletes item" @click="deleteTask(item)">
                             <i class="fa fa-close todo__close-icon" aria-hidden="true"></i>
@@ -26,13 +26,13 @@
             <div class="collapse" id="checkedItems">
                 <div class="card card-body w-100 pr-0 pl-1 py-2">
                     <ul class="mr-3 mb-0 p-0">
-                        <li v-for="(item, index) in completedItems" :key="index" class="todo__checkbox-items pt-1 pb-1">
+                        <li v-for="item in completedItems" :key="item.id" class="todo__checkbox-items pt-1 pb-1">
                             <div class="d-flex todo__toggle-item">
-                                <input type="checkbox" class="mr-2" @click="toggleItem(item)" checked />
+                                <input type="checkbox" :checked="item.completed == 1" class="mr-2" @click="toggleTask(item)" />
                                 <span class="todo__item-completed m-0">{{ item.task }}</span>
                             </div>
                             <div class="d-flex align-items-center">
-                                <div v-if="item.duedate && item.duedate != 0" class="flex-shrink-0">{{ item.duedate }}</div>
+                                <div v-if="item.duedate && item.duedate != 0" class="flex-shrink-0">{{ new Date(item.duedate).toLocaleDateString('de-DE') }}</div>
                                 <input type="date" v-model="item.duedate" class="form-control p-0 mx-2 todo__change-date" @change="updateDate(item)"/>
                                 <button type="button" class="close d-flex" aria-label="Deletes item" @click="deleteTask(item)">
                                     <i class="fa fa-close todo__close-icon" aria-hidden="true"></i>
@@ -89,21 +89,14 @@ export default {
     },
 
     methods: {
-        ...mapActions('taskList', ['getItems', 'addItem', 'updateDate', 'deleteItem', 'toggleTask']),
-
-        // isChecked (item) {
-        //     console.log(item.task)
-        //     console.log(item.completed)
-        //     console.log(item.completed === 1)
-        //     return item.completed === 1
-        // },
+        ...mapActions('taskList', ['getItems', 'addItem', 'updateItem', 'deleteItem', 'toggleItem']),
 
         updateDate (item) {
-            this.updateDate(item)
+            this.updateItem(item)
         },
 
-        toggleItem (item) {
-            this.toggleTask(item)
+        toggleTask (item) {
+            this.toggleItem(item)
         },
 
         deleteTask(item) {

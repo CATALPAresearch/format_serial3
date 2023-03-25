@@ -5,12 +5,14 @@ import moodleStorage from 'core/localstorage';
 import Notification from 'core/notification';
 import $ from 'jquery';
 
+import dashboardSettings from './dashboardSettings';
 import taskList from './taskList';
 
 Vue.use(Vuex);
 
 export const store = new Vuex.Store({
     modules: {
+        dashboardSettings,
         taskList,
     },
 
@@ -31,7 +33,6 @@ export const store = new Vuex.Store({
             message: 'unknown'
         },
         confValue: '',
-        dashboardSettings: [],
         currentSection: -1,
         sectionNames: [],
         allSections: [],
@@ -84,9 +85,6 @@ export const store = new Vuex.Store({
                 }
             );
         },
-        setDashboardSettings(state, ajaxdata) {
-            state.dashboardSettings = ajaxdata;
-        },
         setCurrentSection(state, section) {
             state.currentSection = section;
         },
@@ -138,9 +136,6 @@ export const store = new Vuex.Store({
         getCMID: function(state){
             return state.courseModuleID;
         },
-        getDashboardSettings: function(state){
-            return state.dashboardSettings;
-        },
         getCurrentSection: function(state){
             return state.currentSection;
         },
@@ -182,59 +177,10 @@ export const store = new Vuex.Store({
             }
         },
 
-        /**
-         * Saves a learning goal.
-         *
-         * @param context
-         * @param settings
-         *
-         * @returns {Promise<void>}
-         */
-        async saveDashboardSettings(context, settings) {
-            const payload = {
-                userid: Number(context.state.userid),
-                course: Number(context.state.courseid),
-                settings: settings
-            };
-            console.log(settings);
-            console.log("Payload: ", payload);
-            try {
-                const response =  await ajax('format_ladtopics_saveDashboardSettings', payload);
-                console.log("response: ", response);
-                // commit('setDashboardSettings', response.data);
-            } catch (error) {
-                console.error(error);
-            }
-        },
-
-        /**
-         * Fetch dashbaord settings.
-         *
-         * @param context
-         * @param payload
-         *
-         * @returns {Promise<void>}
-         */
-        async fetchDashboardSettings(context) {
-            const payload = {
-                userid: Number(context.state.userid),
-                course: Number(context.state.courseid),
-            };
-            const response =  await ajax('format_ladtopics_fetchDashboardSettings', payload);
-
-            if (response.success) {
-                response.data = JSON.parse(response.data);
-                console.log('input settings::', JSON.parse(response.data.settings));
-                context.commit('setDashboardSettings',  JSON.parse(response.data.settings));
-            } else {
-                if (response.data) {
-                    console.log('No dashboard settings stored');
-                } else {
-                    console.log('No connection to webservice /overview/');
-                }
-            }
-        },
-    }
+        // setCurrentSection(context, section) {
+        //     context.commit('setCurrentSection', section);
+        // }
+    },
 });
 
 /**

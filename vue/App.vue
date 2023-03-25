@@ -14,7 +14,7 @@
             </div>
         </div>
         <grid-layout
-            :layout="data"
+            :layout="layout"
             :col-num="12"
             :row-height="30"
             :is-draggable="draggable"
@@ -23,7 +23,7 @@
             :use-css-transforms="true"
         >
             <grid-item
-                v-for="(item, index) in data"
+                v-for="(item, index) in layout"
                 :key="index"
                 :static="item.static"
                 :x="item.x"
@@ -49,7 +49,7 @@ import AppDeadlines from "./components/widgets/Deadlines.vue";
 import IndicatorDisplay from "./components/widgets/IndicatorDisplay.vue";
 import MenuBar from "./components/MenuBar.vue";
 import QuizStatistics from "./components/widgets/QuizStatistics.vue";
-import SubjectProgress from "./components/widgets/SubjectProgress.vue";
+import ProgressChart from "./components/widgets/ProgressChart.vue";
 import AppTimeline from "./components/widgets/Timeline.vue";
 import TaskList from "./components/widgets/TaskList.vue";
 import AppMotivation from "./components/widgets/Motivation.vue";
@@ -61,31 +61,26 @@ import { mapState } from 'vuex';
 
 
 export default {
-    components: { GridLayout, GridItem, AppDeadlines, AppMotivation, AppTimeline, CircleChart, IndicatorDisplay, MenuBar, SubjectProgress, TaskList, QuizStatistics },
+    components: { GridLayout, GridItem, AppDeadlines, AppMotivation, AppTimeline, CircleChart, IndicatorDisplay, MenuBar, ProgressChart, TaskList, QuizStatistics },
 
     data () {
         return {
-            name: 'LAD topics',
             courseid: -1,
             context: {},
             logger: null,
-            surveyRequired: true,
-            surveyLink: '',
+            draggable: false,
+            resizable: false,
+            index: 0,
+            editMode: false,
             defaultLayout: [
-                {"x":0,"y":0,"w":6,"h":10,"i":"1", "name": 'Fortschrittbalken', c: 'SubjectProgress', isComponent: true, resizable: true},
+                {"x":0,"y":0,"w":6,"h":10,"i":"1", "name": 'Fortschrittbalken', c: 'ProgressChart', isComponent: true, resizable: true},
                 {"x":6,"y":0,"w":6,"h":10,"i":"7", "name": 'Quiz Statistics', c: 'QuizStatistics', isComponent: true, resizable: true},
                 {"x":0,"y":10,"w":3,"h":10,"i":"3", "name": 'Aufgabenliste', c: 'TaskList', isComponent: true, resizable: true},
                 {"x":3,"y":10,"w":3,"h":10,"i":"4", "name": 'Deadlines', c: 'AppDeadlines', isComponent: true, resizable: true},
                 {"x":6,"y":0,"w":6,"h":10,"i":"2", "name": 'Indikatoren', c: 'IndicatorDisplay', isComponent: true, resizable: true},
             ],
-            layout: [],
-            draggable: false,
-            resizable: false,
-            index: 0,
-            isClicked: false,
-            editMode: false,
             allComponents: [
-                {"x":0,"y":0,"w":6,"h":10,"i":"1", "name": 'Fortschrittbalken', c: 'SubjectProgress', isComponent: true, resizable: true},
+                {"x":0,"y":0,"w":6,"h":10,"i":"1", "name": 'Fortschrittbalken', c: 'ProgressChart', isComponent: true, resizable: true},
                 {"x":6,"y":0,"w":6,"h":10,"i":"2", "name": 'Indikatoren', c: 'IndicatorDisplay', isComponent: true, resizable: true},
                 {"x":0,"y":10,"w":3,"h":10,"i":"3", "name": 'Aufgabenliste', c: 'TaskList', isComponent: true, resizable: true},
                 {"x":3,"y":10,"w":3,"h":10,"i":"4", "name": 'Termine', c: 'AppDeadlines', isComponent: true, resizable: true},
@@ -116,18 +111,14 @@ export default {
             return this.allComponents.filter(({ i: id1 }) => !this.layout.some(({ i: id2 }) => id2 === id1));
         },
 
-        data () {
-            if (this.dashboardSettings && this.dashboardSettings.length > 0) {
-                // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-                this.layout = this.dashboardSettings
-            } else {
-                // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-                this.layout = this.defaultLayout
-            }
-            return this.layout
+        layout () {
+            return this.dashboardSettings && this.dashboardSettings.length > 0 ? this.dashboardSettings : this.defaultLayout;
         },
 
-        ...mapState(['dashboardSettings', 'strings']),
+        ...mapState({
+            dashboardSettings: state => state.dashboardSettings.dashboardSettings,
+            strings: 'strings'
+        }),
     },
 
     methods: {
@@ -143,24 +134,17 @@ export default {
         },
 
         toggleEditMode () {
-            if (!this.editMode) {
-                this.editMode = true
-                this.draggable = true
-                this.resizable = true
-            } else {
-                this.editMode = false
-                this.draggable = false
-                this.resizable = false
-            }
+            this.editMode = !this.editMode;
+            this.draggable = this.resizable = this.editMode;
         },
 
         loadDashboard: function () {
-            this.$store.dispatch('fetchDashboardSettings');
+            this.$store.dispatch('dashboardSettings/fetchDashboardSettings');
         },
 
-        saveDashboard () { // onSave()
-            let settings = JSON.stringify(this.layout)
-            this.$store.dispatch('saveDashboardSettings', settings)
+        saveDashboard () {
+            const settings = JSON.stringify(this.layout)
+            this.$store.dispatch('dashboardSettings/saveDashboardSettings', settings)
             this.toggleEditMode()
         },
     }
