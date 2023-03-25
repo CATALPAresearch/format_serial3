@@ -7,6 +7,7 @@ import $ from 'jquery';
 
 import dashboardSettings from './dashboardSettings';
 import taskList from './taskList';
+import progress from './progress';
 
 Vue.use(Vuex);
 
@@ -14,6 +15,7 @@ export const store = new Vuex.Store({
     modules: {
         dashboardSettings,
         taskList,
+        progress,
     },
 
     state: {
@@ -33,9 +35,6 @@ export const store = new Vuex.Store({
             message: 'unknown'
         },
         confValue: '',
-        currentSection: -1,
-        sectionNames: [],
-        allSections: [],
     },
 
     //strict: process.env.NODE_ENV !== 'production',
@@ -85,15 +84,6 @@ export const store = new Vuex.Store({
                 }
             );
         },
-        setCurrentSection(state, section) {
-            state.currentSection = section;
-        },
-        setAllSections(state, sections) {
-            state.allSections = sections;
-        },
-        setSectionNames(state, names) {
-            state.sectionNames = names;
-        },
     },
 
     getters: {
@@ -135,15 +125,6 @@ export const store = new Vuex.Store({
         },
         getCMID: function(state){
             return state.courseModuleID;
-        },
-        getCurrentSection: function(state){
-            return state.currentSection;
-        },
-        getAllSections: function(state){
-            return state.allSections;
-        },
-        getSectionNames: function(state){
-            return state.sectionNames;
         },
     },
     actions: {
