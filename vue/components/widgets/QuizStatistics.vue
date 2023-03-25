@@ -1,6 +1,6 @@
 <template>
     <div class="position-relative h-100 d-flex flex-column">
-        <widget-heading title="Quiz Statistics" icon="fa-hourglass-o" info-content="info"></widget-heading>
+        <widget-heading title="Ergebnisse" icon="fa-hourglass-o" info-content="info"></widget-heading>
         <div class="row">
             <div class="form-group col-6 mb-0 pr-1">
                 <select
@@ -20,7 +20,7 @@
                     class="form-control form-select"
                 >
                     <option value="-1">Alle Kurseinheiten</option>
-                    <option v-for="section in sectionNames" :key="section.id" :value="section.id">{{ section.name }}</option>
+                    <option v-for="(section, index) in getSections" :key="index" :value="index">{{ section[0].sectionname }}</option>
                 </select>
             </div>
         </div>
@@ -80,7 +80,7 @@ export default {
 
         selectedSection: {
             handler: function(newVal) {
-                this.$store.commit('setCurrentSection', newVal);
+                this.$store.commit('progress/setCurrentSection', newVal);
                 this.filterData();
             },
             immediate: true,

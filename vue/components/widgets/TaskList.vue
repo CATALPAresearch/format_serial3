@@ -21,7 +21,7 @@
             <a type="button" class="todo__toggle w-100 pl-1" data-toggle="collapse" href="#checkedItems" role="button" aria-expanded="false" aria-controls="checkedItems">
                 <i class="icon-collapsed fa fa-chevron-down mr-2" aria-hidden="true"></i>
                 <i class="icon-expanded fa fa-chevron-up mr-2" aria-hidden="true"></i>
-                {{ completedItems.length }} tasks completed
+                {{ completedItems.length }} Aufgaben erledigt
             </a>
             <div class="collapse" id="checkedItems">
                 <div class="card card-body w-100 pr-0 pl-1 py-2">
