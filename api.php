@@ -2502,7 +2502,6 @@ Group by cm.id
 	{
 		return new external_function_parameters([
 			'course' => new external_value(PARAM_INT, 'id of course'),
-			'activityid' => new external_value(PARAM_TEXT, 'id of user'),
 		]);
 	}
 
@@ -2521,17 +2520,16 @@ Group by cm.id
 		);
 	}
 
-	public static function getUserUnderstanding($course, $activityid)
+	public static function getUserUnderstanding($course)
 	{
 		global $DB, $USER;
 
 		$params = [
 			'userid' => (int) $USER->id,
 			'course' => (int) $course,
-			'activityid' => (int) $activityid,
 		];
 
-		$res = $DB->get_record('ladtopics_overview', $params);
+		$res = $DB->get_records('ladtopics_overview', $params);
 
 		if (!$res) {
 			$success = false;
