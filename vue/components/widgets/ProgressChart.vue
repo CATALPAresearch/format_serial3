@@ -1,6 +1,6 @@
 <template>
     <div>
-        <widget-heading title="Progress" icon="fa-hourglass-o" :info-content="info"></widget-heading>
+        <widget-heading title="Fortschritt" icon="fa-hourglass-o" :info-content="info"></widget-heading>
         <div id="dashboard-completion">
             <div class="section-selection mr-2" :class="currentSection === -1 ? 'section-selection--current' : ''" @click="setCurrentSection(-1)">
                 <p class="my-1">Alle</p>
@@ -19,21 +19,26 @@
                     </div>
                 </div>
             </div>
-
-            <div v-for="(type, aIndex) in activityNames" :key="aIndex" class="row">
+            <div v-for="(type, typeIndex) in activityTypes" :key="typeIndex" class="row">
                 <span class="col-3">{{ getActivities[type][0].modulename }}</span>
                 <div class="col-9">
                     <span v-for="(activity, aCount) in currentActivities[type]" :key="aCount" class="position-relative">
                          <button ref="popoverButton" type="button" data-toggle="popover" data-placement="bottom" class="panel-heading subject-progress__popover" :title="activity.name" v-popover-html="popoverContent(activity)">
                             <span class="completion-rect" :class="{
-                                    'rect-grey': activity.rating === 0,
-                                    'rect-red': activity.rating === 1,
-                                    'rect-blue':  activity.rating === 2,
-                                    'rect-green': activity.rating === 3
+                                'rect--grey': activity.rating === 0,
+                                'rect--weak': activity.rating === 1,
+                                'rect--ok':  activity.rating === 2,
+                                'rect--strong': activity.rating === 3
                                 }" :title="activity.name"></span>
                          </button>
                     </span>
                 </div>
+            </div>
+            <div class="legend d-flex justify-content-start mt-3">
+                <div class="d-flex align-items-center mr-3"><span class="completion-rect rect-sm rect--grey mr-1"></span><span class="">Nicht abgeschlossen</span></div>
+                <div class="d-flex align-items-center mr-3"><span class="completion-rect rect-sm rect--weak mr-1"></span><span class="">Schwach</span></div>
+                <div class="d-flex align-items-center mr-3"><span class="completion-rect rect-sm rect--ok mr-1"></span><span class="">Ok</span></div>
+                <div class="d-flex align-items-center"><span class="completion-rect rect-sm rect--strong mr-1"></span><span class="">Gut</span></div>
             </div>
         </div>
     </div>
@@ -104,11 +109,14 @@ export default {
     },
 
     watch: {
-        currentSection: function(val) {
-            if (val === -1) {
-                this.$store.commit('progress/setCurrentActivities', this.getActivities);
-            } else {
-                this.$store.commit('progress/setCurrentActivities', groupBy(this.getSections[this.currentSection], 'type'));
+        currentSection: {
+            immediate: true,
+            handler(val) {
+                if (val === -1) {
+                    this.$store.commit('overview/setCurrentActivities', this.getActivities);
+                } else {
+                    this.$store.commit('overview/setCurrentActivities', groupBy(this.getSections[this.currentSection], 'type'));
+                }
             }
         },
     },
@@ -133,8 +141,17 @@ export default {
             return Math.floor(sum/total*100)
         },
 
-        ...mapState('progress', ['currentSection', 'sections', 'courseData', 'activityNames', 'currentActivities']),
-        ...mapGetters('progress', ['getSections', 'getActivities', 'getCurrentActivities']),
+        currentActivities() {
+            if (this.currentSection === -1) {
+                return this.getActivities;
+            } else {
+                const section = this.getSections[this.currentSection];
+                return groupBy(section, 'type');
+            }
+        },
+
+        ...mapState('overview', ['courseData', 'activityTypes']),
+        ...mapGetters('overview', ['getSections', 'getActivities', 'getCurrentActivities']),
     },
 
     methods: {
@@ -184,7 +201,8 @@ export default {
         },
 
         setCurrentSection(section) {
-            this.$store.commit('progress/setCurrentSection', section);
+            this.currentSection = section;
+            this.$store.commit('overview/setCurrentSection', section);
         },
 
         loadCourseData: async function () {
@@ -197,9 +215,9 @@ export default {
                 console.log('input debug::', JSON.parse(response.data.debug));
                 console.log('input completions::', JSON.parse(response.data.completions));
 
-                this.$store.commit('progress/setCourseData', JSON.parse(response.data.completions))
-                this.$store.commit('progress/setCurrentActivities', this.getActivities);
-                this.$store.commit('progress/setActivityNames', Object.keys(this.getActivities))
+                this.$store.commit('overview/setCourseData', JSON.parse(response.data.completions))
+                this.$store.commit('overview/setCurrentActivities', this.getActivities);
+                this.$store.commit('overview/setActivityTypes', Object.keys(this.getActivities))
                 this.total = this.getTotalActivites()
             } else {
                 if (response.data) {
@@ -226,6 +244,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import "../../scss/variables.scss";
+
 .subject-progress {
     &__popover {
         border: none;
@@ -235,8 +255,8 @@ export default {
 }
 
 .progress-bar-blue {
-    background-color: #136aaf;
-    opacity: 0.6;
+    background-color: $blue-dark;
+    opacity: 0.8;
 }
 
     .completion-rect {
@@ -245,24 +265,29 @@ export default {
         width: 20px;
         height: 18px;
         display: inline-block;
-        opacity: 0.6;
+        opacity: 0.8;
         margin-right: 1px;
     }
 
-    .rect-grey {
-        background-color: #CED4DA;
+    .rect-sm {
+        width: 12px;
+        height: 12px;
     }
 
-    .rect-blue {
-        background-color: #136aaf;
+    .rect--grey {
+        background-color: $light-grey;
     }
 
-    .rect-green {
-        background-color: #89da59;
+    .rect--ok {
+        background-color: $blue-middle;
     }
 
-    .rect-red {
-        background-color: #E18686;
+    .rect--strong {
+        background-color: $blue-dark;
+    }
+
+    .rect--weak {
+        background-color: $blue-weak;
     }
 
     .completion-rect:hover {
@@ -288,13 +313,13 @@ export default {
 
         &:hover {
             text-decoration: underline;
-            outline: 2px solid #5A97C7;
+            outline: 2px solid $blue-default;
             outline-offset: 2px;
         }
 
         &--current {
             text-decoration: underline;
-            outline: 2px solid #5A97C7;
+            outline: 2px solid $blue-default;
             outline-offset: 2px;
         }
     }
