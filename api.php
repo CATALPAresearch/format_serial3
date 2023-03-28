@@ -1390,9 +1390,6 @@ class format_ladtopics_external extends external_api
         return true;
     }
 
-
-
-
     /**
      * Set and get user preferences
      */
@@ -1462,16 +1459,12 @@ class format_ladtopics_external extends external_api
             $transaction->allow_commit();
         }
 
-
         return array('response' => json_encode(array($res)));
     }
     public static function userpreferences_is_allowed_from_ajax()
     {
         return true;
     }
-
-
-
 
     /**
      * Interface to obtain all completed activities
@@ -1708,7 +1701,8 @@ class format_ladtopics_external extends external_api
                     'icon'       => $cm->get_icon_url(),
                     'available'  => $cm->available,
                     'completion' => 0,
-                    'visible' => $cm->visible,
+                    'visible'	 => $cm->visible,
+					'rating'	 => 0,
                 );
             }
         }
@@ -2442,8 +2436,9 @@ Group by cm.id
 	{
 		return new external_function_parameters([
 			'course' => new external_value(PARAM_INT, 'id of course'),
-			'activityid' => new external_value(PARAM_TEXT, 'id of user'),
-			'rating' => new external_value(PARAM_INT, 'id of user'),
+			'activityid' => new external_value(PARAM_TEXT, 'id of activity'),
+			'rating' => new external_value(PARAM_INT, 'user understanding'),
+			'completion' => new external_value(PARAM_INT, 'completion status'),
 		]);
 	}
 
@@ -2462,7 +2457,7 @@ Group by cm.id
 		);
 	}
 
-	public static function setUserUnderstanding($course, $activityid, $rating)
+	public static function setUserUnderstanding($course, $activityid, $rating, $completion)
 	{
 		global $DB, $USER;
 
@@ -2472,9 +2467,9 @@ Group by cm.id
 			'userid' => $userid,
 			'course' => $course,
 			'activityid' => (int) $activityid,
+			'completed' => (int) $completion,
 		];
 
-		// @TODO call database table activity_overview
 		$record = $DB->get_record('ladtopics_overview', $params);
 
 		if ($record) {
@@ -2486,6 +2481,7 @@ Group by cm.id
 			$record->course =  (int) $course;
 			$record->activityid = (int) $activityid;
 			$record->rating = (int) $rating;
+			$record->completed = (int) $completion;
 			$success = $DB->insert_record('ladtopics_overview', $record);
 		}
 
@@ -2496,7 +2492,7 @@ Group by cm.id
 	}
 
 	/**
-	 * Get users understaning of course activity
+	 * Get users understanding of course activity
 	 */
 	public static function getUserUnderstanding_parameters()
 	{
@@ -2631,13 +2627,15 @@ Group by cm.id
 			return null;
 		}
 
-		$sql = "SELECT a.id, a.allowsubmissionsfromdate AS timestart, a.name, a.duedate AS timeclose, 'assignment' AS type
-        FROM {assign} a
-        WHERE a.course = :course AND a.duedate != 0
-        UNION
-        SELECT q.id, q.timeopen AS timestart, q.name, q.timeclose, 'quiz' AS type
-        FROM {quiz} q
-        WHERE q.course = :courseid AND q.timeclose != 0";
+		$sql = "SELECT a.id, cm.id AS coursemoduleid, a.allowsubmissionsfromdate AS timestart, a.name, a.duedate AS timeclose, 'assignment' AS type
+				FROM {assign} a
+				JOIN {course_modules} cm ON cm.instance = a.id AND cm.module = (SELECT id FROM {modules} WHERE name = 'assign')
+				WHERE a.course = :course AND a.duedate != 0
+				UNION
+				SELECT q.id, cm.id AS coursemoduleid, q.timeopen AS timestart, q.name, q.timeclose, 'quiz' AS type
+				FROM {quiz} q
+				JOIN {course_modules} cm ON cm.instance = q.id AND cm.module = (SELECT id FROM {modules} WHERE name = 'quiz')
+				WHERE q.course = :courseid AND q.timeclose != 0";
 
 		$params = array('courseid' => $courseid, 'course' => $courseid);
 		$dates = $DB->get_records_sql($sql, $params);
