@@ -1,6 +1,6 @@
 <template>
     <div>
-        <widget-heading title="Indikatoren" icon="fa-balance-scale" info-content="Informationen über das Widget"></widget-heading>
+        <widget-heading title="Lernziele" icon="fa-balance-scale" info-content="Informationen über das Widget"></widget-heading>
         <div class="form-group d-flex align-items-center pr-3">
             <label for="select-goal" class="pr-2 m-0 flex-shrink-0">Mein Ziel für diesen Kurs ist: </label>
             <select
@@ -12,6 +12,7 @@
                 <option :selected="currentGoal==='mastery'" value="mastery">den Kurs zu meistern</option>
                 <option :selected="currentGoal==='passing'" value="passing">den Kurs zu bestehen</option>
                 <option :selected="currentGoal==='overview'" value="overview">einen Überblick zu bekommen</option>
+                <option :selected="currentGoal==='practise'" value="practise">praktisches/job-relevantes Wissen anzueignen</option>
             </select>
         </div>
         <div class="d-flex mt-3">
@@ -24,71 +25,20 @@
                     aria-haspopup="true"
                     aria-expanded="false"
                 >Indikatoren</button>
-                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                    <li>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton"  @change="selectIndicators">
+                    <li v-for="(indicator, index ) in indicators" :key="index">
                         <a class="dropdown-item" href="#">
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="Checkme1" />
-                                <label class="form-check-label" for="Checkme1">Zeit</label>
+                                <input class="form-check-input" type="checkbox" :value="indicator.value" :id="index" :checked="indicator.checked" />
+                                <label class="form-check-label" :for="index">{{ indicator.title }}</label>
                             </div>
                         </a>
                     </li>
-                    <li>
-                        <a class="dropdown-item" href="#">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="Checkme2" checked />
-                                <label class="form-check-label" for="Checkme2">Assignments</label>
-                            </div>
-                        </a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="#">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="Checkme3" />
-                                <label class="form-check-label" for="Checkme3">Number of activities</label>
-                            </div>
-                        </a>
-                    </li>
-                </ul>
-            </div>
-            <div class="dropdown mx-2">
-                <button
-                    class="btn btn-secondary dropdown-toggle"
-                    id="filter" data-toggle="dropdown"
-                    aria-haspopup="true"
-                    aria-expanded="false"
-                >Zeitraum</button>
-                <ul class="dropdown-menu" aria-labelledby="filter">
-                    <li>
-                        <a class="dropdown-item" href="#">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="1" />
-                                <label class="form-check-label" for="1">Zeit</label>
-                            </div>
-                        </a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="#">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="2" checked />
-                                <label class="form-check-label" for="2">Assignments</label>
-                            </div>
-                        </a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="#">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="3" />
-                                <label class="form-check-label" for="3">Number of activities</label>
-                            </div>
-                        </a>
-                    </li>
+
                 </ul>
             </div>
         </div>
-
-        <div class="bullet-chart mt-3"></div>
-
+        <div ref="bulletChart" class="bullet-chart mt-3"></div>
     </div>
 </template>
 
@@ -98,6 +48,7 @@ import "../../js/bullet.js";
 
 import WidgetHeading from "../WidgetHeading.vue";
 import Communication from "../../scripts/communication";
+import {ajax} from "../../store/store";
 
 
 export default {
@@ -114,70 +65,82 @@ export default {
             type: Number,
             default: 50,
         },
-        // margin: {
-        //     type: Object,
-        //     default: () => ({ top: 10, right: 40, bottom: 20, left: 40 })
-        // },
-        // range: {
-        //     type: Array,
-        //     default: () => [0, 100]
-        // },
-        // ranges: {
-        //     type: Array,
-        //     default: () => [[0, 30], [30, 70], [70, 100]]
-        // },
-        // measure: {
-        //     type: Number,
-        //     default: 50
-        // },
-        // marker: {
-        //     type: Number,
-        //     default: 80
-        // },
-        // format: {
-        //     type: Function,
-        //     default: d => d
-        // }
-        // rangeColors: {
-        //     type: Array,
-        //     default: function() {
-        //         return ['#ff7e5a', '#3f51b5', '#76BF8A'];
-        //     }
-        // }
     },
 
     data: function () {
         return {
-            padding: 10,
-            currentGoal: 'overview',
+            userUnderstanding: null,
+            userGrades: null,
+            learnergoals: [],
+            currentGoal: 'mastery',
+            selectedIndicators: ['Kompetenz', 'Fortschritt', 'Ergebnisse'],
+            indicators: [
+                { value: 'Kompetenz', title: 'Kompetenz', checked: true },
+                { value: 'Fortschritt', title: 'Fortschritt', checked: true },
+                { value: 'Ergebnisse', title: 'Ergebnisse', checked: true },
+            ],
             data: [
                 {
-                    title: 'Time spent',
-                    subtitle:"hours",
-                    ranges: [1500, 2000, 2500],
-                    measures: [2400],
-                    markers: [2100],
+                    title: 'Fortschritt',
+                    subtitle: "in %",
+                    ranges: [],
+                    measures: [],
+                    // markers: [21],
                 },
                 {
-                    title:"Assignments",
-                    subtitle:"out of 5",
-                    ranges: [3.5,4.25,5],
-                    measures: [4.7],
-                    markers: [4.4]
+                    title:"Kompetenz",
+                    subtitle: "in %",
+                    ranges: [],
+                    measures: [],
+                    // markers: [44]
                 },
                 {
-                    title:"Enagement",
-                    subtitle:"out of 5",
-                    ranges: [3.5,4.25,5],
-                    measures: [3.2],
-                    markers: [3.4]
+                    title:"Ergebnisse",
+                    subtitle: "Gesamtpunktzahl",
+                    ranges: [],
+                    measures: [],
+                    // markers: [44]
                 },
             ],
+            rangesGrades: {
+                'mastery': [],
+                'passing': [],
+                'overview': [],
+                'practice': [],
+            },
+            rangesProficiency: {
+                'mastery': [50, 75, 100],
+                'passing': [35, 50, 100],
+                'overview': [15, 30, 100],
+                'practice': [45, 65, 100],
+            },
+            rangesProgress: {
+                'mastery': [55, 85, 100],
+                'passing': [40, 70, 100],
+                'overview': [20, 33, 100],
+                'practice': [45, 60, 100],
+            }
         }
     },
 
     mounted() {
-        this.drawChart();
+        this.loadUserUnderstanding();
+        this.calculateGrades();
+    },
+
+    watch: {
+        filteredData: {
+            deep: true,
+            handler() {
+                this.drawChart();
+            },
+        },
+    },
+
+    computed: {
+        filteredData() {
+            return this.data.filter((indicator) => this.selectedIndicators.includes(indicator.title))
+        }
     },
 
     methods: {
@@ -194,9 +157,7 @@ export default {
                     }
                 }
             );
-            if (response.success) {
-                console.log(JSON.parse(response.data));
-            } else {
+            if (!response.success) {
                 if (response.data) {
                     console.log('Faulty response of webservice /logger/', response.data);
                 } else {
@@ -204,7 +165,155 @@ export default {
                 }
             }
             this.currentGoal = event.target.value;
+            this.updateRanges(event.target.value);
             this.$forceUpdate();
+        },
+
+        selectIndicators(event) {
+            const selectedIndicators = [];
+            const checkboxes = event.currentTarget.querySelectorAll('li input[type="checkbox"]:checked');
+
+            checkboxes.forEach((checkbox) => {
+                selectedIndicators.push(checkbox.value);
+            });
+
+            this.selectedIndicators = selectedIndicators;
+        },
+
+        updateRanges(selectedGoal) {
+             // Find the data object for the proficiency indicator
+            let proficiencyData = this.data.find((d) => d.title === 'Kompetenz');
+            let progressData = this.data.find((d) => d.title === 'Fortschritt');
+            let gradesData = this.data.find((d) => d.title === 'Ergebnisse');
+
+            // Update the ranges based on the selected goal
+            switch (selectedGoal) {
+                case 'mastery':
+                    proficiencyData.ranges = this.rangesProficiency.mastery;
+                    progressData.ranges = this.rangesProgress.mastery;
+                    gradesData.ranges = this.rangesGrades.mastery;
+                    break;
+                case 'passing':
+                    proficiencyData.ranges = this.rangesProficiency.passing;
+                    progressData.ranges = this.rangesProgress.passing;
+                    gradesData.ranges = this.rangesGrades.passing;
+                    break;
+                case 'overview':
+                    proficiencyData.ranges = this.rangesProficiency.overview;
+                    progressData.ranges = this.rangesProgress.passing;
+                    gradesData.ranges = this.rangesGrades.passing;
+                    break;
+                case 'practise':
+                    proficiencyData.ranges = this.rangesProficiency.practice;
+                    progressData.ranges = this.rangesProgress.passing;
+                    progressData.ranges = this.rangesGrades.passing;
+                    break;
+            }
+        },
+
+        /**
+         * Fetches data for each user about their understanding of the course.
+         */
+        async loadUserUnderstanding () {
+            const response = await Communication.webservice(
+                'getUserUnderstanding',
+                { course: this.$store.getters.getCourseid }
+            );
+
+            if (response.success) {
+                this.userUnderstanding = JSON.parse(response.data)
+                this.calculateUnderstanding();
+                this.calculateTopicProficiency();
+            } else {
+                if (response.data) {
+                    console.log('Faulty response of webservice /logger/', response.data);
+                } else {
+                    console.log('No connection to webservice /logger/');
+                }
+            }
+        },
+
+        /**
+         * Calculates the users progress in the course based on their understanding of the topics.
+         * Count of users understanding: 1 for weak, 2 for ok, 3 for strong divided by optimal number of points
+         * one can achieve in total in the course.
+         */
+        calculateUnderstanding () {
+            const total = this.$store.getters['overview/getTotalNumberOfActivities'] * 3
+            const user = Object.values(this.userUnderstanding).reduce((acc, cur) => acc + Number(cur.rating), 0);
+            this.data.find((d) => d.title === 'Fortschritt').measures = [user/total * 100]
+        },
+
+        /**
+         * Calculates the users understanding of the topics.
+         * Count of users understanding: 1 for weak, 2 for ok, 3 for strong divided by optimal number of points one
+         * can achieve in the topics covered so far
+         */
+        calculateTopicProficiency () {
+            const length = Object.keys(this.userUnderstanding).length
+            const total = length * 3
+            const user = Object.values(this.userUnderstanding).reduce((acc, cur) => acc + Number(cur.rating), 0);
+            this.data.find((d) => d.title === 'Kompetenz').measures = [user/total * 100]
+        },
+
+        async calculateGrades () {
+            let quizzes = await Communication.webservice(
+                'getQuizzes',
+                { course: this.$store.getters.getCourseid, userid: 3 }
+            );
+
+            if (quizzes.success) {
+                quizzes = JSON.parse(quizzes.data)
+            } else {
+                if (quizzes.data) {
+                    console.log('Faulty response of webservice /logger/', quizzes.data);
+                } else {
+                    console.log('No connection to webservice /logger/');
+                }
+            }
+
+            let assignments = await Communication.webservice(
+                'getAssignments',
+                {
+                    userid: 3,
+                    course: 4,
+                }
+            );
+
+            if (assignments.success) {
+                assignments = JSON.parse(assignments.data)
+            } else {
+                if (assignments.data) {
+                    console.log('Faulty response of webservice /logger/', assignments.data);
+                } else {
+                    console.log('No connection to webservice /logger/');
+                }
+            }
+
+            this.userGrades = [...Object.values(quizzes), ...Object.values(assignments)]
+
+            const totalPoints = this.userGrades.reduce((sum, item) => {
+                return sum + Number(item.max_grade);
+            }, 0);
+
+            const userPoints = this.userGrades.reduce((sum, item) => {
+                return sum + Number(item.user_grade);
+            }, 0);
+
+            this.data.find((d) => d.title === 'Ergebnisse').measures = [userPoints]
+            this.rangesGrades.mastery = [totalPoints * 0.5, totalPoints * 0.75, totalPoints]
+            this.rangesGrades.passing = [totalPoints * 0.3, totalPoints * 0.66, totalPoints]
+            this.rangesGrades.practise = [totalPoints * 0.5, totalPoints * 0.75, totalPoints]
+            this.rangesGrades.overview = [totalPoints * 0.2, totalPoints * 0.5, totalPoints]
+            this.updateRanges(this.currentGoal);
+        },
+
+        calculateSocialInteraction () {
+            // @TODO
+        },
+
+        calculateTimeliness () {
+            // @TODO
         },
 
         drawChart () {
@@ -212,19 +321,23 @@ export default {
                 width = 600 - margin.left - margin.right,
                 height = 50;
 
+            d3.select(this.$refs.bulletChart).selectAll("svg").remove()
+
             var chart = d3.bullet()
                 .width(width)
                 .height(height);
 
-            var svg = d3.select(".bullet-chart").selectAll("svg")
-                .data(this.data)
-                .enter().append("svg")
+            var svg = d3.select(this.$refs.bulletChart)
+                .selectAll("svg")
+                .data(this.filteredData)
+                .enter()
+                .append("svg")
                 .attr("class", "bullet")
                 .attr("width", width + margin.left + margin.right)
                 .attr("height", height)
                 .append("g")
                 .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-                .call(chart);
+                .call(chart)
 
             var title = svg.append("g")
                 .style("text-anchor", "end")
@@ -240,33 +353,37 @@ export default {
                 .text(function(d) { return d.subtitle; });
         }
     },
-
 }
 </script>
 
 <style lang="scss">
+@import "../../scss/variables.scss";
+
 select.form-control{
-    appearance: menulist-button!important;
+    appearance: menulist-button !important;
 }
 
 .bullet {
     margin: 10px 0;
 }
 
-
 .bullet { font: 10px sans-serif; margin-left:auto;margin-right:auto;}
 .bullet .marker { stroke: #4D4D4D; stroke-width: 2px;}
-.bullet .marker.s0 { fill-opacity:0; stroke: #999999; stroke-width: 2px; }
-.bullet .marker.s1 { fill-opacity:0; stroke: #000; stroke-width: 2px; }
-.bullet .tick line { stroke: #666; stroke-width: .5px; }
 
-.bullet .range.s0 { fill: #C7E1A6; }
-.bullet .range.s1 { fill: #DDE3D5; }
-.bullet .range.s2 { fill: #F5E0E0; }
+.bullet .range.s0 {
+    fill: $blue-dark;
+    opacity: 0.6;
+}
+.bullet .range.s1 {
+    fill: $blue-middle;
+    opacity: 0.6;
+}
+.bullet .range.s2 {
+    fill: $blue-weak;
+    opacity: 0.6;
+}
 
-.bullet .measure.s0 { fill: #999999; }
-//.bullet .measure.s1 { fill: #999999; }
-//.bullet .measure.s2 { fill: #eeeeee; }
+.bullet .measure.s0 { fill: $blue-dark; }
 
 .bullet .title { font-size: 12px; font-weight: bold; }
 .bullet .subtitle.s04 { fill: #000000; font-size: 16px; font-weight: bold;}
