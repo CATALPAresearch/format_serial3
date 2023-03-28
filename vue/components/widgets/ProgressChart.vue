@@ -1,6 +1,6 @@
 <template>
     <div>
-        <widget-heading title="Fortschritt" icon="fa-hourglass-o" :info-content="info"></widget-heading>
+        <widget-heading title="Überblick" icon="fa-hourglass-o" :info-content="info"></widget-heading>
         <div id="dashboard-completion">
             <div class="section-selection mr-2" :class="currentSection === -1 ? 'section-selection--current' : ''" @click="setCurrentSection(-1)">
                 <p class="my-1">Alle</p>
@@ -22,13 +22,13 @@
             <div v-for="(type, typeIndex) in activityTypes" :key="typeIndex" class="row">
                 <span class="col-3">{{ getActivities[type][0].modulename }}</span>
                 <div class="col-9">
-                    <span v-for="(activity, aCount) in currentActivities[type]" :key="aCount" class="position-relative">
-                         <button ref="popoverButton" type="button" data-toggle="popover" data-placement="bottom" class="panel-heading subject-progress__popover" :title="activity.name" v-popover-html="popoverContent(activity)">
+                    <span v-for="activity in currentActivities[type]" :key="activity.id" class="position-relative" :title="activity.name">
+                         <button ref="popoverButton" id="'popover' + activity.id" type="button" data-toggle="popover" data-placement="bottom" class="subject-progress__popover" :data-popover-content="'#' + activity.id" v-popover-html="popoverContent(activity)">
                             <span class="completion-rect" :class="{
-                                'rect--grey': activity.rating === 0,
-                                'rect--weak': activity.rating === 1,
-                                'rect--ok':  activity.rating === 2,
-                                'rect--strong': activity.rating === 3
+                                    'rect--grey': activity.rating === 0,
+                                    'rect--weak': activity.rating === 1,
+                                    'rect--ok':  activity.rating === 2,
+                                    'rect--strong': activity.rating === 3
                                 }" :title="activity.name"></span>
                          </button>
                     </span>
@@ -104,7 +104,8 @@ export default {
             info: 'Informationen über das Widget',
             sectionnames: [],
             stats: [],
-            popoverComponent: null
+            popoverComponent: null,
+            currentSection: -1,
         };
     },
 
@@ -133,7 +134,7 @@ export default {
 
     computed: {
         calculateProgress() {
-            const x = this.getSections.map(a => a.filter(({ completion }) => completion === 1 ).length)
+            const x = this.getSections.map(a => a.filter(({ rating }) => rating !== 0 ).length)
             const sum = x.reduce((total, current) => {
                 return total + current;
             }, 0)
@@ -166,13 +167,14 @@ export default {
                     }
                 }).$mount()
 
-                popover.$on('completion-updated', (completionStatus, activityId) => {
-                    this.courseData[activityId].completion = completionStatus ? 1 : 0
-                });
-
                 popover.$on('understanding-updated', (understanding, activityId) => {
                     this.courseData[activityId].rating = Number(understanding)
-                    this.courseData[activityId].completion = 1
+
+                    if (understanding === 0) {
+                        this.courseData[activityId].completion = 0
+                    } else {
+                        this.courseData[activityId].completion = 1
+                    }
                 })
 
                 popover.$on('add-to-task-list', task => {
@@ -184,7 +186,7 @@ export default {
         },
 
         calculateSectionProgress (section) {
-            const sum = section.filter(({ completion }) => completion === 1 ).length
+            const sum = section.filter(({ rating }) => rating !== 0 ).length
             const total = section.length
             return Math.floor(sum/total*100)
         },

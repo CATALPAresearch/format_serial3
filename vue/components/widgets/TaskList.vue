@@ -119,6 +119,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import "../../scss/scrollbar.scss";
+
 .todo {
     &__items {
         overflow-y: auto;
@@ -177,18 +179,5 @@ export default {
 }
 .todo__toggle[aria-expanded=true] .icon-collapsed {
     display: none;
-}
-
-/* Scrollbar */
-::-webkit-scrollbar {
-    width: 8px;
-}
-
-::-webkit-scrollbar-thumb {
-    background: #888;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: #555;
 }
 </style>

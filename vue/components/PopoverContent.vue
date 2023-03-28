@@ -66,6 +66,7 @@ export default {
                 course: 4,
                 activityid: this.activity.id,
                 rating: newVal,
+                completion: this.activity.id === 0 ? 0 : 1
             })
             this.$emit('understanding-updated', newVal, this.activity.id)
         },

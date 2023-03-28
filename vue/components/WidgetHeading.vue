@@ -23,9 +23,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import "../scss/variables.scss";
+
 .heading {
     &__underline {
-        border-bottom: 1px solid #dee2e6;
+        border-bottom: 1px solid $light-grey;
     }
 
     &__icon {

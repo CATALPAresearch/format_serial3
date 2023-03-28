@@ -1,6 +1,6 @@
 <template>
     <div class="position-relative h-100 d-flex flex-column">
-        <widget-heading title="Ergebnisse" icon="fa-hourglass-o" info-content="info"></widget-heading>
+        <widget-heading title="Ergebnisse" icon="fa-bar-chart" info-content="info"></widget-heading>
         <div class="row">
             <div class="form-group col-6 mb-0 pr-1">
                 <select
@@ -8,9 +8,9 @@
                     id="select-goal"
                     class="form-control form-select"
                 >
-                    <option value="all">Alle Aufgaben</option>
-                    <option value="quiz">Quizzes</option>
-                    <option value="assignment">Assignments</option>
+                    <option value="all">Alle Ergebnisse</option>
+                    <option value="quiz">Tests</option>
+                    <option value="assignment">Aufgaben</option>
                 </select>
             </div>
             <div class="form-group col-6 mb-0 pl-1">
@@ -45,8 +45,8 @@
 <script>
 import WidgetHeading from "../WidgetHeading.vue";
 import * as d3 from "../../js/d3.min.js";
-import {ajax} from '../../store/store';
 import { mapGetters, mapState  } from 'vuex';
+import Communication from "../../scripts/communication";
 
 
 export default {
@@ -62,7 +62,7 @@ export default {
             assignments: [],
             data: [],
             width: 500,
-            height:  210,
+            height:  200,
             margin: {top: 10, right: 30, bottom: 25, left: 80},
             xLabel: 'Assignments',
             yLabel: 'Result',
@@ -80,7 +80,7 @@ export default {
 
         selectedSection: {
             handler: function(newVal) {
-                this.$store.commit('progress/setCurrentSection', newVal);
+                this.$store.commit('overview/setCurrentSection', newVal);
                 this.filterData();
             },
             immediate: true,
@@ -116,8 +116,13 @@ export default {
             return [...this.quizzes, ...this.assignments]
         },
 
-        ...mapState(['strings', 'currentSection', 'sectionNames']),
-        ...mapGetters(['getCurrentSection', 'getSectionNames']),
+        // ...mapState({
+        //     progress: state => state.dashboardSettings.dashboardSettings,
+        //     strings: 'strings'
+        // }),
+
+        ...mapState('overview', ['currentSection']),
+        ...mapGetters('overview', ['getCurrentSection', 'getSections']),
     },
 
     methods: {
@@ -145,36 +150,58 @@ export default {
         },
 
         async getQuizzes () {
-            const response = await ajax('format_ladtopics_getQuizzes', {
-                course: this.$store.state.courseid,
-                // userid: this.$store.state.userid,
-                userid: 3
-            });
+            const response = await Communication.webservice(
+                'getQuizzes',
+                {
+                    userid: 3,
+                    course: 4,
+                }
+            );
 
             if (response.success) {
                 this.quizzes = JSON.parse(response.data)
-                this.quizzes = Object.values(this.quizzes).map(item => {
-                    return { category: item.name, value: (item.user_grade / item.max_grade), user_grade: item.user_grade, max_grade: item.max_grade , type: 'quiz', section: item.section, avg_value: (item.avg_grade / item.max_grade), avg_grade: item.avg_grade, num_participants: item.num_participants, user_attempts: item.user_attempts };
-                });
-            }
 
-            console.log("response quizzes: ", this.quizzes)
+                this.quizzes = Object.values(this.quizzes).map(item => ({
+                    ...item,
+                    category: item.name,
+                    value: (item.user_grade / item.max_grade),
+                    avg_value: (item.avg_grade / item.max_grade),
+                    type: 'quiz'
+                }));
+            } else {
+                if (response.data) {
+                    console.log('Faulty response of webservice /logger/', response.data);
+                } else {
+                    console.log('No connection to webservice /logger/');
+                }
+            }
         },
 
         async getAssignments () {
-            const response = await ajax('format_ladtopics_getAssignments', {
-                course: 4,
-                userid: 3
-            });
+            const response = await Communication.webservice(
+                'getAssignments',
+                {
+                    userid: 3,
+                    course: 4,
+                }
+            );
 
             if (response.success) {
                 this.assignments = JSON.parse(response.data)
-                this.assignments = Object.values(this.assignments).map(item => {
-                    return { category: item.name, value: (item.user_grade / item.max_grade), user_grade: item.user_grade, max_grade: item.max_grade, type: 'assignment', section: item.section, avg_value: (item.avg_grade / item.max_grade), avg_grade: item.avg_grade, num_participants: item.num_participants, user_attempts: item.user_attempts };
-                });
+                this.assignments = Object.values(this.assignments).map(item => ({
+                    ...item,
+                    category: item.name,
+                    value: (item.user_grade / item.max_grade),
+                    avg_value: (item.avg_grade / item.max_grade),
+                    type: 'assignment'
+                }));
+            } else {
+                if (response.data) {
+                    console.log('Faulty response of webservice /logger/', response.data);
+                } else {
+                    console.log('No connection to webservice /logger/');
+                }
             }
-
-            console.log("response assignments: ",  this.assignments)
         },
 
         drawChart() {
@@ -218,7 +245,6 @@ export default {
                     .attr("y", (d) => yScale(d.category))
                     .attr("width", (d) => xScale(d.value) - xRange[0])
                     .attr("height", yScale.bandwidth() / 2 - 1)
-                    .attr("fill", "#64A0D6")
                     .each(function(d) {
                             svg.append("text")
                                 .attr("class", "value-text")
@@ -238,7 +264,6 @@ export default {
                     .attr("y", (d) => yScale(d.category) + yScale.bandwidth() / 2)
                     .attr("width", (d) => xScale(d.avg_value) - xRange[0])
                     .attr("height", yScale.bandwidth() / 2 - 1)
-                    .attr("fill", "#CED4DA")
                     .each(function(d) {
                         svg.append("text")
                             .attr("class", "value-text")
@@ -257,7 +282,6 @@ export default {
                     .attr("y", (d) => yScale(d.category) + (yScale.bandwidth() - yScale.bandwidth() / 1.5) / 2)
                     .attr("width", (d) => xScale(d.value) - xRange[0])
                     .attr("height", yScale.bandwidth() / 1.5)
-                    .attr("fill", "#64A0D6")
                     .each(function(d) {
                         svg.append("text")
                             .attr("class", "value-text")
@@ -272,7 +296,10 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
+@import "../../scss/variables.scss";
+@import "../../scss/scrollbar.scss";
+
 .bar-chart {
     overflow-y: auto;
 }
@@ -286,18 +313,16 @@ export default {
     margin-right: 1px;
 
     &--user {
-        background-color: #64A0D6;
+        background-color: #4087BE;
     }
 
     &--avg {
-        background-color: #CED4DA;
+        background-color: $light-grey;
     }
 }
 
-/* Scrollbar */
-::-webkit-scrollbar {
-    width: 8px;
-}
+.user-bar {
+    fill: #4087BE;
 
 ::-webkit-scrollbar-thumb {
     background: #888;
@@ -305,5 +330,9 @@ export default {
 
 ::-webkit-scrollbar-thumb:hover {
     background: #555;
+}
+
+.avg-bar {
+    fill: $light-grey;
 }
 </style>
