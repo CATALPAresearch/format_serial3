@@ -10,9 +10,8 @@ export default {
 		courseData: null,
 		currentSection: -1,
 		currentActivities: null,
-		activityNames: [],
+		activityTypes: [],
 		sectionNames: [],
-		stats: null,
 	},
 
 	mutations: {
@@ -25,8 +24,8 @@ export default {
 		setCurrentActivities(state, data) {
 			state.currentActivities = data;
 		},
-		setActivityNames(state, data) {
-			state.activityNames = data;
+		setActivityTypes(state, data) {
+			state.activityTypes = data;
 		},
 	},
 
@@ -39,17 +38,22 @@ export default {
 		},
 		getCurrentActivities: function(state) {
 			if (state.currentSection === -1) {
-				console.log("In here: ", state.getActivities);
 				return state.getActivities;
 			} else {
-				console.log("or here: ", groupBy(state.getSections[state.currentSection], 'type') );
 				return groupBy(state.getSections[state.currentSection], 'type');
 			}
+		},
+		getUrlById: (state) => (id) => {
+			const bla = Object.values(state.courseData).find(object => object.id === id);
+			return bla.url;
+		},
+		getTotalNumberOfActivities: function(state) {
+			return Object.keys(state.courseData).length;
 		}
 	},
 
 	actions: {
-		async updateRating({commit}, newVal) {
+		async updateRating({commit, rootState}, newVal) {
 			try {
 				await ajax("format_ladtopics_setUserUnderstanding", {
 					course: Number(rootState.courseid),

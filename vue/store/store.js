@@ -7,7 +7,7 @@ import $ from 'jquery';
 
 import dashboardSettings from './dashboardSettings';
 import taskList from './taskList';
-import progress from './progress';
+import overview from './overview';
 
 Vue.use(Vuex);
 
@@ -15,7 +15,7 @@ export const store = new Vuex.Store({
     modules: {
         dashboardSettings,
         taskList,
-        progress,
+        overview,
     },
 
     state: {
