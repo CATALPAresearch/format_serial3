@@ -1,11 +1,12 @@
 <template>
     <div class="heading__underline d-flex justify-content-between pb-1 mb-2">
         <div class="d-flex align-items-center">
-            <i v-if="icon" class="heading__icon fa mr-3" :class="icon" aria-hidden="true"></i>
+            <i v-if="icon" :class="icon" aria-hidden="true" class="heading__icon fa mr-3"></i>
             <h3 class="mb-1">{{ title }}</h3>
         </div>
-        <button v-if="infoContent" type="button" data-container="body" data-toggle="popover" data-placement="top" data-trigger="click focus" :data-content="infoContent" class="heading__popover" title="Informationen">
-            <i class="heading__info fa fa-info mb-1" aria-hidden="true"></i>
+        <button v-if="infoContent" :data-content="infoContent" class="heading__popover" data-container="body" data-placement="top"
+                data-toggle="popover" data-trigger="click focus" title="Informationen" type="button">
+            <i aria-hidden="true" class="heading__info fa fa-info mb-1"></i>
         </button>
     </div>
 </template>

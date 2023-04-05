@@ -1,11 +1,11 @@
 <template>
     <div class="position-relative h-100 d-flex flex-column">
-        <widget-heading title="Ergebnisse" icon="fa-bar-chart" info-content="info"></widget-heading>
+        <widget-heading icon="fa-bar-chart" info-content="info" title="Ergebnisse"></widget-heading>
         <div class="row">
             <div class="form-group col-6 mb-0 pr-1">
                 <select
-                    v-model="selectedType"
                     id="select-goal"
+                    v-model="selectedType"
                     class="form-control form-select"
                 >
                     <option value="all">Alle Ergebnisse</option>
@@ -15,18 +15,20 @@
             </div>
             <div class="form-group col-6 mb-0 pl-1">
                 <select
-                    v-model="selectedSection"
                     id="select-goal"
+                    v-model="selectedSection"
                     class="form-control form-select"
                 >
                     <option value="-1">Alle Kurseinheiten</option>
-                    <option v-for="(section, index) in getSections" :key="index" :value="index">{{ section[0].sectionname }}</option>
+                    <option v-for="(section, index) in getSections" :key="index" :value="index">
+                        {{ section[0].sectionname }}
+                    </option>
                 </select>
             </div>
         </div>
         <div class="d-flex justify-content-between align-items-center">
             <div class="form-group form-check mt-2 ml-1">
-                <input type="checkbox" class="form-check-input" id="compare-to-average" v-model="showAverage" />
+                <input id="compare-to-average" v-model="showAverage" class="form-check-input" type="checkbox"/>
                 <label class="form-check-label" for="compare-to-average">Vergleich mit Kurs</label>
             </div>
 
@@ -45,7 +47,7 @@
 <script>
 import WidgetHeading from "../WidgetHeading.vue";
 import * as d3 from "../../js/d3.min.js";
-import { mapGetters, mapState  } from 'vuex';
+import {mapGetters, mapState} from 'vuex';
 import Communication from "../../scripts/communication";
 
 
@@ -54,7 +56,7 @@ export default {
 
     components: {WidgetHeading},
 
-    data () {
+    data() {
         return {
             selectedType: 'all',
             selectedSection: -1,
@@ -62,7 +64,7 @@ export default {
             assignments: [],
             data: [],
             width: 500,
-            height:  200,
+            height: 200,
             margin: {top: 10, right: 30, bottom: 25, left: 80},
             xLabel: 'Assignments',
             yLabel: 'Result',
@@ -72,14 +74,14 @@ export default {
 
     watch: {
         selectedType: {
-            handler: function() {
+            handler: function () {
                 this.filterData();
             },
             immediate: true,
         },
 
         selectedSection: {
-            handler: function(newVal) {
+            handler: function (newVal) {
                 this.$store.commit('overview/setCurrentSection', newVal);
                 this.filterData();
             },
@@ -87,7 +89,7 @@ export default {
         },
 
         currentSection: {
-            handler: function(newVal) {
+            handler: function (newVal) {
                 this.selectedSection = Number(newVal);
                 this.filterData();
             },
@@ -95,7 +97,7 @@ export default {
         },
 
         showAverage: {
-            handler: function() {
+            handler: function () {
                 this.drawChart();
             },
         },
@@ -112,14 +114,9 @@ export default {
             return `0 0 ${this.width} ${this.height}`;
         },
 
-        dataAll () {
+        dataAll() {
             return [...this.quizzes, ...this.assignments]
         },
-
-        // ...mapState({
-        //     progress: state => state.dashboardSettings.dashboardSettings,
-        //     strings: 'strings'
-        // }),
 
         ...mapState('overview', ['currentSection']),
         ...mapGetters('overview', ['getCurrentSection', 'getSections']),
@@ -149,9 +146,9 @@ export default {
             this.drawChart()
         },
 
-        async getQuizzes () {
+        async getQuizzes() {
             const response = await Communication.webservice(
-                'getQuizzes',
+                'get_quizzes',
                 {
                     userid: 3,
                     course: 4,
@@ -177,12 +174,12 @@ export default {
             }
         },
 
-        async getAssignments () {
+        async getAssignments() {
             const response = await Communication.webservice(
-                'getAssignments',
+                'get_assignments',
                 {
-                    userid: 3,
-                    course: 4,
+                    userid: this.$store.state.userid,
+                    course: this.$store.state.courseid,
                 }
             );
 
@@ -211,7 +208,7 @@ export default {
             const xFormat = "%";
             const xRange = [this.margin.left, this.width - this.margin.right];
 
-            var xDomain = [0,d3.max(this.data, d => Math.max(d.value, d.avg_value))];
+            var xDomain = [0, d3.max(this.data, d => Math.max(d.value, d.avg_value))];
             var yDomain = d3.map(this.data, (d) => d.category);
 
             const yScale = d3.scaleBand(yDomain, yRange).padding(0.1);
@@ -264,7 +261,7 @@ export default {
                     .attr("y", (d) => yScale(d.category) + yScale.bandwidth() / 2)
                     .attr("width", (d) => xScale(d.avg_value) - xRange[0])
                     .attr("height", yScale.bandwidth() / 2 - 1)
-                    .each(function(d) {
+                    .each(function (d) {
                         svg.append("text")
                             .attr("class", "value-text")
                             .attr("x", xScale(d.avg_value) - 50)
@@ -282,7 +279,7 @@ export default {
                     .attr("y", (d) => yScale(d.category) + (yScale.bandwidth() - yScale.bandwidth() / 1.5) / 2)
                     .attr("width", (d) => xScale(d.value) - xRange[0])
                     .attr("height", yScale.bandwidth() / 1.5)
-                    .each(function(d) {
+                    .each(function (d) {
                         svg.append("text")
                             .attr("class", "value-text")
                             .attr("x", xScale(d.value) - 50)
@@ -324,12 +321,17 @@ export default {
 .user-bar {
     fill: #4087BE;
 
-::-webkit-scrollbar-thumb {
-    background: #888;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: #555;
+    //&--strong {
+    //    fill: $blue-dark;
+    //}
+    //
+    //&--ok {
+    //    fill: $blue-middle;
+    //}
+    //
+    //&--weak {
+    //    fill: $blue-weak;
+    //}
 }
 
 .avg-bar {

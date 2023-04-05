@@ -1,41 +1,50 @@
 <template>
     <div class="position-relative h-100 d-flex flex-column">
-        <widget-heading title="Aufgaben" icon="fa-sticky-note-o" info-content="ToDo Liste"></widget-heading>
+        <widget-heading icon="fa-sticky-note-o" info-content="ToDo Liste" title="Aufgaben"></widget-heading>
         <div class="todo__items flex-shrink-1 mb-6">
             <ul class="p-0 pl-1">
                 <li v-for="item in uncompletedItems" :key="item.id" class="todo__checkbox-items pt-1">
                     <div class="d-flex todo__toggle-item">
-                        <input type="checkbox" :checked="item.completed === 1" class="mr-2" @click="toggleTask(item)"/>
+                        <input :checked="item.completed === 1" class="mr-2" type="checkbox" @click="toggleTask(item)"/>
                         <span class="m-0">{{ item.task }}</span>
                     </div>
                     <div class="d-flex align-items-center mr-3">
-                        <div v-if="item.duedate && item.duedate != 0" class="flex-shrink-0">{{  new Date(item.duedate).toLocaleDateString('de-DE') }}</div>
-                        <input type="date" v-model="item.duedate" class="form-control p-0 mx-2 todo__change-date" @change="updateDate(item)"/>
-                        <button type="button" class="close d-flex" aria-label="Deletes item" @click="deleteTask(item)">
-                            <i class="fa fa-close todo__close-icon" aria-hidden="true"></i>
+                        <div v-if="item.duedate && item.duedate != 0" class="flex-shrink-0">
+                            {{ new Date(item.duedate).toLocaleDateString('de-DE') }}
+                        </div>
+                        <input v-model="item.duedate" class="form-control p-0 mx-2 todo__change-date" type="date"
+                               @change="updateDate(item)"/>
+                        <button aria-label="Deletes item" class="close d-flex" type="button" @click="deleteTask(item)">
+                            <i aria-hidden="true" class="fa fa-close todo__close-icon"></i>
                         </button>
                     </div>
                 </li>
             </ul>
 
-            <a type="button" class="todo__toggle w-100 pl-1" data-toggle="collapse" href="#checkedItems" role="button" aria-expanded="false" aria-controls="checkedItems">
-                <i class="icon-collapsed fa fa-chevron-down mr-2" aria-hidden="true"></i>
-                <i class="icon-expanded fa fa-chevron-up mr-2" aria-hidden="true"></i>
+            <a aria-controls="checkedItems" aria-expanded="false" class="todo__toggle w-100 pl-1" data-toggle="collapse" href="#checkedItems"
+               role="button" type="button">
+                <i aria-hidden="true" class="icon-collapsed fa fa-chevron-down mr-2"></i>
+                <i aria-hidden="true" class="icon-expanded fa fa-chevron-up mr-2"></i>
                 {{ completedItems.length }} Aufgaben erledigt
             </a>
-            <div class="collapse" id="checkedItems">
+            <div id="checkedItems" class="collapse">
                 <div class="card card-body w-100 pr-0 pl-1 py-2">
                     <ul class="mr-3 mb-0 p-0">
                         <li v-for="item in completedItems" :key="item.id" class="todo__checkbox-items pt-1 pb-1">
                             <div class="d-flex todo__toggle-item">
-                                <input type="checkbox" :checked="item.completed == 1" class="mr-2" @click="toggleTask(item)" />
+                                <input :checked="item.completed == 1" class="mr-2" type="checkbox"
+                                       @click="toggleTask(item)"/>
                                 <span class="todo__item-completed m-0">{{ item.task }}</span>
                             </div>
                             <div class="d-flex align-items-center">
-                                <div v-if="item.duedate && item.duedate != 0" class="flex-shrink-0">{{ new Date(item.duedate).toLocaleDateString('de-DE') }}</div>
-                                <input type="date" v-model="item.duedate" class="form-control p-0 mx-2 todo__change-date" @change="updateDate(item)"/>
-                                <button type="button" class="close d-flex" aria-label="Deletes item" @click="deleteTask(item)">
-                                    <i class="fa fa-close todo__close-icon" aria-hidden="true"></i>
+                                <div v-if="item.duedate && item.duedate != 0" class="flex-shrink-0">
+                                    {{ new Date(item.duedate).toLocaleDateString('de-DE') }}
+                                </div>
+                                <input v-model="item.duedate" class="form-control p-0 mx-2 todo__change-date"
+                                       type="date" @change="updateDate(item)"/>
+                                <button aria-label="Deletes item" class="close d-flex" type="button"
+                                        @click="deleteTask(item)">
+                                    <i aria-hidden="true" class="fa fa-close todo__close-icon"></i>
                                 </button>
                             </div>
                         </li>
@@ -46,16 +55,19 @@
 
         <div class="todo__add-item w-100">
             <div class="input-group control-group">
-                <input type="text" v-model="newItem" @keyup.enter="addTask" class="form-control flex-grow-1" :placeholder="placeholderAddItem"  />
-                <input type="date" v-model="newDate" class="form-control flex-grow-0 todo__add-date" />
-                <button type="submit" class="btn btn-primary todo__add-icon" @click="addTask" :disabled="newItem.length === 0">+</button>
+                <input v-model="newItem" :placeholder="placeholderAddItem" class="form-control flex-grow-1" type="text"
+                       @keyup.enter="addTask"/>
+                <input v-model="newDate" class="form-control flex-grow-0 todo__add-date" type="date"/>
+                <button :disabled="newItem.length === 0" class="btn btn-primary todo__add-icon" type="submit"
+                        @click="addTask">+
+                </button>
             </div>
         </div>
     </div>
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex';
+import {mapActions, mapGetters} from 'vuex';
 import WidgetHeading from '../WidgetHeading.vue';
 
 export default {
@@ -73,7 +85,7 @@ export default {
     },
 
     async mounted() {
-         await this.getItems();
+        await this.getItems();
     },
 
     computed: {
@@ -91,11 +103,11 @@ export default {
     methods: {
         ...mapActions('taskList', ['getItems', 'addItem', 'updateItem', 'deleteItem', 'toggleItem']),
 
-        updateDate (item) {
+        updateDate(item) {
             this.updateItem(item)
         },
 
-        toggleTask (item) {
+        toggleTask(item) {
             this.toggleItem(item)
         },
 
@@ -103,7 +115,7 @@ export default {
             this.deleteItem(item);
         },
 
-        addTask () {
+        addTask() {
             const newItem = {
                 course: 4,
                 task: this.newItem,
@@ -177,6 +189,7 @@ export default {
 .todo__toggle[aria-expanded=false] .icon-expanded {
     display: none;
 }
+
 .todo__toggle[aria-expanded=true] .icon-collapsed {
     display: none;
 }

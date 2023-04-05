@@ -9,8 +9,7 @@ export const groupBy = (data, key) => {
 		return arr.filter(function (el) {
 			return el !== null;
 		});
-	}
-	else {
+	} else {
 		return arr;
 	}
 };
