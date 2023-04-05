@@ -1,4 +1,4 @@
-import {ajax} from './store';
+import Communication from "../scripts/communication";
 
 export default {
 	namespaced: true,
@@ -36,61 +36,100 @@ export default {
 
 	actions: {
 		async getItems({commit, rootState}) {
-			const response = await ajax('format_ladtopics_getTodoItems', {
-				userid: Number(rootState.userid),
-				course: Number(rootState.courseid),
-			});
+			const response = await Communication.webservice(
+				'get_tasks',
+				{
+					'userid': 2,
+					'course': 4,
+				}
+			);
 
 			if (response.success) {
 				commit('setItems', Object.values(JSON.parse(response.data)));
+			} else {
+				if (response.data) {
+					console.log('No dashboard settings stored');
+				} else {
+					console.log('No connection to webservice /overview/');
+				}
 			}
 		},
 
 		async addItem({commit}, item) {
-			try {
-				const response = await ajax('format_ladtopics_addTodoItem', item);
+			const response = await Communication.webservice(
+				'create_task', item
+			);
+			if (response.success) {
 				item.id = response.data;
 				commit('addItem', item);
-			} catch (error) {
-				console.error(error);
+			} else {
+				if (response.data) {
+					console.log('Faulty response of webservice /logger/', response.data);
+				} else {
+					console.log('No connection to webservice /logger/');
+				}
 			}
 		},
 
 		async deleteItem({commit}, item) {
-			try {
-				await ajax('format_ladtopics_deleteTodoItem', {
-					id: Number(item.id),
-				});
+			const response = await Communication.webservice(
+				'delete_task',
+				{
+					'id': Number(item.id)
+				}
+			);
+			if (response.success) {
 				commit('deleteItem', item);
-			} catch (error) {
-				console.error(error);
+			} else {
+				if (response.data) {
+					console.log('Faulty response of webservice /logger/', response.data);
+				} else {
+					console.log('No connection to webservice /logger/');
+				}
 			}
 		},
 
 		async updateItem({commit}, item) {
-			try {
-				await ajax('format_ladtopics_toggleTodoItem', {
-					id: item.id,
-					duedate: item.duedate,
-					completed: item.completed
-				});
+			const response = await Communication.webservice(
+				'update_task',
+				{
+					'id': item.id,
+					'duedate': item.duedate,
+					'completed': item.completed
+				}
+			);
+			if (response.success) {
 				commit('updateItem', item);
-			} catch (error) {
-				console.error(error);
+			} else {
+				if (response.data) {
+					console.log('Faulty response of webservice /logger/', response.data);
+				} else {
+					console.log('No connection to webservice /logger/');
+				}
 			}
 		},
 
-		async toggleItem({ commit }, task) {
-			const completed = 1 - task.completed;
-			const updatedTask = { ...task, completed: completed };
+		async toggleItem({commit}, item) {
+			const completed = 1 - item.completed;
+			const updatedItem = {...item, completed: completed};
 
-			await ajax('format_ladtopics_toggleTodoItem', {
-				id: task.id,
-				duedate: task.duedate,
-				completed:  completed
-			});
-
-			commit('updateItem', updatedTask);
+			const response = await Communication.webservice(
+				'update_task',
+				{
+					'id': item.id,
+					'duedate': item.duedate,
+					'completed': item.completed
+				}
+			);
+			if (response.success) {
+				commit('updateItem', updatedItem);
+			} else {
+				if (response.data) {
+					console.log('Faulty response of webservice /logger/', response.data);
+				} else {
+					console.log('No connection to webservice /logger/');
+				}
+			}
 		},
 	},
 };
