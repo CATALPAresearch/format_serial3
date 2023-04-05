@@ -2313,6 +2313,52 @@ Group by cm.id
 
 
 	/**
+	 * Interface to fetch get the missed and total number of assignments and quizzes
+	 */
+	public static function get_missed_activities_parameters()
+	{
+		return new external_function_parameters([
+			'course' => new external_value(PARAM_INT, 'id of course'),
+		]);
+	}
+
+	public static function get_missed_activities_is_allowed_from_ajax()
+	{
+		return true;
+	}
+
+	public static function get_missed_activities_returns()
+	{
+		return new external_single_structure(
+			array(
+				'success' => new external_value(PARAM_BOOL, 'Success Variable'),
+				'data' => new external_value(PARAM_RAW, 'Data output')
+			)
+		);
+	}
+
+	public static function get_missed_activities($course)
+	{
+		global $DB, $USER;
+
+		$sql = "SELECT
+    			COUNT(CASE WHEN s.id IS NULL THEN 1 END) AS num_missed_assignments,
+    			COUNT(*) AS total_assignments
+				FROM {assign} a
+				LEFT JOIN {assign_submission} s ON s.assignment = a.id AND s.userid = :userid
+				WHERE a.course = :course AND a.allowsubmissionsfromdate < UNIX_TIMESTAMP() AND a.duedate < UNIX_TIMESTAMP()";
+
+		$params = array('course' => $course, 'userid' => (int)$USER->id);
+		$missedAssignments = $DB->get_records_sql($sql, $params);
+
+		return array(
+			'success' => true,
+			'data' => json_encode($missedAssignments)
+		);
+	}
+
+
+	/**
 	 * Interface to fetch all quizzes and assignments
 	 */
 	public static function get_assignments_parameters()
@@ -2350,10 +2396,23 @@ Group by cm.id
 				JOIN {assign_grades} g ON g.assignment = a.id
 				JOIN {course_modules} cm ON cm.instance = a.id AND cm.module = (SELECT id FROM {modules} WHERE name = 'assign')
 				JOIN {course_sections} cs ON cs.id = cm.section
-				WHERE a.course = :course AND g.userid = :user";
+				WHERE a.course = :course AND g.userid = :userid2";
 
-		$params = array('course' => $course, 'userid' => $userid, 'user' => $userid);
+		$params = array('course' => $course, 'userid' => $userid, 'userid2' => $userid);
 		$assignments = $DB->get_records_sql($sql, $params);
+
+
+		$sql2 = "SELECT
+    			COUNT(CASE WHEN s.id IS NULL THEN 1 END) AS num_missed_assignments,
+    			COUNT(*) AS total_assignments
+				FROM {assign} a
+				LEFT JOIN {assign_submission} s ON s.assignment = a.id AND s.userid = :userid
+				WHERE a.course = :course AND a.allowsubmissionsfromdate < UNIX_TIMESTAMP() AND a.duedate < UNIX_TIMESTAMP()";
+
+		$params2 = array('course' => $course, 'userid' => $userid);
+		$missedAssignments = $DB->get_records_sql($sql, $params);
+
+
 
 		return array(
 			'success' => true,
@@ -2659,6 +2718,70 @@ Group by cm.id
 		return array(
 			'success' => true,
 			'data' => json_encode($goal),
+		);
+	}
+
+
+	/**
+	 * Get the number of forum posts of a user.
+	 */
+	public static function get_forum_posts_parameters()
+	{
+		return new external_function_parameters([
+			'course' => new external_value(PARAM_INT, 'id of course'),
+		]);
+	}
+
+	public static function get_forum_posts_is_allowed_from_ajax()
+	{
+		return true;
+	}
+
+	public static function get_forum_posts_returns()
+	{
+		return new external_single_structure(
+			array(
+				'success' => new external_value(PARAM_BOOL, 'Success Variable'),
+				'data' => new external_value(PARAM_RAW, 'Data output')
+			)
+		);
+	}
+
+	public static function get_forum_posts($course)
+	{
+		global $DB, $USER;
+
+		$userid = (int)$USER->id;
+
+		$sql = "SELECT 
+			(SELECT COUNT(*) 
+			 FROM {forum_posts} fp 
+			 JOIN {forum_discussions} fd ON fd.id = fp.discussion 
+			 WHERE fd.course = :courseid AND fp.userid = :userid) AS user_posts,
+			COUNT(*) AS total_posts,
+			COUNT(*) / COUNT(DISTINCT fp.userid) AS avg_posts_per_person,
+			(SELECT COUNT(*) 
+			 FROM {forum_posts} fp 
+			 JOIN {forum_discussions} fd ON fd.id = fp.discussion 
+			 GROUP BY fp.userid 
+			 ORDER BY COUNT(*) DESC 
+			 LIMIT 1) AS max_user_posts,
+			(SELECT COUNT(*) 
+			 FROM {forum_posts} fp 
+			 JOIN {forum_discussions} fd ON fd.id = fp.discussion 
+			 GROUP BY fp.userid 
+			 ORDER BY COUNT(*) ASC 
+			 LIMIT 1) AS min_user_posts
+		FROM {forum_posts} fp 
+		JOIN {forum_discussions} fd ON fd.id = fp.discussion 
+		WHERE fd.course = :courseid1 AND fp.userid IS NOT NULL";
+
+		$params = array('courseid' => $course, 'courseid1' => $course, 'userid' => $userid);
+		$result = $DB->get_records_sql($sql, $params);
+
+		return array(
+			'success' => true,
+			'data' => json_encode($result),
 		);
 	}
 }// end class

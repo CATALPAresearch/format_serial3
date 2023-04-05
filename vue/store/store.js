@@ -38,10 +38,9 @@ export const store = new Vuex.Store({
 			message: 'unknown'
 		},
 		confValue: '',
-		currentGoal: 'passing',
+		learnerGoal: 'passing',
 	},
 
-	//strict: process.env.NODE_ENV !== 'production',
 	mutations: {
 		setCourseid(state, val) {
 			state.courseid = val;
@@ -88,8 +87,8 @@ export const store = new Vuex.Store({
 				}
 			);
 		},
-		setCurrentGoal(state, goal) {
-			state.currentGoal = goal;
+		setLearnerGoal(state, goal) {
+			state.learnerGoal = goal;
 		},
 	},
 
@@ -133,8 +132,8 @@ export const store = new Vuex.Store({
 		getCMID: function (state) {
 			return state.courseModuleID;
 		},
-		getCurrentGoal: function (state) {
-			return state.currentGoal;
+		getLearnerGoal: function (state) {
+			return state.learnerGoal;
 		},
 	},
 	actions: {
@@ -174,7 +173,7 @@ export const store = new Vuex.Store({
 		 * @param context
 		 * @returns {Promise<void>}
 		 */
-		async fetchCurrentGoal(context) {
+		async fetchLearnerGoal(context) {
 			const response = await Communication.webservice(
 				'get_learner_goal',
 				{
@@ -182,7 +181,7 @@ export const store = new Vuex.Store({
 				}
 			);
 			if (response.success) {
-				context.commit('setCurrentGoal', JSON.parse(response.data));
+				context.commit('setLearnerGoal', JSON.parse(response.data));
 			} else {
 				if (response.data) {
 					console.log('Faulty response of webservice /set_learner_goal/', response.data);
@@ -198,7 +197,7 @@ export const store = new Vuex.Store({
 		 * @param context
 		 * @returns {Promise<void>}
 		 */
-		async updateCurrentGoal(context, goal) {
+		async updateLearnerGoal(context, goal) {
 			const response = await Communication.webservice(
 				'set_learner_goal',
 				{
@@ -207,32 +206,7 @@ export const store = new Vuex.Store({
 				}
 			);
 			if (response.success) {
-				context.commit('setCurrentGoal', response.goal);
-			} else {
-				if (response.data) {
-					console.log('Faulty response of webservice /set_learner_goal/', response.data);
-				} else {
-					console.log('No connection to webservice /set_learner_goal/');
-				}
-			}
-		},
-
-		/**
-		 * Gets the users learning goal.
-		 *
-		 * @param context
-		 * @returns {Promise<void>}
-		 */
-		async getGrades(context, goal) {
-			const response = await Communication.webservice(
-				'set_learner_goal',
-				{
-					'course': Number(context.state.courseid),
-					'goal': goal,
-				}
-			);
-			if (response.success) {
-				context.commit('setCurrentGoal', response.goal);
+				context.commit('setLearnerGoal', goal);
 			} else {
 				if (response.data) {
 					console.log('Faulty response of webservice /set_learner_goal/', response.data);

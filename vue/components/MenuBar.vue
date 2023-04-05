@@ -1,27 +1,29 @@
 <template>
     <div class="d-flex align-items-center">
-        <button class="button" @click="$emit('editmode')" title="Dashboard bearbeiten">
-            <i class="fa fa-gear icon m-0" aria-hidden="true"></i>
+        <button class="button" title="Dashboard bearbeiten" @click="$emit('editmode')">
+            <i aria-hidden="true" class="fa fa-gear icon m-0"></i>
         </button>
-        <button type="button" class="button" data-toggle="modal" data-target="#informationModal" title="Informationen über das Dashboard">
-            <i class="fa fa-info icon m-0" aria-hidden="true"></i>
+        <button class="button" data-target="#informationModal" data-toggle="modal" title="Informationen über das Dashboard"
+                type="button">
+            <i aria-hidden="true" class="fa fa-info icon m-0"></i>
         </button>
-        <button type="button" class="button" data-toggle="modal" data-target="#linkModal" title="Hilfreiche Links">
-            <i class="fa fa-chain icon m-0" aria-hidden="true"></i>
+        <button class="button" data-target="#linkModal" data-toggle="modal" title="Hilfreiche Links" type="button">
+            <i aria-hidden="true" class="fa fa-chain icon m-0"></i>
         </button>
         <button class="button" title="Forum Nachrichten">
-            <i class="fa fa-comments-o icon m-0" aria-hidden="true"></i>
+            <i aria-hidden="true" class="fa fa-comments-o icon m-0"></i>
         </button>
         <button class="button pr-0" title="Kursbetreuer kontaktieren">
-            <i class="fa fa-send-o icon m-0" aria-hidden="true"></i>
+            <i aria-hidden="true" class="fa fa-send-o icon m-0"></i>
         </button>
 
-        <div class="modal fade" id="informationModal" tabindex="-1" role="dialog" aria-labelledby="informationModalLabel" aria-hidden="true">
+        <div id="informationModal" aria-hidden="true" aria-labelledby="informationModalLabel" class="modal fade"
+             role="dialog" tabindex="-1">
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="informationModalLabel">{{ strings.informationTitle }}</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <h5 id="informationModalLabel" class="modal-title">{{ strings.informationTitle }}</h5>
+                        <button aria-label="Close" class="close" data-dismiss="modal" type="button">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
@@ -31,11 +33,28 @@
                 </div>
             </div>
         </div>
+
+        <div id="linkModal" aria-hidden="true" aria-labelledby="linkModalLabel" class="modal fade"
+             role="dialog" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 id="informationModalLabel" class="modal-title">{{ strings.informationTitle }}</h5>
+                        <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        {{ strings.linkContent }}
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import {mapState} from 'vuex';
 
 
 export default {

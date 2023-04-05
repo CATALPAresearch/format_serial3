@@ -9,19 +9,8 @@ export default {
 		userGrade: 0,
 		totalGrade: 0,
 		progressUnderstanding: 0,
-		progress: 0,
 		timeManagement: 0,
 		socialActivity: 0,
-		planning: 0,
-		weakTopics: [],
-		strongTopics: [],
-		// quizResults: [],
-		// assignmentResults: [],
-		// numberOfTasksAdded: 0,
-		// numberOfTasksCompleted: 0,
-		// averageSessionTime: 0, // compared to course average
-		// progressComparedToTime: null,
-		// totalTopicsCovered: 0,
 	},
 
 	mutations: {
@@ -131,6 +120,7 @@ export default {
 
 		/**
 		 * Calculates social interaction score based on the number of forum posts
+		 *
 		 * @TODO: Include number of shared resources
 		 */
 		async calculateSocialActivity(context) {
@@ -143,8 +133,13 @@ export default {
 				response = Object.values(JSON.parse(response.data));
 				const numberOfUserPosts = response[0].user_posts;
 				const numberOfAvgPosts = response[0].avg_posts_per_person;
-				const social = numberOfUserPosts * numberOfAvgPosts;
-				context.commit('setSocialActivity', social);
+				const minPosts = response[0].min_user_posts;
+				const maxPosts = response[0].max_user_posts;
+				const userScore = ((numberOfUserPosts - numberOfAvgPosts) / numberOfAvgPosts) * 100;
+
+				console.log("user percentage: ", userScore);
+
+				context.commit('setSocialActivity', userScore);
 			} else {
 				if (response.data) {
 					console.log('Faulty response of webservice /get_missed_activities/', response.data);

@@ -1,20 +1,33 @@
 <template>
-    <div>
-        <widget-heading title="Überblick" icon="fa-hourglass-o" :info-content="info"></widget-heading>
-        <div id="dashboard-completion">
-            <div class="section-selection mr-2" :class="currentSection === -1 ? 'section-selection--current' : ''" @click="setCurrentSection(-1)">
+    <div class="position-relative h-100 d-flex flex-column">
+        <widget-heading :info-content="info" icon="fa-hourglass-o" title="Überblick"></widget-heading>
+        <div class="subject-progress px-1">
+            <div :class="currentSection === -1 ? 'section-selection--current' : ''" class="section-selection mr-2"
+                 @click="setCurrentSection(-1)">
                 <p class="my-1">Alle</p>
                 <div class="progress mb-2">
-                    <div class="progress-bar progress-bar-blue" role="progressbar" :style="{'width': calculateProgress + '%'}" :aria-valuenow="calculateProgress" aria-valuemin="0" aria-valuemax="100">{{ calculateProgress }}%</div>
+                    <div :aria-valuenow="calculateProgress" :style="{'width': calculateProgress + '%'}"
+                         aria-valuemax="100" aria-valuemin="0"
+                         class="progress-bar progress-bar-blue" role="progressbar">{{ calculateProgress }}%
+                    </div>
                 </div>
             </div>
 
             <div class="w-100 mb-4">
-                <div v-for="(section, index) in getSections" :key="index" :style="{'width': calculateWidth(getSections.length) + '%'}" class="d-inline-block" @click="setCurrentSection(index)">
-                    <div class="section-selection mr-2" :class="currentSection === index ? 'section-selection--current' : ''">
-                        <p class="section-names mb-1 small" :title="section[0].sectionname">{{ section[0].sectionname }}</p>
+                <div v-for="(section, index) in getSections" :key="index"
+                     :style="{'width': calculateWidth(getSections.length) + '%'}" class="d-inline-block"
+                     @click="setCurrentSection(index)">
+                    <div :class="currentSection === index ? 'section-selection--current' : ''"
+                         class="section-selection mr-2">
+                        <p :title="section[0].sectionname" class="section-names mb-1 small">{{
+                                section[0].sectionname
+                            }}</p>
                         <div class="progress">
-                            <div class="progress-bar progress-bar-blue" role="progressbar" :style="{'width': calculateSectionProgress(section) + '%'}" :aria-valuenow="calculateSectionProgress(section)" aria-valuemin="0" aria-valuemax="100">{{ calculateSectionProgress(section) }}%</div>
+                            <div :aria-valuenow="calculateSectionProgress(section)" :style="{'width': calculateSectionProgress(section) + '%'}"
+                                 aria-valuemax="100"
+                                 aria-valuemin="0" class="progress-bar progress-bar-blue"
+                                 role="progressbar">{{ calculateSectionProgress(section) }}%
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -22,23 +35,38 @@
             <div v-for="(type, typeIndex) in activityTypes" :key="typeIndex" class="row">
                 <span class="col-3">{{ getActivities[type][0].modulename }}</span>
                 <div class="col-9">
-                    <span v-for="activity in currentActivities[type]" :key="activity.id" class="position-relative" :title="activity.name">
-                         <button ref="popoverButton" id="'popover' + activity.id" type="button" data-toggle="popover" data-placement="bottom" class="subject-progress__popover" :data-popover-content="'#' + activity.id" v-popover-html="popoverContent(activity)">
-                            <span class="completion-rect" :class="{
+                    <span v-for="activity in currentActivities[type]" :key="activity.id" :title="activity.name"
+                          class="position-relative">
+                         <button
+                             id="'popover' + activity.id"
+                             ref="popoverButton"
+                             v-popover-html="popoverContent(activity)"
+                             class="subject-progress__popover"
+                             data-placement="bottom"
+                             data-toggle="popover"
+                             type="button"
+                             :title="activity.name"
+                         >
+                            <span :class="{
                                     'rect--grey': activity.rating === 0,
                                     'rect--weak': activity.rating === 1,
                                     'rect--ok':  activity.rating === 2,
                                     'rect--strong': activity.rating === 3
-                                }" :title="activity.name"></span>
+                                }" :title="activity.name" class="completion-rect"></span>
                          </button>
                     </span>
                 </div>
             </div>
             <div class="legend d-flex justify-content-start mt-3">
-                <div class="d-flex align-items-center mr-3"><span class="completion-rect rect-sm rect--grey mr-1"></span><span class="">Nicht abgeschlossen</span></div>
-                <div class="d-flex align-items-center mr-3"><span class="completion-rect rect-sm rect--weak mr-1"></span><span class="">Schwach</span></div>
-                <div class="d-flex align-items-center mr-3"><span class="completion-rect rect-sm rect--ok mr-1"></span><span class="">Ok</span></div>
-                <div class="d-flex align-items-center"><span class="completion-rect rect-sm rect--strong mr-1"></span><span class="">Gut</span></div>
+                <div class="d-flex align-items-center mr-3"><span
+                    class="completion-rect rect-sm rect--grey mr-1"></span><span class="">Nicht abgeschlossen</span>
+                </div>
+                <div class="d-flex align-items-center mr-3"><span
+                    class="completion-rect rect-sm rect--weak mr-1"></span><span class="">Ungenügend verstanden</span></div>
+                <div class="d-flex align-items-center mr-3"><span
+                    class="completion-rect rect-sm rect--ok mr-1"></span><span class="">Größtenteils verstanden</span></div>
+                <div class="d-flex align-items-center"><span
+                    class="completion-rect rect-sm rect--strong mr-1"></span><span class="">Alles verstanden</span></div>
             </div>
         </div>
     </div>
@@ -48,34 +76,34 @@
 import Communication from '../../scripts/communication';
 import WidgetHeading from "../WidgetHeading.vue";
 import Vue from 'vue';
-import { mapActions, mapGetters, mapState  } from 'vuex';
+import {mapActions, mapGetters, mapState} from 'vuex';
 import {groupBy} from "../../scripts/util";
 
 
 export default {
     name: "ProgressChart",
 
-    components: { WidgetHeading },
+    components: {WidgetHeading},
 
     directives: {
         popoverHtml: {
-            bind: function(el, binding) {
+            bind: function (el, binding) {
                 $(el).popover({
                     html: true,
                     sanitize: false,
-                    content: function() {
+                    content: function () {
                         return binding.value;
                     }
                 });
 
 
-                $(el).on('shown.bs.popover', function() {
+                $(el).on('shown.bs.popover', function () {
                     var popover = $(el).siblings('.popover');
-                    popover.on('click', function(event) {
+                    popover.on('click', function (event) {
                         event.stopPropagation();
                     });
 
-                    $(document).on('click.popover', function(event) {
+                    $(document).on('click.popover', function (event) {
                         var isClickInsidePopover = $(event.target).closest('.popover').length > 0;
                         var isClickOnPopoverButton = $(event.target).is($(el));
                         if (!isClickInsidePopover && !isClickOnPopoverButton) {
@@ -85,12 +113,12 @@ export default {
                     });
                 });
 
-                $(el).on('hidden.bs.popover', function() {
+                $(el).on('hidden.bs.popover', function () {
                     var popover = $(el).siblings('.popover');
                     popover.off('click');
                 });
             },
-            unbind: function(el) {
+            unbind: function (el) {
                 $(el).popover('dispose');
                 $(el).off('shown.bs.popover');
                 $(el).off('hidden.bs.popover');
@@ -101,7 +129,9 @@ export default {
     data: function () {
         return {
             total: 0,
-            info: 'Informationen über das Widget',
+            info: 'Das Widget bietet dir eine Übersicht über alle Kursaktivitäten. Für jede Aktivität kannst du dein Verständnis bewerten, im Forum um Hilfe bitten oder es zur Aufgabenliste hinzufügen. Über den Aktivitäten wird dir eine Fortschrittsanzeige angezeigt, die anzeigt, wie viele Aktivitäten du insgesamt und für jede Kurseinheit separat bereits abgeschlossen hast. Diese dienen dir auch als Filter, um die dir nur die Aktivitäten für die jeweilige Kurseinheit anzuzeigen.\n' +
+                '\n' +
+                'Dieses Widget hilft dir deine Lernaktivitäten im Blick zu behalten und deine Fortschritte zu verfolgen. Durch die Bewertung deines Verständnisses kannst du schnell erkennen, welche Aktivitäten noch unklar sind und bei Bedarf im Forum um Hilfe bitten. Das Hinzufügen von Aktivitäten zur Aufgabenliste ermöglicht es dir, deine Aufgaben zu organisieren und Prioritäten zu setzen.',
             sectionnames: [],
             stats: [],
             popoverComponent: null,
@@ -129,17 +159,17 @@ export default {
     },
 
     mounted: async function () {
-       await this.loadCourseData()
+        await this.loadCourseData()
     },
 
     computed: {
         calculateProgress() {
-            const x = this.getSections.map(a => a.filter(({ rating }) => rating !== 0 ).length)
+            const x = this.getSections.map(a => a.filter(({rating}) => rating !== 0).length)
             const sum = x.reduce((total, current) => {
                 return total + current;
             }, 0)
             const total = this.getTotalActivites()
-            return Math.floor(sum/total*100)
+            return Math.floor(sum / total * 100)
         },
 
         currentActivities() {
@@ -158,7 +188,7 @@ export default {
     methods: {
         ...mapActions('taskList', ['addItem']),
 
-        popoverContent (activity) {
+        popoverContent(activity) {
             if (this.popoverComponent) {
                 const PopoverComponent = Vue.extend(this.popoverComponent)
                 const popover = new PopoverComponent({
@@ -185,17 +215,17 @@ export default {
             }
         },
 
-        calculateSectionProgress (section) {
-            const sum = section.filter(({ rating }) => rating !== 0 ).length
+        calculateSectionProgress(section) {
+            const sum = section.filter(({rating}) => rating !== 0).length
             const total = section.length
-            return Math.floor(sum/total*100)
+            return Math.floor(sum / total * 100)
         },
 
         calculateWidth(items) {
             return 100 / items
         },
 
-        getTotalActivites () {
+        getTotalActivites() {
             const y = this.getSections.map(a => a.length)
             return y.reduce((total, current) => {
                 return total + current;
@@ -209,8 +239,8 @@ export default {
 
         loadCourseData: async function () {
             const response = await Communication.webservice(
-              'overview',
-              { courseid: this.$store.getters.getCourseid }
+                'overview',
+                {courseid: this.$store.getters.getCourseid}
             );
             if (response.success) {
                 response.data = JSON.parse(response.data)
@@ -223,18 +253,13 @@ export default {
                 this.total = this.getTotalActivites()
             } else {
                 if (response.data) {
-                  console.log('Faulty response of webservice /overview/', response.data);
+                    console.log('Faulty response of webservice /overview/', response.data);
                 } else {
-                  console.log('No connection to webservice /overview/');
+                    console.log('No connection to webservice /overview/');
                 }
             }
 
-            const res = await Communication.webservice(
-            'getUserUnderstanding',
-             { course: this.$store.getters.getCourseid }
-            );
-
-            const completionData = JSON.parse(res.data)
+            const completionData = this.$store.state.learnermodel.userUnderstanding;
             for (let key in completionData) {
                 let activityid = completionData[key]['activityid'];
                 this.courseData[activityid]['completion'] = Number(completionData[key]['completed']);
@@ -247,8 +272,12 @@ export default {
 
 <style lang="scss" scoped>
 @import "../../scss/variables.scss";
+@import "../../scss/scrollbar.scss";
 
 .subject-progress {
+    overflow-y: auto;
+    overflow-x: hidden;
+
     &__popover {
         border: none;
         padding: 0;
@@ -261,70 +290,70 @@ export default {
     opacity: 0.8;
 }
 
-    .completion-rect {
-        stroke-width: 3px;
-        stroke: white;
-        width: 20px;
-        height: 18px;
-        display: inline-block;
-        opacity: 0.8;
-        margin-right: 1px;
+.completion-rect {
+    stroke-width: 3px;
+    stroke: white;
+    width: 20px;
+    height: 18px;
+    display: inline-block;
+    opacity: 0.8;
+    margin-right: 1px;
+}
+
+.rect-sm {
+    width: 12px;
+    height: 12px;
+}
+
+.rect--grey {
+    background-color: $light-grey;
+}
+
+.rect--ok {
+    background-color: $blue-middle;
+}
+
+.rect--strong {
+    background-color: $blue-dark;
+}
+
+.rect--weak {
+    background-color: $blue-weak;
+}
+
+.completion-rect:hover {
+    stroke-width: 3px;
+    stroke: white;
+    opacity: 1;
+}
+
+.progressbar {
+    width: 100%;
+    height: 40px;
+}
+
+.section-names {
+    white-space: nowrap;
+    overflow: hidden !important;
+    text-overflow: ellipsis;
+}
+
+.section-selection {
+    cursor: pointer;
+    margin: 2px;
+
+    &:hover {
+        text-decoration: underline;
+        outline: 2px solid $blue-default;
+        outline-offset: 2px;
     }
 
-    .rect-sm {
-        width: 12px;
-        height: 12px;
+    &--current {
+        text-decoration: underline;
+        outline: 2px solid $blue-default;
+        outline-offset: 2px;
     }
-
-    .rect--grey {
-        background-color: $light-grey;
-    }
-
-    .rect--ok {
-        background-color: $blue-middle;
-    }
-
-    .rect--strong {
-        background-color: $blue-dark;
-    }
-
-    .rect--weak {
-        background-color: $blue-weak;
-    }
-
-    .completion-rect:hover {
-        stroke-width: 3px;
-        stroke: white;
-        opacity: 1;
-    }
-
-    .progressbar {
-        width: 100%;
-        height: 40px;
-    }
-
-    .section-names {
-        white-space: nowrap;
-        overflow: hidden !important;
-        text-overflow: ellipsis;
-    }
-
-    .section-selection {
-        cursor: pointer;
-        margin: 2px;
-
-        &:hover {
-            text-decoration: underline;
-            outline: 2px solid $blue-default;
-            outline-offset: 2px;
-        }
-
-        &--current {
-            text-decoration: underline;
-            outline: 2px solid $blue-default;
-            outline-offset: 2px;
-        }
-    }
+}
 
 .button {
     border: none;
@@ -335,7 +364,8 @@ export default {
 .container {
     margin-top: 10px;
 }
+
 .my-popover-content {
-    display:none;
+    display: none;
 }
 </style>

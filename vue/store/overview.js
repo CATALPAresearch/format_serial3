@@ -1,9 +1,8 @@
-import {ajax} from './store';
 import {groupBy} from "../scripts/util";
+import Communication from "../scripts/communication";
 
 
 export default {
-
 	namespaced: true,
 
 	state: {
@@ -30,13 +29,13 @@ export default {
 	},
 
 	getters: {
-		getSections: function(state){
+		getSections: function (state) {
 			return groupBy(state.courseData, 'section');
 		},
-		getActivities: function(state){
+		getActivities: function (state) {
 			return groupBy(state.courseData, 'type');
 		},
-		getCurrentActivities: function(state) {
+		getCurrentActivities: function (state) {
 			if (state.currentSection === -1) {
 				return state.getActivities;
 			} else {
@@ -44,39 +43,33 @@ export default {
 			}
 		},
 		getUrlById: (state) => (id) => {
-			const bla = Object.values(state.courseData).find(object => object.id === id);
-			return bla.url;
+			const activity = Object.values(state.courseData).find(object => object.id === id);
+			return activity.url;
 		},
-		getTotalNumberOfActivities: function(state) {
+		getTotalNumberOfActivities: function (state) {
 			return Object.keys(state.courseData).length;
-		}
+		},
 	},
 
 	actions: {
-		async updateRating({commit, rootState}, newVal) {
-			try {
-				await ajax("format_ladtopics_setUserUnderstanding", {
-					course: Number(rootState.courseid),
-					activityid: this.activity.id,
-					rating: newVal,
-				});
+		async updateUnderstanding({commit, rootState}, newVal) {
+			const response = await Communication.webservice(
+				'set_user_understanding',
+				{
+					'course': Number(rootState.courseid),
+					'activityid': this.activity.id,
+					'rating': newVal,
+				}
+			);
+			if (response.success) {
 				commit('updateActivity', newVal);
-			} catch (error) {
-				console.error(error);
+			} else {
+				if (response.data) {
+					console.log('Faulty response of webservice /logger/', response.data);
+				} else {
+					console.log('No connection to webservice /logger/');
+				}
 			}
-		},
-
-		async toggleItem({ commit }, task) {
-			const completed = 1 - task.completed;
-			const updatedTask = { ...task, completed: completed };
-
-			await ajax('format_ladtopics_toggleTodoItem', {
-				id: task.id,
-				duedate: task.duedate,
-				completed:  completed
-			});
-
-			commit('updateItem', updatedTask);
 		},
 	},
 };

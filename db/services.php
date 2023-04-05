@@ -315,4 +315,22 @@ $functions = [
 		'ajax' 				=> true,
 		'loginrequired' 	=> true
 	],
+	'format_ladtopics_get_missed_activities' => [
+		'classname' 		=> 'format_ladtopics_external',
+		'methodname' 		=> 'get_missed_activities',
+		'classpath' 		=> 'course/format/ladtopics/api.php',
+		'description' 		=> 'Get the users learner goal.',
+		'type' 				=> 'read',
+		'ajax' 				=> true,
+		'loginrequired' 	=> true
+	],
+	'format_ladtopics_get_forum_posts' => [
+		'classname' 		=> 'format_ladtopics_external',
+		'methodname' 		=> 'get_forum_posts',
+		'classpath' 		=> 'course/format/ladtopics/api.php',
+		'description' 		=> 'Get the users learner goal.',
+		'type' 				=> 'read',
+		'ajax' 				=> true,
+		'loginrequired' 	=> true
+	],
 ];

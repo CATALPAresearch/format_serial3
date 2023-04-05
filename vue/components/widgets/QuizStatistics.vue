@@ -1,6 +1,6 @@
 <template>
     <div class="position-relative h-100 d-flex flex-column">
-        <widget-heading icon="fa-bar-chart" info-content="info" title="Ergebnisse"></widget-heading>
+        <widget-heading icon="fa-bar-chart" :info-content="info" title="Ergebnisse"></widget-heading>
         <div class="row">
             <div class="form-group col-6 mb-0 pr-1">
                 <select
@@ -64,11 +64,12 @@ export default {
             assignments: [],
             data: [],
             width: 500,
-            height: 200,
+            height: 210,
             margin: {top: 10, right: 30, bottom: 25, left: 80},
             xLabel: 'Assignments',
             yLabel: 'Result',
             showAverage: false,
+            info: 'Dieses Widget zeigt deine Quiz-Ergebnisse in einem Balkendiagramm an. Du kannst optional auch deine Ziele mit dem Klassendurchschnitt vergleichen. Dies ist hilfreich, um deine Leistung in Bezug auf die Klassendurchschnittswerte zu bewerten und herauszufinden, wie du im Vergleich zu anderen Lernenden abschneidest. Auf diese Weise kannst du deine Stärken und Schwächen identifizieren und gezielt an deinen Schwächen arbeiten, um deine Ziele zu erreichen. Um das Balkendiagramm zu lesen, beachte bitte die Achsenbeschriftungen. Die vertikale Achse zeigt die Quiz-Kategorien an, während die horizontale Achse die Anzahl der Punkte angibt.',
         }
     },
 
@@ -231,6 +232,38 @@ export default {
                 .attr("transform", `translate(0, ${yRange[0]})`)
                 .call(xAxis);
 
+            // var Tooltip = d3.select(this.$refs.chart)
+            //     .append("div")
+            //     .style("opacity", 0)
+            //     .attr("class", "tooltip")
+            //     .style("background-color", "white")
+            //     .style("border", "solid")
+            //     .style("border-width", "2px")
+            //     .style("border-radius", "5px")
+            //     .style("padding", "5px")
+            //
+            // // Three function that change the tooltip when user hover / move / leave a cell
+            // var mouseover = function(d) {
+            //     Tooltip
+            //         .style("opacity", 1)
+            //     d3.select(this)
+            //         .style("stroke", "black")
+            //         .style("opacity", 1)
+            // }
+            // var mousemove = function(d) {
+            //     Tooltip
+            //         .html("The exact value of<br>this cell is: " + d.value)
+            //         .style("left", (d3.pointer(this)[0]+70) + "px")
+            //         .style("top", (d3.pointer(this)[1]) + "px")
+            // }
+            // var mouseleave = function(d) {
+            //     Tooltip
+            //         .style("opacity", 0)
+            //     d3.select(this)
+            //         .style("stroke", "none")
+            //         .style("opacity", 0.8)
+            // }
+
             if (this.showAverage) {
                 // add bars for user grades
                 svg.selectAll(".user-bar")
@@ -242,14 +275,17 @@ export default {
                     .attr("y", (d) => yScale(d.category))
                     .attr("width", (d) => xScale(d.value) - xRange[0])
                     .attr("height", yScale.bandwidth() / 2 - 1)
-                    .each(function(d) {
-                            svg.append("text")
-                                .attr("class", "value-text")
-                                .attr("x", xScale(d.value) - 50)
-                                .attr("y", yScale(d.category) + yScale.bandwidth() / 3)
-                                .text(`${Math.trunc(d.user_grade)} / ${Math.trunc(d.max_grade)}`)
-                                .style("font-size", "12px");
-                    });
+                    .each(function (d) {
+                        svg.append("text")
+                            .attr("class", "value-text")
+                            .attr("x", xScale(d.value) - 50)
+                            .attr("y", yScale(d.category) + yScale.bandwidth() / 3)
+                            .text(`${Math.trunc(d.user_grade)} / ${Math.trunc(d.max_grade)}`)
+                            .style("font-size", "12px");
+                    })
+                // .on("mouseover", mouseover)
+                // .on("mousemove", mousemove)
+                // .on("mouseleave", mouseleave)
 
                 // add bars for average grades
                 svg.selectAll(".avg-bar")
@@ -268,7 +304,10 @@ export default {
                             .attr("y", yScale(d.category) + yScale.bandwidth() * 0.85)
                             .text(`${Math.trunc(d.avg_grade)} / ${Math.trunc(d.max_grade)}`)
                             .style("font-size", "12px");
-                    });
+                    })
+                // .on("mouseover", mouseover)
+                // .on("mousemove", mousemove)
+                // .on("mouseleave", mouseleave)
             } else {
                 svg.selectAll(".user-bar")
                     .data(this.data)
@@ -286,7 +325,10 @@ export default {
                             .attr("y", yScale(d.category) + yScale.bandwidth() / 1.7)
                             .text(`${Math.trunc(d.user_grade)} / ${Math.trunc(d.max_grade)}`)
                             .style("font-size", "12px");
-                    });
+                    })
+                // .on("mouseover", mouseover)
+                // .on("mousemove", mousemove)
+                // .on("mouseleave", mouseleave)
             }
         },
     }
@@ -295,7 +337,6 @@ export default {
 
 <style lang="scss">
 @import "../../scss/variables.scss";
-@import "../../scss/scrollbar.scss";
 
 .bar-chart {
     overflow-y: auto;
@@ -320,18 +361,6 @@ export default {
 
 .user-bar {
     fill: #4087BE;
-
-    //&--strong {
-    //    fill: $blue-dark;
-    //}
-    //
-    //&--ok {
-    //    fill: $blue-middle;
-    //}
-    //
-    //&--weak {
-    //    fill: $blue-weak;
-    //}
 }
 
 .avg-bar {

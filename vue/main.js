@@ -16,6 +16,7 @@ function init(courseid, fullPluginName, userid, isModerator, policyAccepted) {
 	store.commit("setUserid", userid);
 	store.commit("setPolicyAccepted", policyAccepted);
 	store.dispatch("loadComponentStrings");
+	store.dispatch("fetchLearnerGoal");
 	store.dispatch('learnermodel/loadUserUnderstanding');
 	store.dispatch('learnermodel/calculateLearnerModel');
 

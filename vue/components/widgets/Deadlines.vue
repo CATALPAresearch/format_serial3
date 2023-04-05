@@ -2,7 +2,7 @@
     <div class="position-relative h-100 d-flex flex-column">
         <widget-heading
             icon="fa-calendar-o"
-            info-content="Informationen über das Widget"
+            :info-content="info"
             title="Termine">
         </widget-heading>
         <div class="form-group mr-1">
@@ -64,6 +64,7 @@ export default {
             deadlines: [],
             assignments: [],
             currentFilterType: "Alle",
+            info: 'Dieses Widget hilft dir alle Termine und Abgaben im Überblick zu behalten. Du kannst die Ausgabe nach der Art der Termine filtern. Über einen Link kommst du direkt zu den zugehörigen Moodle-Seiten.'
         }
     },
 

@@ -1,42 +1,38 @@
 Note: *yFbv6wMRnUwgFYC
 
-LAD Topics is a *Learning Analytics Dashboard* for Moodle courses. The dashboard presents moodle activities on a timeline and enables the user to define milestones. Each milestone is associated with learning objectes, a deadline, certain course ressources and learning strategies to be applied.
+LAD Topics is a *Learning Analytics Dashboard* for Moodle courses. The dashboard consists of several widgets
+that can be selected and arranged to the users liking.
+
+**Implemented Widgets**
+
+- Progress Chart
+- Learner goals and Indicators
+- Recommendations
+- Task List
+- Deadlines
+- Quiz Statistics
 
 **Roadmap**
-- show milestones at the ressource pages (e.g. in the forum)
-- add additional dashboards
 
-
-**Features**
-- visualize moodle activities on the timeline
-- enable the user to define milestones by defining a learning objective, necessary ressources, and apropriate learning strategies
+- Add the resource list
+- Add a time tracking tool and display
+- Add all menu bar functionality
 
 
 # Installation
+
 1. `git clone`  the repository to /your-moodle/course/format/
 2. Open the page https://<moodle>/admin/index.php?cache=1 and follow the install instructions for the plugin.
-3. Open a course of you choice and go to the *course settings* (watch out for the littel cog-icon). Set the 'course format' to 'LAD Topics'.
-
-# Usage
-
-**Limesurvey bindings**
-
-* Manuell in der Tabelle limesurvey_assigns die Kurs-ID sowie die ID der
-   LimeSurvey-Umfrage (z.B. https://umfrage.fernuni-hagen.de/v3/827287
-   => *827287*) einpflegen, um eine verpflichtende Umfrage vor der Kursnutzung zu realisieren. 
-   Was gibt man bei start and stop date an? 1597673805 (https://www.unixtimestamp.com/)
-* Damit Moodle den Abschluss einer Umfrage registrieren kann, muss in Limesurvey eine End-URL definiert werden. Unter XXX muss eine URL gemäß des folgenden Schemas eingefügt werden:
-   * `[moodlePfad]/course/format/ladtopics/survey.php?s={SID}&a={SAVEDID}`
-   * z.B. `http://aple.fernuni-hagen.de/course/format/ladtopics/survey.php?s={SID}&a={SAVEDID}`
-
-* Die Umfrage muss aktiv sein und nach einem Test müssen die
-   Cookies zurückgesetzt werden (sonst klappt es bei LimeSurvey mit den
-   Parametern nicht).
-
-
+3. Open a course of you choice and go to the *course settings* (watch out for the little cog-icon). Set the 'course
+   format' to 'LAD Topics'.
 
 
 # Development
+
+* run `npm run install` to install all dependencies
+
+**Using nodemon**
+* run `nodemon` in the vue folder
 
 **Using grunt**
 
@@ -53,31 +49,39 @@ https://docs.moodle.org/dev/Developer_Mode
 
 * vue.js, vuex
 * d3.js
-* crossfilter
-* dc.js
-* moment.js
+* vue-grid-layout library (https://jbaysolutions.github.io/vue-grid-layout/)
 
 **Getting started**
 
-api.php: In this file you'll find the SQL queries. All API get or post requests implement  webservices. The naming conventions are very strict. Take care to to follow the nameing schema for the functions. 
+api.php: In this file you'll find the SQL queries. All API get or post requests implement webservices. The naming
+conventions are very strict. Take care to to follow the nameing schema for the functions.
 
-db/services.php: Here your are defining the webservice by referencing the involved files (api.php and its containing classes and functions)
+db/services.php: Here your are defining the webservice by referencing the involved files (api.php and its containing
+classes and functions)
 
-version.php: Every time you are changing the webservice description in service.php you need to increment the version by 1 and update the plugin in moodle (See the *notifications* page in the administration panel)
+version.php: Every time you are changing the webservice description in service.php you need to increment the version by
+1 and update the plugin in moodle (See the *notifications* page in the administration panel)
 
 amd/scr: This is the folder where all custome javascript is located.
 
-lib: This the folder where all third party javascript is stored.
+/amd/app-lazy.min.js: This is the only script that is called by the HTML-DOM of the plugin. By using require.js all other
+files and dependencies are loaded on demand in this file and passed to the components underneath.
 
-/amd/ladtopics.js: This is the only script that is called by the HTML-DOM of the plugin. By using require.js all other files and dependencies are loaded on demand in this file and passed to the components (like the Timeline or the Assessment) underneath.
+/vue: This is the folder where all code for the Vue application is stored.
 
-amd/src/Assessment.js: This the major file where your assment dashboard has to be written. All necessray dependencies (d3, dc, vue) should be available there. The data from the server should be provided in the function call inside /amd/ladtopics.js, just below the Timeline call.
+/vue/js: This the folder where all third party javascript is stored.
+
+/vue/store: This folder contains all files related to the vuex store.
+
+/vue/components: This folder contains all components for the dashboard. In the 'widgets' folder all widgets-components
+are stored that are being called by 'App.vue'.
+
+/vue/scripts: This folder contains utility functions.
+
+/vue/data: This data contains data used in the dashboard stored as json. This data includes the adaptation-rules and 
+thresholds.
 
 A good sheet sheet: http://tech.solin.eu/doku.php?id=moodle:course_construction
-
-## Valerie
-Development:
-
 
 
 
@@ -85,3 +89,4 @@ Development:
 * Niels Seidel
 * Marc Burchart
 * Heike Karolyi
+* Valerie Meyer

@@ -102,6 +102,8 @@
                        COMMENT="Stores the learning goal of the user."/>
                 <FIELD NAME="motivation" TYPE="text" NOTNULL="false" SEQUENCE="false"
                        COMMENT="Stores the personal motivation of the user."/>
+                <FIELD NAME="motivation" TYPE="text" NOTNULL="false" SEQUENCE="false"
+                       COMMENT="Stores the personal motivation of the user."/>
             </FIELDS>
             <KEYS>
                 <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

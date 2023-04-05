@@ -1,51 +1,53 @@
 <template>
     <div>
-        <p class="mb-1">Rate your understanding of the material:</p>
+        <p class="mb-1">Bewerte dein Verständnis von dieser Aktivität:</p>
         <div class="form-check mb-2 col-12 pr-0 ml-1">
-            <input class="form-check-input" type="radio" name="userUnderstanding" id="none" value="0" v-model="rating" />
+            <input id="none" v-model="rating" class="form-check-input" name="userUnderstanding" type="radio" value="0"/>
             <label class="form-check-label" for="none">Nicht abgeschlossen</label>
         </div>
-        <div class="row ml-1">
-            <div class="form-check mb-2 col-5 pr-0">
-                <input class="form-check-input" type="radio" name="userUnderstanding" id="weak" value="1" v-model="rating" />
-                <label class="form-check-label" for="weak">Schlecht</label>
+        <div class="ml-1">
+            <div class="form-check mb-2 pr-0">
+                <input id="weak" v-model="rating" class="form-check-input" name="userUnderstanding" type="radio"
+                       value="1"/>
+                <label class="form-check-label" for="weak">Ungenügend verstanden</label>
             </div>
-            <div class="form-check mb-2 col-3 pr-0">
-                <input class="form-check-input" type="radio" name="userUnderstanding" id="ok" value="2" v-model="rating" />
-                <label class="form-check-label" for="ok">Ok</label>
+            <div class="form-check mb-2 pr-0">
+                <input id="ok" v-model="rating" class="form-check-input" name="userUnderstanding" type="radio"
+                       value="2"/>
+                <label class="form-check-label" for="ok">Größtenteils verstanden</label>
             </div>
-            <div class="form-check mb-2 col-4 pr-0">
-                <input class="form-check-input" type="radio" name="userUnderstanding" id="strong" value="3" v-model="rating" />
-                <label class="form-check-label" for="strong">Gut</label>
+            <div class="form-check mb-2 pr-0">
+                <input id="strong" v-model="rating" class="form-check-input" name="userUnderstanding" type="radio"
+                       value="3"/>
+                <label class="form-check-label" for="strong">Alles verstanden</label>
             </div>
-        </div>
-        <div class="py-1">
-            <button class="btn btn-outline-dark btn-sm" @click="addToTaskList">Add to task list</button>
         </div>
         <div class="py-1">
             <a href="#">
-                Ask for help
-                <i class="fa fa-arrow-right" aria-hidden="true"></i>
+                Nach Hilfe fragen
+                <i aria-hidden="true" class="fa fa-arrow-right"></i>
             </a>
         </div>
         <div class="py-1">
             <a :href="activity.url">
                 Gehe zu {{ activity.name }}
-                <i class="fa fa-arrow-right" aria-hidden="true"></i>
+                <i aria-hidden="true" class="fa fa-arrow-right"></i>
             </a>
+        </div>
+        <div class="py-1">
+            <button class="btn btn-outline-dark btn-sm" @click="addToTaskList">Add to task list</button>
         </div>
     </div>
 </template>
 
 <script>
-import {ajax} from '../store/store';
-
+import Communication from "../scripts/communication";
 
 export default {
     name: "PopoverContent",
 
     props: {
-        activity: { type: Object, required: true},
+        activity: {type: Object, required: true},
     },
 
     data() {
@@ -61,17 +63,27 @@ export default {
     },
 
     methods: {
-        async updateUnderstanding (newVal) {
-            await ajax("format_ladtopics_setUserUnderstanding", {
-                course: 4,
-                activityid: this.activity.id,
-                rating: newVal,
-                completion: this.activity.id === 0 ? 0 : 1
-            })
-            this.$emit('understanding-updated', newVal, this.activity.id)
+        async updateUnderstanding(newVal) {
+            const response = await Communication.webservice(
+                'set_user_understanding',
+                {
+                    'course': 4,
+                    'activityid': this.activity.id,
+                    'rating': newVal,
+                }
+            );
+            if (response.success) {
+                this.$emit('understanding-updated', newVal, this.activity.id)
+            } else {
+                if (response.data) {
+                    console.log('Faulty response of webservice /logger/', response.data);
+                } else {
+                    console.log('No connection to webservice /logger/');
+                }
+            }
         },
 
-        addToTaskList () {
+        addToTaskList() {
             this.$emit('add-to-task-list', {
                 course: 4,
                 task: this.activity.name,

@@ -61,4 +61,5 @@ $string['dashboardTitle'] = 'Learner Dashboard';
 $string['dashboardAddItem'] = 'Dashboarditem hinzufügen';
 
 $string['informationTitle'] = 'Informationen über das Learner Dashboard';
-$string['informationContent'] = 'Hier werden alle Hintergründe und Fragen zu dem Gebrauch des Learner Dashboards beantwortet';
+$string['informationContent'] = 'Hier werden alle Hintergründe und Fragen zu dem Gebrauch des Learner Dashboards beantwortet.';
+$string['linkContent'] = 'Hier werden alle relevanten Links und Emails angezeigt. Z.B., Übungsssystem, Studienberatung, Prüfungsamt, News Group.';

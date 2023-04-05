@@ -6,38 +6,43 @@
                 <div class="form-group d-flex align-items-center m-0">
                     <select v-if="editMode" id="addDashboardItems" class="form-control mr-2" @change="addItem($event)">
                         <option value="addNewItem">{{ strings.dashboardAddItem }}</option>
-                        <option v-for="(component, index) in filteredComponents" :key="index" :value="component.i">{{ component.name }}</option>
+                        <option v-for="(component, index) in filteredComponents" :key="index" :value="component.i">
+                            {{ component.name }}
+                        </option>
                     </select>
-                    <button v-if="editMode" class="btn btn-primary btn-edit" @click="saveDashboard">{{ strings.save }}</button>
+                    <button v-if="editMode" class="btn btn-primary btn-edit" @click="saveDashboard">{{
+                            strings.save
+                        }}
+                    </button>
                 </div>
                 <menu-bar @editmode="toggleEditMode"></menu-bar>
             </div>
         </div>
         <grid-layout
-            :layout="layout"
             :col-num="12"
-            :row-height="30"
             :is-draggable="draggable"
             :is-resizable="resizable"
-            :vertical-compact="true"
+            :layout="layout"
+            :row-height="30"
             :use-css-transforms="true"
+            :vertical-compact="true"
         >
             <grid-item
                 v-for="(item, index) in layout"
                 :key="index"
-                :static="item.static"
-                :x="item.x"
-                :y="item.y"
-                :w="item.w"
                 :h="item.h"
                 :i="item.i"
-                :is-resizable="resizable"
+                :static="item.static"
+                :w="item.w"
+                :x="item.x"
+                :y="item.y"
                 class="border p-3"
             >
-                <span v-if="editMode" class="remove" @click="removeItem(item.i)" title="Element aus Dashboard entfernen">
+                <span v-if="editMode & !item.fixed" class="remove" title="Element aus Dashboard entfernen"
+                      @click="removeItem(item.i)">
                      <i class="fa fa-close"></i>
                 </span>
-                <component v-if="item.isComponent" :is="item.c"></component>
+                <component :is="item.c"></component>
             </grid-item>
         </grid-layout>
     </div>
@@ -50,20 +55,30 @@ import IndicatorDisplay from "./components/widgets/IndicatorDisplay.vue";
 import MenuBar from "./components/MenuBar.vue";
 import QuizStatistics from "./components/widgets/QuizStatistics.vue";
 import ProgressChart from "./components/widgets/ProgressChart.vue";
-import AppTimeline from "./components/widgets/Timeline.vue";
+import Recommendations from "./components/widgets/Recommendations.vue";
 import TaskList from "./components/widgets/TaskList.vue";
 import AppMotivation from "./components/widgets/Motivation.vue";
-
-import { GridLayout, GridItem } from './js/vue-grid-layout.umd.min';
-import CircleChart from "./components/CircleChart.vue";
-
-import { mapState } from 'vuex';
+import {GridItem, GridLayout} from './js/vue-grid-layout.umd.min';
+import CircleChart from "./components/widgets/CircleChart.vue";
+import {mapState} from 'vuex';
 
 
 export default {
-    components: { GridLayout, GridItem, AppDeadlines, AppMotivation, AppTimeline, CircleChart, IndicatorDisplay, MenuBar, ProgressChart, TaskList, QuizStatistics },
+    components: {
+        GridLayout,
+        GridItem,
+        AppDeadlines,
+        AppMotivation,
+        CircleChart,
+        IndicatorDisplay,
+        MenuBar,
+        ProgressChart,
+        Recommendations,
+        TaskList,
+        QuizStatistics
+    },
 
-    data () {
+    data() {
         return {
             courseid: -1,
             context: {},
@@ -73,28 +88,150 @@ export default {
             index: 0,
             editMode: false,
             defaultLayout: [
-                {"x":0,"y":0,"w":6,"h":10,"i":"1", "name": 'Fortschrittbalken', c: 'ProgressChart', isComponent: true, resizable: true},
-                {"x":6,"y":0,"w":6,"h":10,"i":"7", "name": 'Quiz Statistics', c: 'QuizStatistics', isComponent: true, resizable: true},
-                {"x":0,"y":10,"w":3,"h":10,"i":"3", "name": 'Aufgabenliste', c: 'TaskList', isComponent: true, resizable: true},
-                {"x":3,"y":10,"w":3,"h":10,"i":"4", "name": 'Deadlines', c: 'AppDeadlines', isComponent: true, resizable: true},
-                {"x":6,"y":0,"w":6,"h":10,"i":"2", "name": 'Indikatoren', c: 'IndicatorDisplay', isComponent: true, resizable: true},
+                {
+                    "x": 0,
+                    "y": 0,
+                    "w": 6,
+                    "h": 10,
+                    "i": "1",
+                    "name": 'Fortschrittbalken',
+                    c: 'ProgressChart',
+                    resizable: true,
+                    fixed: true,
+                },
+                {
+                    "x": 6,
+                    "y": 0,
+                    "w": 6,
+                    "h": 10,
+                    "i": "7",
+                    "name": 'Quiz Statistics',
+                    c: 'QuizStatistics',
+                    resizable: true,
+                },
+                {
+                    "x": 0,
+                    "y": 10,
+                    "w": 3,
+                    "h": 10,
+                    "i": "3",
+                    "name": 'Aufgabenliste',
+                    c: 'TaskList',
+                    resizable: true
+                },
+                {
+                    "x": 3,
+                    "y": 10,
+                    "w": 3,
+                    "h": 10,
+                    "i": "4",
+                    "name": 'Deadlines',
+                    c: 'AppDeadlines',
+                    resizable: true
+                },
+                {
+                    "x": 6,
+                    "y": 0,
+                    "w": 6,
+                    "h": 10,
+                    "i": "2",
+                    "name": 'Indikatoren',
+                    c: 'IndicatorDisplay',
+                    resizable: true
+                },
             ],
             allComponents: [
-                {"x":0,"y":0,"w":6,"h":10,"i":"1", "name": 'Fortschrittbalken', c: 'ProgressChart', isComponent: true, resizable: true},
-                {"x":6,"y":0,"w":6,"h":10,"i":"2", "name": 'Indikatoren', c: 'IndicatorDisplay', isComponent: true, resizable: true},
-                {"x":0,"y":10,"w":3,"h":10,"i":"3", "name": 'Aufgabenliste', c: 'TaskList', isComponent: true, resizable: true},
-                {"x":3,"y":10,"w":3,"h":10,"i":"4", "name": 'Termine', c: 'AppDeadlines', isComponent: true, resizable: true},
-                {"x":0,"y":20,"w":3,"h":10,"i":"6", "name": 'Circle Chart', c: 'CircleChart', isComponent: true, resizable: true},
-                {"x":6,"y":10,"w":6,"h":10,"i":"7", "name": 'Bewertungen', c: 'QuizStatistics', isComponent: true, resizable: true},
-                {"x":6,"y":10,"w":6,"h":10,"i":"9", "name": 'Zeitleiste', c: 'AppTimeline', isComponent: true, resizable: true},
-                {"x":6,"y":10,"w":6,"h":10,"i":"10", "name": 'Motivation', c: 'AppMotivation', isComponent: true, resizable: true},
+                {
+                    "x": 0,
+                    "y": 0,
+                    "w": 6,
+                    "h": 10,
+                    "i": "1",
+                    "name": 'Fortschrittbalken',
+                    c: 'ProgressChart',
+                    resizable: true,
+                    fixed: true,
+                },
+                {
+                    "x": 6,
+                    "y": 0,
+                    "w": 6,
+                    "h": 10,
+                    "i": "2",
+                    "name": 'Indikatoren',
+                    c: 'IndicatorDisplay',
+                    resizable: true
+                },
+                {
+                    "x": 0,
+                    "y": 10,
+                    "w": 3,
+                    "h": 10,
+                    "i": "3",
+                    "name": 'Aufgabenliste',
+                    c: 'TaskList',
+                    resizable: true
+                },
+                {
+                    "x": 3,
+                    "y": 10,
+                    "w": 3,
+                    "h": 10,
+                    "i": "4",
+                    "name": 'Termine',
+                    c: 'AppDeadlines',
+                    resizable: true
+                },
+                {
+                    "x": 0,
+                    "y": 20,
+                    "w": 3,
+                    "h": 10,
+                    "i": "6",
+                    "name": 'Lernzeit-Tracker',
+                    c: 'CircleChart',
+                    resizable: true
+                },
+                {
+                    "x": 6,
+                    "y": 10,
+                    "w": 6,
+                    "h": 10,
+                    "i": "7",
+                    "name": 'Bewertungen',
+                    c: 'QuizStatistics',
+                    resizable: true
+                },
+                {
+                    "x": 6,
+                    "y": 10,
+                    "w": 6,
+                    "h": 10,
+                    "i": "9",
+                    "name": 'Recommendations',
+                    c: 'Recommendations',
+                    resizable: true
+                },
+                {
+                    "x": 6,
+                    "y": 10,
+                    "w": 6,
+                    "h": 10,
+                    "i": "10",
+                    "name": 'Motivation',
+                    c: 'AppMotivation',
+                    resizable: true
+                },
             ],
         };
     },
 
-    mounted: function () {
+    created () {
         this.loadDashboard();
+        // this.$store.dispatch('overview/loadUserUnderstanding');
+    },
 
+    mounted: function () {
         this.courseid = this.$store.state.courseid;
 
         this.context.courseId = this.$store.state.courseid; // TODO
@@ -107,11 +244,11 @@ export default {
     },
 
     computed: {
-        filteredComponents () {
-            return this.allComponents.filter(({ i: id1 }) => !this.layout.some(({ i: id2 }) => id2 === id1));
+        filteredComponents() {
+            return this.allComponents.filter(({i: id1}) => !this.layout.some(({i: id2}) => id2 === id1));
         },
 
-        layout () {
+        layout() {
             return this.dashboardSettings && this.dashboardSettings.length > 0 ? this.dashboardSettings : this.defaultLayout;
         },
 
@@ -128,21 +265,21 @@ export default {
             this.$el.querySelector('#addDashboardItems').selectedIndex = 0
         },
 
-        removeItem (val) {
+        removeItem(val) {
             const index = this.layout.map(item => item.i).indexOf(val);
             this.layout.splice(index, 1);
         },
 
-        toggleEditMode () {
+        toggleEditMode() {
             this.editMode = !this.editMode;
             this.draggable = this.resizable = this.editMode;
         },
 
         loadDashboard: function () {
-            this.$store.dispatch('dashboardSettings/fetchDashboardSettings');
+            this.$store.dispatch('dashboardSettings/getDashboardSettings');
         },
 
-        saveDashboard () {
+        saveDashboard() {
             const settings = JSON.stringify(this.layout)
             this.$store.dispatch('dashboardSettings/saveDashboardSettings', settings)
             this.toggleEditMode()
@@ -170,12 +307,15 @@ export default {
     height: 100%;
     width: 100%;
 }
+
 .vue-grid-item .minMax {
     font-size: 12px;
 }
+
 .vue-grid-item .add {
     cursor: pointer;
 }
+
 .vue-draggable-handle {
     position: absolute;
     width: 20px;
@@ -206,7 +346,7 @@ export default {
     height: 35px;
 }
 
-select.form-control{
-    appearance: menulist-button!important;
+select.form-control {
+    appearance: menulist-button !important;
 }
 </style>
