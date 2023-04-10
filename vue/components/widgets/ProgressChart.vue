@@ -79,12 +79,13 @@ import WidgetHeading from "../WidgetHeading.vue";
 import Vue from 'vue';
 import {mapActions, mapGetters, mapState} from 'vuex';
 import {groupBy} from "../../scripts/util";
+import PopoverContent from "../PopoverContent.vue";
 
 
 export default {
     name: "ProgressChart",
 
-    components: {WidgetHeading},
+    components: {PopoverContent, WidgetHeading},
 
     directives: {
         popoverHtml: {
