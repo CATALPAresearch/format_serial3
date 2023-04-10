@@ -165,9 +165,6 @@ export default {
         socialActivity: {
             deep: true,
             handler() {
-                console.log("Hier")
-                console.log(this.socialActivity)
-                console.log(this.thresholds)
                 this.data.find((d) => d.title === 'Soziale Interaktion').measures = [this.socialActivity]
                 this.drawChart(this.containerWidth);
             },
@@ -200,7 +197,6 @@ export default {
         thresholds: {
             deep: true,
             handler() {
-                console.log("ranges: ", this.ranges)
                 this.ranges = this.thresholds;
                 this.resizeHandler();
             },
