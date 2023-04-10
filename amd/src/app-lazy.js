@@ -19216,9 +19216,6 @@ __webpack_require__.r(__webpack_exports__);
     socialActivity: {
       deep: true,
       handler() {
-        console.log("Hier");
-        console.log(this.socialActivity);
-        console.log(this.thresholds);
         this.data.find(d => d.title === 'Soziale Interaktion').measures = [this.socialActivity];
         this.drawChart(this.containerWidth);
       }
@@ -19250,7 +19247,6 @@ __webpack_require__.r(__webpack_exports__);
     thresholds: {
       deep: true,
       handler() {
-        console.log("ranges: ", this.ranges);
         this.ranges = this.thresholds;
         this.resizeHandler();
       }
@@ -19376,6 +19372,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "ProgressChart",
   components: {
+    PopoverContent: _PopoverContent_vue__WEBPACK_IMPORTED_MODULE_3__["default"],
     WidgetHeading: _WidgetHeading_vue__WEBPACK_IMPORTED_MODULE_1__["default"]
   },
   directives: {
