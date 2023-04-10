@@ -151,8 +151,7 @@ export default {
             const response = await Communication.webservice(
                 'get_quizzes',
                 {
-                    userid: 3,
-                    course: 4,
+                    course: this.$store.state.courseid,
                 }
             );
 
@@ -179,7 +178,6 @@ export default {
             const response = await Communication.webservice(
                 'get_assignments',
                 {
-                    userid: this.$store.state.userid,
                     course: this.$store.state.courseid,
                 }
             );
@@ -232,38 +230,6 @@ export default {
                 .attr("transform", `translate(0, ${yRange[0]})`)
                 .call(xAxis);
 
-            // var Tooltip = d3.select(this.$refs.chart)
-            //     .append("div")
-            //     .style("opacity", 0)
-            //     .attr("class", "tooltip")
-            //     .style("background-color", "white")
-            //     .style("border", "solid")
-            //     .style("border-width", "2px")
-            //     .style("border-radius", "5px")
-            //     .style("padding", "5px")
-            //
-            // // Three function that change the tooltip when user hover / move / leave a cell
-            // var mouseover = function(d) {
-            //     Tooltip
-            //         .style("opacity", 1)
-            //     d3.select(this)
-            //         .style("stroke", "black")
-            //         .style("opacity", 1)
-            // }
-            // var mousemove = function(d) {
-            //     Tooltip
-            //         .html("The exact value of<br>this cell is: " + d.value)
-            //         .style("left", (d3.pointer(this)[0]+70) + "px")
-            //         .style("top", (d3.pointer(this)[1]) + "px")
-            // }
-            // var mouseleave = function(d) {
-            //     Tooltip
-            //         .style("opacity", 0)
-            //     d3.select(this)
-            //         .style("stroke", "none")
-            //         .style("opacity", 0.8)
-            // }
-
             if (this.showAverage) {
                 // add bars for user grades
                 svg.selectAll(".user-bar")
@@ -283,9 +249,6 @@ export default {
                             .text(`${Math.trunc(d.user_grade)} / ${Math.trunc(d.max_grade)}`)
                             .style("font-size", "12px");
                     })
-                // .on("mouseover", mouseover)
-                // .on("mousemove", mousemove)
-                // .on("mouseleave", mouseleave)
 
                 // add bars for average grades
                 svg.selectAll(".avg-bar")
@@ -305,9 +268,6 @@ export default {
                             .text(`${Math.trunc(d.avg_grade)} / ${Math.trunc(d.max_grade)}`)
                             .style("font-size", "12px");
                     })
-                // .on("mouseover", mouseover)
-                // .on("mousemove", mousemove)
-                // .on("mouseleave", mouseleave)
             } else {
                 svg.selectAll(".user-bar")
                     .data(this.data)
@@ -326,9 +286,6 @@ export default {
                             .text(`${Math.trunc(d.user_grade)} / ${Math.trunc(d.max_grade)}`)
                             .style("font-size", "12px");
                     })
-                // .on("mouseover", mouseover)
-                // .on("mousemove", mousemove)
-                // .on("mouseleave", mouseleave)
             }
         },
     }

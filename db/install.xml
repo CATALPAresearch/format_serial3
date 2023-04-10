@@ -100,9 +100,7 @@
                 <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
                 <FIELD NAME="goal" TYPE="text" NOTNULL="false" SEQUENCE="false"
                        COMMENT="Stores the learning goal of the user."/>
-                <FIELD NAME="motivation" TYPE="text" NOTNULL="false" SEQUENCE="false"
-                       COMMENT="Stores the personal motivation of the user."/>
-                <FIELD NAME="motivation" TYPE="text" NOTNULL="false" SEQUENCE="false"
+                <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"
                        COMMENT="Stores the personal motivation of the user."/>
             </FIELDS>
             <KEYS>

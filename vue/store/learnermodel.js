@@ -5,20 +5,50 @@ export default {
 
 	state: {
 		userUnderstanding: null,
-		mastery: 0,
+		proficiency: 0,
 		userGrade: 0,
 		totalGrade: 0,
 		progressUnderstanding: 0,
 		timeManagement: 0,
 		socialActivity: 0,
+		thresholds: {
+			"master": {
+				"grades": [],
+				"proficiency": [70, 85, 100],
+				"progress": [75, 90, 100],
+				"timeManagement": [70, 85, 100],
+				"socialActivity": []
+			},
+			"passing": {
+				"grades": [],
+				"proficiency": [40, 70, 100],
+				"progress": [40, 70, 100],
+				"timeManagement": [40, 70, 100],
+				"socialActivity": []
+			},
+			"overview": {
+				"grades": [],
+				"proficiency": [20, 40, 100],
+				"progress": [40, 70, 100],
+				"timeManagement": [20, 40, 100],
+				"socialActivity": []
+			},
+			"practice": {
+				"grades": [],
+				"proficiency": [30, 60, 100],
+				"progress": [30, 60, 100],
+				"timeManagement": [50, 75, 100],
+				"socialActivity": []
+			}
+		}
 	},
 
 	mutations: {
 		setUserUnderstanding(state, data) {
 			state.userUnderstanding = data;
 		},
-		setMastery(state, data) {
-			state.mastery = data;
+		setProficiency(state, data) {
+			state.proficiency = data;
 		},
 		setProgressUnderstanding(state, data) {
 			state.progressUnderstanding = data;
@@ -34,6 +64,42 @@ export default {
 		},
 		setTotalGrade(state, data) {
 			state.totalGrade = data;
+		},
+		setSocialActivityThresholds(state, thresholds) {
+			console.log(thresholds);
+			state.thresholds = {
+				...state.thresholds,
+				...{
+					master: {
+						...state.thresholds.master,
+						...{ socialActivity: thresholds },
+					},
+					passing: {
+						...state.thresholds.passing,
+						...{ socialActivity: [
+								thresholds[0] / 2,
+								thresholds[1] / 2,
+								thresholds[2]
+							] },
+					},
+					overview: {
+						...state.thresholds.overview,
+						...{ socialActivity: [
+								thresholds[0] / 2,
+								thresholds[1] / 2,
+								thresholds[2]
+							] },
+					},
+					practice: {
+						...state.thresholds.practice,
+						...{ socialActivity: [
+								thresholds[0] / 2,
+								thresholds[1] / 2,
+								thresholds[2]
+							] },
+					},
+				},
+			};
 		},
 	},
 
@@ -69,7 +135,8 @@ export default {
 			await context.dispatch('calculateSocialActivity');
 			await context.dispatch('calculateGrades');
 			await context.dispatch('calculateProgress');
-			await context.dispatch('calculateMastery');
+			await context.dispatch('calculateProficiency');
+			// 	@TODO: add self-assessment score
 		},
 
 		/**
@@ -77,10 +144,10 @@ export default {
 		 * Count of users understanding: 1 for weak, 2 for ok, 3 for strong divided by optimal number of points one
 		 * can achieve in the topics covered so far
 		 */
-		async calculateMastery(context) {
+		async calculateProficiency(context) {
 			const total = Object.keys(context.state.userUnderstanding).length * 3;
 			const user = Object.values(context.state.userUnderstanding).reduce((acc, cur) => acc + Number(cur.rating), 0);
-			context.commit('setMastery', user / total * 100);
+			context.commit('setProficiency', user / total * 100);
 		},
 
 		/**
@@ -117,16 +184,15 @@ export default {
 			}
 		},
 
-
 		/**
 		 * Calculates social interaction score based on the number of forum posts
 		 *
-		 * @TODO: Include number of shared resources
+		 * @TODO: Include number of shared resources once the resource list is implemented
 		 */
 		async calculateSocialActivity(context) {
 			let response = await Communication.webservice(
 				'get_forum_posts',
-				{course: context.rootGetters.getCourseid}
+				{ course: context.rootGetters.getCourseid }
 			);
 
 			if (response.success) {
@@ -135,16 +201,20 @@ export default {
 				const numberOfAvgPosts = response[0].avg_posts_per_person;
 				const minPosts = response[0].min_user_posts;
 				const maxPosts = response[0].max_user_posts;
-				const userScore = ((numberOfUserPosts - numberOfAvgPosts) / numberOfAvgPosts) * 100;
 
-				console.log("user percentage: ", userScore);
+				const thresholds = [
+					minPosts,
+					numberOfAvgPosts,
+					maxPosts
+				];
 
-				context.commit('setSocialActivity', userScore);
+				context.commit('setSocialActivityThresholds', thresholds);
+				context.commit('setSocialActivity', numberOfUserPosts);
 			} else {
 				if (response.data) {
-					console.log('Faulty response of webservice /get_missed_activities/', response.data);
+					console.log('Faulty response of webservice /logger/', response.data);
 				} else {
-					console.log('No connection to webservice /get_missed_activities/');
+					console.log('No connection to webservice /logger/');
 				}
 			}
 		},
@@ -157,8 +227,7 @@ export default {
 			let quizzes = await Communication.webservice(
 				'get_quizzes',
 				{
-					course: 4,
-					userid: 3
+					course: context.rootGetters.getCourseid,
 				}
 			);
 
@@ -175,8 +244,7 @@ export default {
 			let assignments = await Communication.webservice(
 				'get_assignments',
 				{
-					course: 4,
-					userid: 3
+					course: context.rootGetters.getCourseid,
 				}
 			);
 

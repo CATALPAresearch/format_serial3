@@ -58,7 +58,9 @@ export default {
 
 			if (response.success) {
 				response.data = JSON.parse(response.data);
-				context.commit('setDashboardSettings', JSON.parse(response.data.settings));
+				if (response.data) {
+					context.commit('setDashboardSettings', JSON.parse(response.data.settings));
+				}
 			} else {
 				if (response.data) {
 					console.log('No dashboard settings stored');

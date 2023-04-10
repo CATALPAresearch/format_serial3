@@ -5,7 +5,7 @@
             <div class="d-flex justify-content-end align-items-center">
                 <div class="form-group d-flex align-items-center m-0">
                     <select v-if="editMode" id="addDashboardItems" class="form-control mr-2" @change="addItem($event)">
-                        <option value="addNewItem">{{ strings.dashboardAddItem }}</option>
+                        <option style="display:none">{{ strings.dashboardAddItem }}</option>
                         <option v-for="(component, index) in filteredComponents" :key="index" :value="component.i">
                             {{ component.name }}
                         </option>
@@ -19,11 +19,11 @@
             </div>
         </div>
         <grid-layout
-            :col-num="12"
+            :col-num="14"
             :is-draggable="draggable"
             :is-resizable="resizable"
             :layout="layout"
-            :row-height="30"
+            :row-height="25"
             :use-css-transforms="true"
             :vertical-compact="true"
         >
@@ -57,7 +57,6 @@ import QuizStatistics from "./components/widgets/QuizStatistics.vue";
 import ProgressChart from "./components/widgets/ProgressChart.vue";
 import Recommendations from "./components/widgets/Recommendations.vue";
 import TaskList from "./components/widgets/TaskList.vue";
-import AppMotivation from "./components/widgets/Motivation.vue";
 import {GridItem, GridLayout} from './js/vue-grid-layout.umd.min';
 import CircleChart from "./components/widgets/CircleChart.vue";
 import {mapState} from 'vuex';
@@ -68,7 +67,6 @@ export default {
         GridLayout,
         GridItem,
         AppDeadlines,
-        AppMotivation,
         CircleChart,
         IndicatorDisplay,
         MenuBar,
@@ -91,80 +89,82 @@ export default {
                 {
                     "x": 0,
                     "y": 0,
-                    "w": 6,
-                    "h": 10,
+                    "w": 8,
+                    "h": 12,
                     "i": "1",
-                    "name": 'Fortschrittbalken',
+                    "name": 'Überblick',
                     c: 'ProgressChart',
                     resizable: true,
                     fixed: true,
                 },
                 {
-                    "x": 6,
+                    "x": 8,
                     "y": 0,
                     "w": 6,
-                    "h": 10,
-                    "i": "7",
-                    "name": 'Quiz Statistics',
-                    c: 'QuizStatistics',
+                    "h": 14,
+                    "i": "2",
+                    "name": 'Lernziele',
+                    c: 'IndicatorDisplay',
                     resizable: true,
+                    fixed: true,
                 },
                 {
                     "x": 0,
-                    "y": 10,
-                    "w": 3,
-                    "h": 10,
+                    "y": 13,
+                    "w": 5,
+                    "h": 12,
                     "i": "3",
                     "name": 'Aufgabenliste',
                     c: 'TaskList',
                     resizable: true
                 },
                 {
-                    "x": 3,
-                    "y": 10,
+                    "x": 5,
+                    "y": 13,
                     "w": 3,
-                    "h": 10,
+                    "h": 12,
                     "i": "4",
-                    "name": 'Deadlines',
+                    "name": 'Termine',
                     c: 'AppDeadlines',
                     resizable: true
                 },
                 {
-                    "x": 6,
-                    "y": 0,
+                    "x": 8,
+                    "y": 13,
                     "w": 6,
                     "h": 10,
-                    "i": "2",
-                    "name": 'Indikatoren',
-                    c: 'IndicatorDisplay',
+                    "i": "9",
+                    "name": 'Empfehlungen',
+                    c: 'Recommendations',
                     resizable: true
                 },
+
             ],
             allComponents: [
                 {
                     "x": 0,
                     "y": 0,
-                    "w": 6,
-                    "h": 10,
+                    "w": 8,
+                    "h": 12,
                     "i": "1",
-                    "name": 'Fortschrittbalken',
+                    "name": 'Überblick',
                     c: 'ProgressChart',
                     resizable: true,
                     fixed: true,
                 },
                 {
-                    "x": 6,
+                    "x": 0,
                     "y": 0,
                     "w": 6,
-                    "h": 10,
+                    "h": 12,
                     "i": "2",
-                    "name": 'Indikatoren',
+                    "name": 'Lernziele',
                     c: 'IndicatorDisplay',
                     resizable: true
                 },
                 {
                     "x": 0,
-                    "y": 10,
+                    "y": 0,
                     "w": 3,
                     "h": 10,
                     "i": "3",
@@ -173,8 +173,8 @@ export default {
                     resizable: true
                 },
                 {
-                    "x": 3,
-                    "y": 10,
+                    "x": 0,
+                    "y": 0,
                     "w": 3,
                     "h": 10,
                     "i": "4",
@@ -184,42 +184,22 @@ export default {
                 },
                 {
                     "x": 0,
-                    "y": 20,
-                    "w": 3,
-                    "h": 10,
-                    "i": "6",
-                    "name": 'Lernzeit-Tracker',
-                    c: 'CircleChart',
-                    resizable: true
-                },
-                {
-                    "x": 6,
-                    "y": 10,
+                    "y": 0,
                     "w": 6,
-                    "h": 10,
+                    "h": 12,
                     "i": "7",
-                    "name": 'Bewertungen',
+                    "name": 'Ergebnisse',
                     c: 'QuizStatistics',
                     resizable: true
                 },
                 {
-                    "x": 6,
-                    "y": 10,
+                    "x": 0,
+                    "y": 0,
                     "w": 6,
                     "h": 10,
                     "i": "9",
-                    "name": 'Recommendations',
+                    "name": 'Empfehlungen',
                     c: 'Recommendations',
-                    resizable: true
-                },
-                {
-                    "x": 6,
-                    "y": 10,
-                    "w": 6,
-                    "h": 10,
-                    "i": "10",
-                    "name": 'Motivation',
-                    c: 'AppMotivation',
                     resizable: true
                 },
             ],
@@ -228,7 +208,6 @@ export default {
 
     created () {
         this.loadDashboard();
-        // this.$store.dispatch('overview/loadUserUnderstanding');
     },
 
     mounted: function () {

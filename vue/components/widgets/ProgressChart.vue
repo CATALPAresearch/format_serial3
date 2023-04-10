@@ -69,6 +69,7 @@
                     class="completion-rect rect-sm rect--strong mr-1"></span><span class="">Alles verstanden</span></div>
             </div>
         </div>
+        <PopoverContent class="d-none" :activity="{}"></PopoverContent>
     </div>
 </template>
 

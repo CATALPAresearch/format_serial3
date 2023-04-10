@@ -1,13 +1,11 @@
 import * as d3 from "./d3.min.js";
 
-
+// This code is based on the code by http://projects.instantcognition.com/protovis/bulletchart/. I adapted it to fit
+// with the current d3.js version. I further simplified the code, to only contain the needed functionality.
 (function() {
-// Chart design based on the recommendations of Stephen Few. Implementation
-// based on the work of Clint Ivy, Jamie Love, and Jason Davies.
-// http://projects.instantcognition.com/protovis/bulletchart/
 	d3.bullet = function() {
 		var ranges = bulletRanges,
-			// markers = bulletMarkers,
+			markers = bulletMarkers,
 			measures = bulletMeasures,
 			width = 380,
 			height = 20;
@@ -16,7 +14,7 @@ import * as d3 from "./d3.min.js";
 		function bullet(g) {
 			g.each(function(d, i) {
 				var rangez = ranges.call(this, d, i).slice().sort(d3.descending),
-					// markerz = markers.call(this, d, i).slice().sort(d3.descending),
+					markerz = markers.call(this, d, i).slice().sort(d3.descending),
 					measurez = measures.call(this, d, i).slice().sort(d3.descending),
 					g = d3.select(this);
 
@@ -75,26 +73,6 @@ import * as d3 from "./d3.min.js";
 					.attr("height", height / 3)
 					.attr("x", 0)
 					.attr("y", height / 3);
-
-				// Update the marker lines.
-				// var marker = g.selectAll("line.marker")
-				// 	.data(markerz);
-				//
-				// marker.enter().append("line")
-				// 	.attr("class", "marker")
-				// 	.attr("x1", x0)
-				// 	.attr("x2", x0)
-				// 	.attr("y1", height / 6)
-				// 	.attr("y2", height * 5 / 6)
-				// 	.transition()
-				// 	.attr("x1", x1)
-				// 	.attr("x2", x1);
-				//
-				// marker.transition()
-				// 	.attr("x1", x1)
-				// 	.attr("x2", x1)
-				// 	.attr("y1", height / 6)
-				// 	.attr("y2", height * 5 / 6);
 
 				// Compute the tick format.
 				var format = x1.tickFormat(8);
@@ -155,11 +133,11 @@ import * as d3 from "./d3.min.js";
 		};
 
 		// markers (previous, goal)
-		// bullet.markers = function(x) {
-		// 	if (!arguments.length) return markers;
-		// 	markers = x;
-		// 	return bullet;
-		// };
+		bullet.markers = function(x) {
+			if (!arguments.length) return markers;
+			markers = x;
+			return bullet;
+		};
 
 		// measures (actual, forecast)
 		bullet.measures = function(x) {
@@ -187,9 +165,9 @@ import * as d3 from "./d3.min.js";
 		return d.ranges;
 	}
 
-	// function bulletMarkers(d) {
-	// 	return d.markers;
-	// }
+	function bulletMarkers(d) {
+		return d.markers;
+	}
 
 	function bulletMeasures(d) {
 		return d.measures;

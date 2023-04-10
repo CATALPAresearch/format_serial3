@@ -13,26 +13,16 @@
                         <h5>{{ recommendation.title }}</h5>
                         <p>{{ recommendation.description }}</p>
                     </div>
-                    <button
-                        class="recommendations--button btn btn-clear"
-                        @click="markRecommendationDone(index)"
-                    >
-                        <i
-                            aria-hidden="true"
-                            class="fa fa-check mb-1"
-                        ></i>
-                    </button>
                 </li>
             </ul>
-            <p v-else>Keine Empfehlungen vorhanden</p>
+            <p v-else class="recommendations--item">Es scheint, dass Sie in allen Bereichen gut abschneiden und keine besonderen Schwächen aufweisen. Weiter so!<p/>
         </div>
     </div>
 </template>
 
 <script>
 import WidgetHeading from "../WidgetHeading.vue";
-import recommendationRules  from '../../data/adaptation-rules.json';
-import thresholdData  from '../../data/thresholds.json';
+import recommendationRules  from '../../data/recommendations.json';
 import {mapState} from "vuex";
 
 export default {
@@ -42,25 +32,30 @@ export default {
 
     data () {
         return {
-            userMetrics: {},
             recommendations: [],
             info: 'Dieses Widget zeigt dir Empfehlungen an, wie du deine Lernstrategien optimieren und dadurch deine Lernleistung verbessern kannst. Die Empfehlungen basieren auf den Metriken, die dir im "Lernziel"-Widget angezeigt werden. Durch die individuellen Empfehlungen kannst du deine Lernstrategien hinterfragen und gezielt verbessern.',
         }
     },
 
     created() {
-        this.userMetrics = {
-            timeManagement: this.timeManagement,
-            grades: this.userGrade,
-            proficiency: this.proficiency,
-            socialActivity: this.socialActivity,
-            progress: this.progressUnderstanding,
-        };
         this.generateRecommendations();
     },
 
     watch: {
         learnerGoal: {
+            deep: true,
+            handler() {
+                this.generateRecommendations();
+            },
+        },
+
+        userMetrics: {
+            deep: true,
+            handler() {
+                this.generateRecommendations();
+            },
+        },
+        thresholds: {
             deep: true,
             handler() {
                 this.generateRecommendations();
@@ -75,12 +70,24 @@ export default {
             userGrade: state => state.learnermodel.userGrade,
             totalGrade: state => state.learnermodel.totalGrade,
             progressUnderstanding: state => state.learnermodel.progressUnderstanding,
-            proficiency: state => state.learnermodel.mastery,
+            proficiency: state => state.learnermodel.proficiency,
+            thresholds: state => state.learnermodel.thresholds,
             learnerGoal: 'learnerGoal',
             strings: 'strings'
         }),
 
+        userMetrics() {
+            return {
+                timeManagement: this.timeManagement,
+                grades: this.userGrade,
+                proficiency: this.proficiency,
+                socialActivity: this.socialActivity,
+                progress: this.progressUnderstanding,
+            };
+        },
+
         filteredRecommendations() {
+            // @TODO: add option to remove rcommendations
             return this.recommendations.filter((recommendation) => !recommendation.completed);
         },
     },
@@ -93,12 +100,13 @@ export default {
         generateRecommendations() {
             this.recommendations = []
             const rules = recommendationRules[this.learnerGoal]
-            const thresholds = thresholdData[this.learnerGoal]
+            const thresholds = this.thresholds[this.learnerGoal]
 
             for (const metric in rules) {
                 const rule = rules[metric];
                 const threshold = thresholds[metric];
                 const metricValue = this.userMetrics[metric];
+
                 if (metricValue <= threshold[0]) {
                     this.recommendations.push(Object.assign({ completed: false }, ...rule.recommendations));
                 }

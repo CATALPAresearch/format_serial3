@@ -3,51 +3,64 @@
         <widget-heading icon="fa-balance-scale" :info-content="info"
                         title="Lernziele"></widget-heading>
         <div class="indicator-container px-1">
-            <div class="form-group d-flex align-items-center pr-3">
-                <label class="pr-2 m-0 flex-shrink-0" for="select-goal">Mein Ziel für diesen Kurs ist: </label>
-                <select
-                    id="select-goal"
-                    class="form-control form-select"
-                    @change="switchGoal($event)"
-                >
-                    <option :selected="learnerGoal==='master'" value="master">den Kurs zu meistern</option>
-                    <option :selected="learnerGoal==='passing'" value="passing">den Kurs zu bestehen</option>
-                    <option :selected="learnerGoal==='overview'" value="overview">einen Überblick zu bekommen</option>
-                    <option :selected="learnerGoal==='practice'" value="practice">praktisches/job-relevantes Wissen
-                        anzueignen
-                    </option>
-                </select>
-            </div>
-            <div class="d-flex mt-3">
-                <div class="dropdown">
-                    <button
-                        id="dropdownMenuButton"
-                        aria-expanded="false"
-                        aria-haspopup="true"
-                        class="btn btn-secondary dropdown-toggle"
-                        data-toggle="dropdown"
-                        type="button"
-                    >Indikatoren</button>
-                    <ul aria-labelledby="dropdownMenuButton" class="dropdown-menu" @change="selectIndicators">
-                        <li v-for="(indicator, index ) in indicators" :key="index">
-                            <div class="form-check ml-2">
-                                <input
-                                    :id="index"
-                                    class="form-check-input"
-                                    type="checkbox"
-                                    :value="indicator.value"
-                                    v-model="indicator.checked"
-                                />
-                                <label :for="index" class="form-check-label">{{
-                                        indicator.title
-                                    }}</label>
-                            </div>
-                        </li>
-                    </ul>
+            <div>
+                <div class="form-group d-flex align-items-center pr-3">
+                    <label class="pr-2 m-0 flex-shrink-0" for="select-goal">Mein Ziel für diesen Kurs ist: </label>
+                    <select
+                        id="select-goal"
+                        class="form-control form-select"
+                        @change="switchGoal($event)"
+                    >
+                        <option :selected="learnerGoal==='master'" value="master">den Kurs zu meistern</option>
+                        <option :selected="learnerGoal==='passing'" value="passing">den Kurs zu bestehen</option>
+                        <option :selected="learnerGoal==='overview'" value="overview">einen Überblick zu bekommen</option>
+                        <option :selected="learnerGoal==='practice'" value="practice">praktisches/job-relevantes Wissen
+                            anzueignen
+                        </option>
+                    </select>
+                </div>
+                <div class="d-flex mt-3">
+                    <div class="dropdown">
+                        <button
+                            id="dropdownMenuButton"
+                            aria-expanded="false"
+                            aria-haspopup="true"
+                            class="btn btn-secondary dropdown-toggle"
+                            data-toggle="dropdown"
+                            type="button"
+                        >Indikatoren</button>
+                        <ul aria-labelledby="dropdownMenuButton" class="dropdown-menu" @change="selectIndicators">
+                            <li v-for="(indicator, index ) in indicators" :key="index">
+                                <div class="form-check ml-2">
+                                    <input
+                                        :id="index"
+                                        class="form-check-input"
+                                        type="checkbox"
+                                        :value="indicator.value"
+                                        v-model="indicator.checked"
+                                    />
+                                    <label :for="index" class="form-check-label">{{
+                                            indicator.title
+                                        }}</label>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </div>
-            <div ref="container">
+            <div ref="chartContainer">
                 <div ref="bulletChart" class="bullet-chart mt-3"></div>
+            </div>
+            <div class="legend d-flex justify-content-start mt-3">
+                <div class="d-flex flex-wrap align-items-center mr-3"><span
+                    class="completion-rect rect-sm rect--you mr-1"></span><span class="">Dein Status</span>
+                </div>
+                <div class="d-flex align-items-center mr-3"><span
+                    class="completion-rect rect-sm rect--weak mr-1"></span><span class="">Verfehlt das Ziel</span></div>
+                <div class="d-flex align-items-center mr-3"><span
+                    class="completion-rect rect-sm rect--ok mr-1"></span><span class="">Erreicht das Ziel</span></div>
+                <div class="d-flex align-items-center"><span
+                    class="completion-rect rect-sm rect--strong mr-1"></span><span class="">Übertrifft das Ziel</span></div>
             </div>
         </div>
     </div>
@@ -56,8 +69,6 @@
 <script>
 import * as d3 from "../../js/d3.min.js";
 import "../../js/bullet.js";
-import thresholdData  from '../../data/thresholds.json';
-
 import WidgetHeading from "../WidgetHeading.vue";
 import {mapActions, mapGetters, mapState} from "vuex";
 
@@ -83,42 +94,50 @@ export default {
                     subtitle: 'in %',
                     ranges: [],
                     measures: [],
+                    markers: [],
                 },
                 {
                     title: 'Kompetenz',
                     subtitle: 'in %',
                     ranges: [],
                     measures: [],
+                    markers: [],
                 },
                 {
                     title: 'Ergebnisse',
                     subtitle: 'Gesamtpunktzahl',
                     ranges: [],
                     measures: [],
+                    markers: [],
                 },
                 {
                     title: 'Time Management',
                     subtitle: 'in %',
                     ranges: [],
                     measures: [],
+                    markers: [],
                 },
                 {
                     title: 'Soziale Interaktion',
-                    subtitle: 'in %',
+                    subtitle: 'Anzahl Forenbeiträge',
                     ranges: [],
                     measures: [],
+                    markers: [],
                 },
             ],
             ranges: {},
-            info: 'Das Zielsetzungs-Widget bietet dir eine Möglichkeit, ein Lernziel zu definieren und deine Fortschritte dabei zu verfolgen. Unterhalb deines Ziels werden verschiedene Metriken in Form von Bullet Charts angezeigt, damit du sehen kannst, ob du auf Kurs bist, um dein Ziel zu erreichen. Bullet Charts sind einfach zu lesen, da sie eine Farbskala entlang des Diagramms haben, die dir anzeigt, ob die Metrik schwach, ok oder stark ist. Wenn du das Zielsetzungs-Widget nutzt, kannst du dich besser auf deine Lernziele konzentrieren und deinen Fortschritt überwachen, um sicherzustellen, dass du deine Ziele erreichen kannst.'
+            info: 'Das Zielsetzungs-Widget bietet dir eine Möglichkeit, ein Lernziel zu definieren und deine Fortschritte dabei zu verfolgen. Ziel: Hier sollte das beabsichtigte Lernziel des Lernenden angegeben werden.\n' +
+                'Ist: Hier wird angezeigt, wie weit der Lernende bei der Erreichung seines Ziels gekommen ist.\n' +
+                'Soll: Hier wird das empfohlene Lernziel für den aktuellen Zeitpunkt angegeben.\n' +
+                'Gut: Der Bereich, in dem sich der Lernende befindet, wenn er/sie im Soll ist.\n' +
+                'Zu verbessern: Der Bereich, in dem sich der Lernende befindet, wenn er/sie noch nicht im Soll ist und Verbesserungen vornehmen muss.\n' +
+                'Sehr gut: Der Bereich, in dem sich der Lernende befindet, wenn er/sie das Ziel übertroffen hat.'
         }
     },
 
     mounted() {
         window.addEventListener("resize", this.resizeHandler);
-        this.containerWidth = this.$refs.container.clientWidth;
-        this.ranges = thresholdData
-
+        this.ranges = this.thresholds
         this.getselectedIndicators();
         this.calculateUnderstanding();
         this.calculateTopicProficiency();
@@ -134,18 +153,21 @@ export default {
         filteredData: {
             deep: true,
             handler() {
-                this.drawChart(this.containerWidth);
+                this.resizeHandler();
             },
         },
         timeliness: {
             deep: true,
             handler() {
-                this.drawChart(this.containerWidth);
+                this.calculateTimeManagement();
             },
         },
         socialActivity: {
             deep: true,
             handler() {
+                console.log("Hier")
+                console.log(this.socialActivity)
+                console.log(this.thresholds)
                 this.data.find((d) => d.title === 'Soziale Interaktion').measures = [this.socialActivity]
                 this.drawChart(this.containerWidth);
             },
@@ -154,7 +176,6 @@ export default {
             deep: true,
             handler() {
                 this.calculateGrades();
-                this.drawChart(this.containerWidth);
             },
         },
         totalGrade: {
@@ -167,14 +188,21 @@ export default {
             deep: true,
             handler() {
                 this.calculateUnderstanding();
-                this.drawChart(this.containerWidth);
             },
         },
-        mastery: {
+        proficiency: {
             deep: true,
             handler() {
                 this.calculateTopicProficiency();
-                this.drawChart(this.containerWidth);
+            },
+        },
+
+        thresholds: {
+            deep: true,
+            handler() {
+                console.log("ranges: ", this.ranges)
+                this.ranges = this.thresholds;
+                this.resizeHandler();
             },
         },
     },
@@ -193,8 +221,9 @@ export default {
             userGrade: state => state.learnermodel.userGrade,
             totalGrade: state => state.learnermodel.totalGrade,
             progressUnderstanding: state => state.learnermodel.progressUnderstanding,
-            mastery: state => state.learnermodel.mastery,
+            proficiency: state => state.learnermodel.proficiency,
             learnerGoal: state => state.learnerGoal,
+            thresholds: state => state.learnermodel.thresholds,
             strings: 'strings'
         }),
     },
@@ -204,10 +233,10 @@ export default {
         ...mapActions(['updateLearnerGoal', 'fetchLearnerGoal']),
 
         resizeHandler() {
-            if (this.$refs.container) {
-                this.containerWidth = this.$refs.container.clientWidth;
+            if (this.$refs.chartContainer) {
+                this.containerWidth = this.$refs.chartContainer.clientWidth
                 this.$nextTick(() => {
-                    this.drawChart(this.containerWidth);
+                    this.drawChart(this.containerWidth)
                 });
             }
         },
@@ -232,7 +261,6 @@ export default {
         },
 
         updateRanges(selectedGoal) {
-            // Find the data object for the proficiency indicator
             let proficiencyData = this.data.find((d) => d.title === 'Kompetenz');
             let progressData = this.data.find((d) => d.title === 'Wissensstand');
             let gradesData = this.data.find((d) => d.title === 'Ergebnisse');
@@ -251,7 +279,7 @@ export default {
         },
 
         calculateTopicProficiency() {
-            this.data.find((d) => d.title === 'Kompetenz').measures = [this.mastery]
+            this.data.find((d) => d.title === 'Kompetenz').measures = [this.proficiency]
         },
 
         calculateGrades() {
@@ -316,6 +344,28 @@ export default {
 @import "../../scss/variables.scss";
 @import "../../scss/scrollbar.scss";
 
+.rect-sm {
+    width: 12px;
+    height: 12px;
+}
+
+.rect--you {
+    background-color: $blue-dark;
+    opacity: 1 !important;
+}
+
+.rect--ok {
+    background-color: $blue-middle;
+}
+
+.rect--strong {
+    background-color: $blue-dark;
+}
+
+.rect--weak {
+    background-color: $blue-weak;
+}
+
 .indicator-container {
     overflow-y: auto;
     overflow-x: hidden;
@@ -340,14 +390,9 @@ select.form-control {
     margin-right: auto;
 }
 
-.bullet .marker {
-    stroke: #4D4D4D;
-    stroke-width: 2px;
-}
-
 .bullet .range.s0 {
     fill: $blue-dark;
-    opacity: 0.6;
+    opacity: 0.8;
 }
 
 .bullet .range.s1 {
@@ -375,14 +420,4 @@ select.form-control {
     font-weight: bold;
 }
 
-.bullet .subtitle.s13 {
-    fill: #999999;
-    font-size: 12px;
-    font-weight: bold;
-}
-
-.bullet .subtitle.s2 {
-    fill: #999999;
-    font-size: 10px;
-}
 </style>

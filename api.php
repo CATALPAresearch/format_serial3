@@ -2365,7 +2365,6 @@ Group by cm.id
 	{
 		return new external_function_parameters([
 			'course' => new external_value(PARAM_INT, 'id of course'),
-			'userid' => new external_value(PARAM_INT, 'id of user'),
 		]);
 	}
 
@@ -2384,9 +2383,11 @@ Group by cm.id
 		);
 	}
 
-	public static function get_assignments($course, $userid)
+	public static function get_assignments($course)
 	{
-		global $DB;
+		global $DB, $USER;
+
+		$userid = $USER->id;
 
 		$sql = "SELECT a.name, a.intro, a.allowsubmissionsfromdate, a.duedate, a.grade as max_grade, g.grade as user_grade, g.attemptnumber, cs.section,
 				(SELECT COUNT(*) FROM {assign_submission} WHERE assignment = a.id AND userid = :userid) as user_attempts,
@@ -2400,18 +2401,6 @@ Group by cm.id
 
 		$params = array('course' => $course, 'userid' => $userid, 'userid2' => $userid);
 		$assignments = $DB->get_records_sql($sql, $params);
-
-
-		$sql2 = "SELECT
-    			COUNT(CASE WHEN s.id IS NULL THEN 1 END) AS num_missed_assignments,
-    			COUNT(*) AS total_assignments
-				FROM {assign} a
-				LEFT JOIN {assign_submission} s ON s.assignment = a.id AND s.userid = :userid
-				WHERE a.course = :course AND a.allowsubmissionsfromdate < UNIX_TIMESTAMP() AND a.duedate < UNIX_TIMESTAMP()";
-
-		$params2 = array('course' => $course, 'userid' => $userid);
-		$missedAssignments = $DB->get_records_sql($sql, $params);
-
 
 
 		return array(
@@ -2428,7 +2417,6 @@ Group by cm.id
 	{
 		return new external_function_parameters([
 			'course' => new external_value(PARAM_INT, 'id of course'),
-			'userid' => new external_value(PARAM_INT, 'id of user'),
 		]);
 	}
 
@@ -2447,9 +2435,11 @@ Group by cm.id
 		);
 	}
 
-	public static function get_quizzes($course, $userid)
+	public static function get_quizzes($course)
 	{
-		global $DB;
+		global $DB, $USER;
+
+		$userid = $USER->id;
 
 		$sql = "SELECT q.name, q.intro, q.timeopen, q.timeclose, q.sumgrades, q.grade as max_grade, g.grade as user_grade, cs.section,
             (SELECT AVG(grade) FROM {quiz_grades} WHERE quiz = q.id) as avg_grade,

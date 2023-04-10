@@ -60,7 +60,7 @@ export default {
 				'create_task', item
 			);
 			if (response.success) {
-				item.id = response.data;
+				item.id = response.id;
 				commit('addItem', item);
 			} else {
 				if (response.data) {

@@ -35,7 +35,7 @@
             </a>
         </div>
         <div class="py-1">
-            <button class="btn btn-outline-dark btn-sm" @click="addToTaskList">Add to task list</button>
+            <button class="btn btn-outline-dark btn-sm" @click="addToTaskList">Zur Aufgabenliste hinzufügen</button>
         </div>
     </div>
 </template>

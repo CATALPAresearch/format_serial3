@@ -58,8 +58,9 @@ $string['delete'] = 'Löschen';
 // Learner Dashboard
 $string['todoAddNewItem'] = 'Neues Item hinzufügen..';
 $string['dashboardTitle'] = 'Learner Dashboard';
-$string['dashboardAddItem'] = 'Dashboarditem hinzufügen';
+$string['dashboardAddItem'] = 'Block hinzufügen';
 
 $string['informationTitle'] = 'Informationen über das Learner Dashboard';
 $string['informationContent'] = 'Hier werden alle Hintergründe und Fragen zu dem Gebrauch des Learner Dashboards beantwortet.';
+$string['linkTitle'] = 'Hilfreiche Links und Ansprechpartner';
 $string['linkContent'] = 'Hier werden alle relevanten Links und Emails angezeigt. Z.B., Übungsssystem, Studienberatung, Prüfungsamt, News Group.';

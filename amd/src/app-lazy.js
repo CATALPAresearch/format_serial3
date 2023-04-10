@@ -12,10 +12,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _d3_min_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./d3.min.js */ "./js/d3.min.js");
 /* harmony import */ var _d3_min_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_d3_min_js__WEBPACK_IMPORTED_MODULE_0__);
 
+
+// This code is based on the code by http://projects.instantcognition.com/protovis/bulletchart/. I adapted it to fit
+// with the current d3.js version. I further simplified the code, to only contain the needed functionality.
 (function () {
-  // Chart design based on the recommendations of Stephen Few. Implementation
-  // based on the work of Clint Ivy, Jamie Love, and Jason Davies.
-  // http://projects.instantcognition.com/protovis/bulletchart/
   _d3_min_js__WEBPACK_IMPORTED_MODULE_0__.bullet = function () {
     var ranges = bulletRanges,
       markers = bulletMarkers,
@@ -58,11 +58,6 @@ __webpack_require__.r(__webpack_exports__);
         }).attr("width", w0).attr("height", height / 3).attr("x", 0).attr("y", height / 3).transition().attr("width", w1).attr("x", 0);
         measure.transition().attr("width", w1).attr("height", height / 3).attr("x", 0).attr("y", height / 3);
 
-        // Update the marker lines.
-        var marker = g.selectAll("line.marker").data(markerz);
-        marker.enter().append("line").attr("class", "marker").attr("x1", x0).attr("x2", x0).attr("y1", height / 6).attr("y2", height * 5 / 6).transition().attr("x1", x1).attr("x2", x1);
-        marker.transition().attr("x1", x1).attr("x2", x1).attr("y1", height / 6).attr("y2", height * 5 / 6);
-
         // Compute the tick format.
         var format = x1.tickFormat(8);
 
@@ -89,14 +84,6 @@ __webpack_require__.r(__webpack_exports__);
       });
       _d3_min_js__WEBPACK_IMPORTED_MODULE_0__.timerFlush();
     }
-
-    // left, right, top, bottom
-    // bullet.orient = function(x) {
-    // 	if (!arguments.length) return orient;
-    // 	orient = x;
-    // 	reverse = orient == "right" || orient == "bottom";
-    // 	return bullet;
-    // };
 
     // ranges (bad, satisfactory, good)
     bullet.ranges = function (x) {
@@ -18617,12 +18604,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_widgets_ProgressChart_vue__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./components/widgets/ProgressChart.vue */ "./components/widgets/ProgressChart.vue");
 /* harmony import */ var _components_widgets_Recommendations_vue__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./components/widgets/Recommendations.vue */ "./components/widgets/Recommendations.vue");
 /* harmony import */ var _components_widgets_TaskList_vue__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./components/widgets/TaskList.vue */ "./components/widgets/TaskList.vue");
-/* harmony import */ var _components_widgets_Motivation_vue__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./components/widgets/Motivation.vue */ "./components/widgets/Motivation.vue");
-/* harmony import */ var _js_vue_grid_layout_umd_min__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./js/vue-grid-layout.umd.min */ "./js/vue-grid-layout.umd.min.js");
-/* harmony import */ var _js_vue_grid_layout_umd_min__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(_js_vue_grid_layout_umd_min__WEBPACK_IMPORTED_MODULE_9__);
-/* harmony import */ var _components_widgets_CircleChart_vue__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./components/widgets/CircleChart.vue */ "./components/widgets/CircleChart.vue");
-/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
-
+/* harmony import */ var _js_vue_grid_layout_umd_min__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./js/vue-grid-layout.umd.min */ "./js/vue-grid-layout.umd.min.js");
+/* harmony import */ var _js_vue_grid_layout_umd_min__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(_js_vue_grid_layout_umd_min__WEBPACK_IMPORTED_MODULE_8__);
+/* harmony import */ var _components_widgets_CircleChart_vue__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./components/widgets/CircleChart.vue */ "./components/widgets/CircleChart.vue");
+/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
 
 
 
@@ -18636,11 +18621,10 @@ __webpack_require__.r(__webpack_exports__);
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   components: {
-    GridLayout: _js_vue_grid_layout_umd_min__WEBPACK_IMPORTED_MODULE_9__.GridLayout,
-    GridItem: _js_vue_grid_layout_umd_min__WEBPACK_IMPORTED_MODULE_9__.GridItem,
+    GridLayout: _js_vue_grid_layout_umd_min__WEBPACK_IMPORTED_MODULE_8__.GridLayout,
+    GridItem: _js_vue_grid_layout_umd_min__WEBPACK_IMPORTED_MODULE_8__.GridItem,
     AppDeadlines: _components_widgets_Deadlines_vue__WEBPACK_IMPORTED_MODULE_1__["default"],
-    AppMotivation: _components_widgets_Motivation_vue__WEBPACK_IMPORTED_MODULE_8__["default"],
-    CircleChart: _components_widgets_CircleChart_vue__WEBPACK_IMPORTED_MODULE_10__["default"],
+    CircleChart: _components_widgets_CircleChart_vue__WEBPACK_IMPORTED_MODULE_9__["default"],
     IndicatorDisplay: _components_widgets_IndicatorDisplay_vue__WEBPACK_IMPORTED_MODULE_2__["default"],
     MenuBar: _components_MenuBar_vue__WEBPACK_IMPORTED_MODULE_3__["default"],
     ProgressChart: _components_widgets_ProgressChart_vue__WEBPACK_IMPORTED_MODULE_5__["default"],
@@ -18716,7 +18700,7 @@ __webpack_require__.r(__webpack_exports__);
         resizable: true,
         fixed: true
       }, {
-        "x": 9,
+        "x": 0,
         "y": 0,
         "w": 6,
         "h": 12,
@@ -18726,7 +18710,7 @@ __webpack_require__.r(__webpack_exports__);
         resizable: true
       }, {
         "x": 0,
-        "y": 10,
+        "y": 0,
         "w": 3,
         "h": 10,
         "i": "3",
@@ -18734,8 +18718,8 @@ __webpack_require__.r(__webpack_exports__);
         c: 'TaskList',
         resizable: true
       }, {
-        "x": 3,
-        "y": 10,
+        "x": 0,
+        "y": 0,
         "w": 3,
         "h": 10,
         "i": "4",
@@ -18744,39 +18728,21 @@ __webpack_require__.r(__webpack_exports__);
         resizable: true
       }, {
         "x": 0,
-        "y": 20,
-        "w": 3,
-        "h": 10,
-        "i": "6",
-        "name": 'Lernzeit-Tracker',
-        c: 'CircleChart',
-        resizable: true
-      }, {
-        "x": 6,
-        "y": 10,
+        "y": 0,
         "w": 6,
-        "h": 10,
+        "h": 12,
         "i": "7",
         "name": 'Ergebnisse',
         c: 'QuizStatistics',
         resizable: true
       }, {
-        "x": 6,
-        "y": 10,
+        "x": 0,
+        "y": 0,
         "w": 6,
         "h": 10,
         "i": "9",
         "name": 'Empfehlungen',
         c: 'Recommendations',
-        resizable: true
-      }, {
-        "x": 6,
-        "y": 10,
-        "w": 6,
-        "h": 10,
-        "i": "10",
-        "name": 'Motivation',
-        c: 'AppMotivation',
         resizable: true
       }]
     };
@@ -18805,7 +18771,7 @@ __webpack_require__.r(__webpack_exports__);
     layout() {
       return this.dashboardSettings && this.dashboardSettings.length > 0 ? this.dashboardSettings : this.defaultLayout;
     },
-    ...(0,vuex__WEBPACK_IMPORTED_MODULE_11__.mapState)({
+    ...(0,vuex__WEBPACK_IMPORTED_MODULE_10__.mapState)({
       dashboardSettings: state => state.dashboardSettings.dashboardSettings,
       strings: 'strings'
     })
@@ -18851,6 +18817,64 @@ __webpack_require__.r(__webpack_exports__);
   name: "MenuBar",
   computed: {
     ...(0,vuex__WEBPACK_IMPORTED_MODULE_0__.mapState)(['strings'])
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js!./node_modules/vue-loader/lib/index.js??vue-loader-options!./components/PopoverContent.vue?vue&type=script&lang=js&":
+/*!********************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js!./node_modules/vue-loader/lib/index.js??vue-loader-options!./components/PopoverContent.vue?vue&type=script&lang=js& ***!
+  \********************************************************************************************************************************************************************/
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _scripts_communication__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../scripts/communication */ "./scripts/communication.js");
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  name: "PopoverContent",
+  props: {
+    activity: {
+      type: Object,
+      required: true
+    }
+  },
+  data() {
+    return {
+      rating: this.activity.rating
+    };
+  },
+  watch: {
+    rating(newVal) {
+      this.updateUnderstanding(newVal);
+    }
+  },
+  methods: {
+    async updateUnderstanding(newVal) {
+      const response = await _scripts_communication__WEBPACK_IMPORTED_MODULE_0__["default"].webservice('set_user_understanding', {
+        'course': 4,
+        'activityid': this.activity.id,
+        'rating': newVal
+      });
+      if (response.success) {
+        this.$emit('understanding-updated', newVal, this.activity.id);
+      } else {
+        if (response.data) {
+          console.log('Faulty response of webservice /logger/', response.data);
+        } else {
+          console.log('No connection to webservice /logger/');
+        }
+      }
+    },
+    addToTaskList() {
+      this.$emit('add-to-task-list', {
+        course: 4,
+        task: this.activity.name,
+        completed: this.completed ? 1 : 0,
+        duedate: null
+      });
+    }
   }
 });
 
@@ -19093,10 +19117,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _js_d3_min_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../js/d3.min.js */ "./js/d3.min.js");
 /* harmony import */ var _js_d3_min_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_js_d3_min_js__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _js_bullet_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../js/bullet.js */ "./js/bullet.js");
-/* harmony import */ var _data_thresholds_json__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../data/thresholds.json */ "./data/thresholds.json");
-/* harmony import */ var _WidgetHeading_vue__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../WidgetHeading.vue */ "./components/WidgetHeading.vue");
-/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
-
+/* harmony import */ var _WidgetHeading_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../WidgetHeading.vue */ "./components/WidgetHeading.vue");
+/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
 
 
 
@@ -19104,7 +19126,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "IndicatorDisplay",
   components: {
-    WidgetHeading: _WidgetHeading_vue__WEBPACK_IMPORTED_MODULE_3__["default"]
+    WidgetHeading: _WidgetHeading_vue__WEBPACK_IMPORTED_MODULE_2__["default"]
   },
   data: function () {
     return {
@@ -19156,24 +19178,23 @@ __webpack_require__.r(__webpack_exports__);
         markers: []
       }, {
         title: 'Soziale Interaktion',
-        subtitle: 'in %',
+        subtitle: 'Anzahl Forenbeiträge',
         ranges: [],
         measures: [],
         markers: []
       }],
       ranges: {},
-      info: 'Das Zielsetzungs-Widget bietet dir eine Möglichkeit, ein Lernziel zu definieren und deine Fortschritte dabei zu verfolgen. Unterhalb deines Ziels werden verschiedene Metriken in Form von Bullet Charts angezeigt, damit du sehen kannst, ob du auf Kurs bist, um dein Ziel zu erreichen. Bullet Charts sind einfach zu lesen, da sie eine Farbskala entlang des Diagramms haben, die dir anzeigt, ob die Metrik schwach, ok oder stark ist. Wenn du das Zielsetzungs-Widget nutzt, kannst du dich besser auf deine Lernziele konzentrieren und deinen Fortschritt überwachen, um sicherzustellen, dass du deine Ziele erreichen kannst.'
+      info: 'Das Zielsetzungs-Widget bietet dir eine Möglichkeit, ein Lernziel zu definieren und deine Fortschritte dabei zu verfolgen. Ziel: Hier sollte das beabsichtigte Lernziel des Lernenden angegeben werden.\n' + 'Ist: Hier wird angezeigt, wie weit der Lernende bei der Erreichung seines Ziels gekommen ist.\n' + 'Soll: Hier wird das empfohlene Lernziel für den aktuellen Zeitpunkt angegeben.\n' + 'Gut: Der Bereich, in dem sich der Lernende befindet, wenn er/sie im Soll ist.\n' + 'Zu verbessern: Der Bereich, in dem sich der Lernende befindet, wenn er/sie noch nicht im Soll ist und Verbesserungen vornehmen muss.\n' + 'Sehr gut: Der Bereich, in dem sich der Lernende befindet, wenn er/sie das Ziel übertroffen hat.'
     };
   },
   mounted() {
     window.addEventListener("resize", this.resizeHandler);
-    this.ranges = _data_thresholds_json__WEBPACK_IMPORTED_MODULE_2__;
+    this.ranges = this.thresholds;
     this.getselectedIndicators();
     this.calculateUnderstanding();
     this.calculateTopicProficiency();
     this.calculateTimeManagement();
     this.calculateGrades();
-    this.resizeHandler();
   },
   beforeUnmount() {
     window.removeEventListener("resize", this.resizeHandler); // Remove event listener when component is destroyed
@@ -19190,40 +19211,47 @@ __webpack_require__.r(__webpack_exports__);
       deep: true,
       handler() {
         this.calculateTimeManagement();
-        this.resizeHandler();
       }
     },
     socialActivity: {
       deep: true,
       handler() {
+        console.log("Hier");
+        console.log(this.socialActivity);
+        console.log(this.thresholds);
         this.data.find(d => d.title === 'Soziale Interaktion').measures = [this.socialActivity];
-        this.resizeHandler();
+        this.drawChart(this.containerWidth);
       }
     },
     userGrade: {
       deep: true,
       handler() {
         this.calculateGrades();
-        this.resizeHandler();
       }
     },
     totalGrade: {
       deep: true,
       handler() {
-        this.resizeHandler();
+        this.drawChart(this.containerWidth);
       }
     },
     progressUnderstanding: {
       deep: true,
       handler() {
         this.calculateUnderstanding();
-        this.resizeHandler();
       }
     },
-    mastery: {
+    proficiency: {
       deep: true,
       handler() {
         this.calculateTopicProficiency();
+      }
+    },
+    thresholds: {
+      deep: true,
+      handler() {
+        console.log("ranges: ", this.ranges);
+        this.ranges = this.thresholds;
         this.resizeHandler();
       }
     }
@@ -19233,24 +19261,24 @@ __webpack_require__.r(__webpack_exports__);
       const filteredData = this.data.filter(indicator => this.indicators.some(i => i.title === indicator.title && i.checked));
       return filteredData;
     },
-    ...(0,vuex__WEBPACK_IMPORTED_MODULE_4__.mapState)({
+    ...(0,vuex__WEBPACK_IMPORTED_MODULE_3__.mapState)({
       timeliness: state => state.learnermodel.timeManagement,
       socialActivity: state => state.learnermodel.socialActivity,
       userGrade: state => state.learnermodel.userGrade,
       totalGrade: state => state.learnermodel.totalGrade,
       progressUnderstanding: state => state.learnermodel.progressUnderstanding,
-      mastery: state => state.learnermodel.mastery,
+      proficiency: state => state.learnermodel.proficiency,
       learnerGoal: state => state.learnerGoal,
+      thresholds: state => state.learnermodel.thresholds,
       strings: 'strings'
     })
   },
   methods: {
-    ...(0,vuex__WEBPACK_IMPORTED_MODULE_4__.mapGetters)(['getLearnerGoal']),
-    ...(0,vuex__WEBPACK_IMPORTED_MODULE_4__.mapActions)(['updateLearnerGoal', 'fetchLearnerGoal']),
+    ...(0,vuex__WEBPACK_IMPORTED_MODULE_3__.mapGetters)(['getLearnerGoal']),
+    ...(0,vuex__WEBPACK_IMPORTED_MODULE_3__.mapActions)(['updateLearnerGoal', 'fetchLearnerGoal']),
     resizeHandler() {
       if (this.$refs.chartContainer) {
         this.containerWidth = this.$refs.chartContainer.clientWidth;
-        console.log("chart width: ", this.containerWidth);
         this.$nextTick(() => {
           this.drawChart(this.containerWidth);
         });
@@ -19273,7 +19301,6 @@ __webpack_require__.r(__webpack_exports__);
       }
     },
     updateRanges(selectedGoal) {
-      // Find the data object for the proficiency indicator
       let proficiencyData = this.data.find(d => d.title === 'Kompetenz');
       let progressData = this.data.find(d => d.title === 'Wissensstand');
       let gradesData = this.data.find(d => d.title === 'Ergebnisse');
@@ -19289,7 +19316,7 @@ __webpack_require__.r(__webpack_exports__);
       this.data.find(d => d.title === 'Wissensstand').measures = [this.progressUnderstanding];
     },
     calculateTopicProficiency() {
-      this.data.find(d => d.title === 'Kompetenz').measures = [this.mastery];
+      this.data.find(d => d.title === 'Kompetenz').measures = [this.proficiency];
     },
     calculateGrades() {
       this.data.find(d => d.title === 'Ergebnisse').measures = [this.userGrade];
@@ -19326,37 +19353,6 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./node_modules/babel-loader/lib/index.js!./node_modules/vue-loader/lib/index.js??vue-loader-options!./components/widgets/Motivation.vue?vue&type=script&lang=js&":
-/*!************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/babel-loader/lib/index.js!./node_modules/vue-loader/lib/index.js??vue-loader-options!./components/widgets/Motivation.vue?vue&type=script&lang=js& ***!
-  \************************************************************************************************************************************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _WidgetHeading_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../WidgetHeading.vue */ "./components/WidgetHeading.vue");
-
-/* harmony default export */ __webpack_exports__["default"] = ({
-  name: "Motivation",
-  components: {
-    WidgetHeading: _WidgetHeading_vue__WEBPACK_IMPORTED_MODULE_0__["default"]
-  },
-  data() {
-    return {
-      motivation: 'Schreibe hier deine persänliche Motivation für diesen Kurs nieder. Das kann z.B. ein besonderes Interesse an dem Themengebiet sein oder ein bevorstehender Jobwechsel.',
-      editMode: false
-    };
-  },
-  methods: {
-    saveMotivation() {
-      // @TODO Send motivation text to server or store it locally
-      this.editMode = false;
-    }
-  }
-});
-
-/***/ }),
-
 /***/ "./node_modules/babel-loader/lib/index.js!./node_modules/vue-loader/lib/index.js??vue-loader-options!./components/widgets/ProgressChart.vue?vue&type=script&lang=js&":
 /*!***************************************************************************************************************************************************************************!*\
   !*** ./node_modules/babel-loader/lib/index.js!./node_modules/vue-loader/lib/index.js??vue-loader-options!./components/widgets/ProgressChart.vue?vue&type=script&lang=js& ***!
@@ -19367,9 +19363,11 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _scripts_communication__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../scripts/communication */ "./scripts/communication.js");
 /* harmony import */ var _WidgetHeading_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../WidgetHeading.vue */ "./components/WidgetHeading.vue");
-/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm.js");
-/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm.js");
+/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
 /* harmony import */ var _scripts_util__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../scripts/util */ "./scripts/util.js");
+/* harmony import */ var _PopoverContent_vue__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../PopoverContent.vue */ "./components/PopoverContent.vue");
+
 
 
 
@@ -19439,8 +19437,8 @@ __webpack_require__.r(__webpack_exports__);
     }
   },
   created() {
-    __webpack_require__.e(/*! import() */ "components_PopoverContent_vue").then(__webpack_require__.bind(__webpack_require__, /*! ../PopoverContent.vue */ "./components/PopoverContent.vue")).then(component => {
-      this.popoverComponent = vue__WEBPACK_IMPORTED_MODULE_3__["default"].extend(component.default);
+    Promise.resolve(/*! import() */).then(__webpack_require__.bind(__webpack_require__, /*! ../PopoverContent.vue */ "./components/PopoverContent.vue")).then(component => {
+      this.popoverComponent = vue__WEBPACK_IMPORTED_MODULE_4__["default"].extend(component.default);
     });
   },
   mounted: async function () {
@@ -19465,14 +19463,14 @@ __webpack_require__.r(__webpack_exports__);
         return (0,_scripts_util__WEBPACK_IMPORTED_MODULE_2__.groupBy)(section, 'type');
       }
     },
-    ...(0,vuex__WEBPACK_IMPORTED_MODULE_4__.mapState)('overview', ['courseData', 'activityTypes']),
-    ...(0,vuex__WEBPACK_IMPORTED_MODULE_4__.mapGetters)('overview', ['getSections', 'getActivities', 'getCurrentActivities'])
+    ...(0,vuex__WEBPACK_IMPORTED_MODULE_5__.mapState)('overview', ['courseData', 'activityTypes']),
+    ...(0,vuex__WEBPACK_IMPORTED_MODULE_5__.mapGetters)('overview', ['getSections', 'getActivities', 'getCurrentActivities'])
   },
   methods: {
-    ...(0,vuex__WEBPACK_IMPORTED_MODULE_4__.mapActions)('taskList', ['addItem']),
+    ...(0,vuex__WEBPACK_IMPORTED_MODULE_5__.mapActions)('taskList', ['addItem']),
     popoverContent(activity) {
       if (this.popoverComponent) {
-        const PopoverComponent = vue__WEBPACK_IMPORTED_MODULE_3__["default"].extend(this.popoverComponent);
+        const PopoverComponent = vue__WEBPACK_IMPORTED_MODULE_4__["default"].extend(this.popoverComponent);
         const popover = new PopoverComponent({
           propsData: {
             activity: activity
@@ -19645,8 +19643,7 @@ __webpack_require__.r(__webpack_exports__);
     },
     async getQuizzes() {
       const response = await _scripts_communication__WEBPACK_IMPORTED_MODULE_2__["default"].webservice('get_quizzes', {
-        userid: 3,
-        course: 4
+        course: this.$store.state.courseid
       });
       if (response.success) {
         this.quizzes = JSON.parse(response.data);
@@ -19667,7 +19664,6 @@ __webpack_require__.r(__webpack_exports__);
     },
     async getAssignments() {
       const response = await _scripts_communication__WEBPACK_IMPORTED_MODULE_2__["default"].webservice('get_assignments', {
-        userid: this.$store.state.userid,
         course: this.$store.state.courseid
       });
       if (response.success) {
@@ -19702,62 +19698,20 @@ __webpack_require__.r(__webpack_exports__);
       svg.selectAll("*").remove();
       svg.append("g").attr("class", "y-axis").attr("transform", `translate(${xRange[0]}, 0)`).call(yAxis);
       svg.append("g").attr("class", "x-axis").attr("transform", `translate(0, ${yRange[0]})`).call(xAxis);
-
-      // var Tooltip = d3.select(this.$refs.chart)
-      //     .append("div")
-      //     .style("opacity", 0)
-      //     .attr("class", "tooltip")
-      //     .style("background-color", "white")
-      //     .style("border", "solid")
-      //     .style("border-width", "2px")
-      //     .style("border-radius", "5px")
-      //     .style("padding", "5px")
-      //
-      // // Three function that change the tooltip when user hover / move / leave a cell
-      // var mouseover = function(d) {
-      //     Tooltip
-      //         .style("opacity", 1)
-      //     d3.select(this)
-      //         .style("stroke", "black")
-      //         .style("opacity", 1)
-      // }
-      // var mousemove = function(d) {
-      //     Tooltip
-      //         .html("The exact value of<br>this cell is: " + d.value)
-      //         .style("left", (d3.pointer(this)[0]+70) + "px")
-      //         .style("top", (d3.pointer(this)[1]) + "px")
-      // }
-      // var mouseleave = function(d) {
-      //     Tooltip
-      //         .style("opacity", 0)
-      //     d3.select(this)
-      //         .style("stroke", "none")
-      //         .style("opacity", 0.8)
-      // }
-
       if (this.showAverage) {
         // add bars for user grades
         svg.selectAll(".user-bar").data(this.data).enter().append("rect").attr("class", "user-bar").attr("x", xRange[0] + 1).attr("y", d => yScale(d.category)).attr("width", d => xScale(d.value) - xRange[0]).attr("height", yScale.bandwidth() / 2 - 1).each(function (d) {
           svg.append("text").attr("class", "value-text").attr("x", xScale(d.value) - 50).attr("y", yScale(d.category) + yScale.bandwidth() / 3).text(`${Math.trunc(d.user_grade)} / ${Math.trunc(d.max_grade)}`).style("font-size", "12px");
         });
-        // .on("mouseover", mouseover)
-        // .on("mousemove", mousemove)
-        // .on("mouseleave", mouseleave)
 
         // add bars for average grades
         svg.selectAll(".avg-bar").data(this.data).enter().append("rect").attr("class", "avg-bar").attr("x", xRange[0] + 1).attr("y", d => yScale(d.category) + yScale.bandwidth() / 2).attr("width", d => xScale(d.avg_value) - xRange[0]).attr("height", yScale.bandwidth() / 2 - 1).each(function (d) {
           svg.append("text").attr("class", "value-text").attr("x", xScale(d.avg_value) - 50).attr("y", yScale(d.category) + yScale.bandwidth() * 0.85).text(`${Math.trunc(d.avg_grade)} / ${Math.trunc(d.max_grade)}`).style("font-size", "12px");
         });
-        // .on("mouseover", mouseover)
-        // .on("mousemove", mousemove)
-        // .on("mouseleave", mouseleave)
       } else {
         svg.selectAll(".user-bar").data(this.data).enter().append("rect").attr("class", "user-bar").attr("x", xRange[0] + 1).attr("y", d => yScale(d.category) + (yScale.bandwidth() - yScale.bandwidth() / 1.5) / 2).attr("width", d => xScale(d.value) - xRange[0]).attr("height", yScale.bandwidth() / 1.5).each(function (d) {
           svg.append("text").attr("class", "value-text").attr("x", xScale(d.value) - 50).attr("y", yScale(d.category) + yScale.bandwidth() / 1.7).text(`${Math.trunc(d.user_grade)} / ${Math.trunc(d.max_grade)}`).style("font-size", "12px");
         });
-        // .on("mouseover", mouseover)
-        // .on("mousemove", mousemove)
-        // .on("mouseleave", mouseleave)
       }
     }
   }
@@ -19774,10 +19728,8 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _WidgetHeading_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../WidgetHeading.vue */ "./components/WidgetHeading.vue");
-/* harmony import */ var _data_adaptation_rules_json__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../data/adaptation-rules.json */ "./data/adaptation-rules.json");
-/* harmony import */ var _data_thresholds_json__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../data/thresholds.json */ "./data/thresholds.json");
-/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
-
+/* harmony import */ var _data_recommendations_json__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../data/recommendations.json */ "./data/recommendations.json");
+/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
 
 
 
@@ -19807,16 +19759,23 @@ __webpack_require__.r(__webpack_exports__);
       handler() {
         this.generateRecommendations();
       }
+    },
+    thresholds: {
+      deep: true,
+      handler() {
+        this.generateRecommendations();
+      }
     }
   },
   computed: {
-    ...(0,vuex__WEBPACK_IMPORTED_MODULE_3__.mapState)({
+    ...(0,vuex__WEBPACK_IMPORTED_MODULE_2__.mapState)({
       timeManagement: state => state.learnermodel.timeManagement,
       socialActivity: state => state.learnermodel.socialActivity,
       userGrade: state => state.learnermodel.userGrade,
       totalGrade: state => state.learnermodel.totalGrade,
       progressUnderstanding: state => state.learnermodel.progressUnderstanding,
-      proficiency: state => state.learnermodel.mastery,
+      proficiency: state => state.learnermodel.proficiency,
+      thresholds: state => state.learnermodel.thresholds,
       learnerGoal: 'learnerGoal',
       strings: 'strings'
     }),
@@ -19830,6 +19789,7 @@ __webpack_require__.r(__webpack_exports__);
       };
     },
     filteredRecommendations() {
+      // @TODO: add option to remove rcommendations
       return this.recommendations.filter(recommendation => !recommendation.completed);
     }
   },
@@ -19839,8 +19799,8 @@ __webpack_require__.r(__webpack_exports__);
     },
     generateRecommendations() {
       this.recommendations = [];
-      const rules = _data_adaptation_rules_json__WEBPACK_IMPORTED_MODULE_1__[this.learnerGoal];
-      const thresholds = _data_thresholds_json__WEBPACK_IMPORTED_MODULE_2__[this.learnerGoal];
+      const rules = _data_recommendations_json__WEBPACK_IMPORTED_MODULE_1__[this.learnerGoal];
+      const thresholds = this.thresholds[this.learnerGoal];
       for (const metric in rules) {
         const rule = rules[metric];
         const threshold = thresholds[metric];
@@ -19956,8 +19916,8 @@ var render = function render() {
       }
     }
   }, [_c("option", {
-    attrs: {
-      value: "addNewItem"
+    staticStyle: {
+      display: "none"
     }
   }, [_vm._v(_vm._s(_vm.strings.dashboardAddItem))]), _vm._v(" "), _vm._l(_vm.filteredComponents, function (component, index) {
     return _c("option", {
@@ -20196,6 +20156,182 @@ var staticRenderFns = [function () {
       "aria-hidden": "true"
     }
   }, [_vm._v("×")])]);
+}];
+render._withStripped = true;
+
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js!./node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./components/PopoverContent.vue?vue&type=template&id=c2b3cba2&":
+/*!*******************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js!./node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./components/PopoverContent.vue?vue&type=template&id=c2b3cba2& ***!
+  \*******************************************************************************************************************************************************************************************************************************************************/
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": function() { return /* binding */ render; },
+/* harmony export */   "staticRenderFns": function() { return /* binding */ staticRenderFns; }
+/* harmony export */ });
+var render = function render() {
+  var _vm = this,
+    _c = _vm._self._c;
+  return _c("div", [_c("p", {
+    staticClass: "mb-1"
+  }, [_vm._v("Bewerte dein Verständnis von dieser Aktivität:")]), _vm._v(" "), _c("div", {
+    staticClass: "form-check mb-2 col-12 pr-0 ml-1"
+  }, [_c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.rating,
+      expression: "rating"
+    }],
+    staticClass: "form-check-input",
+    attrs: {
+      id: "none",
+      name: "userUnderstanding",
+      type: "radio",
+      value: "0"
+    },
+    domProps: {
+      checked: _vm._q(_vm.rating, "0")
+    },
+    on: {
+      change: function ($event) {
+        _vm.rating = "0";
+      }
+    }
+  }), _vm._v(" "), _c("label", {
+    staticClass: "form-check-label",
+    attrs: {
+      for: "none"
+    }
+  }, [_vm._v("Nicht abgeschlossen")])]), _vm._v(" "), _c("div", {
+    staticClass: "ml-1"
+  }, [_c("div", {
+    staticClass: "form-check mb-2 pr-0"
+  }, [_c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.rating,
+      expression: "rating"
+    }],
+    staticClass: "form-check-input",
+    attrs: {
+      id: "weak",
+      name: "userUnderstanding",
+      type: "radio",
+      value: "1"
+    },
+    domProps: {
+      checked: _vm._q(_vm.rating, "1")
+    },
+    on: {
+      change: function ($event) {
+        _vm.rating = "1";
+      }
+    }
+  }), _vm._v(" "), _c("label", {
+    staticClass: "form-check-label",
+    attrs: {
+      for: "weak"
+    }
+  }, [_vm._v("Ungenügend verstanden")])]), _vm._v(" "), _c("div", {
+    staticClass: "form-check mb-2 pr-0"
+  }, [_c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.rating,
+      expression: "rating"
+    }],
+    staticClass: "form-check-input",
+    attrs: {
+      id: "ok",
+      name: "userUnderstanding",
+      type: "radio",
+      value: "2"
+    },
+    domProps: {
+      checked: _vm._q(_vm.rating, "2")
+    },
+    on: {
+      change: function ($event) {
+        _vm.rating = "2";
+      }
+    }
+  }), _vm._v(" "), _c("label", {
+    staticClass: "form-check-label",
+    attrs: {
+      for: "ok"
+    }
+  }, [_vm._v("Größtenteils verstanden")])]), _vm._v(" "), _c("div", {
+    staticClass: "form-check mb-2 pr-0"
+  }, [_c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.rating,
+      expression: "rating"
+    }],
+    staticClass: "form-check-input",
+    attrs: {
+      id: "strong",
+      name: "userUnderstanding",
+      type: "radio",
+      value: "3"
+    },
+    domProps: {
+      checked: _vm._q(_vm.rating, "3")
+    },
+    on: {
+      change: function ($event) {
+        _vm.rating = "3";
+      }
+    }
+  }), _vm._v(" "), _c("label", {
+    staticClass: "form-check-label",
+    attrs: {
+      for: "strong"
+    }
+  }, [_vm._v("Alles verstanden")])])]), _vm._v(" "), _vm._m(0), _vm._v(" "), _c("div", {
+    staticClass: "py-1"
+  }, [_c("a", {
+    attrs: {
+      href: _vm.activity.url
+    }
+  }, [_vm._v("\n            Gehe zu " + _vm._s(_vm.activity.name) + "\n            "), _c("i", {
+    staticClass: "fa fa-arrow-right",
+    attrs: {
+      "aria-hidden": "true"
+    }
+  })])]), _vm._v(" "), _c("div", {
+    staticClass: "py-1"
+  }, [_c("button", {
+    staticClass: "btn btn-outline-dark btn-sm",
+    on: {
+      click: _vm.addToTaskList
+    }
+  }, [_vm._v("Zur Aufgabenliste hinzufügen")])])]);
+};
+var staticRenderFns = [function () {
+  var _vm = this,
+    _c = _vm._self._c;
+  return _c("div", {
+    staticClass: "py-1"
+  }, [_c("a", {
+    attrs: {
+      href: "#"
+    }
+  }, [_vm._v("\n            Nach Hilfe fragen\n            "), _c("i", {
+    staticClass: "fa fa-arrow-right",
+    attrs: {
+      "aria-hidden": "true"
+    }
+  })])]);
 }];
 render._withStripped = true;
 
@@ -20520,7 +20656,7 @@ var render = function render() {
     }
   }), _vm._v(" "), _c("div", {
     staticClass: "indicator-container px-1"
-  }, [_c("div", {
+  }, [_c("div", [_c("div", {
     staticClass: "form-group d-flex align-items-center pr-3"
   }, [_c("label", {
     staticClass: "pr-2 m-0 flex-shrink-0",
@@ -20565,7 +20701,7 @@ var render = function render() {
     domProps: {
       selected: _vm.learnerGoal === "practice"
     }
-  }, [_vm._v("praktisches/job-relevantes Wissen\n                    anzueignen\n                ")])])]), _vm._v(" "), _c("div", {
+  }, [_vm._v("praktisches/job-relevantes Wissen\n                        anzueignen\n                    ")])])]), _vm._v(" "), _c("div", {
     staticClass: "d-flex mt-3"
   }, [_c("div", {
     staticClass: "dropdown"
@@ -20631,76 +20767,36 @@ var render = function render() {
         for: index
       }
     }, [_vm._v(_vm._s(indicator.title))])])]);
-  }), 0)])]), _vm._v(" "), _c("div", {
+  }), 0)])])]), _vm._v(" "), _c("div", {
     ref: "chartContainer"
   }, [_c("div", {
     ref: "bulletChart",
     staticClass: "bullet-chart mt-3"
-  })])])], 1);
+  })]), _vm._v(" "), _vm._m(0)])], 1);
 };
-var staticRenderFns = [];
-render._withStripped = true;
-
-
-/***/ }),
-
-/***/ "./node_modules/babel-loader/lib/index.js!./node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./components/widgets/Motivation.vue?vue&type=template&id=51439791&scoped=true&":
-/*!***********************************************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/babel-loader/lib/index.js!./node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./components/widgets/Motivation.vue?vue&type=template&id=51439791&scoped=true& ***!
-  \***********************************************************************************************************************************************************************************************************************************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "render": function() { return /* binding */ render; },
-/* harmony export */   "staticRenderFns": function() { return /* binding */ staticRenderFns; }
-/* harmony export */ });
-var render = function render() {
+var staticRenderFns = [function () {
   var _vm = this,
     _c = _vm._self._c;
-  return _c("div", [_c("widget-heading", {
-    attrs: {
-      icon: "fa-hourglass-o",
-      "info-content": "info",
-      title: "Meine Motivation"
-    }
-  }), _vm._v(" "), !_vm.editMode ? _c("div", [_c("p", {
-    staticClass: "border p-2"
-  }, [_vm._v(_vm._s(_vm.motivation))]), _vm._v(" "), _c("button", {
-    staticClass: "btn btn-secondary",
-    on: {
-      click: function ($event) {
-        _vm.editMode = true;
-      }
-    }
-  }, [_vm._v("Bearbeiten")])]) : _vm._e(), _vm._v(" "), _vm.editMode ? _c("div", {
-    staticClass: "position-relative"
-  }, [_c("textarea", {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: _vm.motivation,
-      expression: "motivation"
-    }],
-    staticClass: "h-100 w-100",
-    domProps: {
-      value: _vm.motivation
-    },
-    on: {
-      input: function ($event) {
-        if ($event.target.composing) return;
-        _vm.motivation = $event.target.value;
-      }
-    }
-  }), _vm._v(" "), _c("button", {
-    staticClass: "btn btn-secondary",
-    on: {
-      click: _vm.saveMotivation
-    }
-  }, [_vm._v("Speichern")])]) : _vm._e()], 1);
-};
-var staticRenderFns = [];
+  return _c("div", {
+    staticClass: "legend d-flex justify-content-start mt-3"
+  }, [_c("div", {
+    staticClass: "d-flex flex-wrap align-items-center mr-3"
+  }, [_c("span", {
+    staticClass: "completion-rect rect-sm rect--you mr-1"
+  }), _c("span", {}, [_vm._v("Dein Status")])]), _vm._v(" "), _c("div", {
+    staticClass: "d-flex align-items-center mr-3"
+  }, [_c("span", {
+    staticClass: "completion-rect rect-sm rect--weak mr-1"
+  }), _c("span", {}, [_vm._v("Verfehlt das Ziel")])]), _vm._v(" "), _c("div", {
+    staticClass: "d-flex align-items-center mr-3"
+  }, [_c("span", {
+    staticClass: "completion-rect rect-sm rect--ok mr-1"
+  }), _c("span", {}, [_vm._v("Erreicht das Ziel")])]), _vm._v(" "), _c("div", {
+    staticClass: "d-flex align-items-center"
+  }, [_c("span", {
+    staticClass: "completion-rect rect-sm rect--strong mr-1"
+  }), _c("span", {}, [_vm._v("Übertrifft das Ziel")])])]);
+}];
 render._withStripped = true;
 
 
@@ -20835,7 +20931,12 @@ var render = function render() {
         }
       })])]);
     }), 0)]);
-  }), _vm._v(" "), _vm._m(0)], 2)], 1);
+  }), _vm._v(" "), _vm._m(0)], 2), _vm._v(" "), _c("PopoverContent", {
+    staticClass: "d-none",
+    attrs: {
+      activity: {}
+    }
+  })], 1);
 };
 var staticRenderFns = [function () {
   var _vm = this,
@@ -21059,20 +21160,10 @@ var render = function render() {
       staticClass: "recommendations--item"
     }, [_c("div", {
       staticClass: "mr-5"
-    }, [_c("h5", [_vm._v(_vm._s(recommendation.title))]), _vm._v(" "), _c("p", [_vm._v(_vm._s(recommendation.description))])]), _vm._v(" "), _c("button", {
-      staticClass: "recommendations--button btn btn-clear",
-      on: {
-        click: function ($event) {
-          return _vm.markRecommendationDone(index);
-        }
-      }
-    }, [_c("i", {
-      staticClass: "fa fa-check mb-1",
-      attrs: {
-        "aria-hidden": "true"
-      }
-    })])]);
-  }), 0) : _c("p", [_vm._v("Keine Empfehlungen vorhanden")])])], 1);
+    }, [_c("h5", [_vm._v(_vm._s(recommendation.title))]), _vm._v(" "), _c("p", [_vm._v(_vm._s(recommendation.description))])])]);
+  }), 0) : _c("p", {
+    staticClass: "recommendations--item"
+  }, [_vm._v("Es scheint, dass Sie in allen Bereichen gut abschneiden und keine besonderen Schwächen aufweisen. Weiter so!")]), _c("p")])], 1);
 };
 var staticRenderFns = [];
 render._withStripped = true;
@@ -21650,19 +21741,49 @@ __webpack_require__.r(__webpack_exports__);
   namespaced: true,
   state: {
     userUnderstanding: null,
-    mastery: 0,
+    proficiency: 0,
     userGrade: 0,
     totalGrade: 0,
     progressUnderstanding: 0,
     timeManagement: 0,
-    socialActivity: 0
+    socialActivity: 0,
+    thresholds: {
+      "master": {
+        "grades": [],
+        "proficiency": [70, 85, 100],
+        "progress": [75, 90, 100],
+        "timeManagement": [70, 85, 100],
+        "socialActivity": []
+      },
+      "passing": {
+        "grades": [],
+        "proficiency": [40, 70, 100],
+        "progress": [40, 70, 100],
+        "timeManagement": [40, 70, 100],
+        "socialActivity": []
+      },
+      "overview": {
+        "grades": [],
+        "proficiency": [20, 40, 100],
+        "progress": [40, 70, 100],
+        "timeManagement": [20, 40, 100],
+        "socialActivity": []
+      },
+      "practice": {
+        "grades": [],
+        "proficiency": [30, 60, 100],
+        "progress": [30, 60, 100],
+        "timeManagement": [50, 75, 100],
+        "socialActivity": []
+      }
+    }
   },
   mutations: {
     setUserUnderstanding(state, data) {
       state.userUnderstanding = data;
     },
-    setMastery(state, data) {
-      state.mastery = data;
+    setProficiency(state, data) {
+      state.proficiency = data;
     },
     setProgressUnderstanding(state, data) {
       state.progressUnderstanding = data;
@@ -21678,6 +21799,38 @@ __webpack_require__.r(__webpack_exports__);
     },
     setTotalGrade(state, data) {
       state.totalGrade = data;
+    },
+    setSocialActivityThresholds(state, thresholds) {
+      console.log(thresholds);
+      state.thresholds = {
+        ...state.thresholds,
+        ...{
+          master: {
+            ...state.thresholds.master,
+            ...{
+              socialActivity: thresholds
+            }
+          },
+          passing: {
+            ...state.thresholds.passing,
+            ...{
+              socialActivity: [thresholds[0] / 2, thresholds[1] / 2, thresholds[2]]
+            }
+          },
+          overview: {
+            ...state.thresholds.overview,
+            ...{
+              socialActivity: [thresholds[0] / 2, thresholds[1] / 2, thresholds[2]]
+            }
+          },
+          practice: {
+            ...state.thresholds.practice,
+            ...{
+              socialActivity: [thresholds[0] / 2, thresholds[1] / 2, thresholds[2]]
+            }
+          }
+        }
+      };
     }
   },
   getters: {
@@ -21708,17 +21861,19 @@ __webpack_require__.r(__webpack_exports__);
       await context.dispatch('calculateSocialActivity');
       await context.dispatch('calculateGrades');
       await context.dispatch('calculateProgress');
-      await context.dispatch('calculateMastery');
+      await context.dispatch('calculateProficiency');
+      // 	@TODO: add self-assessment score
     },
+
     /**
      * Calculates the users understanding of the topics.
      * Count of users understanding: 1 for weak, 2 for ok, 3 for strong divided by optimal number of points one
      * can achieve in the topics covered so far
      */
-    async calculateMastery(context) {
+    async calculateProficiency(context) {
       const total = Object.keys(context.state.userUnderstanding).length * 3;
       const user = Object.values(context.state.userUnderstanding).reduce((acc, cur) => acc + Number(cur.rating), 0);
-      context.commit('setMastery', user / total * 100);
+      context.commit('setProficiency', user / total * 100);
     },
     /**
      * Calculates the users progress in the course based on their understanding of the topics.
@@ -21754,7 +21909,7 @@ __webpack_require__.r(__webpack_exports__);
     /**
      * Calculates social interaction score based on the number of forum posts
      *
-     * @TODO: Include number of shared resources
+     * @TODO: Include number of shared resources once the resource list is implemented
      */
     async calculateSocialActivity(context) {
       let response = await _scripts_communication__WEBPACK_IMPORTED_MODULE_0__["default"].webservice('get_forum_posts', {
@@ -21763,19 +21918,17 @@ __webpack_require__.r(__webpack_exports__);
       if (response.success) {
         response = Object.values(JSON.parse(response.data));
         const numberOfUserPosts = response[0].user_posts;
-        // const numberOfAvgPosts = response[0].avg_posts_per_person;
-        // const minPosts = response[0].min_user_posts;
-        // const maxPosts = response[0].max_user_posts;
-        // const userScore = ((numberOfUserPosts - numberOfAvgPosts) / numberOfAvgPosts) * 100;
-        //
-        // console.log("user percentage: ", userScore);
-
+        const numberOfAvgPosts = response[0].avg_posts_per_person;
+        const minPosts = response[0].min_user_posts;
+        const maxPosts = response[0].max_user_posts;
+        const thresholds = [minPosts, numberOfAvgPosts, maxPosts];
+        context.commit('setSocialActivityThresholds', thresholds);
         context.commit('setSocialActivity', numberOfUserPosts);
       } else {
         if (response.data) {
-          console.log('Faulty response of webservice /get_missed_activities/', response.data);
+          console.log('Faulty response of webservice /logger/', response.data);
         } else {
-          console.log('No connection to webservice /get_missed_activities/');
+          console.log('No connection to webservice /logger/');
         }
       }
     },
@@ -21784,8 +21937,7 @@ __webpack_require__.r(__webpack_exports__);
      */
     async calculateGrades(context) {
       let quizzes = await _scripts_communication__WEBPACK_IMPORTED_MODULE_0__["default"].webservice('get_quizzes', {
-        course: 4,
-        userid: 3
+        course: context.rootGetters.getCourseid
       });
       if (quizzes.success) {
         quizzes = JSON.parse(quizzes.data);
@@ -21797,8 +21949,7 @@ __webpack_require__.r(__webpack_exports__);
         }
       }
       let assignments = await _scripts_communication__WEBPACK_IMPORTED_MODULE_0__["default"].webservice('get_assignments', {
-        course: 4,
-        userid: 3
+        course: context.rootGetters.getCourseid
       });
       if (assignments.success) {
         assignments = JSON.parse(assignments.data);
@@ -22214,7 +22365,7 @@ __webpack_require__.r(__webpack_exports__);
     }, item) {
       const response = await _scripts_communication__WEBPACK_IMPORTED_MODULE_0__["default"].webservice('create_task', item);
       if (response.success) {
-        item.id = response.data;
+        item.id = response.id;
         commit('addItem', item);
       } else {
         if (response.data) {
@@ -22423,7 +22574,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_noSourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "::-webkit-scrollbar {\n  width: 8px;\n}\n::-webkit-scrollbar-thumb {\n  background: #8f959e;\n}\n::-webkit-scrollbar-thumb:hover {\n  background: #807f7f;\n}\n.indicator-container {\n  overflow-y: auto;\n  overflow-x: hidden;\n}\nselect.form-control {\n  appearance: menulist-button !important;\n}\n.bullet-chart {\n  width: 100%;\n  height: auto;\n}\n.bullet {\n  margin: 10px 0;\n}\n.bullet {\n  font: 10px sans-serif;\n  margin-left: auto;\n  margin-right: auto;\n}\n.bullet .marker {\n  stroke: #4D4D4D;\n  stroke-width: 2px;\n}\n.bullet .range.s0 {\n  fill: #06375E;\n  opacity: 0.6;\n}\n.bullet .range.s1 {\n  fill: #2487D3;\n  opacity: 0.6;\n}\n.bullet .range.s2 {\n  fill: #B1D9F9;\n  opacity: 0.6;\n}\n.bullet .measure.s0 {\n  fill: #06375E;\n}\n.bullet .title {\n  font-size: 12px;\n  font-weight: bold;\n}\n.bullet .subtitle.s04 {\n  fill: #000000;\n  font-size: 16px;\n  font-weight: bold;\n}\n.bullet .subtitle.s13 {\n  fill: #999999;\n  font-size: 12px;\n  font-weight: bold;\n}\n.bullet .subtitle.s2 {\n  fill: #999999;\n  font-size: 10px;\n}", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "::-webkit-scrollbar {\n  width: 8px;\n}\n::-webkit-scrollbar-thumb {\n  background: #8f959e;\n}\n::-webkit-scrollbar-thumb:hover {\n  background: #807f7f;\n}\n.rect-sm {\n  width: 12px;\n  height: 12px;\n}\n.rect--you {\n  background-color: #06375E;\n  opacity: 1 !important;\n}\n.rect--ok {\n  background-color: #2487D3;\n}\n.rect--strong {\n  background-color: #06375E;\n}\n.rect--weak {\n  background-color: #B1D9F9;\n}\n.indicator-container {\n  overflow-y: auto;\n  overflow-x: hidden;\n}\nselect.form-control {\n  appearance: menulist-button !important;\n}\n.bullet-chart {\n  width: 100%;\n  height: auto;\n}\n.bullet {\n  margin: 10px 0;\n}\n.bullet {\n  font: 10px sans-serif;\n  margin-left: auto;\n  margin-right: auto;\n}\n.bullet .range.s0 {\n  fill: #06375E;\n  opacity: 0.8;\n}\n.bullet .range.s1 {\n  fill: #2487D3;\n  opacity: 0.6;\n}\n.bullet .range.s2 {\n  fill: #B1D9F9;\n  opacity: 0.6;\n}\n.bullet .measure.s0 {\n  fill: #06375E;\n}\n.bullet .title {\n  font-size: 12px;\n  font-weight: bold;\n}\n.bullet .subtitle.s04 {\n  fill: #000000;\n  font-size: 16px;\n  font-weight: bold;\n}", ""]);
 // Exports
 /* harmony default export */ __webpack_exports__["default"] = (___CSS_LOADER_EXPORT___);
 
@@ -22712,6 +22863,42 @@ component.options.__file = "components/MenuBar.vue"
 
 /***/ }),
 
+/***/ "./components/PopoverContent.vue":
+/*!***************************************!*\
+  !*** ./components/PopoverContent.vue ***!
+  \***************************************/
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _PopoverContent_vue_vue_type_template_id_c2b3cba2___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./PopoverContent.vue?vue&type=template&id=c2b3cba2& */ "./components/PopoverContent.vue?vue&type=template&id=c2b3cba2&");
+/* harmony import */ var _PopoverContent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./PopoverContent.vue?vue&type=script&lang=js& */ "./components/PopoverContent.vue?vue&type=script&lang=js&");
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+;
+var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _PopoverContent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _PopoverContent_vue_vue_type_template_id_c2b3cba2___WEBPACK_IMPORTED_MODULE_0__.render,
+  _PopoverContent_vue_vue_type_template_id_c2b3cba2___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns,
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "components/PopoverContent.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
 /***/ "./components/WidgetHeading.vue":
 /*!**************************************!*\
   !*** ./components/WidgetHeading.vue ***!
@@ -22860,42 +23047,6 @@ var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__
 /* hot reload */
 if (false) { var api; }
 component.options.__file = "components/widgets/IndicatorDisplay.vue"
-/* harmony default export */ __webpack_exports__["default"] = (component.exports);
-
-/***/ }),
-
-/***/ "./components/widgets/Motivation.vue":
-/*!*******************************************!*\
-  !*** ./components/widgets/Motivation.vue ***!
-  \*******************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _Motivation_vue_vue_type_template_id_51439791_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Motivation.vue?vue&type=template&id=51439791&scoped=true& */ "./components/widgets/Motivation.vue?vue&type=template&id=51439791&scoped=true&");
-/* harmony import */ var _Motivation_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Motivation.vue?vue&type=script&lang=js& */ "./components/widgets/Motivation.vue?vue&type=script&lang=js&");
-/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
-
-
-
-
-
-/* normalize component */
-;
-var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
-  _Motivation_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
-  _Motivation_vue_vue_type_template_id_51439791_scoped_true___WEBPACK_IMPORTED_MODULE_0__.render,
-  _Motivation_vue_vue_type_template_id_51439791_scoped_true___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns,
-  false,
-  null,
-  "51439791",
-  null
-  
-)
-
-/* hot reload */
-if (false) { var api; }
-component.options.__file = "components/widgets/Motivation.vue"
 /* harmony default export */ __webpack_exports__["default"] = (component.exports);
 
 /***/ }),
@@ -23078,6 +23229,19 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./components/PopoverContent.vue?vue&type=script&lang=js&":
+/*!****************************************************************!*\
+  !*** ./components/PopoverContent.vue?vue&type=script&lang=js& ***!
+  \****************************************************************/
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_node_modules_vue_loader_lib_index_js_vue_loader_options_PopoverContent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../node_modules/babel-loader/lib/index.js!../node_modules/vue-loader/lib/index.js??vue-loader-options!./PopoverContent.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js!./node_modules/vue-loader/lib/index.js??vue-loader-options!./components/PopoverContent.vue?vue&type=script&lang=js&");
+ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_node_modules_vue_loader_lib_index_js_vue_loader_options_PopoverContent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
 /***/ "./components/WidgetHeading.vue?vue&type=script&lang=js&":
 /*!***************************************************************!*\
   !*** ./components/WidgetHeading.vue?vue&type=script&lang=js& ***!
@@ -23127,19 +23291,6 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _node_modules_babel_loader_lib_index_js_node_modules_vue_loader_lib_index_js_vue_loader_options_IndicatorDisplay_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../node_modules/babel-loader/lib/index.js!../../node_modules/vue-loader/lib/index.js??vue-loader-options!./IndicatorDisplay.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js!./node_modules/vue-loader/lib/index.js??vue-loader-options!./components/widgets/IndicatorDisplay.vue?vue&type=script&lang=js&");
  /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_node_modules_vue_loader_lib_index_js_vue_loader_options_IndicatorDisplay_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
-
-/***/ }),
-
-/***/ "./components/widgets/Motivation.vue?vue&type=script&lang=js&":
-/*!********************************************************************!*\
-  !*** ./components/widgets/Motivation.vue?vue&type=script&lang=js& ***!
-  \********************************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_node_modules_vue_loader_lib_index_js_vue_loader_options_Motivation_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../node_modules/babel-loader/lib/index.js!../../node_modules/vue-loader/lib/index.js??vue-loader-options!./Motivation.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js!./node_modules/vue-loader/lib/index.js??vue-loader-options!./components/widgets/Motivation.vue?vue&type=script&lang=js&");
- /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_node_modules_vue_loader_lib_index_js_vue_loader_options_Motivation_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
 
 /***/ }),
 
@@ -23229,6 +23380,23 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./components/PopoverContent.vue?vue&type=template&id=c2b3cba2&":
+/*!**********************************************************************!*\
+  !*** ./components/PopoverContent.vue?vue&type=template&id=c2b3cba2& ***!
+  \**********************************************************************/
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": function() { return /* reexport safe */ _node_modules_babel_loader_lib_index_js_node_modules_vue_loader_lib_loaders_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_lib_index_js_vue_loader_options_PopoverContent_vue_vue_type_template_id_c2b3cba2___WEBPACK_IMPORTED_MODULE_0__.render; },
+/* harmony export */   "staticRenderFns": function() { return /* reexport safe */ _node_modules_babel_loader_lib_index_js_node_modules_vue_loader_lib_loaders_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_lib_index_js_vue_loader_options_PopoverContent_vue_vue_type_template_id_c2b3cba2___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns; }
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_node_modules_vue_loader_lib_loaders_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_lib_index_js_vue_loader_options_PopoverContent_vue_vue_type_template_id_c2b3cba2___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../node_modules/babel-loader/lib/index.js!../node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!../node_modules/vue-loader/lib/index.js??vue-loader-options!./PopoverContent.vue?vue&type=template&id=c2b3cba2& */ "./node_modules/babel-loader/lib/index.js!./node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./components/PopoverContent.vue?vue&type=template&id=c2b3cba2&");
+
+
+/***/ }),
+
 /***/ "./components/WidgetHeading.vue?vue&type=template&id=1c09e6d3&scoped=true&":
 /*!*********************************************************************************!*\
   !*** ./components/WidgetHeading.vue?vue&type=template&id=1c09e6d3&scoped=true& ***!
@@ -23293,23 +23461,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "staticRenderFns": function() { return /* reexport safe */ _node_modules_babel_loader_lib_index_js_node_modules_vue_loader_lib_loaders_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_lib_index_js_vue_loader_options_IndicatorDisplay_vue_vue_type_template_id_4b27bbee___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns; }
 /* harmony export */ });
 /* harmony import */ var _node_modules_babel_loader_lib_index_js_node_modules_vue_loader_lib_loaders_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_lib_index_js_vue_loader_options_IndicatorDisplay_vue_vue_type_template_id_4b27bbee___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../node_modules/babel-loader/lib/index.js!../../node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!../../node_modules/vue-loader/lib/index.js??vue-loader-options!./IndicatorDisplay.vue?vue&type=template&id=4b27bbee& */ "./node_modules/babel-loader/lib/index.js!./node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./components/widgets/IndicatorDisplay.vue?vue&type=template&id=4b27bbee&");
-
-
-/***/ }),
-
-/***/ "./components/widgets/Motivation.vue?vue&type=template&id=51439791&scoped=true&":
-/*!**************************************************************************************!*\
-  !*** ./components/widgets/Motivation.vue?vue&type=template&id=51439791&scoped=true& ***!
-  \**************************************************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "render": function() { return /* reexport safe */ _node_modules_babel_loader_lib_index_js_node_modules_vue_loader_lib_loaders_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_lib_index_js_vue_loader_options_Motivation_vue_vue_type_template_id_51439791_scoped_true___WEBPACK_IMPORTED_MODULE_0__.render; },
-/* harmony export */   "staticRenderFns": function() { return /* reexport safe */ _node_modules_babel_loader_lib_index_js_node_modules_vue_loader_lib_loaders_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_lib_index_js_vue_loader_options_Motivation_vue_vue_type_template_id_51439791_scoped_true___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns; }
-/* harmony export */ });
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_node_modules_vue_loader_lib_loaders_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_lib_index_js_vue_loader_options_Motivation_vue_vue_type_template_id_51439791_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../node_modules/babel-loader/lib/index.js!../../node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!../../node_modules/vue-loader/lib/index.js??vue-loader-options!./Motivation.vue?vue&type=template&id=51439791&scoped=true& */ "./node_modules/babel-loader/lib/index.js!./node_modules/vue-loader/lib/loaders/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./components/widgets/Motivation.vue?vue&type=template&id=51439791&scoped=true&");
 
 
 /***/ }),
@@ -37402,25 +37553,14 @@ module.exports = __WEBPACK_EXTERNAL_MODULE_jquery__;
 
 /***/ }),
 
-/***/ "./data/adaptation-rules.json":
-/*!************************************!*\
-  !*** ./data/adaptation-rules.json ***!
-  \************************************/
+/***/ "./data/recommendations.json":
+/*!***********************************!*\
+  !*** ./data/recommendations.json ***!
+  \***********************************/
 /***/ (function(module) {
 
 "use strict";
-module.exports = JSON.parse('{"passing":{"timeManagement":{"recommendations":[{"id":2,"title":"Use a Time Management Tool","description":"Try using a time management tool like Trello or Pomodoro to help you stay focused and manage your time effectively."}]},"grades":{"recommendations":[{"id":3,"title":"Study with a Tutor","description":"Consider getting a tutor to help you with difficult topics and improve your grades."}]},"proficiency":{"recommendations":[{"id":5,"title":"Revise course activities","description":"Revising topics you\'re struggling with to improve your understanding."}]},"socialActivity":{"recommendations":[{"id":7,"title":"Participate in Online Discussions","description":"Participate in online discussions to get feedback from peers and improve your understanding of course topics."}]}},"master":{"timeManagement":{"recommendations":[{"id":2,"title":"Use a Time Management Tool","description":"Try using a time management tool like Trello or Pomodoro to help you stay focused and manage your time effectively."}]},"grades":{"recommendations":[{"id":3,"title":"Study with a Tutor","description":"Consider getting a tutor to help you with difficult topics and improve your grades."}]},"proficiency":{"recommendations":[{"id":5,"title":"Re-watch Course Videos","description":"Re-watch course videos on topics you\'re struggling with to improve your understanding."}]},"socialActivity":{"recommendations":[{"id":7,"title":"Participate in Online Discussions","description":"Participate in online discussions to get feedback from peers and improve your understanding of course topics."}]},"progress":{"recommendations":[{"id":7,"title":"Participate in Online Discussions","description":"Participate in online discussions to get feedback from peers and improve your understanding of course topics."}]}},"overview":{"timeManagement":{"recommendations":[{"id":2,"title":"Use a Time Management Tool","description":"Try using a time management tool like Trello or Pomodoro to help you stay focused and manage your time effectively."}]},"grades":{"recommendations":[{"id":3,"title":"Study with a Tutor","description":"Consider getting a tutor to help you with difficult topics and improve your grades."}]},"proficiency":{"recommendations":[{"id":5,"title":"Re-watch Course Videos","description":"Re-watch course videos on topics you\'re struggling with to improve your understanding."}]},"socialActivity":{"recommendations":[{"id":7,"title":"Participate in Online Discussions","description":"Participate in online discussions to get feedback from peers and improve your understanding of course topics."}]},"progress":{"recommendations":[{"id":7,"title":"Participate in Online Discussions","description":"Participate in online discussions to get feedback from peers and improve your understanding of course topics."}]}},"practice":{"timeManagement":{"recommendations":[{"id":2,"title":"Use a Time Management Tool","description":"Try using a time management tool like Trello or Pomodoro to help you stay focused and manage your time effectively."}]},"grades":{"recommendations":[{"id":3,"title":"Study with a Tutor","description":"Consider getting a tutor to help you with difficult topics and improve your grades."}]},"proficiency":{"recommendations":[{"id":5,"title":"Re-watch Course Videos","description":"Re-watch course videos on topics you\'re struggling with to improve your understanding."}]},"socialActivity":{"recommendations":[{"id":7,"title":"Participate in Online Discussions","description":"Participate in online discussions to get feedback from peers and improve your understanding of course topics."}]},"progress":{"recommendations":[{"id":7,"title":"Participate in Online Discussions","description":"Participate in online discussions to get feedback from peers and improve your understanding of course topics."}]}}}');
-
-/***/ }),
-
-/***/ "./data/thresholds.json":
-/*!******************************!*\
-  !*** ./data/thresholds.json ***!
-  \******************************/
-/***/ (function(module) {
-
-"use strict";
-module.exports = JSON.parse('{"master":{"grades":[],"proficiency":[70,85,100],"progress":[75,90,100],"timeManagement":[70,85,100],"socialActivity":[50,75,100]},"passing":{"grades":[],"proficiency":[40,70,100],"progress":[40,70,100],"timeManagement":[40,70,100],"socialActivity":[40,70,100]},"overview":{"grades":[],"proficiency":[20,40,100],"progress":[40,70,100],"timeManagement":[20,40,100],"socialActivity":[20,40,100]},"practice":{"grades":[],"proficiency":[30,60,100],"progress":[30,60,100],"timeManagement":[50,75,100],"socialActivity":[50,75,100]}}');
+module.exports = JSON.parse('{"passing":{"timeManagement":{"recommendations":[{"id":2,"title":"Verwende ein Zeitmanagement-Tool","description":"Versuche, ein Zeitmanagement-Tool wie Pomodoro zu verwenden, um konzentriert zu bleiben und deine Zeit effektiv zu verwalten. Es hilft dir deine Aufgaben zu priorisieren und deine deine Lernziele zu erreichen."}]},"grades":{"recommendations":[{"id":3,"title":"Deine Noten sind nicht aussreichend um dein Ziel zu erreichen.","description":"Frage im Forum nach Hilfe. Nutzen Sie den Austausch mit Kommilitonen*innen, um Lernstoff zu diskutieren und um sich gegenseitig Lerninhalte zu erklären."}]},"proficiency":{"recommendations":[{"id":5,"title":"Dein Verständis von deinen bearbeiteten Kursaktivitäten ist gering.","description":"Wiederhole Themen, mit denen du Schwierigkeiten hast, um dein Verständnis zu verbessern. Das hilft dir dein Wissen zu vertiefen."}]},"socialActivity":{"recommendations":[{"id":7,"title":"Nimm an Online-Diskussionen teil","description":"Nimm an Online-Diskussionen teil, um Feedback von Mitschülern zu erhalten und dein Verständnis von Kurs-Themen zu verbessern."}]},"progress":{"recommendations":[{"id":7,"title":"Dein Fortschritt im Kurs ist gering.","description":"Versuche dir Ziele zu setzen und feste Zeiten, um diese zu erreichen. Die Aufgabenliste kann dich beim planen unterstützen.  Durch das Setzen von Zielen und die Planung von festen Zeiten für die Erreichung dieser Ziele kannst du deine Zeit effektiver nutzen und dein Lernpensum besser in den Alltag integrieren."}]}},"master":{"timeManagement":{"recommendations":[{"id":2,"title":"Verwende ein Zeitmanagement-Tool","description":"Versuche, ein Zeitmanagement-Tool wie Pomodoro zu verwenden, um konzentriert zu bleiben und deine Zeit effektiv zu verwalten. Es hilft dir deine Aufgaben zu priorisieren und deine deine Lernziele zu erreichen."}]},"grades":{"recommendations":[{"id":3,"title":"Deine Noten sind nicht aussreichend um dein Ziel zu erreichen.","description":"Frage im Forum nach Hilfe. Nutzen Sie den Austausch mit Kommilitonen*innen, um Lernstoff zu diskutieren und um sich gegenseitig Lerninhalte zu erklären."}]},"proficiency":{"recommendations":[{"id":5,"title":"Sieh dir Kursvideos erneut an","description":"Sieh dir Kursvideos zu Themen, mit denen du Schwierigkeiten hast, erneut an, um dein Verständnis zu verbessern."}]},"socialActivity":{"recommendations":[{"id":7,"title":"Nimm an Online-Diskussionen teil","description":"Nimm an Online-Diskussionen teil, um Feedback von Mitschülern zu erhalten und dein Verständnis von Kurs-Themen zu verbessern."}]},"progress":{"recommendations":[{"id":7,"title":"Dein Fortschritt im Kurs ist gering.","description":"Versuche dir Ziele zu setzen und feste Zeiten, um diese zu erreichen. Die Aufgabenliste kann dich beim planen unterstützen.  Durch das Setzen von Zielen und die Planung von festen Zeiten für die Erreichung dieser Ziele kannst du deine Zeit effektiver nutzen und dein Lernpensum besser in den Alltag integrieren."}]}},"overview":{"timeManagement":{"recommendations":[{"id":2,"title":"Verwende ein Zeitmanagement-Tool","description":"Versuche, ein Zeitmanagement-Tool wie Pomodoro zu verwenden, um konzentriert zu bleiben und deine Zeit effektiv zu verwalten. Es hilft dir deine Aufgaben zu priorisieren und deine deine Lernziele zu erreichen."}]},"grades":{"recommendations":[{"id":3,"title":"Deine Noten sind nicht aussreichend um dein Ziel zu erreichen.","description":"Frage im Forum nach Hilfe. Nutzen Sie den Austausch mit Kommilitonen*innen, um Lernstoff zu diskutieren und um sich gegenseitig Lerninhalte zu erklären."}]},"proficiency":{"recommendations":[{"id":5,"title":"Dein Verständis von deinen bearbeiteten Kursaktivitäten ist gering.","description":"Wiederhole Themen, mit denen du Schwierigkeiten hast, um dein Verständnis zu verbessern. Das hilft dir dein Wissen zu vertiefen."}]},"socialActivity":{"recommendations":[{"id":7,"title":"Nehmen Sie an Online-Diskussionen teil","description":"Nehmen Sie an Online-Diskussionen teil, um Feedback von anderen Teilnehmern zu erhalten und Ihr Verständnis der Kursinhalte zu verbessern."}]},"progress":{"recommendations":[{"id":7,"title":"Dein Fortschritt im Kurs ist gering.","description":"Versuche dir Ziele zu setzen und feste Zeiten, um diese zu erreichen. Die Aufgabenliste kann dich beim planen unterstützen.  Durch das Setzen von Zielen und die Planung von festen Zeiten für die Erreichung dieser Ziele kannst du deine Zeit effektiver nutzen und dein Lernpensum besser in den Alltag integrieren."}]}},"practice":{"timeManagement":{"recommendations":[{"id":2,"title":"Verwende ein Zeitmanagement-Tool","description":"Versuchen Sie, ein Zeitmanagement-Tool wie Pomodoro zu verwenden, um konzentriert zu bleiben und Ihre Zeit effektiv zu verwalten."}]},"grades":{"recommendations":[{"id":3,"title":"Deine Noten sind nicht aussreichend um dein Ziel zu erreichen.","description":"Frage im Forum nach Hilfe. Nutzen Sie den Austausch mit Kommilitonen*innen, um Lernstoff zu diskutieren und um sich gegenseitig Lerninhalte zu erklären."}]},"proficiency":{"recommendations":[{"id":5,"title":"Dein Verständis von deinen bearbeiteten Kursaktivitäten ist gering.","description":"Wiederhole Themen, mit denen du Schwierigkeiten hast, um dein Verständnis zu verbessern. Das hilft dir dein Wissen zu vertiefen."}]},"socialActivity":{"recommendations":[{"id":7,"title":"Nehmen Sie an Online-Diskussionen teil","description":"Nehmen Sie an Online-Diskussionen teil, um Feedback von Gleichgesinnten zu erhalten und Ihr Verständnis von Kursinhalten zu verbessern."}]},"progress":{"recommendations":[{"id":7,"title":"Dein Fortschritt im Kurs ist gering.","description":"Versuche dir Ziele zu setzen und feste Zeiten, um diese zu erreichen. Die Aufgabenliste kann dich beim planen unterstützen.  Durch das Setzen von Zielen und die Planung von festen Zeiten für die Erreichung dieser Ziele kannst du deine Zeit effektiver nutzen und dein Lernpensum besser in den Alltag integrieren."}]}}}');
 
 /***/ })
 
@@ -37450,9 +37590,6 @@ module.exports = JSON.parse('{"master":{"grades":[],"proficiency":[70,85,100],"p
 /******/ 		return module.exports;
 /******/ 	}
 /******/ 	
-/******/ 	// expose the modules object (__webpack_modules__)
-/******/ 	__webpack_require__.m = __webpack_modules__;
-/******/ 	
 /************************************************************************/
 /******/ 	/* webpack/runtime/compat get default export */
 /******/ 	!function() {
@@ -37478,33 +37615,6 @@ module.exports = JSON.parse('{"master":{"grades":[],"proficiency":[70,85,100],"p
 /******/ 		};
 /******/ 	}();
 /******/ 	
-/******/ 	/* webpack/runtime/ensure chunk */
-/******/ 	!function() {
-/******/ 		__webpack_require__.f = {};
-/******/ 		// This file contains only the entry chunk.
-/******/ 		// The chunk loading function for additional chunks
-/******/ 		__webpack_require__.e = function(chunkId) {
-/******/ 			return Promise.all(Object.keys(__webpack_require__.f).reduce(function(promises, key) {
-/******/ 				__webpack_require__.f[key](chunkId, promises);
-/******/ 				return promises;
-/******/ 			}, []));
-/******/ 		};
-/******/ 	}();
-/******/ 	
-/******/ 	/* webpack/runtime/get javascript chunk filename */
-/******/ 	!function() {
-/******/ 		// This function allow to reference async chunks
-/******/ 		__webpack_require__.u = function(chunkId) {
-/******/ 			// return url for filenames based on template
-/******/ 			return "" + chunkId + ".app-lazy.min.js?v=" + __webpack_require__.h() + "";
-/******/ 		};
-/******/ 	}();
-/******/ 	
-/******/ 	/* webpack/runtime/getFullHash */
-/******/ 	!function() {
-/******/ 		__webpack_require__.h = function() { return "36b638fa4e9a6e6c0d14"; }
-/******/ 	}();
-/******/ 	
 /******/ 	/* webpack/runtime/global */
 /******/ 	!function() {
 /******/ 		__webpack_require__.g = (function() {
@@ -37522,51 +37632,6 @@ module.exports = JSON.parse('{"master":{"grades":[],"proficiency":[70,85,100],"p
 /******/ 		__webpack_require__.o = function(obj, prop) { return Object.prototype.hasOwnProperty.call(obj, prop); }
 /******/ 	}();
 /******/ 	
-/******/ 	/* webpack/runtime/load script */
-/******/ 	!function() {
-/******/ 		var inProgress = {};
-/******/ 		var dataWebpackPrefix = "moodle-local_learnerdashboard:";
-/******/ 		// loadScript function to load a script via script tag
-/******/ 		__webpack_require__.l = function(url, done, key, chunkId) {
-/******/ 			if(inProgress[url]) { inProgress[url].push(done); return; }
-/******/ 			var script, needAttach;
-/******/ 			if(key !== undefined) {
-/******/ 				var scripts = document.getElementsByTagName("script");
-/******/ 				for(var i = 0; i < scripts.length; i++) {
-/******/ 					var s = scripts[i];
-/******/ 					if(s.getAttribute("src") == url || s.getAttribute("data-webpack") == dataWebpackPrefix + key) { script = s; break; }
-/******/ 				}
-/******/ 			}
-/******/ 			if(!script) {
-/******/ 				needAttach = true;
-/******/ 				script = document.createElement('script');
-/******/ 		
-/******/ 				script.charset = 'utf-8';
-/******/ 				script.timeout = 120;
-/******/ 				if (__webpack_require__.nc) {
-/******/ 					script.setAttribute("nonce", __webpack_require__.nc);
-/******/ 				}
-/******/ 				script.setAttribute("data-webpack", dataWebpackPrefix + key);
-/******/ 				script.src = url;
-/******/ 			}
-/******/ 			inProgress[url] = [done];
-/******/ 			var onScriptComplete = function(prev, event) {
-/******/ 				// avoid mem leaks in IE.
-/******/ 				script.onerror = script.onload = null;
-/******/ 				clearTimeout(timeout);
-/******/ 				var doneFns = inProgress[url];
-/******/ 				delete inProgress[url];
-/******/ 				script.parentNode && script.parentNode.removeChild(script);
-/******/ 				doneFns && doneFns.forEach(function(fn) { return fn(event); });
-/******/ 				if(prev) return prev(event);
-/******/ 			};
-/******/ 			var timeout = setTimeout(onScriptComplete.bind(null, undefined, { type: 'timeout', target: script }), 120000);
-/******/ 			script.onerror = onScriptComplete.bind(null, script.onerror);
-/******/ 			script.onload = onScriptComplete.bind(null, script.onload);
-/******/ 			needAttach && document.head.appendChild(script);
-/******/ 		};
-/******/ 	}();
-/******/ 	
 /******/ 	/* webpack/runtime/make namespace object */
 /******/ 	!function() {
 /******/ 		// define __esModule on exports
@@ -37581,98 +37646,6 @@ module.exports = JSON.parse('{"master":{"grades":[],"proficiency":[70,85,100],"p
 /******/ 	/* webpack/runtime/publicPath */
 /******/ 	!function() {
 /******/ 		__webpack_require__.p = "/dist/";
-/******/ 	}();
-/******/ 	
-/******/ 	/* webpack/runtime/jsonp chunk loading */
-/******/ 	!function() {
-/******/ 		// no baseURI
-/******/ 		
-/******/ 		// object to store loaded and loading chunks
-/******/ 		// undefined = chunk not loaded, null = chunk preloaded/prefetched
-/******/ 		// [resolve, reject, Promise] = chunk loading, 0 = chunk loaded
-/******/ 		var installedChunks = {
-/******/ 			"main": 0
-/******/ 		};
-/******/ 		
-/******/ 		__webpack_require__.f.j = function(chunkId, promises) {
-/******/ 				// JSONP chunk loading for javascript
-/******/ 				var installedChunkData = __webpack_require__.o(installedChunks, chunkId) ? installedChunks[chunkId] : undefined;
-/******/ 				if(installedChunkData !== 0) { // 0 means "already installed".
-/******/ 		
-/******/ 					// a Promise means "currently loading".
-/******/ 					if(installedChunkData) {
-/******/ 						promises.push(installedChunkData[2]);
-/******/ 					} else {
-/******/ 						if(true) { // all chunks have JS
-/******/ 							// setup Promise in chunk cache
-/******/ 							var promise = new Promise(function(resolve, reject) { installedChunkData = installedChunks[chunkId] = [resolve, reject]; });
-/******/ 							promises.push(installedChunkData[2] = promise);
-/******/ 		
-/******/ 							// start chunk loading
-/******/ 							var url = __webpack_require__.p + __webpack_require__.u(chunkId);
-/******/ 							// create error before stack unwound to get useful stacktrace later
-/******/ 							var error = new Error();
-/******/ 							var loadingEnded = function(event) {
-/******/ 								if(__webpack_require__.o(installedChunks, chunkId)) {
-/******/ 									installedChunkData = installedChunks[chunkId];
-/******/ 									if(installedChunkData !== 0) installedChunks[chunkId] = undefined;
-/******/ 									if(installedChunkData) {
-/******/ 										var errorType = event && (event.type === 'load' ? 'missing' : event.type);
-/******/ 										var realSrc = event && event.target && event.target.src;
-/******/ 										error.message = 'Loading chunk ' + chunkId + ' failed.\n(' + errorType + ': ' + realSrc + ')';
-/******/ 										error.name = 'ChunkLoadError';
-/******/ 										error.type = errorType;
-/******/ 										error.request = realSrc;
-/******/ 										installedChunkData[1](error);
-/******/ 									}
-/******/ 								}
-/******/ 							};
-/******/ 							__webpack_require__.l(url, loadingEnded, "chunk-" + chunkId, chunkId);
-/******/ 						} else installedChunks[chunkId] = 0;
-/******/ 					}
-/******/ 				}
-/******/ 		};
-/******/ 		
-/******/ 		// no prefetching
-/******/ 		
-/******/ 		// no preloaded
-/******/ 		
-/******/ 		// no HMR
-/******/ 		
-/******/ 		// no HMR manifest
-/******/ 		
-/******/ 		// no on chunks loaded
-/******/ 		
-/******/ 		// install a JSONP callback for chunk loading
-/******/ 		var webpackJsonpCallback = function(parentChunkLoadingFunction, data) {
-/******/ 			var chunkIds = data[0];
-/******/ 			var moreModules = data[1];
-/******/ 			var runtime = data[2];
-/******/ 			// add "moreModules" to the modules object,
-/******/ 			// then flag all "chunkIds" as loaded and fire callback
-/******/ 			var moduleId, chunkId, i = 0;
-/******/ 			if(chunkIds.some(function(id) { return installedChunks[id] !== 0; })) {
-/******/ 				for(moduleId in moreModules) {
-/******/ 					if(__webpack_require__.o(moreModules, moduleId)) {
-/******/ 						__webpack_require__.m[moduleId] = moreModules[moduleId];
-/******/ 					}
-/******/ 				}
-/******/ 				if(runtime) var result = runtime(__webpack_require__);
-/******/ 			}
-/******/ 			if(parentChunkLoadingFunction) parentChunkLoadingFunction(data);
-/******/ 			for(;i < chunkIds.length; i++) {
-/******/ 				chunkId = chunkIds[i];
-/******/ 				if(__webpack_require__.o(installedChunks, chunkId) && installedChunks[chunkId]) {
-/******/ 					installedChunks[chunkId][0]();
-/******/ 				}
-/******/ 				installedChunks[chunkId] = 0;
-/******/ 			}
-/******/ 		
-/******/ 		}
-/******/ 		
-/******/ 		var chunkLoadingGlobal = self["webpackChunkmoodle_local_learnerdashboard"] = self["webpackChunkmoodle_local_learnerdashboard"] || [];
-/******/ 		chunkLoadingGlobal.forEach(webpackJsonpCallback.bind(null, 0));
-/******/ 		chunkLoadingGlobal.push = webpackJsonpCallback.bind(null, chunkLoadingGlobal.push.bind(chunkLoadingGlobal));
 /******/ 	}();
 /******/ 	
 /************************************************************************/
