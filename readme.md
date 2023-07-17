@@ -1,10 +1,10 @@
-Note: *yFbv6wMRnUwgFYC
+# SERIAL 3 - SElf Regulation induced by Adaptive Learning, version 3
 
-LAD Topics is a *Learning Analytics Dashboard* for Moodle courses. The dashboard consists of several widgets
+Serial 3 is a *Learning Analytics Dashboard* for Moodle courses. The dashboard consists of several widgets
 that can be selected and arranged to the users liking.
 
-**Implemented Widgets**
 
+**Features**
 - Progress Chart
 - Learner goals and Indicators
 - Recommendations
@@ -24,29 +24,15 @@ that can be selected and arranged to the users liking.
 1. `git clone`  the repository to /your-moodle/course/format/
 2. Open the page https://<moodle>/admin/index.php?cache=1 and follow the install instructions for the plugin.
 3. Open a course of you choice and go to the *course settings* (watch out for the little cog-icon). Set the 'course
-   format' to 'LAD Topics'.
+   format' to 'Serial 3'.
 
 
 # Development
 
 * run `npm install` to install all dependencies
-
-**Using nodemon**
-* run `nodemon` in the vue folder
-
-**Using grunt**
-
-* `grunt plugin-build` transpiles all js code
-* `grunt plugin-check` run js linter
-* `grunt plugin-css` bundles and minifies css files
-* `grunt plugin-all` handles both tasks mentioned above
-
-**Notes**
-
-https://docs.moodle.org/dev/Developer_Mode
+* change to folder `vue` and run in terminal `npm run build` to transpile changes from in vue to js
 
 **Dependencies**
-
 * vue.js, vuex
 * d3.js
 * vue-grid-layout library (https://jbaysolutions.github.io/vue-grid-layout/)
@@ -62,7 +48,7 @@ classes and functions)
 version.php: Every time you are changing the webservice description in service.php you need to increment the version by
 1 and update the plugin in moodle (See the *notifications* page in the administration panel)
 
-amd/scr: This is the folder where all custome javascript is located.
+amd/scr: This is the folder where all custome javascript is located. You should not change any file there since it is the output folder for transpiled and optimized code.
 
 /amd/app-lazy.min.js: This is the only script that is called by the HTML-DOM of the plugin. By using require.js all other
 files and dependencies are loaded on demand in this file and passed to the components underneath.
@@ -90,3 +76,4 @@ A good sheet sheet: http://tech.solin.eu/doku.php?id=moodle:course_construction
 * Marc Burchart
 * Heike Karolyi
 * Valerie Meyer
+* Slavisa Radovic

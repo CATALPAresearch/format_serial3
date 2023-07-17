@@ -575,7 +575,7 @@ class format_serial3_external extends external_api
     public static function name($data)
     {
         return array(
-            'data' => 'LAD Topics Format'
+            'data' => 'Serial 3 Format'
         );
     }
 

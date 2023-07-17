@@ -58,7 +58,7 @@ import ProgressChart from "./components/widgets/ProgressChart.vue";
 import Recommendations from "./components/widgets/Recommendations.vue";
 import TaskList from "./components/widgets/TaskList.vue";
 import {GridItem, GridLayout} from './js/vue-grid-layout.umd.min';
-import CircleChart from "./components/widgets/CircleChart.vue";
+//import CircleChart from "./components/widgets/CircleChart.vue";
 import {mapState} from 'vuex';
 
 
@@ -67,7 +67,7 @@ export default {
         GridLayout,
         GridItem,
         AppDeadlines,
-        CircleChart,
+        //CircleChart,
         IndicatorDisplay,
         MenuBar,
         ProgressChart,
@@ -215,7 +215,7 @@ export default {
 
         this.context.courseId = this.$store.state.courseid; // TODO
         this.logger = new Logger(this.context.courseId, {
-            context: "format_ladtopics",
+            context: "format_serial3",
             outputType: 1,
             url: this.$store.state.url
         });

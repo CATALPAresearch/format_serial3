@@ -1,6 +1,6 @@
 import Vue from "vue";
 import {store} from "./store/store";
-import App from "./app.vue";
+import App from "./App.vue";
 import Communication from "./scripts/communication";
 
 function init(courseid, fullPluginName, userid, isModerator, policyAccepted) {

@@ -9,7 +9,7 @@ const isDevServer = process.argv.find(v => v.includes('webpack-dev-server'));
 module.exports = (env, options) => {
 
 	exports = {
-		entry: './main.js',
+		entry: path.resolve(__dirname, 'main.js'),
 		output: {
 			path: path.resolve(__dirname, '../amd/build'),
 			publicPath: '/dist/',
@@ -43,7 +43,7 @@ module.exports = (env, options) => {
 			alias: {
 				'vue$': 'vue/dist/vue.esm.js'
 			},
-			extensions: ['*', '.js', '.vue', '.json']
+			extensions: ['.*', '.js', '.vue', '.json']
 		},
 		devServer: {
 			historyApiFallback: true,
@@ -150,13 +150,13 @@ module.exports = (env, options) => {
 		exports.optimization = {
 			minimizer: [
 				new TerserPlugin({
-					cache: true,
 					parallel: true,
-					sourceMap: true,
 					terserOptions: {
-						// https://github.com/webpack-contrib/terser-webpack-plugin#terseroptions
+						mangle: true,
+						keep_fnames: false,
+						toplevel: true,
 					}
-				}),
+				  }),
 			]
 		}
 	}

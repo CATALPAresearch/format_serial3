@@ -38,7 +38,7 @@ define([
             filler.css('display', 'inline-block');
         });
 
-        var width = document.getElementById('ladtopic-container-0').offsetWidth;
+        var width = document.getElementById('serial3-container-0').offsetWidth;
         var margins = { top: 15, right: 10, bottom: 20, left: 10 };
         var course = {
             courseType: 'Kurs', // or 'Modul'

@@ -27,7 +27,7 @@ define(['jquery'
         'mod_quiz': 'Quiz'
     };
     var actionTypes = Object.keys(label);
-    var width = document.getElementById('ladtopic-container-0').offsetWidth;
+    var width = document.getElementById('serial3-container-0').offsetWidth;
     var margins = { top: 15, right: 0, bottom: 20, left: 10 };
 
     /**

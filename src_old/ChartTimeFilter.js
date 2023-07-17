@@ -20,7 +20,7 @@ define(['jquery'], function ($) {
         timeFilterChart = dc.compositeChart("#filter-chart");
         this.xRange = xRange;
         this.milestoneApp = milestoneApp;
-        var width = document.getElementById('ladtopic-container-0').offsetWidth;
+        var width = document.getElementById('serial3-container-0').offsetWidth;
         var margins = { top: 15, right: 10, bottom: 20, left: 10 };
         var color_ms_status_range = ["#ffa500", "ff420e", "#80bd9e", "#89da59", "#004C97"];
 
