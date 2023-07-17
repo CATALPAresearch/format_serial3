@@ -8,8 +8,8 @@
 /**
  * InitialSurvey
  *
- * @module     format/ladtopics
- * @package    format_ladtopics
+ * @module     format/serial3
+ * @package    format_serial3
  * @class      InitialSurvey
  * @copyright  2019 Niels Seidel <niels.seidel@fernuni-hagen.de>
  * @license    MIT
@@ -18,8 +18,8 @@
 
 define([
     'jquery',
-    M.cfg.wwwroot + "/course/format/ladtopics/lib/build/vue.min.js",
-    M.cfg.wwwroot + "/course/format/ladtopics/lib/build/Sortable.min.js"
+    M.cfg.wwwroot + "/course/format/serial3/lib/build/vue.min.js",
+    M.cfg.wwwroot + "/course/format/serial3/lib/build/Sortable.min.js"
 ], function ($, Vue, Sortable) {
 
     /**
@@ -106,7 +106,7 @@ define([
                 utils.get_ws('userpreferences', {
                     data: {
                         'setget': 'get',
-                        'fieldname': 'ladtopics_survey_done',
+                        'fieldname': 'serial3_survey_done',
                         'courseid': parseInt(course.id, 10)
                     }
                 }, function (e) {
@@ -280,7 +280,7 @@ define([
                         data: {
                             'setget': 'set',
                             'courseid': parseInt(course.id, 10),
-                            'fieldname': 'ladtopics_survey_done',
+                            'fieldname': 'serial3_survey_done',
                             'value': 1
                         }
                     }, function (e) {
@@ -296,7 +296,7 @@ define([
                                 data: {
                                     'setget': 'set',
                                     'courseid': parseInt(course.id, 10),
-                                    'fieldname': 'ladtopics_survey_results',
+                                    'fieldname': 'serial3_survey_results',
                                     'value': JSON.stringify({
                                         objectives: _this.objectives,
                                         availableTime: _this.availableTime,

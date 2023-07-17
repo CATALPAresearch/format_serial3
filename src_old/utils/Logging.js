@@ -11,7 +11,7 @@
 define([
     'jquery', 
     'core/ajax', 
-    M.cfg.wwwroot + "/course/format/ladtopics/amd/src/utils/Utils.js"
+    M.cfg.wwwroot + "/course/format/serial3/amd/src/utils/Utils.js"
 ], function ($, ajax, utils) {
     
     utils = new utils();
@@ -19,7 +19,7 @@ define([
     var Log = function(courseid, options) {
         this.utils = utils;
         this.courseid = courseid;
-        this.name = 'log_ladtopics';
+        this.name = 'log_serial3';
         this.options = this.utils.mergeObjects({
             outputType: 0, // -1: no logging, 0: console.log(), 1: server log, 
             prefix: '',
@@ -116,7 +116,7 @@ define([
          */
         this.sendLog = function(entry) {
             ajax.call([{
-                methodname: 'format_ladtopics_logger',
+                methodname: 'format_serial3_logger',
                 args: {
                     data: {
                         courseid: this.courseid,

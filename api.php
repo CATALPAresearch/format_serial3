@@ -58,7 +58,7 @@ function get_meta($courseID)
     }
 }
 
-class format_ladtopics_external extends external_api
+class format_serial3_external extends external_api
 {
     // Analytics
 
@@ -76,7 +76,7 @@ class format_ladtopics_external extends external_api
         $out = array();
         try {
             global $USER, $CFG, $DB;
-            $permission = new format_ladtopics\permission\course((int)$USER->id, $courseid);
+            $permission = new format_serial3\permission\course((int)$USER->id, $courseid);
             if (!$permission->isAnyKindOfModerator()) throw new Exception("No permission");
             $context = $permission->getCourseContext();
             $enrollments = get_enrolled_users($context);
@@ -98,7 +98,7 @@ class format_ladtopics_external extends external_api
                     // Get milestones from the person
 
                     $sql = 'SELECT t.milestones, t.settings, t.timemodified 
-                            FROM ' . $CFG->prefix . 'ladtopics_milestones AS t
+                            FROM ' . $CFG->prefix . 'serial3_milestones AS t
                             WHERE   
                                 t.course = ' . (int)$courseid . ' 
                                 AND t.userid = ' . (int)$user->id . '
@@ -128,11 +128,11 @@ class format_ladtopics_external extends external_api
                     // Preferences
 
                     $surveyDone = $DB->get_record("user_preferences", array(
-                        'name' => 'ladtopics_survey_done-course-' . (int)$courseid,
+                        'name' => 'serial3_survey_done-course-' . (int)$courseid,
                         'userid' => (int)$user->id
                     ));
                     $surveyData = $DB->get_record("user_preferences", array(
-                        'name' => 'ladtopics_survey_results-course-' . (int)$courseid,
+                        'name' => 'serial3_survey_results-course-' . (int)$courseid,
                         'userid' => (int)$user->id
                     ));
                     if ($surveyDone !== false && is_object($surveyData) && isset($surveyData->value)) {
@@ -211,7 +211,7 @@ class format_ladtopics_external extends external_api
         global $CFG, $DB, $USER;
         $out = array();
         try {
-            $perm = new format_ladtopics\permission\course($USER->id, $courseid);
+            $perm = new format_serial3\permission\course($USER->id, $courseid);
             if ($perm->isAnyKindOfModerator()) return array('data' => json_encode($out));
 
             $out['warnSurvey'] = false;
@@ -244,7 +244,7 @@ class format_ladtopics_external extends external_api
                         }
                     }
 
-                    //$url = new moodle_url('/course/format/ladtopics/survey.php', array('c' => $courseid));
+                    //$url = new moodle_url('/course/format/serial3/survey.php', array('c' => $courseid));
                     //$out['link'] = $url->__toString();
                 }
             }
@@ -308,7 +308,7 @@ class format_ladtopics_external extends external_api
                 $transaction = $DB->start_delegated_transaction();
                 $sql = '
                     SELECT t.milestones, t.settings, t.timemodified 
-                    FROM ' . $CFG->prefix . 'ladtopics_milestones AS t
+                    FROM ' . $CFG->prefix . 'serial3_milestones AS t
                     WHERE   
                         t.course = ' . (int)$courseid . ' 
                         AND t.userid = ' . (int)$user->id . '
@@ -321,7 +321,7 @@ class format_ladtopics_external extends external_api
                 $transaction = $DB->start_delegated_transaction();
                 $sql = '
                     SELECT t.timemodified 
-                    FROM ' . $CFG->prefix . 'ladtopics_milestones AS t
+                    FROM ' . $CFG->prefix . 'serial3_milestones AS t
                     WHERE   
                         t.course = ' . (int)$courseid . ' 
                         AND t.userid = ' . (int)$user->id . '
@@ -332,14 +332,14 @@ class format_ladtopics_external extends external_api
                 // preferences
                 $transaction = $DB->start_delegated_transaction();
                 $resSD = $DB->get_record("user_preferences", array(
-                    'name' => 'ladtopics_survey_done-course-' . (int)$courseid,
+                    'name' => 'serial3_survey_done-course-' . (int)$courseid,
                     'userid' => (int)$user->id
                 ));
                 $transaction->allow_commit();
                 $uo->surveyDone = $resSD;
                 $transaction = $DB->start_delegated_transaction();
                 $res = $DB->get_record("user_preferences", array(
-                    'name' => 'ladtopics_survey_results-course-' . (int)$courseid,
+                    'name' => 'serial3_survey_results-course-' . (int)$courseid,
                     'userid' => (int)$user->id
                 ));
                 $transaction->allow_commit();
@@ -624,7 +624,7 @@ class format_ladtopics_external extends external_api
                 $r->settings = [];
                 $r->timemodified = (int)$date->getTimestamp();
                 $transaction = $DB->start_delegated_transaction();
-                $res = $DB->insert_record("ladtopics_milestones", $r);
+                $res = $DB->insert_record("serial3_milestones", $r);
                 $transaction->allow_commit();
                 $out['milestones'] = $data->milestones;
             }
@@ -654,8 +654,8 @@ class format_ladtopics_external extends external_api
                         $transaction->allow_commit();
                     }
                 }
-                func("ladtopics_survey_results", (int)$data->courseid, (int)$userid, $data->plan);
-                func("ladtopics_survey_done", (int)$data->courseid, (int)$userid, 0);
+                func("serial3_survey_results", (int)$data->courseid, (int)$userid, $data->plan);
+                func("serial3_survey_done", (int)$data->courseid, (int)$userid, 0);
             }
         } catch (Exception $ex) {
             $out['debug'] = $ex->getMessage();
@@ -985,12 +985,12 @@ class format_ladtopics_external extends external_api
         global $CFG, $DB, $USER;
 
         $r = new stdClass();
-        $r->name = 'format_ladtopics';
-        $r->component = 'format_ladtopics';
-        $r->eventname = '\format_ladtopics\event\\' . $data['action'];
+        $r->name = 'format_serial3';
+        $r->component = 'format_serial3';
+        $r->eventname = '\format_serial3\event\\' . $data['action'];
         $r->action = $data['action'];
         $r->target = 'course_format';
-        $r->objecttable = 'ladtopics';
+        $r->objecttable = 'serial3';
         $r->objectid = 0;
         $r->crud = 'r';
         $r->edulevel = 2;
@@ -1045,7 +1045,7 @@ class format_ladtopics_external extends external_api
             "SELECT other
             FROM {logstore_standard_log}
             WHERE 
-            component = 'format_ladtopics' AND
+            component = 'format_serial3' AND
             action = 'change_goal' AND
             courseid = :courseid AND
             userid = :userid
@@ -1172,7 +1172,7 @@ class format_ladtopics_external extends external_api
         $transaction = $DB->start_delegated_transaction();
         $sql = '
             SELECT t.milestones, t.settings, t.timemodified 
-            FROM ' . $CFG->prefix . 'ladtopics_milestones AS t
+            FROM ' . $CFG->prefix . 'serial3_milestones AS t
             WHERE   
                 t.course = ' . $data['courseid'] . ' 
                 AND t.userid = ' . (int)$data['userid'] . '
@@ -1236,9 +1236,9 @@ class format_ladtopics_external extends external_api
         $r->timemodified = (int)$date->getTimestamp();
 
         $transaction = $DB->start_delegated_transaction();
-        $res = $DB->insert_records("ladtopics_milestones", array($r));
+        $res = $DB->insert_records("serial3_milestones", array($r));
         $sql = '
-            INSERT INTO ' . $CFG->prefix . 'ladtopics_milestones (user,course,milestones,settings,timemodified) 
+            INSERT INTO ' . $CFG->prefix . 'serial3_milestones (user,course,milestones,settings,timemodified) 
             VALUES (' . (int)$data['userid'] . ',' . (int)$data['courseid'] . ',\'' . $data['milestones'] . '\',\'' . $data['settings'] . '\',' . (int)$date->getTimestamp() . ')
             ;';
         //$res = $DB->execute($sql);
@@ -1284,7 +1284,7 @@ class format_ladtopics_external extends external_api
         $params[] = $param['plan'];
         $sql = '
             SELECT milestones 
-            FROM ' . $CFG->prefix . 'ladtopics_milestone_plans AS t
+            FROM ' . $CFG->prefix . 'serial3_milestone_plans AS t
             WHERE   
                 t.course = ? 
                 AND t.plan = ?
@@ -1349,7 +1349,7 @@ class format_ladtopics_external extends external_api
                 $c->created = (int)$date->getTimestamp();
                 $c->plan = $param['plan'];
                 $c->milestones = $param['milestones'];
-                $sql = 'SELECT id FROM ' . $CFG->prefix . 'ladtopics_milestone_plans WHERE course = ? AND plan = ? LIMIT 1';
+                $sql = 'SELECT id FROM ' . $CFG->prefix . 'serial3_milestone_plans WHERE course = ? AND plan = ? LIMIT 1';
                 $transaction = $DB->start_delegated_transaction();
                 $params = array();
                 $params[] = (int)$meta->course->id;
@@ -1361,7 +1361,7 @@ class format_ladtopics_external extends external_api
                     $id = reset($res);
                     $c->id = $id->id;
                     $transaction = $DB->start_delegated_transaction();
-                    $res = $DB->update_record("ladtopics_milestone_plans", $c);
+                    $res = $DB->update_record("serial3_milestone_plans", $c);
                     $transaction->allow_commit();
                     if ($res === true) {
                         $data['success'] = true;
@@ -1371,7 +1371,7 @@ class format_ladtopics_external extends external_api
                     }
                 } else {
                     $transaction = $DB->start_delegated_transaction();
-                    $res = $DB->insert_records("ladtopics_milestone_plans", array($c));
+                    $res = $DB->insert_records("serial3_milestone_plans", array($c));
                     $transaction->allow_commit();
                     $data['success'] = true;
                 }
@@ -1454,7 +1454,7 @@ class format_ladtopics_external extends external_api
                 'userid' => $userid,
                 'name' => $data['fieldname'] . '-course-' . $data['courseid']
             ));
-            //$sql = 'UPDATE '. $CFG->prefix .'user_preferences SET value=\''. $data['value'] .'\' WHERE name=\'ladtopics_survey_done\' ;';
+            //$sql = 'UPDATE '. $CFG->prefix .'user_preferences SET value=\''. $data['value'] .'\' WHERE name=\'serial3_survey_done\' ;';
             //$res = $DB->set_records_sql($sql);
             $transaction->allow_commit();
         }
@@ -1921,7 +1921,7 @@ Group by cm.id
         $courseid = $data;
         $transaction = $DB->start_delegated_transaction();
         $res = $DB->get_records_sql(
-            "SELECT * FROM {ladtopics_reflections} WHERE courseid=:course AND userid=:user ORDER BY timecreated ASC",
+            "SELECT * FROM {serial3_reflections} WHERE courseid=:course AND userid=:user ORDER BY timecreated ASC",
             array("course" => (int)$courseid, "user" => (int)$userid)
         );
         $transaction->allow_commit();
@@ -1982,7 +1982,7 @@ Group by cm.id
         $r->timemodified = date_timestamp_get($date);
 
         $transaction = $DB->start_delegated_transaction();
-        $res = $DB->insert_record("ladtopics_reflections", $r);
+        $res = $DB->insert_record("serial3_reflections", $r);
         $transaction->allow_commit();
 
         return array(
@@ -2058,17 +2058,17 @@ Group by cm.id
 			'settings' => $settings,
 		];
 
-		$record = $DB->get_record('ladtopics_dashboard_settings',['userid' => $userid, 'course' => $course]);
+		$record = $DB->get_record('serial3_dashboard_settings',['userid' => $userid, 'course' => $course]);
 
 		if ($record) {
 			$record->settings = $settings;
-			$DB->update_record('ladtopics_dashboard_settings', $record);
+			$DB->update_record('serial3_dashboard_settings', $record);
 		} else {
 			$record = new stdClass();
 			$record->userid = $userid;
 			$record->course = $course;
 			$record->settings = $settings;
-			$DB->insert_record('ladtopics_dashboard_settings', $record);
+			$DB->insert_record('serial3_dashboard_settings', $record);
 		}
 
 		return array(
@@ -2114,7 +2114,7 @@ Group by cm.id
 
 		$result = $DB->get_record_sql(
 			"SELECT settings
-            FROM {ladtopics_dashboard_settings}
+            FROM {serial3_dashboard_settings}
             WHERE
             	userid=:userid AND
             	course=:course",
@@ -2169,7 +2169,7 @@ Group by cm.id
 		$record->timemodified = time();
 		$record->completed = (int)$completed;
 
-		$insertResult = $DB->insert_record("ladtopics_tasks", $record);
+		$insertResult = $DB->insert_record("serial3_tasks", $record);
 
 		if ($insertResult) {
 			return [
@@ -2211,12 +2211,12 @@ Group by cm.id
 		// update task status in database
 		global $DB;
 
-		$record = $DB->get_record('ladtopics_tasks', ['id' => (int)$id]);
+		$record = $DB->get_record('serial3_tasks', ['id' => (int)$id]);
 
 		if ($record) {
 			$record->completed = $completed;
 			$record->duedate = strtotime($duedate);
-			$success = $DB->update_record('ladtopics_tasks', $record);
+			$success = $DB->update_record('serial3_tasks', $record);
 		} else {
 			$success = false;
 		}
@@ -2254,7 +2254,7 @@ Group by cm.id
 	{
 		global $DB;
 
-		$DB->delete_records('ladtopics_tasks', ['id' => $id]);
+		$DB->delete_records('serial3_tasks', ['id' => $id]);
 
 		return [
 			'success' => true,
@@ -2291,7 +2291,7 @@ Group by cm.id
 	{
 		global $DB;
 
-		$res = $DB->get_records('ladtopics_tasks', ['userid' => (int)$userid, 'course' => (int)$course]);
+		$res = $DB->get_records('serial3_tasks', ['userid' => (int)$userid, 'course' => (int)$course]);
 
 		if (!$res) {
 			$success = false;
@@ -2499,18 +2499,18 @@ Group by cm.id
 			'activityid' => (int)$activityid,
 		];
 
-		$record = $DB->get_record('ladtopics_overview', $params);
+		$record = $DB->get_record('serial3_overview', $params);
 
 		if ($record) {
 			$record->rating = $rating;
-			$DB->update_record('ladtopics_overview', $record);
+			$DB->update_record('serial3_overview', $record);
 		} else {
 			$record = new stdClass();
 			$record->userid = (int)$userid;
 			$record->course = (int)$course;
 			$record->activityid = (int)$activityid;
 			$record->rating = (int)$rating;
-			$success = $DB->insert_record('ladtopics_overview', $record);
+			$success = $DB->insert_record('serial3_overview', $record);
 		}
 
 		return array(
@@ -2553,7 +2553,7 @@ Group by cm.id
 			'course' => (int)$course,
 		];
 
-		$res = $DB->get_records('ladtopics_overview', $params);
+		$res = $DB->get_records('serial3_overview', $params);
 
 		if (!$res) {
 			$success = false;
@@ -2653,17 +2653,17 @@ Group by cm.id
 
 		$userid = (int)$USER->id;
 
-		$record = $DB->get_record('ladtopics_learner_goal', array('userid' => $userid, 'course' => $course));
+		$record = $DB->get_record('serial3_learner_goal', array('userid' => $userid, 'course' => $course));
 
 		if ($record) {
 			$record->goal = $goal;
-			$success = $DB->update_record('ladtopics_learner_goal', $record);
+			$success = $DB->update_record('serial3_learner_goal', $record);
 		} else {
 			$record = new stdClass();
 			$record->userid = $userid;
 			$record->course = (int)$course;
 			$record->goal = $goal;
-			$success = $DB->insert_record('ladtopics_learner_goal', $record);
+			$success = $DB->insert_record('serial3_learner_goal', $record);
 		}
 
 		return array(
@@ -2703,7 +2703,7 @@ Group by cm.id
 
 		$userid = (int)$USER->id;
 
-		$goal = $DB->get_field('ladtopics_learner_goal', 'goal', array('userid' => $userid, 'course' => $course));
+		$goal = $DB->get_field('serial3_learner_goal', 'goal', array('userid' => $userid, 'course' => $course));
 
 		return array(
 			'success' => true,

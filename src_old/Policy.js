@@ -3,8 +3,8 @@
 /**
  * Main method of the plugin. Load depending javascript and css before starting the timeline dashboard.
  *
- * @module     format/ladtopics
- * @class      LADTopics
+ * @module     format/serial3
+ * @class      serial3
  * @copyright  2019 Niels Seidel <niels.seidel@fernuni-hagen.de>
  * @license    MIT
  * @since      3.1
@@ -14,15 +14,15 @@
  */
 define([
     'jquery',
-    M.cfg.wwwroot + "/course/format/ladtopics/lib/build/vue.min.js",
-    M.cfg.wwwroot + "/course/format/ladtopics/lib/build/moment-with-locales.min.js"
+    M.cfg.wwwroot + "/course/format/serial3/lib/build/vue.min.js",
+    M.cfg.wwwroot + "/course/format/serial3/lib/build/moment-with-locales.min.js"
 ],
     function ($, Vue, moment) {
 
         require.config({
             enforceDefine: false,
             paths: {
-                "moment226": [M.cfg.wwwroot + "/course/format/ladtopics/lib/build/moment-with-locales.min.js"],
+                "moment226": [M.cfg.wwwroot + "/course/format/serial3/lib/build/moment-with-locales.min.js"],
             },
             shim: {
                 "moment226": {
@@ -55,7 +55,7 @@ define([
                             return moment.unix(utc).format("DD.MM.YYYY");
                         },
                         getLink: function(p, action){
-                            return M.cfg.wwwroot + '/course/format/ladtopics/policy.php?policy='+p.id+'&version='+p.version+'&status='+action;
+                            return M.cfg.wwwroot + '/course/format/serial3/policy.php?policy='+p.id+'&version='+p.version+'&status='+action;
                         },
                         getPolicyLink: function(version_id){
                             return M.cfg.wwwroot + '/admin/tool/policy/viewall.php#policy-'+version_id;

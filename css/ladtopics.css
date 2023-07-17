@@ -1,9 +1,9 @@
 /* not working */
 
-/*@import url("//moodle/course/format/ladtopics/css/bootstrap.min.css");
-@import url("//moodle/course/format/ladtopics/css/dc.min.css");
-@import "//moodle/course/format/ladtopics/css/dc.css";
-@import "/moodle/course/format/ladtopics/css/ladtopics.css";*/
+/*@import url("//moodle/course/format/serial3/css/bootstrap.min.css");
+@import url("//moodle/course/format/serial3/css/dc.min.css");
+@import "//moodle/course/format/serial3/css/dc.css";
+@import "/moodle/course/format/serial3/css/serial3.css";*/
 
 [v-cloak] {
   display: none;
@@ -23,13 +23,13 @@
 
 /* Bad hack xxx: removes box above the timeline */
 
-body#page-course-view-ladtopics #region-main-box:nth-child(1) {
+body#page-course-view-serial3 #region-main-box:nth-child(1) {
   display: inline-block;
   max-height: none;
   min-height: 1px;
 }
 
-body#page-course-view-ladtopics #region-main-box:nth-child(1) #region-main .card {
+body#page-course-view-serial3 #region-main-box:nth-child(1) #region-main .card {
   display: inline-block;
   min-height: 1px;
   border: none;
@@ -37,7 +37,7 @@ body#page-course-view-ladtopics #region-main-box:nth-child(1) #region-main .card
 
 /* reset min-height to fit height to the content */
 
-#region-main.ladtopics-region .card {
+#region-main.serial3-region .card {
   min-height: 2rem;
 }
 
@@ -45,7 +45,7 @@ body#page-course-view-ladtopics #region-main-box:nth-child(1) #region-main .card
   margin-bottom: 20px;
 }
 
-.card-body.ladtopics {
+.card-body.serial3 {
   padding: 1.25rem;
 }
 
@@ -708,7 +708,7 @@ svg {
   left: 0;
   height: 85px;
   width: 20px;
-  background-image: url('https://aple.fernuni-hagen.de/course/format/ladtopics/img/label-milestone.png');
+  background-image: url('https://aple.fernuni-hagen.de/course/format/serial3/img/label-milestone.png');
   background-repeat: no-repeat;
   background-position: center;
   /* Center the image */
@@ -722,7 +722,7 @@ svg {
   display: inline-block;
   height: 129px;
   width: 20px;
-  background-image: url('https://aple.fernuni-hagen.de/course/format/ladtopics/img/label-activities.png');
+  background-image: url('https://aple.fernuni-hagen.de/course/format/serial3/img/label-activities.png');
   background-repeat: no-repeat;
   background-position: center;
   /* Center the image */
@@ -736,7 +736,7 @@ svg {
   left: 0;
   height: 58px;
   width: 20px;
-  background-image: url('https://aple.fernuni-hagen.de/course/format/ladtopics/img/label-filter.png');
+  background-image: url('https://aple.fernuni-hagen.de/course/format/serial3/img/label-filter.png');
   background-repeat: no-repeat;
   background-position: center;
   /* Center the image */
@@ -1000,7 +1000,7 @@ svg {
   color: #ced4da;
 }
 
-.ladtopics-pills {
+.serial3-pills {
   display: inline-flex !important;
 }
 

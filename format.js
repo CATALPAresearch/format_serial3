@@ -19,7 +19,7 @@ M.course.format = M.course.format || {};
 M.course.format.get_config = function() {
     return {
         container_node : 'ul',
-        container_class : 'ladtopics',
+        container_class : 'serial3',
         section_node : 'li',
         section_class : 'section'
     };

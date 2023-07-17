@@ -1,5 +1,5 @@
 {
-  "name": "moodle-local_learnerdashboard",
+  "name": "moodle-serial3-learnerdashboard",
   "description": "A learner dashboard for moodle with Vue.js",
   "version": "1.0.0",
   "author": "Valerie Meyer",

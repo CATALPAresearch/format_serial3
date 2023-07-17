@@ -12,9 +12,9 @@
 require.config({
     enforceDefine: false,
     paths: {
-        "d3": [M.cfg.wwwroot + "/course/format/ladtopics/lib/build/d3.v4.min"], // upgrade to v5!
-        "crossfilter": [M.cfg.wwwroot + "/course/format/ladtopics/lib/build/crossfilter.min"],
-        "dc": [M.cfg.wwwroot + "/course/format/ladtopics/lib/build/dc.v3.min"]
+        "d3": [M.cfg.wwwroot + "/course/format/serial3/lib/build/d3.v4.min"], // upgrade to v5!
+        "crossfilter": [M.cfg.wwwroot + "/course/format/serial3/lib/build/crossfilter.min"],
+        "dc": [M.cfg.wwwroot + "/course/format/serial3/lib/build/dc.v3.min"]
     },
     shim: {
         'dc': {
@@ -34,7 +34,7 @@ define([
     'core/ajax',
     'd3',
     'dc',
-    M.cfg.wwwroot + '/course/format/ladtopics/amd/src/utils/ErrorHandler.js'
+    M.cfg.wwwroot + '/course/format/serial3/amd/src/utils/ErrorHandler.js'
 ], function ($, ajax, d3, dc, ErrorHandler) {
 
     
@@ -49,7 +49,7 @@ define([
         this.get_ws = function (ws, params, cb, external) {
             external = external === undefined ? false : external;
             ajax.call([{
-                methodname: external ? ws : 'format_ladtopics_' + ws,
+                methodname: external ? ws : 'format_serial3_' + ws,
                 args: params,
                 done: function (msg) {
                     if (msg.hasOwnProperty('exception')) {

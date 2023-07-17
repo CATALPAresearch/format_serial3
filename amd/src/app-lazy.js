@@ -18754,7 +18754,7 @@ __webpack_require__.r(__webpack_exports__);
     this.courseid = this.$store.state.courseid;
     this.context.courseId = this.$store.state.courseid; // TODO
     this.logger = new _scripts_logger__WEBPACK_IMPORTED_MODULE_0__["default"](this.context.courseId, {
-      context: "format_ladtopics",
+      context: "format_serial3",
       outputType: 1,
       url: this.$store.state.url
     });
@@ -22218,7 +22218,7 @@ const store = new vuex__WEBPACK_IMPORTED_MODULE_10__["default"].Store({
      */
     async loadComponentStrings(context) {
       const lang = jquery__WEBPACK_IMPORTED_MODULE_3___default()('html').attr('lang').replace(/-/g, '_');
-      const cacheKey = 'format_ladtopics/strings/' + lang;
+      const cacheKey = 'format_serial3/strings/' + lang;
       const cachedStrings = core_localstorage__WEBPACK_IMPORTED_MODULE_1___default().get(cacheKey);
       if (cachedStrings) {
         context.commit('setStrings', JSON.parse(cachedStrings));
@@ -22226,7 +22226,7 @@ const store = new vuex__WEBPACK_IMPORTED_MODULE_10__["default"].Store({
         const request = {
           methodname: 'core_get_component_strings',
           args: {
-            'component': 'format_ladtopics',
+            'component': 'format_serial3',
             lang
           }
         };
@@ -37667,7 +37667,7 @@ __webpack_require__.r(__webpack_exports__);
 
 function init(courseid, fullPluginName, userid, isModerator, policyAccepted) {
   // We need to overwrite the variable for lazy loading.
-  __webpack_require__.p = M.cfg.wwwroot + "/course/format/ladtopics/amd/build/";
+  __webpack_require__.p = M.cfg.wwwroot + "/course/format/serial3/amd/build/";
   _scripts_communication__WEBPACK_IMPORTED_MODULE_2__["default"].setPluginName(fullPluginName);
   _store_store__WEBPACK_IMPORTED_MODULE_0__.store.commit("setCourseid", courseid);
   _store_store__WEBPACK_IMPORTED_MODULE_0__.store.commit("setisModerator", isModerator);

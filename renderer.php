@@ -33,7 +33,7 @@ require_once($CFG->dirroot.'/course/format/renderer.php');
  * @copyright 2012 Dan Poltawski
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class format_ladtopics_renderer extends format_section_renderer_base {
+class format_serial3_renderer extends format_section_renderer_base {
 
     /**
      * Constructor method, calls the parent constructor

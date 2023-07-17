@@ -33,7 +33,7 @@ require_once($CFG->dirroot. '/course/format/lib.php');
  * @copyright  2012 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class format_ladtopics extends format_base {
+class format_serial3 extends format_base {
 
     private $SURVEY_ENABLED = true;
 
@@ -77,7 +77,7 @@ class format_ladtopics extends format_base {
     public function get_default_section_name($section) {
         if ($section->section == 0) {
             // Return the general section.
-            return get_string('section0name', 'format_ladtopics');
+            return get_string('section0name', 'format_serial3');
         } else {
             // Use format_base::get_default_section_name implementation which
             // will display the section name in "Topic n" format.
@@ -155,7 +155,7 @@ class format_ladtopics extends format_base {
         
         global $COURSE, $DB, $CFG, $USER;
 
-        $perm = new format_ladtopics\permission\course($USER->id, $COURSE->id);
+        $perm = new format_serial3\permission\course($USER->id, $COURSE->id);
 
         if($this->SURVEY_ENABLED === true && !$perm->isAnyKindOfModerator()){             
             $records = $DB->get_records_sql('SELECT * FROM '.$CFG->prefix.'limesurvey_assigns WHERE course_id = ?', array($COURSE->id));                   
@@ -177,7 +177,7 @@ class format_ladtopics extends format_base {
                         }
                     }
                     //if((!isset($record->startdate) || !is_int(+$record->startdate)) && (!isset($record->stopdate) || !is_int(+$record->stopdate)) && (!isset($record->warndate) || !is_int(+$record->warndate))) continue;
-                    $redirectToSurvey = new moodle_url('/course/format/ladtopics/survey.php', array('c' => $COURSE->id));
+                    $redirectToSurvey = new moodle_url('/course/format/serial3/survey.php', array('c' => $COURSE->id));
                     redirect($redirectToSurvey);
                 }
             }
@@ -302,7 +302,7 @@ class format_ladtopics extends format_base {
                     'help_component' => 'moodle',
                 ),
                 'dashboardsectionexclude' => array(
-                    'label' => get_string('dashboardsectionexclude', 'format_ladtopics'),
+                    'label' => get_string('dashboardsectionexclude', 'format_serial3'),
                     'element_type' => 'text'
                 ),
             );
@@ -345,7 +345,7 @@ class format_ladtopics extends format_base {
     /**
      * Updates format options for a course
      *
-     * In case if course format was changed to 'ladtopics', we try to copy options
+     * In case if course format was changed to 'serial3', we try to copy options
      * 'coursedisplay' and 'hiddensections' from the previous format.
      *
      * @param stdClass|array $data return value from {@link moodleform::get_data()} or array with data
@@ -394,11 +394,11 @@ class format_ladtopics extends format_base {
     public function inplace_editable_render_section_name($section, $linkifneeded = true,
                                                          $editable = null, $edithint = null, $editlabel = null) {
         if (empty($edithint)) {
-            $edithint = new lang_string('editsectionname', 'format_ladtopics');
+            $edithint = new lang_string('editsectionname', 'format_serial3');
         }
         if (empty($editlabel)) {
             $title = get_section_name($section->course, $section);
-            $editlabel = new lang_string('newsectionname', 'format_ladtopics', $title);
+            $editlabel = new lang_string('newsectionname', 'format_serial3', $title);
         }
         return parent::inplace_editable_render_section_name($section, $linkifneeded, $editable, $edithint, $editlabel);
     }
@@ -437,7 +437,7 @@ class format_ladtopics extends format_base {
 
         // For show/hide actions call the parent method and return the new content for .section_availability element.
         $rv = parent::section_action($section, $action, $sr);
-        $renderer = $PAGE->get_renderer('format_ladtopics');
+        $renderer = $PAGE->get_renderer('format_serial3');
         $rv['section_availability'] = $renderer->section_availability($this->get_section($section));
         return $rv;
     }
@@ -451,13 +451,13 @@ class format_ladtopics extends format_base {
  * @param mixed $newvalue
  * @return \core\output\inplace_editable
  */
-function format_ladtopics_inplace_editable($itemtype, $itemid, $newvalue) {
+function format_serial3_inplace_editable($itemtype, $itemid, $newvalue) {
     global $DB, $CFG;
     require_once($CFG->dirroot . '/course/lib.php');
     if ($itemtype === 'sectionname' || $itemtype === 'sectionnamenl') {
         $section = $DB->get_record_sql(
             'SELECT s.* FROM {course_sections} s JOIN {course} c ON s.course = c.id WHERE s.id = ? AND c.format = ?',
-            array($itemid, 'ladtopics'), MUST_EXIST);
+            array($itemid, 'serial3'), MUST_EXIST);
         return course_get_format($section->course)->inplace_editable_update_section_name($section, $itemtype, $newvalue);
     }
 }

@@ -18,7 +18,7 @@
  * Version details
  *
  * @package    format
- * @subpackage ladtopics
+ * @subpackage serial3
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -26,4 +26,4 @@ defined('MOODLE_INTERNAL') || die();
 
 $plugin->version   = 2023012411;        // The current plugin version (Date: YYYYMMDDXX).
 $plugin->requires  = 2017050500;        // Requires this Moodle version.
-$plugin->component = 'format_ladtopics';    // Full name of the plugin (used for diagnostics).
+$plugin->component = 'format_serial3';    // Full name of the plugin (used for diagnostics).

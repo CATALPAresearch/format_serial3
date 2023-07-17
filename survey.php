@@ -5,7 +5,7 @@ require_once(dirname(__FILE__) . '/../../../config.php');
 $context = context_system::instance();
 global $USER, $PAGE, $DB, $CFG;
 $PAGE->set_context($context);
-$PAGE->set_url($CFG->wwwroot.'/course/format/ladtopics/survey.php');
+$PAGE->set_url($CFG->wwwroot.'/course/format/serial3/survey.php');
 
 $link = 'https://umfrage.fernuni-hagen.de/v3/';
 
@@ -37,7 +37,7 @@ if(isset($sess->s)){
         //\core\notification::success("gespeichert");
     }  
     unset($sess->s);  
-    $url = new moodle_url('/course/format/ladtopics/survey.php');
+    $url = new moodle_url('/course/format/serial3/survey.php');
     redirect($url);
 } 
 
@@ -81,13 +81,13 @@ if(isset($sess->c)){
         }     
 
         if($record->done === true){
-            $state = "<span class=\"text-success font-weight-bold\">".get_string('surveyDone', 'format_ladtopics')."</span>";
+            $state = "<span class=\"text-success font-weight-bold\">".get_string('surveyDone', 'format_serial3')."</span>";
         } else {
             $pending = true;
             if(isset($record->warndate) && is_int(+$record->warndate) && $record->warndate <= time()){
-                $state = "<span class=\"text-danger font-weight-bold\">".get_string('surveyRequired', 'format_ladtopics')."</span>"; 
+                $state = "<span class=\"text-danger font-weight-bold\">".get_string('surveyRequired', 'format_serial3')."</span>"; 
             } else {
-                $state = "<span class=\"text-warning font-weight-bold\">".get_string('surveyPending', 'format_ladtopics')."</span>"; 
+                $state = "<span class=\"text-warning font-weight-bold\">".get_string('surveyPending', 'format_serial3')."</span>"; 
             }
         }     
         
@@ -111,29 +111,29 @@ if(isset($sess->c)){
 
     // OUTPUT
     $PAGE->set_pagelayout('course');
-    $PAGE->set_title(get_string('surveyTitle', 'format_ladtopics'));
-    $PAGE->set_heading(get_string('surveyHeadline', 'format_ladtopics'));
+    $PAGE->set_title(get_string('surveyTitle', 'format_serial3'));
+    $PAGE->set_heading(get_string('surveyHeadline', 'format_serial3'));
     echo $OUTPUT->header();  
-    echo '<div style="display: inline-block;"><p class="mt-2 mb-4">'.get_string('surveyDescription', 'format_ladtopics').'</p>';   
+    echo '<div style="display: inline-block;"><p class="mt-2 mb-4">'.get_string('surveyDescription', 'format_serial3').'</p>';   
     echo "<table class=\"table\">
                     <thead class=\"thead-light\">
                         <tr>
-                            <th scope=\"col\">".get_string('surveyID', 'format_ladtopics')."</th>
-                            <th scope=\"col\">".get_string('surveyTitle', 'format_ladtopics')."</th>
-                            <th scope=\"col\">".get_string('surveyStop', 'format_ladtopics')."</th>
-                            <th scope=\"col\">".get_string('surveyState', 'format_ladtopics')."</th>
-                            <th scope=\"col\">".get_string('surveyLink', 'format_ladtopics')."</th>
+                            <th scope=\"col\">".get_string('surveyID', 'format_serial3')."</th>
+                            <th scope=\"col\">".get_string('surveyTitle', 'format_serial3')."</th>
+                            <th scope=\"col\">".get_string('surveyStop', 'format_serial3')."</th>
+                            <th scope=\"col\">".get_string('surveyState', 'format_serial3')."</th>
+                            <th scope=\"col\">".get_string('surveyLink', 'format_serial3')."</th>
                         </tr>
                     <thead>
                     <tbody>
                         {$list}
                     </tbody>
                 </table>";   
-                // <th scope=\"col\">".get_string('surveyStart', 'format_ladtopics')."</th><th scope=\"col\">".get_string('surveyWarn', 'format_ladtopics')."</th>
+                // <th scope=\"col\">".get_string('surveyStart', 'format_serial3')."</th><th scope=\"col\">".get_string('surveyWarn', 'format_serial3')."</th>
                                 
     $courseURL = new moodle_url('/course/view.php', array('id' => +$sess->c));
-    echo '<p class="text-center">'.get_string('surveyReqText', 'format_ladtopics').'</p>';
-    echo '<div class="text-center"><button onClick="javascript:window.location.href=\''.$courseURL->__toString().'\';" class="btn btn-secondary center-block">'.get_string('surveyButton', 'format_ladtopics').'</button></div></div>';
+    echo '<p class="text-center">'.get_string('surveyReqText', 'format_serial3').'</p>';
+    echo '<div class="text-center"><button onClick="javascript:window.location.href=\''.$courseURL->__toString().'\';" class="btn btn-secondary center-block">'.get_string('surveyButton', 'format_serial3').'</button></div></div>';
     echo $OUTPUT->footer();
 } else {    
     redirect(new moodle_url('/'));

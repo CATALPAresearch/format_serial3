@@ -1,8 +1,8 @@
 /**
  * DashboardCompletion
  *
- * @module     format/ladtopics
- * @package    format_ladtopics
+ * @module     format/serial3
+ * @package    format_serial3
  * @class      DashboardCompletion
  * @copyright  2020 Niels Seidel, niels.seidel@fernuni-hagen.de
  * @description Shows per course section a row of rectangles indicating the completion of assigned activities.
@@ -17,9 +17,9 @@
 
 define([
     'jquery',
-    M.cfg.wwwroot + "/course/format/ladtopics/lib/build/vue.min.js",
+    M.cfg.wwwroot + "/course/format/serial3/lib/build/vue.min.js",
     // 'd3v4',
-    M.cfg.wwwroot + "/course/format/ladtopics/amd/src/utils/Utils.js"
+    M.cfg.wwwroot + "/course/format/serial3/amd/src/utils/Utils.js"
 ], function ($, Vue, Utils) {
     Utils = new Utils();
     return Vue.component('dashboard-completion',

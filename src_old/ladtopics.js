@@ -3,21 +3,21 @@
 /**
  * Main method of the plugin. Load depending javascript and css before starting the timeline dashboard.
  *
- * @module     format/ladtopics
- * @class      LADTopics
+ * @module     format/serial3
+ * @class      serial3
  * @copyright  2019 Niels Seidel <niels.seidel@fernuni-hagen.de>
  * @license    MIT
  * @since      3.1
  */
 define([
     'jquery',
-    M.cfg.wwwroot + '/course/format/ladtopics/amd/src/Timeline.js',
-    M.cfg.wwwroot + '/course/format/ladtopics/amd/src/utils/Utils.js',
-    M.cfg.wwwroot + '/course/format/ladtopics/amd/src/ChartTimeFilter.js',
-    M.cfg.wwwroot + '/course/format/ladtopics/amd/src/ChartActivity.js',
-    M.cfg.wwwroot + '/course/format/ladtopics/amd/src/InitialSurvey.js',
-    M.cfg.wwwroot + '/course/format/ladtopics/amd/src/utils/Logging.js',
-    M.cfg.wwwroot + '/course/format/ladtopics/amd/src/utils/ErrorHandler.js'
+    M.cfg.wwwroot + '/course/format/serial3/amd/src/Timeline.js',
+    M.cfg.wwwroot + '/course/format/serial3/amd/src/utils/Utils.js',
+    M.cfg.wwwroot + '/course/format/serial3/amd/src/ChartTimeFilter.js',
+    M.cfg.wwwroot + '/course/format/serial3/amd/src/ChartActivity.js',
+    M.cfg.wwwroot + '/course/format/serial3/amd/src/InitialSurvey.js',
+    M.cfg.wwwroot + '/course/format/serial3/amd/src/utils/Logging.js',
+    M.cfg.wwwroot + '/course/format/serial3/amd/src/utils/ErrorHandler.js'
 ],
     function ($, Timeline, Utils, filterChart, activityChart, initialSurvey, Log, ErrorHandler) {
         /**
@@ -26,17 +26,17 @@ define([
         require.config({
             enforceDefine: false,
             paths: {
-                //"crossfilter": [M.cfg.wwwroot + "/course/format/ladtopics/lib/build/crossfilter.min"],
-                //"d3": [M.cfg.wwwroot + "/course/format/ladtopics/lib/build/d3.v4.min"], 
-                //"dc": [M.cfg.wwwroot + "/course/format/ladtopics/lib/build/dc.v4.min"],
-                "d3": [M.cfg.wwwroot + "/course/format/ladtopics/lib/buil/d3.v4.min"],
-                "crossfilter": [M.cfg.wwwroot + "/course/format/ladtopics/lib/build/crossfilter.min"],
-                "dc": [M.cfg.wwwroot + "/course/format/ladtopics/lib/build/dc.v3.min"],
-                "moment226": [M.cfg.wwwroot + "/course/format/ladtopics/lib/build/moment-with-locales.min"], // ["moment.min"],
-                "intro293": [M.cfg.wwwroot + "/course/format/ladtopics/lib/build/intro.min"],
-                "ICAL": [M.cfg.wwwroot + "/course/format/ladtopics/lib/build/ical.min"],
-                "vDP": [M.cfg.wwwroot + "/course/format/ladtopics/lib/build/vDP.min"],
-                "vDPde": [M.cfg.wwwroot + "/course/format/ladtopics/lib/build/vDPde.min"]
+                //"crossfilter": [M.cfg.wwwroot + "/course/format/serial3/lib/build/crossfilter.min"],
+                //"d3": [M.cfg.wwwroot + "/course/format/serial3/lib/build/d3.v4.min"], 
+                //"dc": [M.cfg.wwwroot + "/course/format/serial3/lib/build/dc.v4.min"],
+                "d3": [M.cfg.wwwroot + "/course/format/serial3/lib/buil/d3.v4.min"],
+                "crossfilter": [M.cfg.wwwroot + "/course/format/serial3/lib/build/crossfilter.min"],
+                "dc": [M.cfg.wwwroot + "/course/format/serial3/lib/build/dc.v3.min"],
+                "moment226": [M.cfg.wwwroot + "/course/format/serial3/lib/build/moment-with-locales.min"], // ["moment.min"],
+                "intro293": [M.cfg.wwwroot + "/course/format/serial3/lib/build/intro.min"],
+                "ICAL": [M.cfg.wwwroot + "/course/format/serial3/lib/build/ical.min"],
+                "vDP": [M.cfg.wwwroot + "/course/format/serial3/lib/build/vDP.min"],
+                "vDPde": [M.cfg.wwwroot + "/course/format/serial3/lib/build/vDPde.min"]
             },
             shim: {
                 'dc': {
@@ -90,7 +90,7 @@ define([
 
                     var utils = new Utils();
                     var logger = new Log(courseid, {
-                        context: 'format_ladtopics',
+                        context: 'format_serial3',
                         outputType: 1 // 0: console, 1: logstore_standard_log
                     });
 
@@ -117,10 +117,10 @@ define([
                                             }                                            
                                         }
                                         
-                                        //const link = `${window.location.protocol}//${window.location.hostname}/course/format/ladtopics/survey.php?c=${courseid}`;
+                                        //const link = `${window.location.protocol}//${window.location.hostname}/course/format/serial3/survey.php?c=${courseid}`;
                                         const curl = window.location.href;
                                         const split = curl.substr(0, curl.indexOf("view"));
-                                        const link = `${split}format/ladtopics/survey.php?c=${courseid}`
+                                        const link = `${split}format/serial3/survey.php?c=${courseid}`
 
                                         const obj = $(
                                             `

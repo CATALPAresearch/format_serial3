@@ -8,15 +8,15 @@
 define([
     'jquery',
     'core/ajax',
-    M.cfg.wwwroot + "/course/format/ladtopics/lib/build/vue.min.js",
-    M.cfg.wwwroot + "/course/format/ladtopics/lib/build/moment-with-locales.min.js"    
+    M.cfg.wwwroot + "/course/format/serial3/lib/build/vue.min.js",
+    M.cfg.wwwroot + "/course/format/serial3/lib/build/moment-with-locales.min.js"    
 ],
     function($, ajax, Vue, moment){  
         
         require.config({
             enforceDefine: false,
             paths: {
-                "d3": [M.cfg.wwwroot + "/course/format/ladtopics/lib/build/d3.v4.min"]
+                "d3": [M.cfg.wwwroot + "/course/format/serial3/lib/build/d3.v4.min"]
             },
             shim: {
                 'dc': {
@@ -453,7 +453,7 @@ define([
                                         return new Promise(
                                             function(resolve, reject){
                                                 ajax.call([{
-                                                    methodname: 'format_ladtopics_'+method,
+                                                    methodname: 'format_serial3_'+method,
                                                     args: param,
                                                     timeout: 3000,
                                                     done: function(data){                                                                
@@ -827,7 +827,7 @@ define([
                                 template: `
                                 <div>
                                     <nav class="navbar navbar-expand-lg navbar-light bg-primary">
-                                        <a class="navbar-brand" href="#"><span class="text-white">LADTopics Analytics Dashboard</span></a>
+                                        <a class="navbar-brand" href="#"><span class="text-white">serial3 Analytics Dashboard</span></a>
                                         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
                                             <span class="navbar-toggler-icon"></span>
                                         </button>

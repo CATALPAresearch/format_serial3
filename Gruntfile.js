@@ -54,7 +54,7 @@ module.exports = function (grunt) { // jshint ignore:line
     grunt.initConfig({
         ts: {
             amd: {
-                //tsconfig: moodleroot + '/format/ladtopics/amd/src/tsconfig.json',
+                //tsconfig: moodleroot + '/format/serial3/amd/src/tsconfig.json',
                 src: ["./amd/src/**/*.ts", "!node_modules/**"]
             }
         },

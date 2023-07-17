@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" PATH="course/format/ladtopics/db" VERSION="20200915"
-       COMMENT="XMLDB file for LADTOPICS module"
+<XMLDB xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" PATH="course/format/serial3/db" VERSION="20200915"
+       COMMENT="XMLDB file for serial3 module"
        xsi:noNamespaceSchemaLocation="../../../../lib/xmldb/xmldb.xsd"
 >
     <TABLES>
-        <TABLE NAME="ladtopics_milestones" COMMENT="Each record is one page and its config data">
+        <TABLE NAME="serial3_milestones" COMMENT="Each record is one page and its config data">
             <FIELDS>
                 <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
                 <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
@@ -20,7 +20,7 @@
                 <INDEX NAME="course" UNIQUE="false" FIELDS="course"/>
             </INDEXES>
         </TABLE>
-        <TABLE NAME="ladtopics_milestone_plans" COMMENT="Each record is one page and its config data">
+        <TABLE NAME="serial3_milestone_plans" COMMENT="Each record is one page and its config data">
             <FIELDS>
                 <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
                 <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
@@ -62,7 +62,7 @@
                 <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
             </KEYS>
         </TABLE>_
-        <TABLE NAME="ladtopics_tasks" COMMENT="Stores the tasks list items. Each record is one task item">
+        <TABLE NAME="serial3_tasks" COMMENT="Stores the tasks list items. Each record is one task item">
             <FIELDS>
                 <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
                 <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
@@ -81,7 +81,7 @@
                 <INDEX NAME="course" UNIQUE="false" FIELDS="course"/>
             </INDEXES>
         </TABLE>
-        <TABLE NAME="ladtopics_dashboard_settings" COMMENT="Stores dashboard settings for each user">
+        <TABLE NAME="serial3_dashboard_settings" COMMENT="Stores dashboard settings for each user">
             <FIELDS>
                 <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
                 <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
@@ -93,7 +93,7 @@
                 <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
             </KEYS>
         </TABLE>
-        <TABLE NAME="ladtopics_learner_goal" COMMENT="Stores dashboard settings for each user">
+        <TABLE NAME="serial3_learner_goal" COMMENT="Stores dashboard settings for each user">
             <FIELDS>
                 <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
                 <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
@@ -107,7 +107,7 @@
                 <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
             </KEYS>
         </TABLE>
-        <TABLE NAME="ladtopics_activitiy_ratings" COMMENT="Stores user progress and topic understanding">
+        <TABLE NAME="serial3_activitiy_ratings" COMMENT="Stores user progress and topic understanding">
             <FIELDS>
                 <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
                 <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>

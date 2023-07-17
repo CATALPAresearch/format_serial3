@@ -1,7 +1,7 @@
 /**
  * DashboardCompletion
  *
- * @module     format/ladtopics
+ * @module     format/serial3
  * @class      DashboardCompletion
  * @copyright  2020 Niels Seidel <niels.seidel@fernuni-hagen.de>
  * @description 
@@ -15,7 +15,7 @@
 
 define([
     'jquery',
-    M.cfg.wwwroot + "/course/format/ladtopics/lib/build/vue.min.js"
+    M.cfg.wwwroot + "/course/format/serial3/lib/build/vue.min.js"
 ], function ($, Vue) {
 
     return Vue.component('dashboard-strategy',
@@ -160,8 +160,8 @@ define([
 
                 if (this.storageAvailable('localStorage')) {
                     try {
-                        if (localStorage.getItem('ladtopics_strategy_bookmarks') !== null) {
-                            this.bookmarked = JSON.parse(localStorage.getItem('ladtopics_strategy_bookmarks'));
+                        if (localStorage.getItem('serial3_strategy_bookmarks') !== null) {
+                            this.bookmarked = JSON.parse(localStorage.getItem('serial3_strategy_bookmarks'));
                         } else {
                             this.bookmarked = {};
                         }
@@ -247,7 +247,7 @@ define([
                     this.bookmarked[id] = !this.bookmarked[id];
                     this.$forceUpdate();
                     if (this.storageAvailable('localStorage')) {
-                        localStorage.setItem('ladtopics_strategy_bookmarks', JSON.stringify(this.bookmarked));
+                        localStorage.setItem('serial3_strategy_bookmarks', JSON.stringify(this.bookmarked));
                     }
                 },
                 storageAvailable: function (type) {
@@ -354,8 +354,8 @@ define([
                                 <p>Üben Sie das schnelle Lesen, indem Sie einmal probieren, so schnell zu lesen, wie Sie können.Lesen Sie so schnell, dass Sie kaum etwas
                                 vom Inhalt des Textes mitbekommen. Betrachten Sie das als eine Tempo-Übung.Eine weitere Übung, um die Lesegeschwindigkeit zu erhöhen,
                                 ist die Vergrößerung des Fixierungsbereichs; lesen Sie in Wortgruppen anstelle des wortwörtlichen Lesens. Beide Prozesse werden durch
-                                die nachfolgenden Abbildungen dargestellt:<img class="w-50" :src="moodlePath + \'/course/format/ladtopics/pix/schnelle_Lesebewegung.png\'" /><img
-                                    class="w-50" :src="moodlePath + \'/course/format/ladtopics/pix/normale_Lesebewegung.png\'" />Eine weitere unterstützende Technik bietet die
+                                die nachfolgenden Abbildungen dargestellt:<img class="w-50" :src="moodlePath + \'/course/format/serial3/pix/schnelle_Lesebewegung.png\'" /><img
+                                    class="w-50" :src="moodlePath + \'/course/format/serial3/pix/normale_Lesebewegung.png\'" />Eine weitere unterstützende Technik bietet die
                                 Beschleunigung des Lesefingers. Lesen Sie zu Beginn mit dem Finger unter den Zeilen. Das schult die Blickbewegung, so dass mehrere Worte
                                 auf einmal wahrgenommen werden können. Steigern Sie dabei das Tempo Ihres Fingers; je schneller der Finger über die Zeilen gleitet,
                                 desto schneller müssen Sie auch lesen.</p>

@@ -30,7 +30,7 @@ defined('MOODLE_INTERNAL') || die();
  * For each such course we call {@link format_topics_upgrade_hide_extra_sections()} and
  * either delete or hide "orphaned" sections.
  */
-function format_ladtopics_upgrade_remove_numsections() {
+function format_serial3_upgrade_remove_numsections() {
     global $DB;
 
     $sql1 = "SELECT c.id, max(cs.section) AS sectionsactual
@@ -44,7 +44,7 @@ function format_ladtopics_upgrade_remove_numsections() {
           JOIN {course_format_options} n ON n.courseid = c.id AND n.format = :format1 AND n.name = :numsections AND n.sectionid = 0
           WHERE c.format = :format2";
 
-    $params = ['format1' => 'ladtopics', 'format2' => 'ladtopics', 'numsections' => 'numsections'];
+    $params = ['format1' => 'serial3', 'format2' => 'serial3', 'numsections' => 'numsections'];
 
     $actual = $DB->get_records_sql_menu($sql1, $params);
     $numsections = $DB->get_records_sql_menu($sql2, $params);
@@ -66,10 +66,10 @@ function format_ladtopics_upgrade_remove_numsections() {
     unset($numsections);
 
     foreach ($needfixing as $courseid => $numsections) {
-        format_ladtopics_upgrade_hide_extra_sections($courseid, $numsections);
+        format_serial3_upgrade_hide_extra_sections($courseid, $numsections);
     }
 
-    $DB->delete_records('course_format_options', ['format' => 'ladtopics', 'sectionid' => 0, 'name' => 'numsections']);
+    $DB->delete_records('course_format_options', ['format' => 'serial3', 'sectionid' => 0, 'name' => 'numsections']);
 }
 
 /**
@@ -82,7 +82,7 @@ function format_ladtopics_upgrade_remove_numsections() {
  * @param int $courseid
  * @param int $numsections
  */
-function format_ladtopics_upgrade_hide_extra_sections($courseid, $numsections) {
+function format_serial3_upgrade_hide_extra_sections($courseid, $numsections) {
     global $DB;
     $sections = $DB->get_records_sql('SELECT id, name, summary, sequence, visible
         FROM {course_sections}

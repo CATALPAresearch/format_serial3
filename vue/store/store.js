@@ -145,7 +145,7 @@ export const store = new Vuex.Store({
 		 */
 		async loadComponentStrings(context) {
 			const lang = $('html').attr('lang').replace(/-/g, '_');
-			const cacheKey = 'format_ladtopics/strings/' + lang;
+			const cacheKey = 'format_serial3/strings/' + lang;
 			const cachedStrings = moodleStorage.get(cacheKey);
 			if (cachedStrings) {
 				context.commit('setStrings', JSON.parse(cachedStrings));
@@ -153,7 +153,7 @@ export const store = new Vuex.Store({
 				const request = {
 					methodname: 'core_get_component_strings',
 					args: {
-						'component': 'format_ladtopics',
+						'component': 'format_serial3',
 						lang,
 					},
 				};

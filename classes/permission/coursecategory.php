@@ -21,7 +21,7 @@
  * 
  */
 
-namespace format_ladtopics\permission;
+namespace format_serial3\permission;
 
 class coursecategory extends context {
     function __construct($userid, $category_id){

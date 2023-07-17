@@ -29,7 +29,7 @@ that can be selected and arranged to the users liking.
 
 # Development
 
-* run `npm run install` to install all dependencies
+* run `npm install` to install all dependencies
 
 **Using nodemon**
 * run `nodemon` in the vue folder

@@ -6,7 +6,7 @@ import Communication from "./scripts/communication";
 function init(courseid, fullPluginName, userid, isModerator, policyAccepted) {
 	// We need to overwrite the variable for lazy loading.
 	__webpack_public_path__ =
-		M.cfg.wwwroot + "/course/format/ladtopics/amd/build/";
+		M.cfg.wwwroot + "/course/format/serial3/amd/build/";
 
 	Communication.setPluginName(fullPluginName);
 

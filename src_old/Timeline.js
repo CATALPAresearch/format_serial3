@@ -11,8 +11,8 @@
 /**
  * Timeline
  *
- * @module     format/ladtopics
- * @package    format_ladtopics
+ * @module     format/serial3
+ * @package    format_serial3
  * @class      Timeline
  * @copyright  2019 Niels Seidel, niels.seidel@fernuni-hagen.de
  * @license    MIT
@@ -22,11 +22,11 @@
 define([
     'jquery',
     'core/ajax',
-    M.cfg.wwwroot + "/course/format/ladtopics/lib/build/vue.min.js",
-    M.cfg.wwwroot + "/course/format/ladtopics/amd/src/MilestoneCalendarExport.js",
-    M.cfg.wwwroot + "/course/format/ladtopics/amd/src/DashboardOverview.js",
-    M.cfg.wwwroot + "/course/format/ladtopics/amd/src/DashboardCompletion.js",
-    M.cfg.wwwroot + "/course/format/ladtopics/amd/src/DashboardStrategy.js"
+    M.cfg.wwwroot + "/course/format/serial3/lib/build/vue.min.js",
+    M.cfg.wwwroot + "/course/format/serial3/amd/src/MilestoneCalendarExport.js",
+    M.cfg.wwwroot + "/course/format/serial3/amd/src/DashboardOverview.js",
+    M.cfg.wwwroot + "/course/format/serial3/amd/src/DashboardCompletion.js",
+    M.cfg.wwwroot + "/course/format/serial3/amd/src/DashboardStrategy.js"
 ], function ($, ajax, Vue, MilestoneCalendarExport, DashboardOverview, DashboardCompletion, DashboardStrategy) {
 
     var Timeline = function (d3, dc, crossfilter, moment, utils, introJs, logger, ChartTimeFilter, ChartActivity, InitialSurvey, vDP, vDPde, ErrorHandler) {
@@ -1696,7 +1696,7 @@ define([
                                 this.timeFilterChart.replaceFilter(dc.filters.RangedFilter(start, stop));
                                 this.timeFilterChart.filterTime();
                                 $('html, body').animate({
-                                    scrollTop: $("div.ladtopics").offset().top - $("nav.navbar").outerHeight()
+                                    scrollTop: $("div.serial3").offset().top - $("nav.navbar").outerHeight()
                                 }, 1000);
                                 $("#filter-presets").find("button").css("text-decoration", "none");
 
@@ -1991,7 +1991,7 @@ define([
                                         data: {
                                             'setget': 'set',
                                             'courseid': parseInt(course.id, 10),
-                                            'fieldname': 'ladtopics_survey_done',
+                                            'fieldname': 'serial3_survey_done',
                                             'value': 0
                                         }
                                     }, function (e) {
@@ -2005,7 +2005,7 @@ define([
                                         data: {
                                             'setget': 'set',
                                             'courseid': parseInt(course.id, 10),
-                                            'fieldname': 'ladtopics_survey_results',
+                                            'fieldname': 'serial3_survey_results',
                                             'value': ""
                                         }
                                     }, function (e) {
@@ -2573,7 +2573,7 @@ define([
                                 data: {
                                     'setget': 'get',
                                     'courseid': parseInt(course.id, 10),
-                                    'fieldname': 'ladtopics_survey_results',
+                                    'fieldname': 'serial3_survey_results',
                                 }
                             }, function (u) {
 

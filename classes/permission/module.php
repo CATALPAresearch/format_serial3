@@ -21,7 +21,7 @@
  * 
  */
 
-namespace format_ladtopics\permission;
+namespace format_serial3\permission;
 
 defined('MOODLE_INTERNAL') || die();
 

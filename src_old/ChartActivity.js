@@ -5,8 +5,8 @@
 /**
  * ActivityChart
  *
- * @module     format/ladtopics
- * @package    format_ladtopics
+ * @module     format/serial3
+ * @package    format_serial3
  * @class      ActivityChart
  * @copyright  2020 Niels Seidel, niels.seidel@fernuni-hagen.de
  * @license    MIT

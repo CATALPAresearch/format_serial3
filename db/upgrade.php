@@ -30,7 +30,7 @@ defined('MOODLE_INTERNAL') || die();
  * @param int $oldversion the version we are upgrading from
  * @return bool result
  */
-function xmldb_format_ladtopics_upgrade($oldversion) {
+function xmldb_format_serial3_upgrade($oldversion) {
     global $CFG, $DB;
 
     

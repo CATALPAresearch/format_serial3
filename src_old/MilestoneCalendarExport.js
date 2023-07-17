@@ -11,22 +11,22 @@
 /**
  * Timeline
  *
- * @module     format/ladtopics
+ * @module     format/serial3
  * @class      Timeline
  * @copyright  2020 Marc Burchart, Niels Seidel <niels.seidel@fernuni-hagen.de>
  * @license    MIT
  * @since      3.1
  */
 define([
-    M.cfg.wwwroot + '/course/format/ladtopics/lib/build/vue.min.js',
-    M.cfg.wwwroot + '/course/format/ladtopics/amd/build/ICalExport.min.js',
-    M.cfg.wwwroot + '/course/format/ladtopics/amd/build/utils/ErrorHandler.min.js'
+    M.cfg.wwwroot + '/course/format/serial3/lib/build/vue.min.js',
+    M.cfg.wwwroot + '/course/format/serial3/amd/build/ICalExport.min.js',
+    M.cfg.wwwroot + '/course/format/serial3/amd/build/utils/ErrorHandler.min.js'
 ], function(Vue, ICalExport, ErrorHandler) {
 
     require.config({
         enforceDefine: false,
         paths: {
-            "ICAL": [M.cfg.wwwroot + "/course/format/ladtopics/lib/build/ical.min"]
+            "ICAL": [M.cfg.wwwroot + "/course/format/serial3/lib/build/ical.min"]
         },
         shim: {
             'ICAL': {

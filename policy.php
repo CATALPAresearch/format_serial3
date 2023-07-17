@@ -6,7 +6,7 @@ $context = context_system::instance();
 global $USER, $PAGE, $DB, $CFG;
 require_login();
 $PAGE->set_context($context);
-$PAGE->set_url($CFG->wwwroot.'/course/format/ladtopics/policy.php');
+$PAGE->set_url($CFG->wwwroot.'/course/format/serial3/policy.php');
 $PAGE->set_pagelayout('course');
 $PAGE->set_title("Zustimmung und Richtlinien");
 echo $OUTPUT->header();
@@ -94,6 +94,6 @@ ON p.currentversionid = v.id
 $res = $DB->get_records_sql($query, array((int)$USER->id));
 //get_records("tool_policy_acceptances", array("userid" => (int)$USER->id ));
 echo '<policy-container></policy-container>';
-$PAGE->requires->js_call_amd('format_ladtopics/Policy', 'init', array('policies'=>$res, 'message'=>$message, 'backurl'=>$policy_back));
+$PAGE->requires->js_call_amd('format_serial3/Policy', 'init', array('policies'=>$res, 'message'=>$message, 'backurl'=>$policy_back));
 echo $OUTPUT->footer();
 
