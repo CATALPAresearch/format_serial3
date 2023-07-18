@@ -1,36 +1,33 @@
 <template>
     <div class="position-relative h-100 d-flex flex-column">
-        <widget-heading icon="fa-thumbs-o-up" :info-content="info"
-                        title="Empfehlungen"></widget-heading>
+        <widget-heading icon="fa-thumbs-o-up" :info-content="info" title="Empfehlungen"></widget-heading>
         <div class="recommendations--container pr-1">
             <ul v-if="recommendations.length > 0" class="list-unstyled">
-                <li
-                    v-for="(recommendation, index) in filteredRecommendations"
-                    :key="index"
-                    class="recommendations--item"
-                >
+                <li v-for="(recommendation, index) in filteredRecommendations" :key="index" class="recommendations--item">
                     <div class="mr-5">
                         <h5>{{ recommendation.title }}</h5>
                         <p>{{ recommendation.description }}</p>
                     </div>
                 </li>
             </ul>
-            <p v-else class="recommendations--item">Es scheint, dass Sie in allen Bereichen gut abschneiden und keine besonderen Schwächen aufweisen. Weiter so!<p/>
+            <p v-else class="recommendations--item">Es scheint, dass Sie in allen Bereichen gut abschneiden und keine
+                besonderen Schwächen aufweisen. Weiter so!
+                <p />
         </div>
     </div>
 </template>
 
 <script>
 import WidgetHeading from "../WidgetHeading.vue";
-import recommendationRules  from '../../data/recommendations.json';
-import {mapState} from "vuex";
+import recommendationRules from '../../data/recommendations.json';
+import { mapState } from "vuex";
 
 export default {
     name: "Recommendations",
 
-    components: {WidgetHeading},
+    components: { WidgetHeading },
 
-    data () {
+    data() {
         return {
             recommendations: [],
             info: 'Dieses Widget zeigt dir Empfehlungen an, wie du deine Lernstrategien optimieren und dadurch deine Lernleistung verbessern kannst. Die Empfehlungen basieren auf den Metriken, die dir im "Lernziel"-Widget angezeigt werden. Durch die individuellen Empfehlungen kannst du deine Lernstrategien hinterfragen und gezielt verbessern.',
@@ -121,9 +118,9 @@ export default {
 
 .recommendations {
     &--container {
-         overflow-y: auto;
-         max-height: 300px;
-     }
+        overflow-y: auto;
+        max-height: 300px;
+    }
 
     &--item {
         border: 1px solid #ccc;
