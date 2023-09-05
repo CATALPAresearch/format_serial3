@@ -18,6 +18,15 @@ export default {
 			state.currentSection = section;
 		},
 		setCourseData(state, data) {
+			// TODO: filter for a limited ste of activity types
+			var allowedActivitities = ['questionnaire', 'hypervideo', 'longpage', 'assignment'];
+			var filtered = Object.values(data)
+				/*.filter( type  => data.includes(type) && type == 'hypervideo')
+				.reduce((obj, key) => {
+					obj[key] = users[key];
+					return obj;
+			}, {});*/
+			console.log('ffff', filtered);
 			state.courseData = data;
 		},
 		setCurrentActivities(state, data) {

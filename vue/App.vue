@@ -55,8 +55,10 @@ import IndicatorDisplay from "./components/widgets/IndicatorDisplay.vue";
 import MenuBar from "./components/MenuBar.vue";
 import QuizStatistics from "./components/widgets/QuizStatistics.vue";
 import ProgressChart from "./components/widgets/ProgressChart.vue";
+import ProgressChartAdaptive from "./components/widgets/ProgressChartAdaptive.vue";
 import Recommendations from "./components/widgets/Recommendations.vue";
 import TaskList from "./components/widgets/TaskList.vue";
+import CourseOverview from "./components/widgets/CourseOverview.vue";
 import {GridItem, GridLayout} from './js/vue-grid-layout.umd.min';
 //import CircleChart from "./components/widgets/CircleChart.vue";
 import {mapState} from 'vuex';
@@ -71,8 +73,10 @@ export default {
         IndicatorDisplay,
         MenuBar,
         ProgressChart,
+        ProgressChartAdaptive,
         Recommendations,
         TaskList,
+        CourseOverview,
         QuizStatistics
     },
 
@@ -86,6 +90,7 @@ export default {
             index: 0,
             editMode: false,
             defaultLayout: [
+                /*
                 {
                     "x": 0,
                     "y": 0,
@@ -95,7 +100,18 @@ export default {
                     "name": 'Überblick',
                     c: 'ProgressChart',
                     resizable: true,
-                    fixed: true,
+                    fixed: false,
+                },
+                {
+                    "x": 0,
+                    "y": 13,
+                    "w": 8,
+                    "h": 12,
+                    "i": "10",
+                    "name": 'Adaptiver Überblick',
+                    c: 'ProgressChartAdaptive',
+                    resizable: true,
+                    fixed: false,
                 },
                 {
                     "x": 8,
@@ -137,7 +153,7 @@ export default {
                     "name": 'Empfehlungen',
                     c: 'Recommendations',
                     resizable: true
-                },
+                },*/
 
             ],
             allComponents: [
@@ -150,11 +166,22 @@ export default {
                     "name": 'Überblick',
                     c: 'ProgressChart',
                     resizable: true,
-                    fixed: true,
+                    fixed: false,
                 },
                 {
                     "x": 0,
-                    "y": 0,
+                    "y": 13,
+                    "w": 8,
+                    "h": 12,
+                    "i": "10",
+                    "name": 'Adaptiver Überblick',
+                    c: 'ProgressChartAdaptive',
+                    resizable: true,
+                    fixed: false,
+                },
+                {
+                    "x": 0,
+                    "y": 22,
                     "w": 6,
                     "h": 12,
                     "i": "2",
@@ -202,12 +229,27 @@ export default {
                     c: 'Recommendations',
                     resizable: true
                 },
+                {
+                    "x": 0,
+                    "y": 0,
+                    "w": 12,
+                    "h": 10,
+                    "i": "10",
+                    "name": 'Kursübersicht',
+                    c: 'CourseOverview',
+                    resizable: true
+                },
             ],
         };
     },
 
     created () {
         this.loadDashboard();
+        this.defaultLayout = [ 
+            this.allComponents[0], 
+            this.allComponents[1],
+            //this.allComponents[10],
+        ]; 
     },
 
     mounted: function () {

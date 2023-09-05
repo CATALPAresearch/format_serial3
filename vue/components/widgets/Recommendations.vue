@@ -10,7 +10,8 @@
                     </div>
                 </li>
             </ul>
-            <p v-else class="recommendations--item">Es scheint, dass Sie in allen Bereichen gut abschneiden und keine
+            <p v-else class="recommendations--item">
+                Es scheint, dass Sie in allen Bereichen gut abschneiden und keine
                 besonderen Schwächen aufweisen. Weiter so!
                 <p />
         </div>
@@ -89,7 +90,69 @@ export default {
         },
     },
 
+    mounted: function () {
+        this.loadRecommentations()
+    },
+
     methods: {
+        loadRecommentations() {
+            // save to indexeddb
+            let openRequest = indexedDB.open("ari_prompts", 1);
+
+            // create/upgrade the database without version checks
+            openRequest.onupgradeneeded = function () {
+                let db = openRequest.result;
+                if (!db.objectStoreNames.contains('prompts')) {
+                    //db.createObjectStore('prompts', {keyPath: 'id'}); 
+                }
+            };
+
+            openRequest.onsuccess = function () {
+                let db = openRequest.result;
+
+                db.onversionchange = function () {
+                    db.close();
+                    alert("Database is outdated, please reload the page.")
+                };
+                let transaction = db.transaction("prompts", "readwrite");
+
+                // get an object store to operate on it
+                let prompts = transaction.objectStore("prompts"); 
+
+                let request = prompts.getAll();
+                this.recommendations = {
+                    "overview": {
+                        "timeManagement": {
+                            "recommendations": []
+                        },
+                        "grades": {
+                            "recommendations": []
+                        },
+                        "proficiency": {
+                            "recommendations": []
+                        },
+                        "socialActivity": {
+                            "recommendations": []
+                        },
+                        "progress": {
+                            "recommendations": []
+                        }
+                    },
+                    "passing": {},
+                    "master": {},
+                    "practice": {},
+                };
+
+                request.onsuccess = function () { // (4)
+                    console.log("Return all results from indexedDB: ", request.result);
+                };
+
+                request.onerror = function () {
+                    console.log("SERIAL3: Error reading prompts", request.error);
+                };
+
+            }
+        },
         markRecommendationDone(index) {
             this.recommendations[index].completed = true;
         },

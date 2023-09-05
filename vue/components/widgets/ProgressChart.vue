@@ -1,6 +1,6 @@
 <template>
     <div class="position-relative h-100 d-flex flex-column">
-        <widget-heading :info-content="info" icon="fa-hourglass-o" title="Überblick"></widget-heading>
+        <widget-heading :info-content="info" icon="fa-hourglass-o" title="Überblick !!"></widget-heading>
         <div class="subject-progress px-1">
             <div :class="currentSection === -1 ? 'section-selection--current' : ''" class="section-selection mr-2"
                  @click="setCurrentSection(-1)">
@@ -242,11 +242,10 @@ export default {
         loadCourseData: async function () {
             const response = await Communication.webservice(
                 'overview',
-                {courseid: this.$store.getters.getCourseid}
+                {courseid: parseInt(this.$store.getters.getCourseid, 10)}
             );
             if (response.success) {
                 response.data = JSON.parse(response.data)
-                console.log('input debug::', JSON.parse(response.data.debug));
                 console.log('input completions::', JSON.parse(response.data.completions));
 
                 this.$store.commit('overview/setCourseData', JSON.parse(response.data.completions))

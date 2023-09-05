@@ -1507,6 +1507,8 @@ class format_serial3_external extends external_api
         foreach ($modinfo->instances as $module => $instances) {
             $modulename = get_string('pluginname', $module);
             foreach ($instances as $index => $cm) {
+                #$url = is_string($cm->url) ? (method_exists($cm->url, 'out') ? $cm->url->out() : '') : '';
+                $url = $cm->url->out();
                 $activities[] = array(
                     'type'       => $module,
                     'modulename' => $modulename,
@@ -1517,7 +1519,7 @@ class format_serial3_external extends external_api
                     'section'    => $cm->sectionnum,
                     'sectionname' => get_section_name($courseid, $cm->sectionnum),
                     'position'   => array_search($cm->id, $sections[$cm->sectionnum]),
-                    'url'        => method_exists($cm->url, 'out') ? $cm->url->out() : '',
+                    'url'        => '',
                     'context'    => $cm->context,
                     'icon'       => $cm->get_icon_url(),
                     'available'  => $cm->available,
@@ -1686,6 +1688,8 @@ class format_serial3_external extends external_api
         foreach ($modinfo->instances as $module => $instances) {
             $modulename = get_string('pluginname', $module);
             foreach ($instances as $index => $cm) {
+                $url = is_string($cm->url) ? (method_exists($cm->url, 'out') ? $cm->url->out() : '') : '';
+                //$url = $cm->url->out();
                 $activities[] = array(
                     'type'       => $module,
                     'modulename' => $modulename,
@@ -1696,7 +1700,7 @@ class format_serial3_external extends external_api
                     'section'    => $cm->sectionnum,
                     'sectionname' => get_section_name($courseid, $cm->sectionnum),
                     'position'   => array_search($cm->id, $sections[$cm->sectionnum]),
-                    'url'        => method_exists($cm->url, 'out') ? $cm->url->out() : '',
+                    'url'        => '',
                     'context'    => $cm->context,
                     'icon'       => $cm->get_icon_url(),
                     'available'  => $cm->available,

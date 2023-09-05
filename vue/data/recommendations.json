@@ -93,15 +93,15 @@
       ]
     }
   },
-"overview": {
-"timeManagement": {
-    "recommendations": [
-      {
-        "id": 2,
-        "title": "Verwende ein Zeitmanagement-Tool",
-        "description": "Versuche, ein Zeitmanagement-Tool wie Pomodoro zu verwenden, um konzentriert zu bleiben und deine Zeit effektiv zu verwalten. Es hilft dir deine Aufgaben zu priorisieren und deine deine Lernziele zu erreichen."
-      }
-    ]
+  "overview": {
+    "timeManagement": {
+      "recommendations": [
+        {
+          "id": 2,
+          "title": "Verwende ein Zeitmanagement-Tool",
+          "description": "Versuche, ein Zeitmanagement-Tool wie Pomodoro zu verwenden, um konzentriert zu bleiben und deine Zeit effektiv zu verwalten. Es hilft dir deine Aufgaben zu priorisieren und deine deine Lernziele zu erreichen."
+        }
+      ]
     },
     "grades": {
       "recommendations": [
@@ -110,7 +110,7 @@
           "title": "Deine Noten sind nicht aussreichend um dein Ziel zu erreichen.",
           "description": "Frage im Forum nach Hilfe. Nutzen Sie den Austausch mit Kommilitonen*innen, um Lernstoff zu diskutieren und um sich gegenseitig Lerninhalte zu erklären."
         }
-    ]
+      ]
     },
     "proficiency": {
       "recommendations": [
@@ -119,7 +119,7 @@
           "title": "Dein Verständis von deinen bearbeiteten Kursaktivitäten ist gering.",
           "description": "Wiederhole Themen, mit denen du Schwierigkeiten hast, um dein Verständnis zu verbessern. Das hilft dir dein Wissen zu vertiefen."
         }
-    ]
+      ]
     },
     "socialActivity": {
       "recommendations": [
@@ -130,15 +130,15 @@
         }
       ]
     },
-  "progress": {
-    "recommendations": [
-      {
-        "id": 7,
-        "title": "Dein Fortschritt im Kurs ist gering.",
-        "description": "Versuche dir Ziele zu setzen und feste Zeiten, um diese zu erreichen. Die Aufgabenliste kann dich beim planen unterstützen.  Durch das Setzen von Zielen und die Planung von festen Zeiten für die Erreichung dieser Ziele kannst du deine Zeit effektiver nutzen und dein Lernpensum besser in den Alltag integrieren."
-      }
-    ]
-  }
+    "progress": {
+      "recommendations": [
+        {
+          "id": 7,
+          "title": "Dein Fortschritt im Kurs ist gering.",
+          "description": "Versuche dir Ziele zu setzen und feste Zeiten, um diese zu erreichen. Die Aufgabenliste kann dich beim planen unterstützen.  Durch das Setzen von Zielen und die Planung von festen Zeiten für die Erreichung dieser Ziele kannst du deine Zeit effektiver nutzen und dein Lernpensum besser in den Alltag integrieren."
+        }
+      ]
+    }
   },
   "practice": {
     "timeManagement": {
@@ -148,43 +148,43 @@
           "title": "Verwende ein Zeitmanagement-Tool",
           "description": "Versuchen Sie, ein Zeitmanagement-Tool wie Pomodoro zu verwenden, um konzentriert zu bleiben und Ihre Zeit effektiv zu verwalten."
         }
-    ]
-  },
-  "grades": {
-    "recommendations": [
-      {
-        "id": 3,
-        "title": "Deine Noten sind nicht aussreichend um dein Ziel zu erreichen.",
-        "description": "Frage im Forum nach Hilfe. Nutzen Sie den Austausch mit Kommilitonen*innen, um Lernstoff zu diskutieren und um sich gegenseitig Lerninhalte zu erklären."
-      }
-    ]
-  },
-  "proficiency": {
-    "recommendations": [
-      {
-        "id": 5,
-        "title": "Dein Verständis von deinen bearbeiteten Kursaktivitäten ist gering.",
-        "description": "Wiederhole Themen, mit denen du Schwierigkeiten hast, um dein Verständnis zu verbessern. Das hilft dir dein Wissen zu vertiefen."
-      }
-    ]
-  },
-  "socialActivity": {
-    "recommendations": [
-      {
-        "id": 7,
-        "title": "Nehmen Sie an Online-Diskussionen teil",
-        "description": "Nehmen Sie an Online-Diskussionen teil, um Feedback von Gleichgesinnten zu erhalten und Ihr Verständnis von Kursinhalten zu verbessern."
-      }
-    ]
-  },
-  "progress": {
-    "recommendations": [
-      {
-        "id": 7,
-        "title": "Dein Fortschritt im Kurs ist gering.",
-        "description": "Versuche dir Ziele zu setzen und feste Zeiten, um diese zu erreichen. Die Aufgabenliste kann dich beim planen unterstützen.  Durch das Setzen von Zielen und die Planung von festen Zeiten für die Erreichung dieser Ziele kannst du deine Zeit effektiver nutzen und dein Lernpensum besser in den Alltag integrieren."
-      }
-    ]
+      ]
+    },
+    "grades": {
+      "recommendations": [
+        {
+          "id": 3,
+          "title": "Deine Noten sind nicht aussreichend um dein Ziel zu erreichen.",
+          "description": "Frage im Forum nach Hilfe. Nutzen Sie den Austausch mit Kommilitonen*innen, um Lernstoff zu diskutieren und um sich gegenseitig Lerninhalte zu erklären."
+        }
+      ]
+    },
+    "proficiency": {
+      "recommendations": [
+        {
+          "id": 5,
+          "title": "Dein Verständis von deinen bearbeiteten Kursaktivitäten ist gering.",
+          "description": "Wiederhole Themen, mit denen du Schwierigkeiten hast, um dein Verständnis zu verbessern. Das hilft dir dein Wissen zu vertiefen."
+        }
+      ]
+    },
+    "socialActivity": {
+      "recommendations": [
+        {
+          "id": 7,
+          "title": "Nehmen Sie an Online-Diskussionen teil",
+          "description": "Nehmen Sie an Online-Diskussionen teil, um Feedback von Gleichgesinnten zu erhalten und Ihr Verständnis von Kursinhalten zu verbessern."
+        }
+      ]
+    },
+    "progress": {
+      "recommendations": [
+        {
+          "id": 7,
+          "title": "Dein Fortschritt im Kurs ist gering.",
+          "description": "Versuche dir Ziele zu setzen und feste Zeiten, um diese zu erreichen. Die Aufgabenliste kann dich beim planen unterstützen.  Durch das Setzen von Zielen und die Planung von festen Zeiten für die Erreichung dieser Ziele kannst du deine Zeit effektiver nutzen und dein Lernpensum besser in den Alltag integrieren."
+        }
+      ]
+    }
   }
-}
 }

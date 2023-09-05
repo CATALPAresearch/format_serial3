@@ -7,13 +7,16 @@
                 type="button">
             <i aria-hidden="true" class="fa fa-info icon m-0"></i>
         </button>
-        <button class="button" data-target="#linkModal" data-toggle="modal" title="Hilfreiche Links" type="button">
+        <button hidden class="button" data-target="#linkModal" data-toggle="modal" title="Hilfreiche Links" type="button">
             <i aria-hidden="true" class="fa fa-chain icon m-0"></i>
         </button>
-        <button class="button" title="Forum Nachrichten">
-            <i aria-hidden="true" class="fa fa-comments-o icon m-0"></i>
-        </button>
-        <button class="button pr-0" title="Kursbetreuer kontaktieren">
+        
+        <a href="xxx">
+            <button class="button" title="Newsgroup Beiträge ansehen">
+                <i aria-hidden="true" class="fa fa-comments-o icon m-0"></i>
+            </button>
+        </a>
+        <button hidden class="button pr-0" title="Kursbetreuer kontaktieren">
             <i aria-hidden="true" class="fa fa-send-o icon m-0"></i>
         </button>
 
