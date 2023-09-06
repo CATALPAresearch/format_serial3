@@ -1,10 +1,10 @@
 
 <template>
-    <div id="dashboard-overview" class="position-relative h-100 d-flex flex-column">
+    <div id="dashboard-overview" class="position-relative d-flex flex-column">
         <widget-heading
             icon="fa-calendar-o"
             :info-content="info"
-            title="Termine">
+            title="Kursübersicht">
         </widget-heading>
         <div class="row mb-3 form-group">
             <div class="col-4 form-group">
@@ -260,13 +260,16 @@
 import WidgetHeading from "../WidgetHeading.vue";
 import Communication from "../../scripts/communication";
 
+
 export default {
-    name: 'AppCourseOverview',
-    props: ['course', 'log', 'surveyRequired', 'surveyLink', 'aple1801', 'currentGoal'],
+    name: 'WidgetCourseOverview',
+    props: ['course', 'log', 'surveyRequired', 'surveyLink'],
     components: {WidgetHeading},
 
     data: function () {
         return {
+            aple1801: [], // dummy
+            currentGoal: 'mastery', // dummy
             controlgroup: false,
             color: {
                 default: '#7cc0d8',
@@ -673,7 +676,14 @@ export default {
     -moz-hyphens: auto;
     -webkit-hyphens: auto;
     hyphens: auto;
+}
 
+#select-goa .fa-caret-down::before {
+  content: "\f0d7";
+}
+
+.modal-backdrop.show{
+    z-index: -22;
 }
 </style>
 

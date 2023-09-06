@@ -53,11 +53,12 @@ import Logger from './scripts/logger';
 import AppDeadlines from "./components/widgets/Deadlines.vue";
 import IndicatorDisplay from "./components/widgets/IndicatorDisplay.vue";
 import MenuBar from "./components/MenuBar.vue";
-import QuizStatistics from "./components/widgets/QuizStatistics.vue";
+//import QuizStatistics from "./components/widgets/QuizStatistics.vue";
 import ProgressChart from "./components/widgets/ProgressChart.vue";
 import ProgressChartAdaptive from "./components/widgets/ProgressChartAdaptive.vue";
 import Recommendations from "./components/widgets/Recommendations.vue";
 import TaskList from "./components/widgets/TaskList.vue";
+import LearningStrategies from "./components/widgets/LearningStrategies.vue";
 import CourseOverview from "./components/widgets/CourseOverview.vue";
 import {GridItem, GridLayout} from './js/vue-grid-layout.umd.min';
 //import CircleChart from "./components/widgets/CircleChart.vue";
@@ -77,7 +78,8 @@ export default {
         Recommendations,
         TaskList,
         CourseOverview,
-        QuizStatistics
+        LearningStrategies,
+        //QuizStatistics
     },
 
     data() {
@@ -163,7 +165,7 @@ export default {
                     "w": 8,
                     "h": 12,
                     "i": "1",
-                    "name": 'Überblick',
+                    "name": 'Überblick (alt)',
                     c: 'ProgressChart',
                     resizable: true,
                     fixed: false,
@@ -191,8 +193,8 @@ export default {
                 },
                 {
                     "x": 0,
-                    "y": 0,
-                    "w": 3,
+                    "y": 13,
+                    "w": 8,
                     "h": 10,
                     "i": "3",
                     "name": 'Aufgabenliste',
@@ -200,8 +202,8 @@ export default {
                     resizable: true
                 },
                 {
-                    "x": 0,
-                    "y": 0,
+                    "x": 9,
+                    "y": 13,
                     "w": 3,
                     "h": 10,
                     "i": "4",
@@ -209,7 +211,7 @@ export default {
                     c: 'AppDeadlines',
                     resizable: true
                 },
-                {
+                /*{
                     "x": 0,
                     "y": 0,
                     "w": 6,
@@ -218,7 +220,7 @@ export default {
                     "name": 'Ergebnisse',
                     c: 'QuizStatistics',
                     resizable: true
-                },
+                },*/
                 {
                     "x": 0,
                     "y": 0,
@@ -234,11 +236,22 @@ export default {
                     "y": 0,
                     "w": 12,
                     "h": 10,
-                    "i": "10",
+                    "i": "12",
                     "name": 'Kursübersicht',
                     c: 'CourseOverview',
                     resizable: true
                 },
+                {
+                    "x": 0,
+                    "y": 0,
+                    "w": 12,
+                    "h": 10,
+                    "i": "11",
+                    "name": 'Lernstrategien',
+                    c: 'LearningStrategies',
+                    resizable: true
+                },
+                
             ],
         };
     },
@@ -253,6 +266,7 @@ export default {
     },
 
     mounted: function () {
+        
         this.courseid = this.$store.state.courseid;
 
         this.context.courseId = this.$store.state.courseid; // TODO
