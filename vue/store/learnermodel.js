@@ -145,9 +145,13 @@ export default {
 		 * can achieve in the topics covered so far
 		 */
 		async calculateProficiency(context) {
-			const total = Object.keys(context.state.userUnderstanding).length * 3;
-			const user = Object.values(context.state.userUnderstanding).reduce((acc, cur) => acc + Number(cur.rating), 0);
-			context.commit('setProficiency', user / total * 100);
+			
+			if(context.state.userUnderstanding != null){
+				const total = Object.keys(context.state.userUnderstanding).length * 3;
+				const user = Object.values(context.state.userUnderstanding).reduce((acc, cur) => acc + Number(cur.rating), 0);
+				context.commit('setProficiency', user / total * 100);
+			}
+			
 		},
 
 		/**
@@ -155,10 +159,14 @@ export default {
 		 * Count of users understanding: 1 for weak, 2 for ok, 3 for strong divided by optimal number of points
 		 * one can achieve in total in the course.
 		 */
-		async calculateProgress(context) {
+		async calculateProgress(context) { 
 			const total = context.rootGetters['overview/getTotalNumberOfActivities'] * 3;
-			const user = Object.values(context.state.userUnderstanding).reduce((acc, cur) => acc + Number(cur.rating), 0);
-			context.commit('setProgressUnderstanding', user / total * 100);
+			if(context.state.userUnderstanding != null){ // if understanding data is available
+				const user = Object.values(context.state.userUnderstanding).reduce((acc, cur) => acc + Number(cur.rating), 0);
+				context.commit('setProgressUnderstanding', user / total * 100);
+			}
+			
+
 		},
 
 		/**

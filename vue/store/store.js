@@ -10,6 +10,7 @@ import taskList from './taskList';
 import overview from './overview';
 import learnermodel from './learnermodel';
 import Communication from "../scripts/communication";
+import recommendations from "./recommendations";
 
 Vue.use(Vuex);
 
@@ -19,6 +20,7 @@ export const store = new Vuex.Store({
 		learnermodel,
 		overview,
 		taskList,
+		recommendations,
 	},
 
 	state: {

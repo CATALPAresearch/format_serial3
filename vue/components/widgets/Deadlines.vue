@@ -55,7 +55,7 @@ import Communication from "../../scripts/communication";
 
 
 export default {
-    name: "AppDeadlines",
+    name: "WidgetDeadlines",
 
     components: {WidgetHeading},
 

@@ -2,18 +2,23 @@
     <div class="position-relative h-100 d-flex flex-column">
         <widget-heading icon="fa-thumbs-o-up" :info-content="info" title="Empfehlungen"></widget-heading>
         <div class="recommendations--container pr-1">
-            <ul v-if="recommendations.length > 0" class="list-unstyled">
+            <ul v-if="getRecommendations.length > 0" class="list-unstyled">
                 <li v-for="(recommendation, index) in filteredRecommendations" :key="index" class="recommendations--item">
                     <div class="mr-5">
-                        <h5>{{ recommendation.title }}</h5>
-                        <p>{{ recommendation.description }}</p>
+                        <h5><i :class="'fa pr-2 ' + classOfCategory[recommendation.category]"></i>[{{ recommendation.type }}] {{ recommendation.title }}</h5>
+                        <p v-html="recommendation.description"></p>
+                        <div>
+                            <span>{{ dateToHumanReadable(recommendation.timecreated) }}</span>
+                            <button class="btn btn-default"><i class="fa fa-arrow-up"></i></button>
+                            <button class="btn btn-default"><i class="fa fa-arrow-down"></i></button>
+                        </div>
                     </div>
                 </li>
             </ul>
             <p v-else class="recommendations--item">
                 Es scheint, dass Sie in allen Bereichen gut abschneiden und keine
                 besonderen Schwächen aufweisen. Weiter so!
-                <p />
+            </p>
         </div>
     </div>
 </template>
@@ -21,16 +26,28 @@
 <script>
 import WidgetHeading from "../WidgetHeading.vue";
 import recommendationRules from '../../data/recommendations.json';
-import { mapState } from "vuex";
+import { mapActions, mapGetters, mapState } from 'vuex';
+import TimeAgo from 'javascript-time-ago'
+import en from 'javascript-time-ago/locale/en'
+import de from 'javascript-time-ago/locale/de'
+import recommendations from "../../store/recommendations";
+
 
 export default {
-    name: "Recommendations",
+    name: "WidgetRecommendations",
 
     components: { WidgetHeading },
 
     data() {
         return {
-            recommendations: [],
+            timeago: '',
+            classOfCategory: {
+                "time_management": "fa-clock",
+                "progress": "fa-chart-line",
+                "success": "fa-thumbs-up",
+                "social": "fa-people-group",
+                "competency": "fa-lightbulb"
+            },
             info: 'Dieses Widget zeigt dir Empfehlungen an, wie du deine Lernstrategien optimieren und dadurch deine Lernleistung verbessern kannst. Die Empfehlungen basieren auf den Metriken, die dir im "Lernziel"-Widget angezeigt werden. Durch die individuellen Empfehlungen kannst du deine Lernstrategien hinterfragen und gezielt verbessern.',
         }
     },
@@ -86,18 +103,28 @@ export default {
 
         filteredRecommendations() {
             // @TODO: add option to remove rcommendations
-            return this.recommendations.filter((recommendation) => !recommendation.completed);
+            //return this.generateRecommendations.filter((recommendation) => !recommendation.completed);
+            return this.getRecommendations.filter((recommendation) => !recommendation.completed);
         },
+
+        ...mapState('recommendations' ['recommendations']),
+        ...mapGetters('recommendations', ['getRecommendations', 'getCourseRecommendations']),
+
     },
 
     mounted: function () {
+        TimeAgo.addDefaultLocale(de);
+        //this.timeAgo = new TimeAgo('en-US');
+        this.timeAgo = new TimeAgo('de-DE');
         this.loadRecommentations()
     },
 
     methods: {
         loadRecommentations() {
+            let _this = this;
+            
             // save to indexeddb
-            let openRequest = indexedDB.open("ari_prompts", 1);
+            let openRequest = indexedDB.open("ari_prompts", 2);
 
             // create/upgrade the database without version checks
             openRequest.onupgradeneeded = function () {
@@ -112,39 +139,27 @@ export default {
 
                 db.onversionchange = function () {
                     db.close();
-                    alert("Database is outdated, please reload the page.")
+                    console.log("ERROR: Database is outdated, please reload the page.")
                 };
                 let transaction = db.transaction("prompts", "readwrite");
 
                 // get an object store to operate on it
-                let prompts = transaction.objectStore("prompts"); 
+                let prompts = transaction.objectStore("prompts");
 
                 let request = prompts.getAll();
-                this.recommendations = {
-                    "overview": {
-                        "timeManagement": {
-                            "recommendations": []
-                        },
-                        "grades": {
-                            "recommendations": []
-                        },
-                        "proficiency": {
-                            "recommendations": []
-                        },
-                        "socialActivity": {
-                            "recommendations": []
-                        },
-                        "progress": {
-                            "recommendations": []
-                        }
-                    },
-                    "passing": {},
-                    "master": {},
-                    "practice": {},
-                };
 
-                request.onsuccess = function () { // (4)
-                    console.log("Return all results from indexedDB: ", request.result);
+                request.onsuccess = function () {
+                    for (let rec in request.result) {
+                        console.log('RecLISt---------------------------------------', request.result[rec])
+                        let item = request.result[rec];
+                        _this.$store.commit('recommendations/addRecommendation', {
+                            type: item.type,
+                            category: item.category,
+                            title: item.title,
+                            description: item.message,
+                            timecreated: item.timecreated,
+                        });
+                    }
                 };
 
                 request.onerror = function () {
@@ -153,11 +168,17 @@ export default {
 
             }
         },
+
+        dateToHumanReadable(date){
+            return this.timeAgo.format(date);
+        },
+
         markRecommendationDone(index) {
-            this.recommendations[index].completed = true;
+            this.$store.commit('recommendations/markDone', index)
         },
 
         generateRecommendations() {
+            /*
             this.recommendations = []
             const rules = recommendationRules[this.learnerGoal]
             const thresholds = this.thresholds[this.learnerGoal]
@@ -171,6 +192,7 @@ export default {
                     this.recommendations.push(Object.assign({ completed: false }, ...rule.recommendations));
                 }
             }
+            */
         }
     }
 }

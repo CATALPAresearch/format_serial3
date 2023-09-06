@@ -1,7 +1,14 @@
 <template>
     <div class="position-relative h-100 d-flex flex-column">
         <widget-heading :info-content="info" icon="fa-hourglass-o" title="Adaptiver Überblick"></widget-heading>
-        <div class="course-recommendation">Do these and that.</div>
+        <div class="course-recommendation">
+            <div v-for="(r, index) in getCourseRecommendations" :key="index">
+                <span v-if="index < 1">
+                    <i class="fa fa-robot pr-1"></i>
+                    <span v-html="r.description"></span>
+                </span>
+            </div>
+        </div>
         <div class="subject-progress px-1">
             <div :class="currentSection === -1 ? 'section-selection--current' : ''" class="section-selection mr-2"
                 @click="setCurrentSection(-1)">
@@ -78,7 +85,7 @@ import { treemapSquarify } from '../../../lib/src/d3.v4';
 
 
 export default {
-    name: "ProgressChartAdaptive",
+    name: "WidgetProgressChartAdaptive",
 
     components: { PopoverContent, WidgetHeading },
 
@@ -168,6 +175,8 @@ export default {
             }, 0)
             const total = this.getTotalActivites()
             return Math.floor(sum / total * 100)
+
+            
         },
 
         currentActivities() {
@@ -178,9 +187,11 @@ export default {
                 return groupBy(section, 'type');
             }
         },
-
+        //
         ...mapState('overview', ['courseData', 'activityTypes']),
         ...mapGetters('overview', ['getSections', 'getActivities', 'getCurrentActivities']),
+        ...mapGetters('recommendations', ['getRecommendations', 'getCourseRecommendations', 'getCourseUnitRecommendations', 'getActivityTypeRecommendations', 'getActivityRecommendations']),
+        
     },
 
     methods: {
