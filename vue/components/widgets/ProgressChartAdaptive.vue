@@ -1,14 +1,7 @@
 <template>
     <div class="position-relative h-100 d-flex flex-column">
         <widget-heading :info-content="info" icon="fa-hourglass-o" title="Adaptiver Überblick"></widget-heading>
-        <div class="course-recommendation">
-            <div v-for="(r, index) in getCourseRecommendations" :key="index">
-                <span v-if="index < 1">
-                    <i class="fa fa-robot pr-1"></i>
-                    <span v-html="r.description"></span>
-                </span>
-            </div>
-        </div>
+        
         <div class="subject-progress px-1">
             <div :class="currentSection === -1 ? 'section-selection--current' : ''" class="section-selection mr-2"
                 @click="setCurrentSection(-1)">
@@ -39,20 +32,45 @@
                     </div>
                 </div>
             </div>
+            <div class="course-recommendation py-2">
+                <div v-for="(r, index) in getCourseRecommendations" :key="index">
+                    <span v-if="index < 1 && currentSection == -1 && r.type=='scope_course'">
+                        <i class="fa fa-lightbulb pr-1"></i>
+                        <span v-html="r.description"></span>
+                    </span>
+                </div>
+            </div>
             <div v-for="(type, typeIndex) in activityTypes" :key="typeIndex" class="row">
                 <span v-if="isIncludedActivity(getActivities[type][0].type)" class="col-3">{{ getActivities[type][0].modulename }}</span>
                 <div class="col-9">
-                    <span v-if="isIncludedActivity(activity.type)" v-for="activity in currentActivities[type]" :key="activity.id" :title="activity.name"
-                        class="position-relative">
-                        <button id="'popover' + activity.id" ref="popoverButton" v-popover-html="popoverContent(activity)"
-                            class="subject-progress__popover" data-placement="bottom" data-toggle="popover" type="button"
-                            :title="activity.name">
+                    <span 
+                        v-if="isIncludedActivity(activity.type)" 
+                        v-for="activity in currentActivities[type]" 
+                        :key="activity.id" 
+                        
+                        class="position-relative"
+                        
+                        >
+                        <button id="'popover' + activity.id" 
+                            ref="popoverButton" 
+                            v-popover-html="popoverContent(activity)"
+                            class="subject-progress__popover" 
+                            data-placement="bottom" 
+                            data-toggle="popover" 
+                            type="button"
+                            :title="activity.completion !== 0 ? activity.name + ' (bereits bearbeitet)': activity.name"
+                            >
                             <span :class="{
                                 'rect--grey': activity.rating === 0,
                                 'rect--weak': activity.rating === 1,
                                 'rect--ok': activity.rating === 2,
-                                'rect--strong': activity.rating === 3
-                            }" :title="activity.name" class="completion-rect"></span>
+                                'rect--strong': activity.rating === 3,
+                                'activity-completed': activity.completion !== 0
+                                }" 
+                                :title="activity.name" 
+                                data-toggle="tooltip" data-placement="top"
+                                class="completion-rect"
+                                ></span>
                         </button>
                     </span>
                 </div>
@@ -70,7 +88,7 @@
                         class="">Alles verstanden</span></div>
             </div>
         </div>
-        <PopoverContent class="d-none" :activity="{}"></PopoverContent>
+        <PopoverContent class="d-none" :activity="{}" :courseid="$store.getters.getCourseid"></PopoverContent>
     </div>
 </template>
 
@@ -108,8 +126,9 @@ export default {
                     });
 
                     $(document).on('click.popover', function (event) {
-                        var isClickInsidePopover = $(event.target).closest('.popover').length > 0;
+                        var isClickInsidePopover = $(event.target).closest('.popover').length > 0 || $(event.target).hasClass('popover-content');
                         var isClickOnPopoverButton = $(event.target).is($(el));
+                        console.log('clo ',isClickInsidePopover, isClickOnPopoverButton)
                         if (!isClickInsidePopover && !isClickOnPopoverButton) {
                             $(el).popover('hide');
                             $(document).off('click.popover');
@@ -133,13 +152,13 @@ export default {
     data: function () {
         return {
             total: 0,
-            info: 'Das Widget bietet dir eine Übersicht über alle Kursaktivitäten. Für jede Aktivität kannst du dein Verständnis bewerten, im Forum um Hilfe bitten oder es zur Aufgabenliste hinzufügen. Über den Aktivitäten wird dir eine Fortschrittsanzeige angezeigt, die anzeigt, wie viele Aktivitäten du insgesamt und für jede Kurseinheit separat bereits abgeschlossen hast. Diese dienen dir auch als Filter, um die dir nur die Aktivitäten für die jeweilige Kurseinheit anzuzeigen.\n' +
+            info: 'Das Widget bietet Ihnen eine Übersicht über alle Kursaktivitäten. Für jede Aktivität können Sie Ihr Verständnis bewerten, den Bearbeitungsstand sehen oder es zur Aufgabenliste hinzufügen. Über den Aktivitäten wird Ihnen eine Fortschrittsanzeige angezeigt, die anzeigt, wie viele Aktivitäten Sie insgesamt und für jede Kurseinheit separat bereits abgeschlossen haben. Diese dienen Ihnen auch als Filter, um die dir nur die Aktivitäten für die jeweilige Kurseinheit anzuzeigen.\n' +
                 '\n' +
-                'Dieses Widget hilft dir deine Lernaktivitäten im Blick zu behalten und deine Fortschritte zu verfolgen. Durch die Bewertung deines Verständnisses kannst du schnell erkennen, welche Aktivitäten noch unklar sind und bei Bedarf im Forum um Hilfe bitten. Das Hinzufügen von Aktivitäten zur Aufgabenliste ermöglicht es dir, deine Aufgaben zu organisieren und Prioritäten zu setzen.',
+                'Dieses Widget hilft Ihnen Ihre Lernaktivitäten im Blick zu behalten und Ihre Fortschritte zu verfolgen. Durch die Bewertung Ihres Verständnisses können Sie schnell erkennen, welche Aktivitäten noch unklar sind. Das Hinzufügen von Aktivitäten zur Aufgabenliste ermöglicht es Ihnen, Ihre Aufgaben zu organisieren und Prioritäten zu setzen.',
             sectionnames: [],
             stats: [],
             popoverComponent: null,
-            currentSection: -1,
+            currentSection: -1
         };
     },
 
@@ -200,9 +219,11 @@ export default {
         popoverContent(activity) {
             if (this.popoverComponent) {
                 const PopoverComponent = Vue.extend(this.popoverComponent)
+
                 const popover = new PopoverComponent({
                     propsData: {
-                        activity: activity
+                        activity: activity,
+                        courseid: this.$store.getters.getCourseid
                     }
                 }).$mount()
 
@@ -414,5 +435,9 @@ export default {
 
 .my-popover-content {
     display: none;
+}
+
+.activity-completed {
+    border-bottom: solid 2px #555;
 }
 </style>

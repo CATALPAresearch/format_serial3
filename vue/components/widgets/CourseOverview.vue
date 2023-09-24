@@ -510,7 +510,7 @@ export default {
         },
         isNoExcludedSection: function(title){
             if(
-                title=='Willkommen!' || 
+                title == 'Willkommen!' || 
                 title == 'Allgemeines' || 
                 title == 'General' ||
                 title == 'Prüfung' ||

@@ -58,8 +58,8 @@
                 <input v-model="newItem" :placeholder="placeholderAddItem" class="form-control flex-grow-1" type="text"
                        @keyup.enter="addTask"/>
                 <input v-model="newDate" class="form-control flex-grow-0 todo__add-date" type="date"/>
-                <button :disabled="newItem.length === 0" class="btn btn-primary todo__add-icon" type="submit"
-                        @click="addTask">+
+                <button :disabled="newItem.length === 0" class="btn btn-primary" type="submit"
+                        @click="addTask"><i class="fa fa-plus"></i>
                 </button>
             </div>
         </div>
@@ -81,7 +81,7 @@ export default {
             newDate: '',
             placeholderAddItem: 'Neues Item hinzufügen..',
             showCompletedItems: false,
-            info: 'Die Aufgabenliste unterstützt dich beim planen und managen aller wichtigen Aufgaben.',
+            info: 'Die Aufgabenliste unterstützt Sie beim Planen und Priorisieren Ihrer Lernaktivitäten.',
         };
     },
 

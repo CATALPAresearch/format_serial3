@@ -1,28 +1,28 @@
 <template>
     <div>
-        <p class="mb-1">Bewerte dein Verständnis von dieser Aktivität:</p>
+        <p class="mb-1">Bewerten Sie Ihr Verständnis dieser Aktivität:</p>
         <div class="form-check mb-2 col-12 pr-0 ml-1">
-            <input id="none" v-model="rating" class="form-check-input" name="userUnderstanding" type="radio" value="0"/>
-            <label class="form-check-label" for="none">Nicht abgeschlossen</label>
+            <input id="noneUnderstanding" v-model="rating" class="form-check-input popover-content" name="userUnderstanding" type="radio" value="0"/>
+            <label class="form-check-label popover-content" for="noneUnderstanding">Nicht abgeschlossen</label>
         </div>
         <div class="ml-1">
             <div class="form-check mb-2 pr-0">
-                <input id="weak" v-model="rating" class="form-check-input" name="userUnderstanding" type="radio"
+                <input id="weakUnderstanding" v-model="rating" class="form-check-input popover-content" name="userUnderstanding" type="radio"
                        value="1"/>
-                <label class="form-check-label" for="weak">Ungenügend verstanden</label>
+                <label class="form-check-label popover-content" for="weakUnderstanding">Ungenügend verstanden</label>
             </div>
             <div class="form-check mb-2 pr-0">
-                <input id="ok" v-model="rating" class="form-check-input" name="userUnderstanding" type="radio"
+                <input id="okUnderstanding" v-model="rating" class="form-check-input popover-content" name="userUnderstanding" type="radio"
                        value="2"/>
-                <label class="form-check-label" for="ok">Größtenteils verstanden</label>
+                <label class="form-check-label popover-content" for="okUnderstanding">Größtenteils verstanden</label>
             </div>
             <div class="form-check mb-2 pr-0">
-                <input id="strong" v-model="rating" class="form-check-input" name="userUnderstanding" type="radio"
+                <input id="strongUnderstanding" v-model="rating" class="form-check-input popover-content" name="userUnderstanding" type="radio"
                        value="3"/>
-                <label class="form-check-label" for="strong">Alles verstanden</label>
+                <label class="form-check-label popover-content" for="strongUnderstanding">Alles verstanden</label>
             </div>
         </div>
-        <div class="py-1">
+        <div hidden class="py-1">
             <a href="#">
                 Nach Hilfe fragen
                 <i aria-hidden="true" class="fa fa-arrow-right"></i>
@@ -40,6 +40,7 @@
     </div>
 </template>
 
+
 <script>
 import Communication from "../scripts/communication";
 
@@ -48,11 +49,13 @@ export default {
 
     props: {
         activity: {type: Object, required: true},
+        courseid: {type: Number, required: true}
     },
 
     data() {
         return {
             rating: this.activity.rating,
+            id: this.activity.id,
         };
     },
 
@@ -64,16 +67,20 @@ export default {
 
     methods: {
         async updateUnderstanding(newVal) {
+            console.log('3', this.courseid, this.id, newVal)
+            if(this.courseid == undefined || this.id == undefined || newVal == undefined){
+                return;
+            }
             const response = await Communication.webservice(
                 'set_user_understanding',
                 {
-                    'course': 4,
-                    'activityid': this.activity.id,
+                    'course': this.courseid,
+                    'activityid': this.id,
                     'rating': newVal,
                 }
             );
             if (response.success) {
-                this.$emit('understanding-updated', newVal, this.activity.id)
+                this.$emit('understanding-updated', newVal, this.id)
             } else {
                 if (response.data) {
                     console.log('Faulty response of webservice /logger/', response.data);
@@ -85,7 +92,7 @@ export default {
 
         addToTaskList() {
             this.$emit('add-to-task-list', {
-                course: 4,
+                course: this.courseid,
                 task: this.activity.name,
                 completed: this.completed ? 1 : 0,
                 duedate: null,
@@ -94,3 +101,11 @@ export default {
     }
 }
 </script>
+
+
+<style scoped>
+input {
+    margin-top:0;
+    margin-left: -1.5rem;
+}
+</style>
