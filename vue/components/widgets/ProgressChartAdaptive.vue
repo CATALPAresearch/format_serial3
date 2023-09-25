@@ -41,7 +41,7 @@
                 </div>
             </div>
             <div v-for="(type, typeIndex) in activityTypes" :key="typeIndex" class="row">
-                <span v-if="isIncludedActivity(getActivities[type][0].type)" class="col-3">{{ getActivities[type][0].modulename }}</span>
+                <span v-if="isIncludedActivity(getActivities[type][0].type)" class="col-3">{{ mapActivityNames[getActivities[type][0].modulename] }}</span>
                 <div class="col-9">
                     <span 
                         v-if="isIncludedActivity(activity.type)" 
@@ -158,7 +158,16 @@ export default {
             sectionnames: [],
             stats: [],
             popoverComponent: null,
-            currentSection: -1
+            currentSection: -1,
+            mapActivityNames: {
+                'longpage': 'Kurstext',
+                'Assignment': 'Einsendeaufgaben',
+                'hypervideo': 'Video',
+                'Safran': 'Self-Assessments',
+                'safran': 'Self-Assessments',
+                'quiz': 'Selbsttests',
+
+            }
         };
     },
 

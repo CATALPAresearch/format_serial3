@@ -11,36 +11,20 @@
                         </option>
                     </select>
                     <button v-if="editMode" class="btn btn-primary btn-edit" @click="saveDashboard">{{
-                            strings.save
-                        }}
+                        strings.save
+                    }}
                     </button>
                 </div>
                 <menu-bar @editmode="toggleEditMode"></menu-bar>
             </div>
         </div>
-        <grid-layout
-            :col-num="14"
-            :is-draggable="draggable"
-            :is-resizable="resizable"
-            :layout="layout"
-            :row-height="25"
-            :use-css-transforms="true"
-            :vertical-compact="true"
-        >
-            <grid-item
-                v-for="(item, index) in layout"
-                :key="index"
-                :h="item.h"
-                :i="item.i"
-                :static="item.static"
-                :w="item.w"
-                :x="item.x"
-                :y="item.y"
-                class="border p-3"
-            >
+        <grid-layout :col-num="14" :is-draggable="draggable" :is-resizable="resizable" :layout="layout" :row-height="25"
+            :use-css-transforms="true" :vertical-compact="true">
+            <grid-item v-for="(item, index) in layout" :key="index" :h="item.h" :i="item.i" :static="item.static"
+                :w="item.w" :x="item.x" :y="item.y" class="border p-3">
                 <span v-if="editMode & !item.fixed" class="remove" title="Element aus Dashboard entfernen"
-                      @click="removeItem(item.i)">
-                     <i class="fa fa-close"></i>
+                    @click="removeItem(item.i)">
+                    <i class="fa fa-close"></i>
                 </span>
                 <component :is="item.c"></component>
             </grid-item>
@@ -60,9 +44,9 @@ import Recommendations from "./components/widgets/Recommendations.vue";
 import TaskList from "./components/widgets/TaskList.vue";
 import LearningStrategies from "./components/widgets/LearningStrategies.vue";
 import CourseOverview from "./components/widgets/CourseOverview.vue";
-import {GridItem, GridLayout} from './js/vue-grid-layout.umd.min';
+import { GridItem, GridLayout } from './js/vue-grid-layout.umd.min';
 //import CircleChart from "./components/widgets/CircleChart.vue";
-import {mapState} from 'vuex';
+import { mapState } from 'vuex';
 
 
 export default {
@@ -92,181 +76,121 @@ export default {
             index: 0,
             editMode: false,
             defaultLayout: [
-                /*
-                {
-                    "x": 0,
-                    "y": 0,
-                    "w": 8,
-                    "h": 12,
-                    "i": "1",
-                    "name": 'Überblick',
-                    c: 'ProgressChart',
-                    resizable: true,
-                    fixed: false,
-                },
-                {
-                    "x": 0,
-                    "y": 13,
-                    "w": 8,
-                    "h": 12,
-                    "i": "10",
-                    "name": 'Adaptiver Überblick',
-                    c: 'ProgressChartAdaptive',
-                    resizable: true,
-                    fixed: false,
-                },
-                {
-                    "x": 8,
-                    "y": 0,
-                    "w": 6,
-                    "h": 14,
-                    "i": "2",
-                    "name": 'Lernziele',
-                    c: 'IndicatorDisplay',
-                    resizable: true,
-                    fixed: true,
-                },
-                {
-                    "x": 0,
-                    "y": 13,
-                    "w": 5,
-                    "h": 12,
-                    "i": "3",
-                    "name": 'Aufgabenliste',
-                    c: 'TaskList',
-                    resizable: true
-                },
-                {
-                    "x": 5,
-                    "y": 13,
-                    "w": 3,
-                    "h": 12,
-                    "i": "4",
-                    "name": 'Termine',
-                    c: 'AppDeadlines',
-                    resizable: true
-                },
-                {
-                    "x": 8,
-                    "y": 13,
-                    "w": 6,
-                    "h": 10,
-                    "i": "9",
-                    "name": 'Empfehlungen',
-                    c: 'Recommendations',
-                    resizable: true
-                },*/
+                { "x": 0, "y": 0, "w": 8, "h": 12, "i": "10", "name": "Adaptiver Überblick", "c": "ProgressChartAdaptive", "resizable": true, "fixed": false, "moved": false }, 
+                { "x": 8, "y": 0, "w": 6, "h": 12, "i": "2", "name": "Lernziele", "c": "IndicatorDisplay", "resizable": true, "moved": false }, 
+                { "x": 0, "y": 22, "w": 14, "h": 11, "i": "12", "name": "Kursübersicht", "c": "CourseOverview", "resizable": true, "moved": false }, 
+                { "x": 10, "y": 12, "w": 4, "h": 10, "i": "3", "name": "Aufgabenliste", "c": "TaskList", "resizable": true, "moved": false }, 
+                { "x": 6, "y": 12, "w": 4, "h": 10, "i": "4", "name": "Termine", "c": "AppDeadlines", "resizable": true, "moved": false }, 
+                { "x": 0, "y": 12, "w": 6, "h": 10, "i": "9", "name": "Empfehlungen", "c": "Recommendations", "resizable": true, "moved": false }],
+                allComponents: [
+                    {
+                        "x": 0,
+                        "y": 0,
+                        "w": 8,
+                        "h": 12,
+                        "i": "1",
+                        "name": 'Überblick (alt)',
+                        c: 'ProgressChart',
+                        resizable: true,
+                        fixed: false,
+                    },
+                    {
+                        "x": 0,
+                        "y": 0,
+                        "w": 8,
+                        "h": 12,
+                        "i": "10",
+                        "name": 'Adaptiver Überblick',
+                        c: 'ProgressChartAdaptive',
+                        resizable: true,
+                        fixed: false,
+                    },
+                    {
+                        "x": 0,
+                        "y": 0,
+                        "w": 6,
+                        "h": 12,
+                        "i": "2",
+                        "name": 'Lernziele',
+                        c: 'IndicatorDisplay',
+                        resizable: true
+                    },
+                    {
+                        "x": 0,
+                        "y": 0,
+                        "w": 3,
+                        "h": 10,
+                        "i": "3",
+                        "name": 'Aufgabenliste',
+                        c: 'TaskList',
+                        resizable: true
+                    },
+                    {
+                        "x": 9,
+                        "y": 0,
+                        "w": 3,
+                        "h": 10,
+                        "i": "4",
+                        "name": 'Termine',
+                        c: 'AppDeadlines',
+                        resizable: true
+                    },
+                    /*{
+                        "x": 0,
+                        "y": 0,
+                        "w": 6,
+                        "h": 12,
+                        "i": "7",
+                        "name": 'Ergebnisse',
+                        c: 'QuizStatistics',
+                        resizable: true
+                    },*/
+                    {
+                        "x": 0,
+                        "y": 0,
+                        "w": 6,
+                        "h": 10,
+                        "i": "9",
+                        "name": 'Empfehlungen',
+                        c: 'Recommendations',
+                        resizable: true
+                    },
+                    {
+                        "x": 0,
+                        "y": 0,
+                        "w": 12,
+                        "h": 10,
+                        "i": "12",
+                        "name": 'Kursübersicht',
+                        c: 'CourseOverview',
+                        resizable: true
+                    },
+                    {
+                        "x": 0,
+                        "y": 0,
+                        "w": 12,
+                        "h": 10,
+                        "i": "11",
+                        "name": 'Lernstrategien',
+                        c: 'LearningStrategies',
+                        resizable: true
+                    },
 
-            ],
-            allComponents: [
-                {
-                    "x": 0,
-                    "y": 0,
-                    "w": 8,
-                    "h": 12,
-                    "i": "1",
-                    "name": 'Überblick (alt)',
-                    c: 'ProgressChart',
-                    resizable: true,
-                    fixed: false,
-                },
-                {
-                    "x": 0,
-                    "y": 13,
-                    "w": 8,
-                    "h": 12,
-                    "i": "10",
-                    "name": 'Adaptiver Überblick',
-                    c: 'ProgressChartAdaptive',
-                    resizable: true,
-                    fixed: false,
-                },
-                {
-                    "x": 0,
-                    "y": 22,
-                    "w": 6,
-                    "h": 12,
-                    "i": "2",
-                    "name": 'Lernziele',
-                    c: 'IndicatorDisplay',
-                    resizable: true
-                },
-                {
-                    "x": 0,
-                    "y": 13,
-                    "w": 8,
-                    "h": 10,
-                    "i": "3",
-                    "name": 'Aufgabenliste',
-                    c: 'TaskList',
-                    resizable: true
-                },
-                {
-                    "x": 9,
-                    "y": 13,
-                    "w": 3,
-                    "h": 10,
-                    "i": "4",
-                    "name": 'Termine',
-                    c: 'AppDeadlines',
-                    resizable: true
-                },
-                /*{
-                    "x": 0,
-                    "y": 0,
-                    "w": 6,
-                    "h": 12,
-                    "i": "7",
-                    "name": 'Ergebnisse',
-                    c: 'QuizStatistics',
-                    resizable: true
-                },*/
-                {
-                    "x": 0,
-                    "y": 0,
-                    "w": 6,
-                    "h": 10,
-                    "i": "9",
-                    "name": 'Empfehlungen',
-                    c: 'Recommendations',
-                    resizable: true
-                },
-                {
-                    "x": 0,
-                    "y": 0,
-                    "w": 12,
-                    "h": 10,
-                    "i": "12",
-                    "name": 'Kursübersicht',
-                    c: 'CourseOverview',
-                    resizable: true
-                },
-                {
-                    "x": 0,
-                    "y": 0,
-                    "w": 12,
-                    "h": 10,
-                    "i": "11",
-                    "name": 'Lernstrategien',
-                    c: 'LearningStrategies',
-                    resizable: true
-                },
-                
-            ],
+                ],
         };
     },
 
-    created () {
+    created() {
         this.loadDashboard();
-        this.defaultLayout = [ 
-            this.allComponents[0], 
+        this.defaultLayout = [
+            this.allComponents[0],
             this.allComponents[1],
             //this.allComponents[10],
-        ]; 
+        ];
     },
 
     mounted: function () {
-        
+
         this.courseid = this.$store.state.courseid;
 
         this.context.courseId = this.$store.state.courseid; // TODO
@@ -280,7 +204,7 @@ export default {
 
     computed: {
         filteredComponents() {
-            return this.allComponents.filter(({i: id1}) => !this.layout.some(({i: id2}) => id2 === id1));
+            return this.allComponents.filter(({ i: id1 }) => !this.layout.some(({ i: id2 }) => id2 === id1));
         },
 
         layout() {

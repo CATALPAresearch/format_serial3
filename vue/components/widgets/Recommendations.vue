@@ -1,6 +1,6 @@
 <template>
     <div class="position-relative h-100 d-flex flex-column">
-        <widget-heading icon="fa-thumbs-o-up" :info-content="info" title="Empfehlungen"></widget-heading>
+        <widget-heading icon="fa fa-lightbulb" :info-content="info" title="Empfehlungen"></widget-heading>
         <div class="recommendations--container pr-1">
             <ul v-if="getRecommendations.length > 0" class="list-unstyled">
                 <li v-for="(recommendation, index) in filteredRecommendations" :key="index" class="recommendations--item">

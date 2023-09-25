@@ -64,7 +64,7 @@
                         :style="'position:absolute;background-color:'+getBarColor('hypervideo_completion', getRatio(section.hypervideo.complete, section.hypervideo.count))+';display:block;height:100%;width:'+ getRatio(section.hypervideo.complete, section.hypervideo.count, 100) +'%;'">
                     </span>
                     <span class="p-1 d-none d-md-block"
-                        style="z-index:10;position:absolute;color:#333;font-size:0.7rem;vertical-align:middle;display:block;height:100%;">
+                        style="z-index:10;position:absolute;color:#222;font-size:0.7rem;vertical-align:middle;display:block;height:100%;">
                         {{ getRatio(section.hypervideo.complete, section.hypervideo.count).toFixed(1) }}% gesehen
                     </span>
                 </span>
@@ -78,7 +78,7 @@
                         :style="'position:absolute;background-color:'+getBarColor('longpage_completion', getRatio(section.longpage.complete, section.longpage.count, 100))+';display:block;height:100%;width:'+ getRatio(section.longpage.complete, section.longpage.count, 100) +'%;'">
                     </span>
                     <span class="p-1 d-none d-md-block"
-                        style="z-index:10;position:absolute;color:#333;font-size:0.7rem;vertical-align:middle;display:block;height:100%;">
+                        style="z-index:10;position:absolute;color:#222;font-size:0.7rem;vertical-align:middle;display:block;height:100%;">
                         {{ Math.round(getRatio(section.longpage.complete, section.longpage.count, 100)) }}% gelesen
                     </span>
                 </span>
@@ -92,7 +92,7 @@
                         :style="'position:absolute;background-color:'+getBarColor('quiz_completion', getRatio(section.quiz.complete, section.quiz.count))+';display:block;height:100%;width:'+ getRatio(section.quiz.complete, section.quiz.count, 100) +'%;'">
                     </span>
                     <span class="p-1 d-none d-md-block"
-                        style="z-index:10;position:absolute;color:#333;font-size:0.7rem;vertical-align:middle;display:block;height:100%;">
+                        style="z-index:10;position:absolute;color:#222;font-size:0.7rem;vertical-align:middle;display:block;height:100%;">
                         {{ section.quiz.complete }} von {{ section.quiz.count }} bearbeitet
                     </span>
                 </span>
@@ -102,7 +102,7 @@
                         :style="'position:absolute;background-color:'+getBarColor('quiz_score', section.quiz.achieved_score)+';display:block;height:100%;width:'+ getRatio(section.quiz.achieved_score, section.quiz.max_score, 100) +'%;'">
                     </span>
                     <span class="p-1 d-none d-md-block"
-                        style="z-index:10;position:absolute;color:#333;font-size:0.7rem;vertical-align:middle;display:block;height:100%;">
+                        style="z-index:10;position:absolute;color:#222;font-size:0.7rem;vertical-align:middle;display:block;height:100%;">
                         {{ section.quiz.achieved_score }} , {{section.quiz.max_score }}% korrekt
                     </span>
                 </span>
@@ -116,7 +116,7 @@
                         :style="'position:absolute;background-color:'+getBarColor('assign_completion', getRatio(section.assign.complete, section.assign.count))+';display:block;height:100%;width:'+ getRatio(section.assign.complete, section.assign.count, 100) +'%;'">
                     </span>
                     <span class="p-1 d-none d-md-block"
-                        style="z-index:10;position:absolute;color:#333;font-size:0.7rem;vertical-align:middle;display:block;height:100%;">
+                        style="z-index:10;position:absolute;color:#222;font-size:0.7rem;vertical-align:middle;display:block;height:100%;">
                         {{ section.assign.complete }} von {{ section.assign.count }} bearbeitet
                     </span>
                 </span>
@@ -126,7 +126,7 @@
                         :style="'position:absolute;background-color:'+getBarColor('assign_score', getRatio(section.assign.achieved_score, section.assign.max_score))+';display:block;height:100%;width:'+ getRatio(section.assign.achieved_score, section.assign.max_score, 100) +'%;'">
                     </span>
                     <span class="p-1 d-none d-md-block"
-                        style="z-index:10;position:absolute;color:#333;font-size:0.7rem;vertical-align:middle;display:block;height:100%;">
+                        style="z-index:10;position:absolute;color:#222;font-size:0.7rem;vertical-align:middle;display:block;height:100%;">
                         {{ Math.round(getRatio(section.assign.achieved_score, section.assign.max_score), 0) }}% korrekt
                     </span>
                 </span>
@@ -272,10 +272,10 @@ export default {
             currentGoal: 'mastery', // dummy
             controlgroup: false,
             color: {
-                default: '#7cc0d8',
-                orange: '#e79c63',
-                green: '#88c2b7',
-                yellow: '#e7c87a'
+                default: '#CED4DA',//'#7cc0d8',
+                orange: '#B1D9F9',//'#e79c63',
+                green: '#06375E',//'#88c2b7',
+                yellow: '#2487D3',//'#e7c87a'
             },
             sections: [],
             dashboardsectionexclude: [],

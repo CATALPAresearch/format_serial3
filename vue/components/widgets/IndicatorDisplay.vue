@@ -18,17 +18,15 @@
                             anzueignen
                         </option>
                     </select>
-                </div>
-                <div class="d-flex mt-3">
                     <div class="dropdown">
-                        <button
+                        <div
                             id="dropdownMenuButton"
                             aria-expanded="false"
                             aria-haspopup="true"
-                            class="btn btn-secondary dropdown-toggle"
+                            class="btn btn-link dropdown-toggle ml-3 icon"
                             data-toggle="dropdown"
                             type="button"
-                        >Indikatoren</button>
+                        ><i class="fa fa-cog"></i></div>
                         <ul aria-labelledby="dropdownMenuButton" class="dropdown-menu" @change="selectIndicators">
                             <li v-for="(indicator, index ) in indicators" :key="index">
                                 <div class="form-check ml-2">
@@ -340,6 +338,23 @@ export default {
 @import "../../scss/variables.scss";
 @import "../../scss/scrollbar.scss";
 
+.icon {
+  color: rgba(0,0,0,.6);
+  width: 30px;
+  height: 26px;
+  font-size: 18px;
+  border: 1px solid #8f959e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-left: 6px;
+  padding-right: 6px;
+}
+
+.icon:hover {
+    text-decoration: none;
+}
+
 .rect-sm {
     width: 12px;
     height: 12px;
@@ -377,7 +392,7 @@ select.form-control {
 }
 
 .bullet {
-    margin: 10px 0;
+    margin: 0;
 }
 
 .bullet {

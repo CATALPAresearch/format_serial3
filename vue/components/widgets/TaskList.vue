@@ -1,6 +1,6 @@
 <template>
     <div class="position-relative h-100 d-flex flex-column">
-        <widget-heading icon="fa-sticky-note-o" :info-content="info" title="Aufgaben"></widget-heading>
+        <widget-heading icon="fa-star-o" :info-content="info" title="Aufgaben"></widget-heading>
         <div class="todo__items flex-shrink-1 mb-6">
             <ul class="p-0 pl-1">
                 <li v-for="item in uncompletedItems" :key="item.id" class="todo__checkbox-items pt-1">
