@@ -35,12 +35,12 @@ export default {
 	},
 
 	actions: {
-		async getItems({commit, rootState}) {
+		async getItems({state, commit, rootState}) {
 			const response = await Communication.webservice(
 				'get_tasks',
 				{
-					'userid': 2,
-					'course': 4,
+					'userid': Number(rootState.userid),
+					'course': Number(rootState.courseid),
 				}
 			);
 
@@ -118,7 +118,7 @@ export default {
 				{
 					'id': item.id,
 					'duedate': item.duedate,
-					'completed': item.completed
+					'completed': completed//item.completed
 				}
 			);
 			if (response.success) {

@@ -35,7 +35,11 @@
             </a>
         </div>
         <div class="py-1">
-            <button class="btn btn-outline-dark btn-sm" @click="addToTaskList">Zur Aufgabenliste hinzufügen</button>
+            {{ activity }}
+            <button class="btn btn-outline-dark btn-sm" @click="addToTaskList()">
+                <i class="fa fa-star-o"></i>
+                Zur Aufgabenliste hinzufügen
+            </button>
         </div>
     </div>
 </template>
@@ -67,7 +71,6 @@ export default {
 
     methods: {
         async updateUnderstanding(newVal) {
-            console.log('3', this.courseid, this.id, newVal)
             if(this.courseid == undefined || this.id == undefined || newVal == undefined){
                 return;
             }
@@ -90,10 +93,11 @@ export default {
             }
         },
 
-        addToTaskList() {
+        addToTaskList(url) {
             this.$emit('add-to-task-list', {
                 course: this.courseid,
-                task: this.activity.name,
+                task: '<a href="'+ url +'">'+this.activity.name+'</a>',
+                //task: '<a href="https://heise.de/">'+this.activity.name+'</a>',
                 completed: this.completed ? 1 : 0,
                 duedate: null,
             });

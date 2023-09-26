@@ -351,13 +351,13 @@ export default {
             );
             if (response.success) {
                 response.data = JSON.parse(response.data)
-                console.log('input debug::', JSON.parse(response.data.debug));
-                console.log('input completions::', JSON.parse(response.data.completions));
+                console.log('LAD-DATA::input debug::', JSON.parse(response.data.debug));
+                console.log('LAD-DATA::input completions::', JSON.parse(response.data.completions));
 
                 this.sections = this.groupBy(JSON.parse(response.data.completions), 'section');
-                console.log('sections', this.sections)
+                console.log('LAD-DATA::sections', this.sections)
                 this.stats = this.calcStats();
-                console.log('stats', this.stats);
+                console.log('LAD-DATA::stats', this.stats);
 
                 //_this.dashboardsectionexclude = $('#dashboardsectionexclude').text().replace(' ','').split(',');
                 //_this.dashboardsectionexclude = _this.dashboardsectionexclude.isArray() ? _this.dashboardsectionexclude : [];
@@ -424,17 +424,14 @@ export default {
                         stats[section[i].section][section[i].type].max_score += section[i].max_score != null ? parseInt(section[i].max_score, 10) : 0;
 
                     } else if(section[i].type == "quiz"){
-                        console.log('Dash::', stats[section[i].section][section[i].type]);
                         stats[section[i].section][section[i].type].count = stats[section[i].section][section[i].type].count + 1;
                         stats[section[i].section][section[i].type].complete += section[i].submission_time != null ? 1 : 0;
                         if(section[i].achieved_score != null && section[i].max_score != null ){
                             // FIXME:
                             // section[i].achieved_score >= 0
-                            console.log('found', section[i]);
                             stats[section[i].section][section[i].type].achieved_score += parseInt(section[i].achieved_score, 10) > parseInt(section[i].max_score, 10) ? parseInt(section[i].max_score, 10) : parseInt(section[i].achieved_score, 10);
                             stats[section[i].section][section[i].type].max_score += parseInt(section[i].max_score, 10);
-                            console.log(section[i].achieved_score, section[i].max_score);
-                            console.log('result', stats[section[i].section][section[i].type].achieved_score, stats[section[i].section][section[i].type].max_score)
+                        
                         }
                     } else{
                         //
@@ -502,7 +499,7 @@ export default {
                 out.push(el);
             }
             this.sumScores = sum;
-            console.log('SUMME',out)
+            
             return out;
         },
         shortenTitle: function(title){
@@ -598,9 +595,7 @@ export default {
                 { 'courseid': this.$store.getters.getCourseid }
             );
             if (response.success) {
-                console.log(JSON.parse(response.data));
                 this.reflections = JSON.parse(response.data);
-                console.log("Reflection-data ", this.reflections);
             } else {
                 if (response.data) {
                     console.log('Faulty response of webservice /reflectionread/', response.data);

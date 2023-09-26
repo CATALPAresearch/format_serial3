@@ -2168,7 +2168,7 @@ Group by cm.id
 		$record = new stdClass();
 		$record->userid = (int)$USER->id;
 		$record->course = (int)$course;
-		$record->task = s($task);
+		$record->task = (string)($task);
 		$record->duedate = strtotime($duedate);
 		$record->timemodified = time();
 		$record->completed = (int)$completed;

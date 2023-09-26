@@ -5,7 +5,7 @@
         <div class="subject-progress px-1">
             <div :class="currentSection === -1 ? 'section-selection--current' : ''" class="section-selection mr-2"
                 @click="setCurrentSection(-1)">
-                <p class="my-1">Alle</p>
+                <p class="my-1 pl-1">Alle Kurseinheiten</p>
                 <div class="progress mb-2">
                     <div :aria-valuenow="calculateProgress" :style="{ 'width': calculateProgress + '%' }" aria-valuemax="100"
                         aria-valuemin="0" class="progress-bar progress-bar-blue" role="progressbar">{{ calculateProgress }}%
@@ -19,7 +19,7 @@
                     @click="setCurrentSection(index)">
                     <div :class="currentSection === index ? 'section-selection--current' : ''"
                         class="section-selection mr-2">
-                        <p :title="section[0].sectionname" class="section-names mb-1 small">{{
+                        <p :title="section[0].sectionname" class="section-names mb-1 small pl-1">{{
                             section[0].sectionname
                         }}</p>
                         <div class="progress">
@@ -128,7 +128,6 @@ export default {
                     $(document).on('click.popover', function (event) {
                         var isClickInsidePopover = $(event.target).closest('.popover').length > 0 || $(event.target).hasClass('popover-content');
                         var isClickOnPopoverButton = $(event.target).is($(el));
-                        console.log('clo ',isClickInsidePopover, isClickOnPopoverButton)
                         if (!isClickInsidePopover && !isClickOnPopoverButton) {
                             $(el).popover('hide');
                             $(document).off('click.popover');
@@ -292,31 +291,28 @@ export default {
             xmlhttp.onreadystatechange = function() {
                 if (this.readyState == 4 && this.status == 200) {
                     var lm = JSON.parse(this.responseText);
-                    console.log('Learner Model', lm)
                     // TODO convert LM to internal data structure
                 }
             };
             // FIXME: pass the moodle path from php to the client
             var wwwroot = window.location.protocol + "//" + window.location.host + "/" + window.location.pathname;
-            console.log(wwwroot);
             wwwroot = 'http://localhost/moodle311';
             // FIXME: add the current semester as a parameter of the path instead of "SS23"
             var path = wwwroot + '/local/ari/lm_get_user_data.php?format=json&&period=SS23&course_id=' + parseInt(this.$store.getters.getCourseid, 10) + '&user_id=' + parseInt(this.$store.getters.getUserid, 10);
-            console.log(path);
             xmlhttp.open('GET', path, true);
             xmlhttp.send();
         },
 
         loadCourseData: async function () {
-            console.log('DEBUG')
+            //console.log('DEBUG')
             const response = await Communication.webservice(
                 'overview',
                 { courseid: parseInt(this.$store.getters.getCourseid, 10) }
             );
             if (response.success) {
                 response.data = JSON.parse(response.data)
-                console.log('input debug::', JSON.parse(response.data.debug));
-                console.log('input completions::', JSON.parse(response.data.completions));
+                //console.log('input debug::', JSON.parse(response.data.debug));
+                //console.log('input completions::', JSON.parse(response.data.completions));
 
                 this.$store.commit('overview/setCourseData', JSON.parse(response.data.completions))
                 this.$store.commit('overview/setCurrentActivities', this.getActivities);
@@ -422,13 +418,13 @@ export default {
     &:hover {
         text-decoration: underline;
         outline: 2px solid $blue-default;
-        outline-offset: 2px;
+        outline-offset: 0px;
     }
 
     &--current {
         text-decoration: underline;
         outline: 2px solid $blue-default;
-        outline-offset: 2px;
+        outline-offset: 0px;
     }
 }
 

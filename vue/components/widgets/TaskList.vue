@@ -6,7 +6,7 @@
                 <li v-for="item in uncompletedItems" :key="item.id" class="todo__checkbox-items pt-1">
                     <div class="d-flex todo__toggle-item">
                         <input :checked="item.completed === 1" class="mr-2" type="checkbox" @click="toggleTask(item)"/>
-                        <span class="m-0">{{ item.task }}</span>
+                        <span class="m-0" v-html="item.task"></span>
                     </div>
                     <div class="d-flex align-items-center mr-3">
                         <div v-if="item.duedate && item.duedate != 0" class="flex-shrink-0">
@@ -31,10 +31,11 @@
                 <div class="card card-body w-100 pr-0 pl-1 py-2">
                     <ul class="mr-3 mb-0 p-0">
                         <li v-for="item in completedItems" :key="item.id" class="todo__checkbox-items pt-1 pb-1">
+                            
                             <div class="d-flex todo__toggle-item">
                                 <input :checked="item.completed == 1" class="mr-2" type="checkbox"
                                        @click="toggleTask(item)"/>
-                                <span class="todo__item-completed m-0">{{ item.task }}</span>
+                                <span class="todo__item-completed m-0" v-html="item.task"></span>
                             </div>
                             <div class="d-flex align-items-center">
                                 <div v-if="item.duedate && item.duedate != 0" class="flex-shrink-0">
@@ -118,7 +119,7 @@ export default {
 
         addTask() {
             const newItem = {
-                course: 4,
+                course: this.$store.getters.getCourseid,
                 task: this.newItem,
                 completed: 0,
                 duedate: this.newDate,

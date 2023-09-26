@@ -5,13 +5,37 @@
             <ul v-if="getRecommendations.length > 0" class="list-unstyled">
                 <li v-for="(recommendation, index) in filteredRecommendations" :key="index" class="recommendations--item">
                     <div class="mr-5">
-                        <h5><i :class="'fa pr-2 ' + classOfCategory[recommendation.category]"></i>[{{ recommendation.type }}] {{ recommendation.title }}</h5>
+                        <h5><i :class="'fa pr-2 ' + classOfCategory[recommendation.category]"></i>{{ recommendation.title }}</h5>
                         <p v-html="recommendation.description"></p>
-                        <div>
-                            <span>{{ dateToHumanReadable(recommendation.timecreated) }}</span>
-                            <button class="btn btn-default"><i class="fa fa-arrow-up"></i></button>
-                            <button class="btn btn-default"><i class="fa fa-arrow-down"></i></button>
+                        <div class="dropdown">
+                            <div
+                                id="dropdownThumbsup"
+                                aria-expanded="false"
+                                aria-haspopup="true"
+                                class="btn btn-link dropdown-toggle ml-3 icon"
+                                data-toggle="dropdown"
+                                type="button"
+                            ><i class="fa fa-thumbs-up"></i></div>
+                            <ul aria-labelledby="dropdownThumbsup" class="dropdown-menu">
+                                <li @click="rateFeedback(recommendation.id, 'helpful')">Dieses Feedback ist für mich hilfreich.</li>
+                                <li @click="rateFeedback(recommendation.id, 'applicable')">Dieses Feedback will ich umsetzen</li>
+                            </ul>
                         </div>
+                        <div class="dropdown">
+                            <div
+                                id="dropdownThumbsDown"
+                                aria-expanded="false"
+                                aria-haspopup="true"
+                                class="btn btn-link dropdown-toggle ml-3 icon"
+                                data-toggle="dropdown"
+                                type="button"
+                            ><i class="fa fa-thumbs-down"></i></div>
+                            <ul aria-labelledby="dropdownThumbsDown" class="dropdown-menu">
+                                <li @click="rateFeedback(recommendation.id, 'not-applicable')">Das trifft nicht auf mich zu</li>
+                                <li @click="rateFeedback(recommendation.id, 'later')">Jetzt nicht, später.</li>
+                            </ul>
+                        </div>
+                        <span class="right">{{ dateToHumanReadable(recommendation.timecreated) }}</span>
                     </div>
                 </li>
             </ul>
@@ -120,6 +144,10 @@ export default {
     },
 
     methods: {
+        rateFeedback(id, rating){
+            console.log('LAD::Rulerating@Recommendations: ',id, rating);
+
+        },
         loadRecommentations() {
             let _this = this;
             
@@ -150,9 +178,10 @@ export default {
 
                 request.onsuccess = function () {
                     for (let rec in request.result) {
-                        console.log('RecLISt---------------------------------------', request.result[rec])
+                        //console.log('RecLISt---------------------------------------', request.result[rec])
                         let item = request.result[rec];
                         _this.$store.commit('recommendations/addRecommendation', {
+                            id: item.id,
                             type: item.type,
                             category: item.category,
                             title: item.title,
@@ -200,6 +229,7 @@ export default {
 
 <style scoped lang="scss">
 @import "../../scss/scrollbar.scss";
+@import "../../scss/variables.scss";
 
 .recommendations {
     &--container {
@@ -220,4 +250,54 @@ export default {
         right: 5px;
     }
 }
+
+.icon {
+  color: rgba(0,0,0,.6);
+  width: 20px;
+  height: 26px;
+  font-size: 16px;
+  display: inline;
+  border: none;
+  align-items: center;
+  justify-content: center;
+  padding-left: 4px;
+  padding-right: 4px;
+  margin:0;
+}
+
+.icon:hover {
+    text-decoration: none;
+    color: $blue-default;
+}
+
+.dropdown {
+    display:inline;
+
+}
+
+.dropdown-toggle::after{
+    display: none;
+}
+
+ul.dropdown-menu {
+    cursor: pointer;
+    width: 180px;
+}
+
+ul.dropdown-menu {
+    padding: 0;
+    margin:0;
+}
+
+ul.dropdown-menu  li {
+    padding: 2px 4px;
+}
+
+ul.dropdown-menu  li:hover {
+    background-color: $blue-default;
+    color: #fff;
+}
+
+
+
 </style>

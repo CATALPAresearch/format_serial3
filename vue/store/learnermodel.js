@@ -66,7 +66,6 @@ export default {
 			state.totalGrade = data;
 		},
 		setSocialActivityThresholds(state, thresholds) {
-			console.log(thresholds);
 			state.thresholds = {
 				...state.thresholds,
 				...{
