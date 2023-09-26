@@ -56,6 +56,55 @@ export default {
 	},
 
 	actions: {
+        async loadRecommentations({commit, rootState}) {
+            let _this = this;
+            
+            // save to indexeddb
+            let openRequest = indexedDB.open("ari_prompts", 2);
+
+            // create/upgrade the database without version checks
+            openRequest.onupgradeneeded = function () {
+                let db = openRequest.result;
+                if (!db.objectStoreNames.contains('prompts')) {
+                    //db.createObjectStore('prompts', {keyPath: 'id'}); 
+                }
+            };
+
+            openRequest.onsuccess = function () {
+                let db = openRequest.result;
+
+                db.onversionchange = function () {
+                    db.close();
+                    console.log("ERROR: Database is outdated, please reload the page.")
+                };
+                let transaction = db.transaction("prompts", "readwrite");
+
+                // get an object store to operate on it
+                let prompts = transaction.objectStore("prompts");
+
+                let request = prompts.getAll();
+
+                request.onsuccess = function () {
+                    for (let rec in request.result) {
+                        let item = request.result[rec];
+                        _this.commit('recommendations/addRecommendation', {
+                            id: item.id,
+                            type: item.type,
+                            category: item.category,
+                            title: item.title,
+                            description: item.message,
+                            timecreated: item.timecreated,
+                        });
+                    }
+                };
+
+                request.onerror = function () {
+                    console.log("SERIAL3: Error reading prompts", request.error);
+                };
+
+            }
+        },
+
 		async getItems({commit, rootState}) {
             /*
 			const response = await Communication.webservice(

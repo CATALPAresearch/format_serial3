@@ -99,7 +99,7 @@ import Vue from 'vue';
 import { mapActions, mapGetters, mapState } from 'vuex';
 import { groupBy } from "../../scripts/util";
 import PopoverContent from "../PopoverContent.vue";
-import { treemapSquarify } from '../../../lib/src/d3.v4';
+//import { treemapSquarify } from '../../../lib/src/d3.v4';
 
 
 export default {
