@@ -33,11 +33,14 @@
                 </div>
             </div>
             <div class="course-recommendation py-2">
-                <div v-for="(r, index) in getCourseRecommendations" :key="index">
-                    <span v-if="index < 1 && currentSection == -1 && r.type=='scope_course'">
-                        <i class="fa fa-lightbulb pr-1"></i>
-                        <span v-html="r.description"></span>
-                    </span>
+                <div v-for="(recommendation, index) in getCourseRecommendations" :key="index">
+                    <RecommendationItem 
+                    v-if="index < 1 && currentSection == -1 && recommendation.type=='scope_course'"
+                    :recommendation="recommendation"
+                    :courseid="$store.getters.getCourseid"
+                    :timeAgo="timeAgo"
+                    :mode="'minimal'"
+                    ></RecommendationItem>
                 </div>
             </div>
             <div v-for="(type, typeIndex) in activityTypes" :key="typeIndex" class="row">
@@ -95,6 +98,7 @@
 <script>
 import Communication from '../../scripts/communication';
 import WidgetHeading from "../WidgetHeading.vue";
+import RecommendationItem from "../RecommendationItem.vue";
 import Vue from 'vue';
 import { mapActions, mapGetters, mapState } from 'vuex';
 import { groupBy } from "../../scripts/util";
@@ -105,7 +109,7 @@ import PopoverContent from "../PopoverContent.vue";
 export default {
     name: "WidgetProgressChartAdaptive",
 
-    components: { PopoverContent, WidgetHeading },
+    components: { WidgetHeading, PopoverContent, RecommendationItem },
 
     directives: {
         popoverHtml: {

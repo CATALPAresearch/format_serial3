@@ -4,11 +4,12 @@
         <div class="recommendations--container pr-1">
             <ul v-if="getRecommendations.length > 0" class="list-unstyled">
                 <li v-for="(recommendation, index) in filteredRecommendations" :key="index" class="recommendations--item">
-                    <RecommendationListItem 
+                    <RecommendationItem 
                     :recommendation="recommendation"
                     :courseid="$store.getters.getCourseid"
                     :timeAgo="timeAgo"
-                    ></RecommendationListItem>
+                    :mode="'full'"
+                    ></RecommendationItem>
                 </li>
             </ul>
             <p v-else class="recommendations--item">
@@ -20,7 +21,7 @@
 
 <script>
 import WidgetHeading from "../WidgetHeading.vue";
-import RecommendationListItem from "../RecommendationListItem.vue";
+import RecommendationItem from "../RecommendationItem.vue";
 // import recommendationRules from '../../data/recommendations.json';
 import { mapActions, mapGetters, mapState } from 'vuex';
 import TimeAgo from 'javascript-time-ago'
@@ -32,7 +33,7 @@ import de from 'javascript-time-ago/locale/de'
 export default {
     name: "WidgetRecommendations",
 
-    components: { WidgetHeading, RecommendationListItem },
+    components: { WidgetHeading, RecommendationItem },
 
     data() {
         return {

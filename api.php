@@ -2316,6 +2316,44 @@ Group by cm.id
 	}
 
 
+    //set_rule_response
+    public static function set_rule_response_parameters()
+	{
+		return new external_function_parameters([
+			'course_id' => new external_value(PARAM_INT, 'course id'),
+            'action_id' => new external_value(PARAM_TEXT, 'id of the rule action'),
+            'response_type' => new external_value(PARAM_TEXT, 'user response to a rule action'),
+            'user_response' => new external_value(PARAM_RAW, 'user response to a rule action'),
+		]);
+	}
+
+    public static function set_rule_response_is_allowed_from_ajax()
+	{
+		return true;
+	}
+    public static function set_rule_response_returns()
+	{
+		return new external_single_structure([ 'success' => new external_value(PARAM_BOOL, 'Success Variable') ]);
+	}
+    public static function set_rule_response($course_id, $action_id, $response_type, $user_response){
+        global $DB, $USER;
+        $date = new DateTime();
+		$record = new stdClass();
+        $record->user_id = (int)$USER->id;
+		$record->course_id = (int)$course_id;
+		$record->action_id = $action_id;
+        $record->response_type = $response_type;
+        $record->response = $user_response;
+        $record->timecreated = $date->getTimestamp();
+		
+        $DB->insert_record('ari_response_rule_action', $record);
+        return array(
+			'success' => true
+        );
+    }
+
+
+
 	/**
 	 * Interface to fetch get the missed and total number of assignments and quizzes
 	 */
@@ -2654,7 +2692,7 @@ Group by cm.id
 	public static function set_learner_goal($course, $goal)
 	{
 		global $DB, $USER;
-
+        
 		$userid = (int)$USER->id;
 
 		$record = $DB->get_record('serial3_learner_goal', array('userid' => $userid, 'course' => $course));

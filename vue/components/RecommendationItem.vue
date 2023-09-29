@@ -1,7 +1,7 @@
 <template>
     <div class="mr-5">
-        <h5><i :class="'fa pr-2 ' + classOfCategory[recommendation.category]"></i>{{ recommendation.title }}</h5>
-        <p v-html="recommendation.description"></p>
+        <h5 v-if="mode!='minimal'"><i :class="'fa pr-2 ' + classOfCategory[recommendation.category]"></i>{{ recommendation.title }}</h5>
+        <p @click="set_rule_response('click', 'description')" v-html="recommendation.description"></p>
         <div class="dropdown">
             <div
                 id="dropdownThumbsup"
@@ -12,8 +12,8 @@
                 type="button"
             ><i class="fa fa-thumbs-up"></i></div>
             <ul aria-labelledby="dropdownThumbsup" class="dropdown-menu">
-                <li @click="rateFeedback(recommendation.id, 'helpful')">Dieses Feedback ist für mich hilfreich.</li>
-                <li @click="rateFeedback(recommendation.id, 'applicable')">Dieses Feedback will ich umsetzen</li>
+                <li @click="set_rule_response('user_rating', 'helpful')">Dieses Feedback ist für mich hilfreich.</li>
+                <li @click="set_rule_response('user_rating', 'applicable')">Dieses Feedback will ich umsetzen</li>
             </ul>
         </div>
         <div class="dropdown">
@@ -26,11 +26,11 @@
                 type="button"
             ><i class="fa fa-thumbs-down"></i></div>
             <ul aria-labelledby="dropdownThumbsDown" class="dropdown-menu">
-                <li @click="rateFeedback(recommendation.id, 'not-applicable')">Das trifft nicht auf mich zu</li>
-                <li @click="rateFeedback(recommendation.id, 'later')">Jetzt nicht, später.</li>
+                <li @click="set_rule_response('user_rating', 'not-applicable')">Das trifft nicht auf mich zu</li>
+                <li @click="set_rule_response('user_rating', 'later')">Jetzt nicht, später.</li>
             </ul>
         </div>
-        <span class="right">{{ dateToHumanReadable(recommendation.timecreated) }}</span>
+        <span v-if="mode!='minimal'" class="right">{{ dateToHumanReadable(recommendation.timecreated) }}</span>
     </div>
 </template>
 
@@ -39,12 +39,13 @@
 import Communication from "../scripts/communication";
 
 export default {
-    name: "RecommendationListItem",
+    name: "RecommendationItem",
 
     props: {
         recommendation: {type: Object, required: true},
         courseid: {type: Number, required: true},
-        timeAgo: {type: Object, required: true},
+        timeAgo: {type: Object, required: false},
+        mode: {type: String, required: false}
     },
 
     data() {
@@ -68,9 +69,21 @@ export default {
     },
 
     methods: {
-        rateFeedback(id, rating){
-            this.rating = rating;
-            console.log('LAD::Rulerating@Recommendations: ',id, rating);
+        async set_rule_response(response_type, user_response){
+            if(response_type == 'user_rating'){
+                this.rating = user_response;
+            }
+            const data = {
+                    'course_id': this.courseid,
+                    'action_id': this.id,
+                    'response_type': response_type,
+                    'user_response': user_response,
+                };
+            console.log('LAD::Rulerating@Recommendations: ', data);
+            const response = await Communication.webservice('set_rule_response', data);
+            if (!response.success) {
+                console.log('No connection to webservice /set_rule_response/');
+            }
         },
 
         dateToHumanReadable(date){

@@ -35,6 +35,7 @@
                                         class="form-check-input"
                                         type="checkbox"
                                         :value="indicator.value"
+                                        :checked="indicator.checked"
                                         v-model="indicator.checked"
                                     />
                                     <label :for="index" class="form-check-label">{{
@@ -83,8 +84,8 @@ export default {
                 {value: 'Kompetenz', title: 'Kompetenz', checked: true},
                 {value: 'Wissensstand', title: 'Wissensstand', checked: true},
                 {value: 'Ergebnisse', title: 'Ergebnisse', checked: true},
-                {value: 'Time Management', title: 'Time Management', checked: true},
-                {value: 'Soziale Interaktion', title: 'Soziale Interaktion', checked: true},
+                {value: 'Time Management', title: 'Time Management', checked: false},
+                {value: 'Soziale Interaktion', title: 'Soziale Interaktion', checked: false},
             ],
             data: [
                 {

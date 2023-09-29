@@ -333,4 +333,13 @@ $functions = [
 		'ajax' 				=> true,
 		'loginrequired' 	=> true
 	],
+	'format_serial3_set_rule_response' => [
+		'classname' 		=> 'format_serial3_external',
+		'methodname' 		=> 'set_rule_response',
+		'classpath' 		=> 'course/format/serial3/api.php',
+		'description' 		=> 'Get the users learner goal.',
+		'type' 				=> 'write',
+		'ajax' 				=> true,
+		'loginrequired' 	=> true
+	],
 ];
