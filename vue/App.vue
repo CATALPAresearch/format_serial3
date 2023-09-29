@@ -45,7 +45,6 @@ import TaskList from "./components/widgets/TaskList.vue";
 import LearningStrategies from "./components/widgets/LearningStrategies.vue";
 import CourseOverview from "./components/widgets/CourseOverview.vue";
 import { GridItem, GridLayout } from './js/vue-grid-layout.umd.min';
-//import CircleChart from "./components/widgets/CircleChart.vue";
 import { mapState } from 'vuex';
 
 
