@@ -2797,7 +2797,7 @@ Group by cm.id
 			 JOIN {forum_discussions} fd ON fd.id = fp.discussion 
 			 WHERE fd.course = :courseid AND fp.userid = :userid) AS user_posts,
 			COUNT(*) AS total_posts,
-			COUNT(*) / COUNT(DISTINCT fp.userid) AS avg_posts_per_person,
+			COUNT(*) / COALESCE(NULLIF(COUNT(DISTINCT fp.userid), 0)) AS avg_posts_per_person,
 			(SELECT COUNT(*) 
 			 FROM {forum_posts} fp 
 			 JOIN {forum_discussions} fd ON fd.id = fp.discussion 
@@ -2812,10 +2812,11 @@ Group by cm.id
 			 LIMIT 1) AS min_user_posts
 		FROM {forum_posts} fp 
 		JOIN {forum_discussions} fd ON fd.id = fp.discussion 
-		WHERE fd.course = :courseid1 AND fp.userid IS NOT NULL";
+		WHERE fd.course = :courseid1 AND fp.userid IS NOT NULL
+        ;";
 
-        $params = array('courseid' => $course, 'courseid1' => $course, 'userid' => $userid);
-        // FIXME: Does not work under postgres
+        $params = array('courseid' => (int)$course, 'courseid1' => (int)$course, 'userid' => $userid);
+        
         $result = $DB->get_records_sql($sql, $params);
         $result = [];
         return array(
