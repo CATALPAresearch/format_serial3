@@ -36,32 +36,6 @@
                 <INDEX NAME="course" UNIQUE="false" FIELDS="course"/>
             </INDEXES>
         </TABLE>
-        <TABLE NAME="limesurvey_submissions" COMMENT="Default comment for the table, please edit me">
-            <FIELDS>
-                <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-                <FIELD NAME="user_id" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false"/>
-                <FIELD NAME="survey_id" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false"/>
-                <FIELD NAME="submission_id" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false"/>
-                <FIELD NAME="complete_date" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false"/>
-            </FIELDS>
-            <KEYS>
-                <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-            </KEYS>
-        </TABLE>
-        <TABLE NAME="limesurvey_assigns" COMMENT="Default comment for the table, please edit me">
-            <FIELDS>
-                <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-                <FIELD NAME="name" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
-                <FIELD NAME="course_id" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false"/>
-                <FIELD NAME="survey_id" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false"/>
-                <FIELD NAME="startdate" TYPE="int" LENGTH="11" NOTNULL="false" SEQUENCE="false"/>
-                <FIELD NAME="warndate" TYPE="int" LENGTH="11" NOTNULL="false" SEQUENCE="false"/>
-                <FIELD NAME="stopdate" TYPE="int" LENGTH="11" NOTNULL="false" SEQUENCE="false"/>
-            </FIELDS>
-            <KEYS>
-                <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-            </KEYS>
-        </TABLE>_
         <TABLE NAME="serial3_tasks" COMMENT="Stores the tasks list items. Each record is one task item">
             <FIELDS>
                 <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
