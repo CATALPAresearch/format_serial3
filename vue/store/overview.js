@@ -71,7 +71,7 @@ export default {
       return groupBy(state.courseData, "section");
     },
     getActivities: function (state) {
-		return groupBy(state.courseData, "type");
+      return groupBy(state.courseData, "type");
     },
     getCurrentActivities: function (state) {
       if (state.currentSection === -1) {
@@ -84,10 +84,10 @@ export default {
       const activity = Object.values(state.courseData).find(
         (object) => object.id === id
       );
-	  if (activity != undefined){
-		return activity.url;
-	  }
-	  return '#';
+      if (activity != undefined) {
+        return activity.url;
+      }
+      return "#";
     },
     getTotalNumberOfActivities: function (state) {
       return Object.keys(state.courseData).length;
