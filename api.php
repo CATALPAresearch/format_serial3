@@ -2393,7 +2393,8 @@ Group by cm.id
     			COUNT(*) AS total_assignments
 				FROM {assign} a
 				LEFT JOIN {assign_submission} s ON s.assignment = a.id AND s.userid = :userid
-				WHERE a.course = :course AND a.allowsubmissionsfromdate < UNIX_TIMESTAMP() AND a.duedate < UNIX_TIMESTAMP()";
+				WHERE a.course = :course";
+                //AND a.allowsubmissionsfromdate < UNIX_TIMESTAMP() AND a.duedate < UNIX_TIMESTAMP()
 
         $params = array('course' => $course, 'userid' => (int)$USER->id);
         $missedAssignments = $DB->get_records_sql($sql, $params);
@@ -2814,8 +2815,9 @@ Group by cm.id
 		WHERE fd.course = :courseid1 AND fp.userid IS NOT NULL";
 
         $params = array('courseid' => $course, 'courseid1' => $course, 'userid' => $userid);
+        // FIXME: Does not work under postgres
         $result = $DB->get_records_sql($sql, $params);
-
+        $result = [];
         return array(
             'success' => true,
             'data' => json_encode($result),

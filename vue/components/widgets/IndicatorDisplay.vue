@@ -69,7 +69,7 @@ export default {
                 { value: 'progressUnderstanding', title: 'Selbsteinschätzung', id: 'progressUnderstanding', checked: true },
                 { value: 'userGrades', title: 'Ergebnisse', id: 'userGrades', checked: false },
                 { value: 'timeliness', title: 'Time Management', id: 'timeliness', checked: false },
-                { value: 'socialActivity', title: 'Soziale Interaktion', id: 'socialActivity', checked: false },
+                //{ value: 'socialActivity', title: 'Soziale Interaktion', id: 'socialActivity', checked: false },
             ],
             data: [
                 {
@@ -104,14 +104,14 @@ export default {
                     measures: [],
                     markers: [],
                 },
-                {
+                /*{
                     id: 'socialActivity',
                     title: 'Soziale Interaktion',
                     subtitle: 'Anzahl Forenbeiträge',
                     ranges: [],
                     measures: [],
                     markers: [],
-                },
+                },*/
             ],
             ranges: {},
             info: "Das Lernziel-Widget möchte Sie dazu anregen, Ihre Fortschritte für Ihr persönliches Lernziel im Blick zu behalten. Die Lernziele fassen wir in vier Kategorien zusammen:<br>(1) den Kurs meistern,<br>(2) den Kurs bestehen,<br>(3) einen Überblick über die Kursinhalten zu erlangen, oder<br>(4) praktisches bzw. berufsrelevantes Wissen zu erlangen.<br>Wählen Sie zu Beginn des Semesters ein Ziel aus und ändern Sie bei Bedarf im Laufe des Semesters.<br><br>In den Balkendiagrammen ist Ihr aktueller Stand (dunkelblau) dargestellt. Anhand der farblichen Bereiche erkennen Sie, wie weit Sie bei der Erreichung Ihres Ziels bislang gekommen sind:<ul><li>Noch nicht erreichtes Ziel (hellblau): Sie haben Ihr Ziel noch nicht erricht.</li><li>Nah am Ziel (blau): Sie haben Ihr gestecktes Lernziel bald erreicht.</li><li>Erreichtes Ziel (dunkelblau): Sie waren fleißig und haben Ihr Lernziel erreicht, so dass Sie sich für den Kurs ggf. ein höheres Ziel stecken können.</li></ul>",
@@ -148,8 +148,8 @@ export default {
         socialActivity: {
             deep: true,
             handler() {
-                this.data.find((d) => d.id === 'socialActivity').measures = [this.socialActivity]
-                this.drawChart(this.containerWidth);
+                //this.data.find((d) => d.id === 'socialActivity').measures = [this.socialActivity]
+                //this.drawChart(this.containerWidth);
             },
         },
         userGrade: {
@@ -197,7 +197,7 @@ export default {
 
         ...mapState({
             timeliness: state => state.learnermodel.timeManagement,
-            socialActivity: state => state.learnermodel.socialActivity,
+            //socialActivity: state => state.learnermodel.socialActivity,
             userGrade: state => state.learnermodel.userGrade,
             totalGrade: state => state.learnermodel.totalGrade,
             progressUnderstanding: state => state.learnermodel.progressUnderstanding,
@@ -245,13 +245,13 @@ export default {
             let progressData = this.data.find((d) => d.id === 'progressUnderstanding');
             let userGradesData = this.data.find((d) => d.id === 'userGrades');
             let timeData = this.data.find((d) => d.id === 'timeliness');
-            let socialData = this.data.find((d) => d.id === 'socialActivity');
+            //let socialData = this.data.find((d) => d.id === 'socialActivity');
 
             proficiencyData.ranges = this.ranges[selectedGoal].proficiency;
             progressData.ranges = this.ranges[selectedGoal].progress;
             userGradesData.ranges = this.ranges[selectedGoal].grades;
             timeData.ranges = this.ranges[selectedGoal].timeManagement;
-            socialData.ranges = this.ranges[selectedGoal].socialActivity;
+            //socialData.ranges = this.ranges[selectedGoal].socialActivity;
         },
 
         calculateUnderstanding() {

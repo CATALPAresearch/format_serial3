@@ -131,7 +131,7 @@ export default {
 
 		async calculateLearnerModel(context) {
 			await context.dispatch('calculateTimeManagement');
-			await context.dispatch('calculateSocialActivity');
+			//await context.dispatch('calculateSocialActivity');
 			await context.dispatch('calculateGrades');
 			await context.dispatch('calculateProgress');
 			await context.dispatch('calculateProficiency');
