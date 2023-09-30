@@ -30,7 +30,7 @@ export const store = new Vuex.Store({
 		contextID: 0,
 		courseid: 0,
 		userid: -1,
-		research_condition: 'control_group',
+		research_condition: 'control_groupX',
 		aple1801courses: [2, 5, 8, 9, 20, 24, 26, 42],
 		surveyRequired: false,
 		surveyLink: '',
@@ -55,10 +55,12 @@ export const store = new Vuex.Store({
 			// assign user to the control group if their user id is even 
 			state.research_condition = state.userid % 2 == 0 ? 'control_group' : 'treatment_group';
 			// do not assign user to the control group if they are not in the course 24 (operating systems etc.)
-			state.research_condition = is1801Course() ? state.research_condition : 'control_group';
+			state.research_condition = this.getters.is1801Course ? state.research_condition : 'control_group';
 			// do not assign user to the control group if they are accessing the system on localhost
-			state.research_condition = window.location.hostname == 'localhost' ? 'treatment_group' : state.research_condition;
+			//state.research_condition = window.location.hostname == 'localhost' ? 'treatment_group' : state.research_condition;
 			//state.research_condition = window.location.hostname == 'localhost' ? 'control_group' : state.research_condition;
+			state.research_condition = state.isModerator ? 'treatment_group' : state.research_condition;
+			//state.research_condition = state.isModerator ? 'control_group' : state.research_condition ;
 		},
 		setCourseid(state, val) {
 			state.courseid = val;

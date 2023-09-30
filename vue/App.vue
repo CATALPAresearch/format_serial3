@@ -1,8 +1,11 @@
 <template>
-    <div>
+    <div style="width:100%;">
         <survey-prompt></survey-prompt>
         <div class="d-flex justify-content-between">
             <h2 class="main__title">{{ strings.dashboardTitle }}</h2>
+            <div v-if="isModerator" class="alert alert-success">
+                Condition: {{ research_condition }}
+            </div>
             <div class="d-flex justify-content-end align-items-center">
                 <div class="form-group d-flex align-items-center m-0">
                     <select v-if="editMode" id="addDashboardItems" class="form-control mr-2" @change="addItem($event)">
@@ -19,8 +22,15 @@
                 <menu-bar @editmode="toggleEditMode"></menu-bar>
             </div>
         </div>
-        <grid-layout :col-num="14" :is-draggable="draggable" :is-resizable="resizable" :layout="layout" :row-height="25"
-            :use-css-transforms="true" :vertical-compact="true">
+        <grid-layout 
+            :col-num="14" 
+            :is-draggable="draggable" 
+            :is-resizable="resizable" 
+            :layout="layout" 
+            :row-height="25"
+            :responsive="true"
+            :use-css-transforms="true" 
+            :vertical-compact="true">
             <grid-item v-for="(item, index) in layout" :key="index" :h="item.h" :i="item.i" :static="item.static"
                 :w="item.w" :x="item.x" :y="item.y" class="border p-3">
                 <span v-if="editMode & !item.fixed" class="remove" title="Element aus Dashboard entfernen"
@@ -43,7 +53,6 @@ import MenuBar from "./components/MenuBar.vue";
 import WelcomeVideo from "./components/WelcomeVideo.vue";
 import SurveyPrompt from "./components/SurveyPrompt.vue";
 //import QuizStatistics from "./components/widgets/QuizStatistics.vue";
-import ProgressChart from "./components/widgets/ProgressChart.vue";
 import ProgressChartAdaptive from "./components/widgets/ProgressChartAdaptive.vue";
 import Recommendations from "./components/widgets/Recommendations.vue";
 import TaskList from "./components/widgets/TaskList.vue";
@@ -62,7 +71,6 @@ export default {
         MenuBar,
         WelcomeVideo,
         SurveyPrompt,
-        ProgressChart,
         ProgressChartAdaptive,
         Recommendations,
         TaskList,
@@ -88,58 +96,14 @@ export default {
                 { "x": 6, "y": 12, "w": 4, "h": 10, "i": "4", "name": "Termine", "c": "AppDeadlines", "resizable": true, "moved": false }, 
                 { "x": 0, "y": 12, "w": 6, "h": 10, "i": "9", "name": "Feedback", "c": "Recommendations", "resizable": true, "moved": false }],
             allComponents: [
-                    {
-                        "x": 0,
-                        "y": 0,
-                        "w": 8,
-                        "h": 12,
-                        "i": "1",
-                        "name": 'Überblick (alt)',
-                        c: 'ProgressChart',
-                        resizable: true,
-                        fixed: false,
-                    },
-                    {
-                        "x": 0,
-                        "y": 0,
-                        "w": 8,
-                        "h": 12,
-                        "i": "10",
-                        "name": 'Adaptiver Überblick',
-                        c: 'ProgressChartAdaptive',
-                        resizable: true,
-                        fixed: false,
-                    },
-                    {
-                        "x": 0,
-                        "y": 0,
-                        "w": 6,
-                        "h": 12,
-                        "i": "2",
-                        "name": 'Lernziele',
-                        c: 'IndicatorDisplay',
-                        resizable: true
-                    },
-                    {
-                        "x": 0,
-                        "y": 0,
-                        "w": 3,
-                        "h": 10,
-                        "i": "3",
-                        "name": 'Aufgabenliste',
-                        c: 'TaskList',
-                        resizable: true
-                    },
-                    {
-                        "x": 9,
-                        "y": 0,
-                        "w": 3,
-                        "h": 10,
-                        "i": "4",
-                        "name": 'Termine',
-                        c: 'AppDeadlines',
-                        resizable: true
-                    },
+            { "x": 0, "y": 0, "w": 8, "h": 12, "i": "10", "name": "Adaptiver Überblick", "c": "ProgressChartAdaptive", "resizable": true, "fixed": false, "moved": false }, 
+                { "x": 8, "y": 0, "w": 6, "h": 12, "i": "2", "name": "Lernziele", "c": "IndicatorDisplay", "resizable": true, "moved": false }, 
+                { "x": 0, "y": 22, "w": 14, "h": 11, "i": "12", "name": "Kursübersicht", "c": "CourseOverview", "resizable": true, "moved": false }, 
+                { "x": 10, "y": 12, "w": 4, "h": 10, "i": "3", "name": "Aufgabenliste", "c": "TaskList", "resizable": true, "moved": false }, 
+                { "x": 6, "y": 12, "w": 4, "h": 10, "i": "4", "name": "Termine", "c": "AppDeadlines", "resizable": true, "moved": false }, 
+                { "x": 0, "y": 12, "w": 6, "h": 10, "i": "9", "name": "Feedback", "c": "Recommendations", "resizable": true, "moved": false },
+                    
+                    
                     /*{
                         "x": 0,
                         "y": 0,
@@ -150,26 +114,8 @@ export default {
                         c: 'QuizStatistics',
                         resizable: true
                     },*/
-                    {
-                        "x": 0,
-                        "y": 0,
-                        "w": 6,
-                        "h": 10,
-                        "i": "9",
-                        "name": 'Feedback',
-                        c: 'Recommendations',
-                        resizable: true
-                    },
-                    {
-                        "x": 0,
-                        "y": 0,
-                        "w": 12,
-                        "h": 10,
-                        "i": "12",
-                        "name": 'Kursübersicht',
-                        c: 'CourseOverview',
-                        resizable: true
-                    },
+                    
+                   
                     {
                         "x": 0,
                         "y": 0,
@@ -187,18 +133,13 @@ export default {
 
     created() {
         this.loadDashboard();
-        this.defaultLayout = [
-            this.allComponents[0],
-            this.allComponents[1],
-            //this.allComponents[10],
-        ];
     },
 
     mounted: function () {
-        this.setResearchCondition; 
+        this.$store.commit('setResearchCondition'); 
         if(this.research_condition == 'control_group'){
-            //this.allComponents = allComponents.filter(component => component.i != "9");
-            //this.defaultComponents = defaultComponents.filter(component => component.i != "9");
+            this.allComponents = this.allComponents.filter(component => component.i != "9");
+            this.defaultLayout = this.defaultLayout.filter(component => component.i != "9");
         }
         this.courseid = this.$store.state.courseid;
 
@@ -228,6 +169,7 @@ export default {
         ...mapState({
             dashboardSettings: state => state.dashboardSettings.dashboardSettings,
             research_condition: state => state.research_condition,
+            isModerator: state => state.isModerator,
             strings: 'strings'
         }),
     },
