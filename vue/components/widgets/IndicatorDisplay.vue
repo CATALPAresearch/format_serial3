@@ -1,46 +1,30 @@
 <template>
-    <div class="position-relative h-100 d-flex flex-column">
-        <widget-heading icon="fa-balance-scale" :info-content="info"
-                        title="Lernziele"></widget-heading>
+    <div class="position-relative h-100 d-flex flex-column indicator-display">
+        <widget-heading icon="fa-balance-scale" :info-content="info" title="Lernziele"></widget-heading>
         <div class="indicator-container px-1">
             <div>
                 <div class="form-group d-flex align-items-center pr-3">
                     <label class="pr-2 m-0 flex-shrink-0" for="select-goal">Mein Ziel für diesen Kurs ist: </label>
-                    <select
-                        id="select-goal"
-                        class="form-control form-select"
-                        @change="switchGoal($event)"
-                    >
-                        <option :selected="learnerGoal==='master'" value="master">den Kurs zu meistern</option>
-                        <option :selected="learnerGoal==='passing'" value="passing">den Kurs zu bestehen</option>
-                        <option :selected="learnerGoal==='overview'" value="overview">einen Überblick zu bekommen</option>
-                        <option :selected="learnerGoal==='practice'" value="practice">praktisches/job-relevantes Wissen
+                    <select id="select-goal" class="form-control form-select" @change="switchGoal($event)">
+                        <option :selected="learnerGoal === 'master'" value="master">den Kurs zu meistern</option>
+                        <option :selected="learnerGoal === 'passing'" value="passing">den Kurs zu bestehen</option>
+                        <option :selected="learnerGoal === 'overview'" value="overview">einen Überblick zu bekommen</option>
+                        <option :selected="learnerGoal === 'practice'" value="practice">praktisches/job-relevantes Wissen
                             anzueignen
                         </option>
                     </select>
                     <div class="dropdown">
-                        <div
-                            id="dropdownMenuButton"
-                            aria-expanded="false"
-                            aria-haspopup="true"
-                            class="btn btn-link dropdown-toggle ml-3 icon"
-                            data-toggle="dropdown"
-                            type="button"
-                        ><i class="fa fa-cog"></i></div>
+                        <div id="dropdownMenuButton" aria-expanded="false" aria-haspopup="true"
+                            class="btn btn-link dropdown-toggle ml-3 icon" data-toggle="dropdown" type="button"><i
+                                class="fa fa-cog"></i></div>
                         <ul aria-labelledby="dropdownMenuButton" class="dropdown-menu" @change="selectIndicators">
                             <li v-for="(indicator, index ) in indicators" :key="index">
                                 <div class="form-check ml-2">
-                                    <input
-                                        :id="index"
-                                        class="form-check-input"
-                                        type="checkbox"
-                                        :value="indicator.value"
-                                        :checked="indicator.checked"
-                                        v-model="indicator.checked"
-                                    />
+                                    <input :id="index" class="form-check-input" type="checkbox" :value="indicator.id"
+                                        :checked="indicator.checked" v-model="indicator.checked" />
                                     <label :for="index" class="form-check-label">{{
-                                            indicator.title
-                                        }}</label>
+                                        indicator.title
+                                    }}</label>
                                 </div>
                             </li>
                         </ul>
@@ -52,14 +36,14 @@
             </div>
             <div class="legend d-flex justify-content-start mt-3">
                 <div class="d-flex flex-wrap align-items-center mr-3"><span
-                    class="completion-rect rect-sm rect--you mr-1"></span><span class="">Dein Status</span>
+                        class="completion-rect rect-sm rect--you mr-1"></span><span class="">Dein Status</span>
                 </div>
                 <div class="d-flex align-items-center mr-3"><span
-                    class="completion-rect rect-sm rect--weak mr-1"></span><span class="">Verfehlt das Ziel</span></div>
-                <div class="d-flex align-items-center mr-3"><span
-                    class="completion-rect rect-sm rect--ok mr-1"></span><span class="">Erreicht das Ziel</span></div>
-                <div class="d-flex align-items-center"><span
-                    class="completion-rect rect-sm rect--strong mr-1"></span><span class="">Übertrifft das Ziel</span></div>
+                        class="completion-rect rect-sm rect--weak mr-1"></span><span class="">Verfehlt das Ziel</span></div>
+                <div class="d-flex align-items-center mr-3"><span class="completion-rect rect-sm rect--ok mr-1"></span><span
+                        class="">Nah am Ziel</span></div>
+                <div class="d-flex align-items-center"><span class="completion-rect rect-sm rect--strong mr-1"></span><span
+                        class="">Erreicht das Ziel</span></div>
             </div>
         </div>
     </div>
@@ -69,40 +53,43 @@
 import * as d3 from "../../js/d3.min.js";
 import "../../js/bullet.js";
 import WidgetHeading from "../WidgetHeading.vue";
-import {mapActions, mapGetters, mapState} from "vuex";
+import { mapActions, mapGetters, mapState } from "vuex";
 
 
 export default {
     name: "IndicatorDisplay",
 
-    components: {WidgetHeading},
+    components: { WidgetHeading },
 
     data: function () {
         return {
             containerWidth: 0,
             indicators: [
-                {value: 'Kompetenz', title: 'Kompetenz', checked: true},
-                {value: 'Wissensstand', title: 'Wissensstand', checked: true},
-                {value: 'Ergebnisse', title: 'Ergebnisse', checked: true},
-                {value: 'Time Management', title: 'Time Management', checked: false},
-                {value: 'Soziale Interaktion', title: 'Soziale Interaktion', checked: false},
+                { value: 'proficiency', title: 'Kompetenz', id: 'proficiency', checked: true },
+                { value: 'progressUnderstanding', title: 'Selbsteinschätzung', id: 'progressUnderstanding', checked: true },
+                { value: 'userGrades', title: 'Ergebnisse', id: 'userGrades', checked: false },
+                { value: 'timeliness', title: 'Time Management', id: 'timeliness', checked: false },
+                { value: 'socialActivity', title: 'Soziale Interaktion', id: 'socialActivity', checked: false },
             ],
             data: [
                 {
-                    title: 'Wissensstand',
-                    subtitle: 'in %',
+                    id: 'progressUnderstanding', // meint das Verständis in Bezug auf alle Aktiviäten
+                    title: 'Verständnis insg.',
+                    subtitle: 'Selbsteinschätzung in %',
                     ranges: [],
                     measures: [],
                     markers: [],
                 },
                 {
-                    title: 'Kompetenz',
-                    subtitle: 'in %',
+                    id: 'proficiency', // meint das Verständnis der bereits bearbeiteten Aufgaben
+                    title: 'Verständnis indiv.',
+                    subtitle: 'Bearbeitete Aktivitäten. in %',
                     ranges: [],
                     measures: [],
                     markers: [],
                 },
                 {
+                    id: 'userGrades',
                     title: 'Ergebnisse',
                     subtitle: 'Gesamtpunktzahl',
                     ranges: [],
@@ -110,6 +97,7 @@ export default {
                     markers: [],
                 },
                 {
+                    id: 'timeliness',
                     title: 'Time Management',
                     subtitle: 'in %',
                     ranges: [],
@@ -117,6 +105,7 @@ export default {
                     markers: [],
                 },
                 {
+                    id: 'socialActivity',
                     title: 'Soziale Interaktion',
                     subtitle: 'Anzahl Forenbeiträge',
                     ranges: [],
@@ -125,12 +114,7 @@ export default {
                 },
             ],
             ranges: {},
-            info: 'Das Zielsetzungs-Widget bietet dir eine Möglichkeit, ein Lernziel zu definieren und deine Fortschritte dabei zu verfolgen. Ziel: Hier sollte das beabsichtigte Lernziel des Lernenden angegeben werden.\n' +
-                'Ist: Hier wird angezeigt, wie weit der Lernende bei der Erreichung seines Ziels gekommen ist.\n' +
-                'Soll: Hier wird das empfohlene Lernziel für den aktuellen Zeitpunkt angegeben.\n' +
-                'Gut: Der Bereich, in dem sich der Lernende befindet, wenn er/sie im Soll ist.\n' +
-                'Zu verbessern: Der Bereich, in dem sich der Lernende befindet, wenn er/sie noch nicht im Soll ist und Verbesserungen vornehmen muss.\n' +
-                'Sehr gut: Der Bereich, in dem sich der Lernende befindet, wenn er/sie das Ziel übertroffen hat.'
+            info: "Das Lernziel-Widget möchte Sie dazu anregen, Ihre Fortschritte für Ihr persönliches Lernziel im Blick zu behalten. Die Lernziele fassen wir in vier Kategorien zusammen:<br>(1) den Kurs meistern,<br>(2) den Kurs bestehen,<br>(3) einen Überblick über die Kursinhalten zu erlangen, oder<br>(4) praktisches bzw. berufsrelevantes Wissen zu erlangen.<br>Wählen Sie zu Beginn des Semesters ein Ziel aus und ändern Sie bei Bedarf im Laufe des Semesters.<br><br>In den Balkendiagrammen ist Ihr aktueller Stand (dunkelblau) dargestellt. Anhand der farblichen Bereiche erkennen Sie, wie weit Sie bei der Erreichung Ihres Ziels bislang gekommen sind:<ul><li>Noch nicht erreichtes Ziel (hellblau): Sie haben Ihr Ziel noch nicht erricht.</li><li>Nah am Ziel (blau): Sie haben Ihr gestecktes Lernziel bald erreicht.</li><li>Erreichtes Ziel (dunkelblau): Sie waren fleißig und haben Ihr Lernziel erreicht, so dass Sie sich für den Kurs ggf. ein höheres Ziel stecken können.</li></ul>",
         }
     },
 
@@ -164,7 +148,7 @@ export default {
         socialActivity: {
             deep: true,
             handler() {
-                this.data.find((d) => d.title === 'Soziale Interaktion').measures = [this.socialActivity]
+                this.data.find((d) => d.id === 'socialActivity').measures = [this.socialActivity]
                 this.drawChart(this.containerWidth);
             },
         },
@@ -205,8 +189,9 @@ export default {
     computed: {
         filteredData() {
             const filteredData = this.data.filter(indicator =>
-                this.indicators.some(i => i.title === indicator.title && i.checked)
+                this.indicators.some(i => i.id === indicator.id && i.checked)
             );
+            console.log('filtered', filteredData);
             return filteredData
         },
 
@@ -256,29 +241,29 @@ export default {
         },
 
         updateRanges(selectedGoal) {
-            let proficiencyData = this.data.find((d) => d.title === 'Kompetenz');
-            let progressData = this.data.find((d) => d.title === 'Wissensstand');
-            let gradesData = this.data.find((d) => d.title === 'Ergebnisse');
-            let timeData = this.data.find((d) => d.title === 'Time Management');
-            let socialData = this.data.find((d) => d.title === 'Soziale Interaktion');
+            let proficiencyData = this.data.find((d) => d.id === 'proficiency');
+            let progressData = this.data.find((d) => d.id === 'progressUnderstanding');
+            let userGradesData = this.data.find((d) => d.id === 'userGrades');
+            let timeData = this.data.find((d) => d.id === 'timeliness');
+            let socialData = this.data.find((d) => d.id === 'socialActivity');
 
             proficiencyData.ranges = this.ranges[selectedGoal].proficiency;
             progressData.ranges = this.ranges[selectedGoal].progress;
-            gradesData.ranges = this.ranges[selectedGoal].grades;
+            userGradesData.ranges = this.ranges[selectedGoal].grades;
             timeData.ranges = this.ranges[selectedGoal].timeManagement;
             socialData.ranges = this.ranges[selectedGoal].socialActivity;
         },
 
         calculateUnderstanding() {
-            this.data.find((d) => d.title === 'Wissensstand').measures = [this.progressUnderstanding]
+            this.data.find((d) => d.id === 'progressUnderstanding').measures = [this.progressUnderstanding]
         },
 
         calculateTopicProficiency() {
-            this.data.find((d) => d.title === 'Kompetenz').measures = [this.proficiency]
+            this.data.find((d) => d.id === 'proficiency').measures = [this.proficiency]
         },
 
         calculateGrades() {
-            this.data.find((d) => d.title === 'Ergebnisse').measures = [this.userGrade]
+            this.data.find((d) => d.id === 'userGrades').measures = [this.userGrade]
             this.ranges['master'].grades = [this.totalGrade * 0.5, this.totalGrade * 0.75, this.totalGrade]
             this.ranges['passing'].grades = [this.totalGrade * 0.3, this.totalGrade * 0.66, this.totalGrade]
             this.ranges['overview'].grades = [this.totalGrade * 0.5, this.totalGrade * 0.75, this.totalGrade]
@@ -287,16 +272,16 @@ export default {
         },
 
         calculateTimeManagement() {
-            this.data.find((d) => d.title === 'Time Management').measures = [this.timeliness]
+            this.data.find((d) => d.id === 'timeliness').measures = [this.timeliness]
         },
 
         drawChart(width) {
-            var margin = {top: 5, right: 30, bottom: 50, left: 120},
+            var margin = { top: 5, right: 7, bottom: 50, left: 140 },
                 height = 50;
 
             width = width - margin.left - margin.right,
 
-            d3.select(this.$refs.bulletChart).selectAll('svg').remove()
+                d3.select(this.$refs.bulletChart).selectAll('svg').remove()
 
             var chart = d3.bullet()
                 .width(width)
@@ -324,6 +309,7 @@ export default {
                     return d.title;
                 });
 
+            // @FIXME: https://gist.github.com/mbostock/7555321
             title.append('text')
                 .attr('class', 'subtitle')
                 .attr('dy', '1em')
@@ -339,20 +325,20 @@ export default {
 @import "../../scss/variables.scss";
 @import "../../scss/scrollbar.scss";
 
-.icon {
-  color: rgba(0,0,0,.6);
-  width: 30px;
-  height: 26px;
-  font-size: 18px;
-  border: 1px solid #8f959e;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding-left: 6px;
-  padding-right: 6px;
+.indicator-display.icon {
+    color: rgba(0, 0, 0, .6);
+    width: 30px;
+    height: 26px;
+    font-size: 18px;
+    border: 1px solid #8f959e;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-left: 6px;
+    padding-right: 6px;
 }
 
-.icon:hover {
+.indicator-display.icon:hover {
     text-decoration: none;
 }
 
@@ -431,5 +417,4 @@ select.form-control {
     font-size: 16px;
     font-weight: bold;
 }
-
 </style>

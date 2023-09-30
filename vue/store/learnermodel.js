@@ -21,15 +21,15 @@ export default {
 			},
 			"passing": {
 				"grades": [],
-				"proficiency": [40, 70, 100],
-				"progress": [40, 70, 100],
+				"proficiency": [50, 70, 100],
+				"progress": [50, 70, 100],
 				"timeManagement": [40, 70, 100],
 				"socialActivity": []
 			},
 			"overview": {
 				"grades": [],
 				"proficiency": [20, 40, 100],
-				"progress": [40, 70, 100],
+				"progress": [40, 50, 100],
 				"timeManagement": [20, 40, 100],
 				"socialActivity": []
 			},
@@ -159,9 +159,9 @@ export default {
 		 * one can achieve in total in the course.
 		 */
 		async calculateProgress(context) { 
-			const total = context.rootGetters['overview/getTotalNumberOfActivities'] * 3;
+			const total = context.rootGetters['overview/getTotalNumberOfActivities'];
 			if(context.state.userUnderstanding != null){ // if understanding data is available
-				const user = Object.values(context.state.userUnderstanding).reduce((acc, cur) => acc + Number(cur.rating), 0);
+				const user = Object.values(context.state.userUnderstanding).reduce((acc, cur) => acc + 1, 0);
 				context.commit('setProgressUnderstanding', user / total * 100);
 			}
 			
