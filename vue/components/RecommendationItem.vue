@@ -79,7 +79,6 @@ export default {
                     'response_type': response_type,
                     'user_response': user_response,
                 };
-            console.log('LAD::Rulerating@Recommendations: ', data);
             const response = await Communication.webservice('set_rule_response', data);
             if (!response.success) {
                 console.log('No connection to webservice /set_rule_response/');
@@ -89,30 +88,6 @@ export default {
         dateToHumanReadable(date){
             return this.timeAgo.format(date);
         },
-        /*
-        async updateUnderstanding(newVal) {
-            if(this.courseid == undefined || this.id == undefined || newVal == undefined){
-                return;
-            }
-            const response = await Communication.webservice(
-                'set_user_understanding',
-                {
-                    'course': this.courseid,
-                    'activityid': this.id,
-                    'rating': newVal,
-                }
-            );
-            if (response.success) {
-                this.$emit('understanding-updated', newVal, this.id)
-            } else {
-                if (response.data) {
-                    console.log('Faulty response of webservice /logger/', response.data);
-                } else {
-                    console.log('No connection to webservice /logger/');
-                }
-            }
-        },
-        */
         addToTaskList(url) {
             this.$emit('add-to-task-list', {
                 course: this.courseid,

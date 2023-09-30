@@ -191,7 +191,6 @@ export default {
             const filteredData = this.data.filter(indicator =>
                 this.indicators.some(i => i.id === indicator.id && i.checked)
             );
-            console.log('filtered', filteredData);
             return filteredData
         },
 

@@ -159,7 +159,6 @@ export default {
 
         layout() {
             let r = this.dashboardSettings && this.dashboardSettings.length > 0 ? this.dashboardSettings : this.defaultLayout;
-            console.log('xxxxxxxxxx', this.research_condition)
             if(this.research_condition == 'control_group'){
                 //r = r.filter(component => component.i != "9");
             }

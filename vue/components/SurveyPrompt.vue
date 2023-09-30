@@ -63,14 +63,10 @@ export default {
                 }
             );
             if (response.success) {
-                console.log('SSUURR', 4);
                 response.data = JSON.parse(response.data);
-                console.log('QUESTIONNAIRE: ', response.data, this.courseid, this.questionnaireid[this.courseid])
                 if (response.data.submitted) {
-                    console.log('SSUURR', 5);
-                    console.log('questionnaire submitted at ' + response.data.submitted);
+                    console.log('Questionnaire was submitted at ' + response.data.submitted);
                 } else if (this.is1801Course()) {
-                    console.log('SSUURR', 6);
                     $('#questionnaireModal').modal('show');
                     //$('body').prepend('<a target='new' class='btn btn-lg fixed-top w-50 survey-button' href='https://aple.fernuni-hagen.de/mod/questionnaire/view.php?id='+ this.questionnaireid +''>Helfen Sie uns das Lernangebot zu verbessern und nehmen Sie an unserer Befragung teil.</a>');
                 }
