@@ -4,11 +4,11 @@
             <video controls='true' style='width:100%;max-height:400px;'>
                 <source 
                     v-if="research_condition == 'treatment_group'" 
-                    src="https://nise81.com/1801-Intro-SS2023_Versuchsgruppe.mp4" type="video/mp4"></source>
+                    src="https://nise81.com/1801-Intro-WS2023_Versuchsgruppe.mp4" type="video/mp4"></source>
                 
                 <source 
                     v-if="research_condition == 'control_group'"
-                    src="https://nise81.com/1801-Intro-SS2023_Kontrollgruppe.mp4" type="video/mp4"></source>
+                    src="https://nise81.com/1801-Intro-WS2023_Kontrollgruppe.mp4" type="video/mp4"></source>
                 
                 Leider können wir Ihnen das Begrüßungsvideo nicht zeigen, da Ihr Browser keine Videos unterstützt.
             </video>
