@@ -51,9 +51,9 @@ $functions = [
 			'ajax'        => true
 	],
 
-	'format_serial3_limesurvey' => [
+	'format_serial3_get_surveys' => [
 			'classname'   => 'format_serial3_external',
-			'methodname'  => 'limesurvey',
+			'methodname'  => 'get_surveys',
 			'classpath'   => 'course/format/serial3/api.php',
 			'description' => 'xxx',
 			'type'        => 'read',

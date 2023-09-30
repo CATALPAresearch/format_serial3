@@ -1,5 +1,6 @@
 <template>
     <div>
+        <survey-prompt></survey-prompt>
         <div class="d-flex justify-content-between">
             <h2 class="main__title">{{ strings.dashboardTitle }}</h2>
             <div class="d-flex justify-content-end align-items-center">
@@ -29,7 +30,9 @@
                 <component :is="item.c"></component>
             </grid-item>
         </grid-layout>
+        <welcome-video></welcome-video>
     </div>
+    
 </template>
 
 <script>
@@ -37,6 +40,8 @@ import Logger from './scripts/logger';
 import AppDeadlines from "./components/widgets/Deadlines.vue";
 import IndicatorDisplay from "./components/widgets/IndicatorDisplay.vue";
 import MenuBar from "./components/MenuBar.vue";
+import WelcomeVideo from "./components/WelcomeVideo.vue";
+import SurveyPrompt from "./components/SurveyPrompt.vue";
 //import QuizStatistics from "./components/widgets/QuizStatistics.vue";
 import ProgressChart from "./components/widgets/ProgressChart.vue";
 import ProgressChartAdaptive from "./components/widgets/ProgressChartAdaptive.vue";
@@ -45,7 +50,7 @@ import TaskList from "./components/widgets/TaskList.vue";
 import LearningStrategies from "./components/widgets/LearningStrategies.vue";
 import CourseOverview from "./components/widgets/CourseOverview.vue";
 import { GridItem, GridLayout } from './js/vue-grid-layout.umd.min';
-import { mapState } from 'vuex';
+import { mapState, mapGetters } from 'vuex';
 
 
 export default {
@@ -53,9 +58,10 @@ export default {
         GridLayout,
         GridItem,
         AppDeadlines,
-        //CircleChart,
         IndicatorDisplay,
         MenuBar,
+        WelcomeVideo,
+        SurveyPrompt,
         ProgressChart,
         ProgressChartAdaptive,
         Recommendations,
@@ -80,8 +86,8 @@ export default {
                 { "x": 0, "y": 22, "w": 14, "h": 11, "i": "12", "name": "Kursübersicht", "c": "CourseOverview", "resizable": true, "moved": false }, 
                 { "x": 10, "y": 12, "w": 4, "h": 10, "i": "3", "name": "Aufgabenliste", "c": "TaskList", "resizable": true, "moved": false }, 
                 { "x": 6, "y": 12, "w": 4, "h": 10, "i": "4", "name": "Termine", "c": "AppDeadlines", "resizable": true, "moved": false }, 
-                { "x": 0, "y": 12, "w": 6, "h": 10, "i": "9", "name": "Empfehlungen", "c": "Recommendations", "resizable": true, "moved": false }],
-                allComponents: [
+                { "x": 0, "y": 12, "w": 6, "h": 10, "i": "9", "name": "Feedback", "c": "Recommendations", "resizable": true, "moved": false }],
+            allComponents: [
                     {
                         "x": 0,
                         "y": 0,
@@ -150,7 +156,7 @@ export default {
                         "w": 6,
                         "h": 10,
                         "i": "9",
-                        "name": 'Empfehlungen',
+                        "name": 'Feedback',
                         c: 'Recommendations',
                         resizable: true
                     },
@@ -189,7 +195,11 @@ export default {
     },
 
     mounted: function () {
-
+        this.setResearchCondition; 
+        if(this.research_condition == 'control_group'){
+            //this.allComponents = allComponents.filter(component => component.i != "9");
+            //this.defaultComponents = defaultComponents.filter(component => component.i != "9");
+        }
         this.courseid = this.$store.state.courseid;
 
         this.context.courseId = this.$store.state.courseid; // TODO
@@ -207,16 +217,23 @@ export default {
         },
 
         layout() {
-            return this.dashboardSettings && this.dashboardSettings.length > 0 ? this.dashboardSettings : this.defaultLayout;
+            let r = this.dashboardSettings && this.dashboardSettings.length > 0 ? this.dashboardSettings : this.defaultLayout;
+            console.log('xxxxxxxxxx', this.research_condition)
+            if(this.research_condition == 'control_group'){
+                //r = r.filter(component => component.i != "9");
+            }
+            return r;
         },
 
         ...mapState({
             dashboardSettings: state => state.dashboardSettings.dashboardSettings,
+            research_condition: state => state.research_condition,
             strings: 'strings'
         }),
     },
 
     methods: {
+        ...mapGetters()['setResearchCondition'],
         addItem(e) {
             const newItem = this.allComponents.find(element => element.i === e.target.value)
             this.layout.push(newItem)

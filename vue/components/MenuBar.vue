@@ -11,7 +11,7 @@
             <i aria-hidden="true" class="fa fa-chain icon m-0"></i>
         </button>
         
-        <a href="xxx">
+        <a href="https://aple.fernuni-hagen.de/mod/usenet/view.php?id=5081&forceview=1">
             <button class="button" title="Newsgroup Beiträge ansehen">
                 <i aria-hidden="true" class="fa fa-comments-o icon m-0"></i>
             </button>
@@ -30,9 +30,7 @@
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <div class="modal-body">
-                        {{ strings.informationContent }}
-                    </div>
+                    <div class="modal-body" v-html="strings.informationContent"></div>
                 </div>
             </div>
         </div>

@@ -1,9 +1,9 @@
 <template>
     <div>
-        <p class="mb-1">Bewerten Sie Ihr Verständnis dieser Aktivität:</p>
+        <p class="mb-1">Schätzen Sie Ihr Verständnis dieser Aktivität:</p>
         <div class="form-check mb-2 col-12 pr-0 ml-1">
             <input id="noneUnderstanding" v-model="rating" class="form-check-input popover-content" name="userUnderstanding" type="radio" value="0"/>
-            <label class="form-check-label popover-content" for="noneUnderstanding">Nicht abgeschlossen</label>
+            <label class="form-check-label popover-content" for="noneUnderstanding">Noch nicht betrachtet</label>
         </div>
         <div class="ml-1">
             <div class="form-check mb-2 pr-0">
@@ -35,7 +35,6 @@
             </a>
         </div>
         <div class="py-1">
-            {{ activity }}
             <button class="btn btn-outline-dark btn-sm" @click="addToTaskList()">
                 <i class="fa fa-star-o"></i>
                 Zur Aufgabenliste hinzufügen

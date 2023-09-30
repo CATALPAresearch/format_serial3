@@ -15,6 +15,7 @@ import recommendations from "./recommendations";
 Vue.use(Vuex);
 
 export const store = new Vuex.Store({
+	name: 'store',
 	modules: {
 		dashboardSettings,
 		learnermodel,
@@ -29,6 +30,12 @@ export const store = new Vuex.Store({
 		contextID: 0,
 		courseid: 0,
 		userid: -1,
+		research_condition: 'control_group',
+		aple1801courses: [2, 5, 8, 9, 20, 24, 26, 42],
+		surveyRequired: false,
+		surveyLink: '',
+		questionnaireid: { 2: 0, 5: 0, 8: 0, 9: 0, 20: 0, 24: 0, 26: 1659, 42: 4046 },
+
 		isModerator: false,
 		policyAccepted: false,
 		url: '',
@@ -44,6 +51,15 @@ export const store = new Vuex.Store({
 	},
 
 	mutations: {
+		setResearchCondition(state){
+			// assign user to the control group if their user id is even 
+			state.research_condition = state.userid % 2 == 0 ? 'control_group' : 'treatment_group';
+			// do not assign user to the control group if they are not in the course 24 (operating systems etc.)
+			state.research_condition = is1801Course() ? state.research_condition : 'control_group';
+			// do not assign user to the control group if they are accessing the system on localhost
+			state.research_condition = window.location.hostname == 'localhost' ? 'treatment_group' : state.research_condition;
+			//state.research_condition = window.location.hostname == 'localhost' ? 'control_group' : state.research_condition;
+		},
 		setCourseid(state, val) {
 			state.courseid = val;
 		},
@@ -95,6 +111,9 @@ export const store = new Vuex.Store({
 	},
 
 	getters: {
+		is1801Course: function(state){
+			return state.aple1801courses.includes(parseInt(state.courseid,10)) ? true : false;
+		},
 		getCourseid: function (state) {
 			return state.courseid;
 		},

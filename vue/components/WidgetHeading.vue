@@ -4,8 +4,17 @@
             <i v-if="icon" :class="icon" aria-hidden="true" class="heading__icon fa mr-3"></i>
             <h3 class="mb-1">{{ title }}</h3>
         </div>
-        <button v-if="infoContent" :data-content="infoContent" class="heading__popover" data-container="body" data-placement="top"
-                data-toggle="popover" data-trigger="click focus" title="Informationen" type="button">
+        <button 
+            v-if="infoContent" 
+            data-html="true" 
+            :data-content="infoContent" 
+            class="heading__popover" 
+            data-container="body" 
+            data-placement="top"
+            data-toggle="popover" 
+            data-trigger="click focus" 
+            title="Informationen" 
+            type="button">
             <i aria-hidden="true" class="heading__info fa fa-info mb-1"></i>
         </button>
     </div>

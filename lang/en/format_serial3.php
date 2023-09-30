@@ -68,11 +68,12 @@ $string['edit'] = 'Edit';
 $string['delete'] = 'Delete';
 
 $string['todoAddNewItem'] = 'Add new item..';
-$string['dashboardTitle'] = 'Learner Dashboard';
+$string['dashboardTitle'] = 'Semester Overview';
 $string['dashboardAddItem'] = 'Add dashboard item';
 
-$string['informationTitle'] = 'Informationen über das Learner Dashboard';
-$string['informationContent'] = 'All important information and questions regarding the use of the Learner Dashboard are answered here.';
+$string['informationTitle'] = 'Informationen über die Semesterübersicht';
+$string['informationContent'] = 'In einem typischen Fernstudiumskurs wie diesem stehen Ihnen viele verschiedene Lernmaterialien zur Verfügung, die Sie über einen längeren Zeitraum bis zur Klausur durchgearbeitet und verstanden haben müssen.<br> 
+Mit der Semesterübersicht unterstützen wir Sie dabei die Übersicht zu behalten, Ihre Lernziele zu erreichen, Termine nicht zu verpassen und einen Lernplan zu erstellen. Sie erhalten je Kurseinheit eine Übersicht über Ihren Lernfortschritt, d.h. die bislang bearbeiteten Aufgaben und gelesenen Texte sowie die dabei erzielten Ergebnisse. Sie können Ihren Wissensstand zudem selbst einschätzen, Ihre TODOs planen und unter Anleitung reflektieren, wie Sie in der letzten Kurseinheit eigentlich gelernt haben. ';
 $string['linkTitle'] = 'Helpful links and contacts';
 $string['linkContent'] = 'Here all relevant links and emails are displayed. For example, exercise system, student advisory service, examination office, news group.';
 

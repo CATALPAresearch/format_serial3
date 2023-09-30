@@ -1,6 +1,6 @@
 <template>
     <div class="position-relative h-100 d-flex flex-column">
-        <widget-heading :info-content="info" icon="fa-hourglass-o" title="Adaptiver Überblick"></widget-heading>
+        <widget-heading :info-content="info" icon="fa-hourglass-o" title="Überblick über den Kurs und die Kurseinheiten"></widget-heading>
         
         <div class="subject-progress px-1">
             <div :class="currentSection === -1 ? 'section-selection--current' : ''" class="section-selection mr-2"
@@ -32,7 +32,7 @@
                     </div>
                 </div>
             </div>
-            <div class="course-recommendation py-2">
+            <div v-if="research_condition != 'control_group'" class="course-recommendation py-2">
                 <div v-for="(recommendation, index) in getCourseRecommendations" :key="index">
                     <RecommendationItem 
                     v-if="index < 1 && currentSection == -1 && recommendation.type=='scope_course'"
@@ -219,7 +219,14 @@ export default {
             }
         },
         //
-        ...mapState('overview', ['courseData', 'activityTypes']),
+        ...mapState(
+            //'overview', ['courseData', 'activityTypes'],
+            {
+            activityTypes: state => state.overview.activityTypes,
+            courseData: state => state.overview.courseData,
+            research_condition: state => state.research_condition,
+            }
+            ),
         ...mapGetters('overview', ['getSections', 'getActivities', 'getCurrentActivities']),
         ...mapGetters('recommendations', ['getRecommendations', 'getCourseRecommendations', 'getCourseUnitRecommendations', 'getActivityTypeRecommendations', 'getActivityRecommendations']),
         

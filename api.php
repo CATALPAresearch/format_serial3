@@ -832,14 +832,14 @@ class format_serial3_external extends external_api
             array(
                 'courseid' => new external_value(PARAM_INT, 'course id'),
                 'select' =>
-                    new external_single_structure(
-                        array(
-                            'modules' => new external_value(PARAM_RAW, 'modules'),
-                            'sectionid' => new external_value(PARAM_INT, 'section id', VALUE_OPTIONAL),
-                            'moduleid' => new external_value(PARAM_INT, 'module id', VALUE_OPTIONAL)
-                        ),
-                        'select special items'
-                    )
+                new external_single_structure(
+                    array(
+                        'modules' => new external_value(PARAM_RAW, 'modules'),
+                        'sectionid' => new external_value(PARAM_INT, 'section id', VALUE_OPTIONAL),
+                        'moduleid' => new external_value(PARAM_INT, 'module id', VALUE_OPTIONAL)
+                    ),
+                    'select special items'
+                )
             )
         );
     }
@@ -956,18 +956,19 @@ class format_serial3_external extends external_api
     /**
      * Collects log data from the client
      */
-    public static function logger_parameters() {
+    public static function logger_parameters()
+    {
         return new external_function_parameters(
             array(
                 'data' =>
-                    new external_single_structure(
-                        array(
-                            'courseid' => new external_value(PARAM_INT, 'id of course', VALUE_OPTIONAL),
-                            'utc' => new external_value(PARAM_INT, 'utc time', VALUE_OPTIONAL),
-                            'action' => new external_value(PARAM_TEXT, 'action', VALUE_OPTIONAL),
-                            'entry' => new external_value(PARAM_RAW, 'log data', VALUE_OPTIONAL)
-                        )
+                new external_single_structure(
+                    array(
+                        'courseid' => new external_value(PARAM_INT, 'id of course', VALUE_OPTIONAL),
+                        'utc' => new external_value(PARAM_INT, 'utc time', VALUE_OPTIONAL),
+                        'action' => new external_value(PARAM_TEXT, 'action', VALUE_OPTIONAL),
+                        'entry' => new external_value(PARAM_RAW, 'log data', VALUE_OPTIONAL)
                     )
+                )
             )
         );
     }
@@ -1025,15 +1026,16 @@ class format_serial3_external extends external_api
     /**
      * get current goal
      */
-    public static function get_goal_parameters() {
+    public static function get_goal_parameters()
+    {
         return new external_function_parameters(
             array(
                 'data' =>
-                    new external_single_structure(
-                        array(
-                            'courseid' => new external_value(PARAM_INT, 'id of course', VALUE_OPTIONAL)
-                        )
+                new external_single_structure(
+                    array(
+                        'courseid' => new external_value(PARAM_INT, 'id of course', VALUE_OPTIONAL)
                     )
+                )
             )
         );
     }
@@ -1055,7 +1057,8 @@ class format_serial3_external extends external_api
             [
                 'courseid' => $course['courseid'],
                 'userid' => $USER->id
-            ]);
+            ]
+        );
 
         return array(
             'success' => true,
@@ -1086,12 +1089,12 @@ class format_serial3_external extends external_api
         return new external_function_parameters(
             array(
                 'data' =>
-                    new external_single_structure(
-                        array(
-                            'courseid' => new external_value(PARAM_INT, 'id of course', VALUE_OPTIONAL),
-                            'userid' => new external_value(PARAM_INT, 'id of course', VALUE_OPTIONAL)
-                        )
+                new external_single_structure(
+                    array(
+                        'courseid' => new external_value(PARAM_INT, 'id of course', VALUE_OPTIONAL),
+                        'userid' => new external_value(PARAM_INT, 'id of course', VALUE_OPTIONAL)
                     )
+                )
             )
         );
     }
@@ -1150,12 +1153,12 @@ class format_serial3_external extends external_api
         return new external_function_parameters(
             array(
                 'data' =>
-                    new external_single_structure(
-                        array(
-                            'courseid' => new external_value(PARAM_INT, 'id of course', VALUE_OPTIONAL)
-                            //'userid' => new external_value(PARAM_INT, 'utc time', VALUE_OPTIONAL)
-                        )
+                new external_single_structure(
+                    array(
+                        'courseid' => new external_value(PARAM_INT, 'id of course', VALUE_OPTIONAL)
+                        //'userid' => new external_value(PARAM_INT, 'utc time', VALUE_OPTIONAL)
                     )
+                )
             )
         );
     }
@@ -1203,14 +1206,14 @@ class format_serial3_external extends external_api
         return new external_function_parameters(
             array(
                 'data' =>
-                    new external_single_structure(
-                        array(
-                            'courseid' => new external_value(PARAM_INT, 'id of course', VALUE_OPTIONAL),
-                            //'userid' => new external_value(PARAM_INT, 'user id', VALUE_OPTIONAL),
-                            'milestones' => new external_value(PARAM_RAW, 'milestones', VALUE_OPTIONAL),
-                            'settings' => new external_value(PARAM_RAW, 'settings', VALUE_OPTIONAL)
-                        )
+                new external_single_structure(
+                    array(
+                        'courseid' => new external_value(PARAM_INT, 'id of course', VALUE_OPTIONAL),
+                        //'userid' => new external_value(PARAM_INT, 'user id', VALUE_OPTIONAL),
+                        'milestones' => new external_value(PARAM_RAW, 'milestones', VALUE_OPTIONAL),
+                        'settings' => new external_value(PARAM_RAW, 'settings', VALUE_OPTIONAL)
                     )
+                )
             )
         );
     }
@@ -1259,12 +1262,12 @@ class format_serial3_external extends external_api
         return new external_function_parameters(
             array(
                 'data' =>
-                    new external_single_structure(
-                        array(
-                            'courseid' => new external_value(PARAM_INT, 'id of course', VALUE_OPTIONAL),
-                            'plan' => new external_value(PARAM_TEXT, 'the desired plan')
-                        )
+                new external_single_structure(
+                    array(
+                        'courseid' => new external_value(PARAM_INT, 'id of course', VALUE_OPTIONAL),
+                        'plan' => new external_value(PARAM_TEXT, 'the desired plan')
                     )
+                )
             )
         );
     }
@@ -1313,13 +1316,13 @@ class format_serial3_external extends external_api
         return new external_function_parameters(
             array(
                 'data' =>
-                    new external_single_structure(
-                        array(
-                            'courseid' => new external_value(PARAM_INT, 'id of course'),
-                            'milestones' => new external_value(PARAM_RAW, 'milestones'),
-                            'plan' => new external_value(PARAM_TEXT, 'plan')
-                        )
+                new external_single_structure(
+                    array(
+                        'courseid' => new external_value(PARAM_INT, 'id of course'),
+                        'milestones' => new external_value(PARAM_RAW, 'milestones'),
+                        'plan' => new external_value(PARAM_TEXT, 'plan')
                     )
+                )
             )
         );
     }
@@ -1398,14 +1401,14 @@ class format_serial3_external extends external_api
         return new external_function_parameters(
             array(
                 'data' =>
-                    new external_single_structure(
-                        array(
-                            'courseid' => new external_value(PARAM_INT, 'id of course', VALUE_OPTIONAL),
-                            'fieldname' => new external_value(PARAM_TEXT, 'Name of the field'),
-                            'setget' => new external_value(PARAM_TEXT, 'Get or Set'),
-                            'value' => new external_value(PARAM_TEXT, 'Value of field', VALUE_OPTIONAL)
-                        )
+                new external_single_structure(
+                    array(
+                        'courseid' => new external_value(PARAM_INT, 'id of course', VALUE_OPTIONAL),
+                        'fieldname' => new external_value(PARAM_TEXT, 'Name of the field'),
+                        'setget' => new external_value(PARAM_TEXT, 'Get or Set'),
+                        'value' => new external_value(PARAM_TEXT, 'Value of field', VALUE_OPTIONAL)
                     )
+                )
             )
         );
     }
@@ -1705,8 +1708,8 @@ class format_serial3_external extends external_api
                     'icon'       => $cm->get_icon_url(),
                     'available'  => $cm->available,
                     'completion' => 0,
-                    'visible'	 => $cm->visible,
-					'rating'	 => 0,
+                    'visible'     => $cm->visible,
+                    'rating'     => 0,
                 );
             }
         }
@@ -1945,13 +1948,13 @@ Group by cm.id
         return new external_function_parameters(
             array(
                 'data' =>
-                    new external_single_structure(
-                        array(
-                            'course' => new external_value(PARAM_INT, 'course id'),
-                            'section' => new external_value(PARAM_INT, 'section id'),
-                            'reflection' => new external_value(PARAM_TEXT, 'reflection text submitted by the learner')
-                        )
+                new external_single_structure(
+                    array(
+                        'course' => new external_value(PARAM_INT, 'course id'),
+                        'section' => new external_value(PARAM_INT, 'section id'),
+                        'reflection' => new external_value(PARAM_TEXT, 'reflection text submitted by the learner')
                     )
+                )
             )
         );
     }
@@ -2030,408 +2033,410 @@ Group by cm.id
         return true;
     }
 
-	/**
-	 * Interface to save dashboard layout settings for a user
-	 */
-	public static function save_dashboard_settings_parameters()
-	{
-		return new external_function_parameters([
-			'userid' => new external_value(PARAM_INT, 'if of user'),
-			'course' => new external_value(PARAM_INT, 'id of course'),
-			'settings' => new external_value(PARAM_TEXT, 'layout settings', VALUE_OPTIONAL)
-		]);
-	}
+    /**
+     * Interface to save dashboard layout settings for a user
+     */
+    public static function save_dashboard_settings_parameters()
+    {
+        return new external_function_parameters([
+            'userid' => new external_value(PARAM_INT, 'if of user'),
+            'course' => new external_value(PARAM_INT, 'id of course'),
+            'settings' => new external_value(PARAM_TEXT, 'layout settings', VALUE_OPTIONAL)
+        ]);
+    }
 
-	public static function save_dashboard_settings_returns()
-	{
-		return new external_single_structure(
-			array(
-				'success' => new external_value(PARAM_BOOL, 'Success Variable'),
-				'data' => new external_value(PARAM_TEXT, 'Data output')
-			)
-		);
-	}
+    public static function save_dashboard_settings_returns()
+    {
+        return new external_single_structure(
+            array(
+                'success' => new external_value(PARAM_BOOL, 'Success Variable'),
+                'data' => new external_value(PARAM_TEXT, 'Data output')
+            )
+        );
+    }
 
-	public static function save_dashboard_settings($userid, $course, $settings)
-	{
-		global $DB;
+    public static function save_dashboard_settings($userid, $course, $settings)
+    {
+        global $DB;
 
-		$params = [
-			'userid' => $userid,
-			'course' => $course,
-			'settings' => $settings,
-		];
+        $params = [
+            'userid' => $userid,
+            'course' => $course,
+            'settings' => $settings,
+        ];
 
-		$record = $DB->get_record('serial3_dashboard_settings',['userid' => $userid, 'course' => $course]);
+        $record = $DB->get_record('serial3_dashboard_settings', ['userid' => $userid, 'course' => $course]);
 
-		if ($record) {
-			$record->settings = $settings;
-			$DB->update_record('serial3_dashboard_settings', $record);
-		} else {
-			$record = new stdClass();
-			$record->userid = $userid;
-			$record->course = $course;
-			$record->settings = $settings;
-			$DB->insert_record('serial3_dashboard_settings', $record);
-		}
+        if ($record) {
+            $record->settings = $settings;
+            $DB->update_record('serial3_dashboard_settings', $record);
+        } else {
+            $record = new stdClass();
+            $record->userid = $userid;
+            $record->course = $course;
+            $record->settings = $settings;
+            $DB->insert_record('serial3_dashboard_settings', $record);
+        }
 
-		return array(
-			'success' => ($record !== false),
-			'data' => json_encode($params)
-		);
-	}
+        return array(
+            'success' => ($record !== false),
+            'data' => json_encode($params)
+        );
+    }
 
-	public static function save_dashboard_settings_is_allowed_from_ajax()
-	{
-		return true;
-	}
+    public static function save_dashboard_settings_is_allowed_from_ajax()
+    {
+        return true;
+    }
 
-	/**
-	 * Interface to get dashboard settings for a user
-	 */
-	public static function get_dashboard_settings_parameters()
-	{
-		return new external_function_parameters([
-			'userid' => new external_value(PARAM_INT, 'user id'),
-			'course' => new external_value(PARAM_INT, 'id of course'),
-		]);
-	}
+    /**
+     * Interface to get dashboard settings for a user
+     */
+    public static function get_dashboard_settings_parameters()
+    {
+        return new external_function_parameters([
+            'userid' => new external_value(PARAM_INT, 'user id'),
+            'course' => new external_value(PARAM_INT, 'id of course'),
+        ]);
+    }
 
-	public static function get_dashboard_settings_is_allowed_from_ajax()
-	{
-		return true;
-	}
+    public static function get_dashboard_settings_is_allowed_from_ajax()
+    {
+        return true;
+    }
 
-	public static function get_dashboard_settings_returns()
-	{
-		return new external_single_structure(
-			array(
-				'success' => new external_value(PARAM_BOOL, 'Success Variable'),
-				'data' => new external_value(PARAM_RAW, 'Data output')
-			)
-		);
-	}
+    public static function get_dashboard_settings_returns()
+    {
+        return new external_single_structure(
+            array(
+                'success' => new external_value(PARAM_BOOL, 'Success Variable'),
+                'data' => new external_value(PARAM_RAW, 'Data output')
+            )
+        );
+    }
 
-	public static function get_dashboard_settings($userid, $course)
-	{
-		global $DB;
+    public static function get_dashboard_settings($userid, $course)
+    {
+        global $DB;
 
-		$result = $DB->get_record_sql(
-			"SELECT settings
+        $result = $DB->get_record_sql(
+            "SELECT settings
             FROM {serial3_dashboard_settings}
             WHERE
             	userid=:userid AND
             	course=:course",
-			[
-				"course" => (int)$course,
-				"userid" => (int)$userid
-			]
-		);
+            [
+                "course" => (int)$course,
+                "userid" => (int)$userid
+            ]
+        );
 
-		return array(
-			'success' => true,
-			'data' => json_encode($result),
-		);
-	}
+        return array(
+            'success' => true,
+            'data' => json_encode($result),
+        );
+    }
 
 
-	/**
-	 * Interface to add new task list items to a user's task list
-	 */
-	public static function create_task_parameters()
-	{
-		return new external_function_parameters([
-			'course' => new external_value(PARAM_INT, 'Course ID'),
-			'task' => new external_value(PARAM_RAW, 'Task description'),
-			'completed' => new external_value(PARAM_BOOL, 'Task completion status'),
-			'duedate' => new external_value(PARAM_TEXT, 'Task due date'),
-		]);
-	}
+    /**
+     * Interface to add new task list items to a user's task list
+     */
+    public static function create_task_parameters()
+    {
+        return new external_function_parameters([
+            'course' => new external_value(PARAM_INT, 'Course ID'),
+            'task' => new external_value(PARAM_RAW, 'Task description'),
+            'completed' => new external_value(PARAM_BOOL, 'Task completion status'),
+            'duedate' => new external_value(PARAM_TEXT, 'Task due date'),
+        ]);
+    }
 
-	public static function create_task_is_allowed_from_ajax()
-	{
-		return true;
-	}
+    public static function create_task_is_allowed_from_ajax()
+    {
+        return true;
+    }
 
-	public static function create_task_returns()
-	{
-		return new external_single_structure([
-			'success' => new external_value(PARAM_BOOL, 'Success flag'),
-			'id' => new external_value(PARAM_INT, 'ID of new item')
-		]);
-	}
+    public static function create_task_returns()
+    {
+        return new external_single_structure([
+            'success' => new external_value(PARAM_BOOL, 'Success flag'),
+            'id' => new external_value(PARAM_INT, 'ID of new item')
+        ]);
+    }
 
-	public static function create_task($course, $task, $completed, $duedate)
-	{
-		global $DB, $USER;
+    public static function create_task($course, $task, $completed, $duedate)
+    {
+        global $DB, $USER;
 
-		$record = new stdClass();
-		$record->userid = (int)$USER->id;
-		$record->course = (int)$course;
-		$record->task = (string)($task);
-		$record->duedate = strtotime($duedate);
-		$record->timemodified = time();
-		$record->completed = (int)$completed;
+        $record = new stdClass();
+        $record->userid = (int)$USER->id;
+        $record->course = (int)$course;
+        $record->task = (string)($task);
+        $record->duedate = strtotime($duedate);
+        $record->timemodified = time();
+        $record->completed = (int)$completed;
 
-		$insertResult = $DB->insert_record("serial3_tasks", $record);
+        $insertResult = $DB->insert_record("serial3_tasks", $record);
 
-		if ($insertResult) {
-			return [
-				'success' => true,
-				'id' => $insertResult
-			];
-		} else {
-			throw new Exception('Failed to insert new item');
-		}
-	}
+        if ($insertResult) {
+            return [
+                'success' => true,
+                'id' => $insertResult
+            ];
+        } else {
+            throw new Exception('Failed to insert new item');
+        }
+    }
 
-	/**
-	 * Interface to toggle a task item
-	 */
-	public static function update_task_parameters()
-	{
-		return new external_function_parameters([
-			'id' => new external_value(PARAM_INT, 'user id'),
-			'duedate' => new external_value(PARAM_RAW, 'task due date'),
-			'completed' => new external_value(PARAM_RAW, 'completion status of task'),
-		]);
-	}
+    /**
+     * Interface to toggle a task item
+     */
+    public static function update_task_parameters()
+    {
+        return new external_function_parameters([
+            'id' => new external_value(PARAM_INT, 'user id'),
+            'duedate' => new external_value(PARAM_RAW, 'task due date'),
+            'completed' => new external_value(PARAM_RAW, 'completion status of task'),
+        ]);
+    }
 
-	public static function update_task_is_allowed_from_ajax()
-	{
-		return true;
-	}
+    public static function update_task_is_allowed_from_ajax()
+    {
+        return true;
+    }
 
-	public static function update_task_returns()
-	{
-		return new external_single_structure([
-			'success' => new external_value(PARAM_BOOL, 'success flag'),
-			'data' => new external_value(PARAM_RAW, 'message for user')
-		]);
-	}
+    public static function update_task_returns()
+    {
+        return new external_single_structure([
+            'success' => new external_value(PARAM_BOOL, 'success flag'),
+            'data' => new external_value(PARAM_RAW, 'message for user')
+        ]);
+    }
 
-	public static function update_task($id, $duedate, $completed)
-	{
-		// update task status in database
-		global $DB;
+    public static function update_task($id, $duedate, $completed)
+    {
+        // update task status in database
+        global $DB;
 
-		$record = $DB->get_record('serial3_tasks', ['id' => (int)$id]);
+        $record = $DB->get_record('serial3_tasks', ['id' => (int)$id]);
 
-		if ($record) {
-			$record->completed = $completed;
-			$record->duedate = strtotime($duedate);
-			$success = $DB->update_record('serial3_tasks', $record);
-		} else {
-			$success = false;
-		}
+        if ($record) {
+            $record->completed = $completed;
+            $record->duedate = strtotime($duedate);
+            $success = $DB->update_record('serial3_tasks', $record);
+        } else {
+            $success = false;
+        }
 
-		// set success flag and message for response
-		return [
-			'success' => true,
-			'data' => $success
-		];
-	}
+        // set success flag and message for response
+        return [
+            'success' => true,
+            'data' => $success
+        ];
+    }
 
-	/**
-	 * Interface to delete a to-do item
-	 */
-	public static function delete_task_parameters()
-	{
-		return new external_function_parameters([
-			'id' => new external_value(PARAM_INT, 'user id'),
-		]);
-	}
+    /**
+     * Interface to delete a to-do item
+     */
+    public static function delete_task_parameters()
+    {
+        return new external_function_parameters([
+            'id' => new external_value(PARAM_INT, 'user id'),
+        ]);
+    }
 
-	public static function delete_task_is_allowed_from_ajax()
-	{
-		return true;
-	}
+    public static function delete_task_is_allowed_from_ajax()
+    {
+        return true;
+    }
 
-	public static function delete_task_returns()
-	{
-		return new external_single_structure([
-			'success' => new external_value(PARAM_BOOL, 'success flag'),
-		]);
-	}
+    public static function delete_task_returns()
+    {
+        return new external_single_structure([
+            'success' => new external_value(PARAM_BOOL, 'success flag'),
+        ]);
+    }
 
-	public static function delete_task($id)
-	{
-		global $DB;
+    public static function delete_task($id)
+    {
+        global $DB;
 
-		$DB->delete_records('serial3_tasks', ['id' => $id]);
+        $DB->delete_records('serial3_tasks', ['id' => $id]);
 
-		return [
-			'success' => true,
-		];
-	}
+        return [
+            'success' => true,
+        ];
+    }
 
-	/**
-	 * Interface to fetch all to-do items for a user
-	 */
-	public static function get_tasks_parameters()
-	{
-		return new external_function_parameters([
-			'userid' => new external_value(PARAM_INT, 'user id'),
-			'course' => new external_value(PARAM_INT, 'id of course'),
-		]);
-	}
+    /**
+     * Interface to fetch all to-do items for a user
+     */
+    public static function get_tasks_parameters()
+    {
+        return new external_function_parameters([
+            'userid' => new external_value(PARAM_INT, 'user id'),
+            'course' => new external_value(PARAM_INT, 'id of course'),
+        ]);
+    }
 
-	public static function get_tasks_is_allowed_from_ajax()
-	{
-		return true;
-	}
+    public static function get_tasks_is_allowed_from_ajax()
+    {
+        return true;
+    }
 
-	public static function get_tasks_returns()
-	{
-		return new external_single_structure(
-			array(
-				'success' => new external_value(PARAM_BOOL, 'Success Variable'),
-				'data' => new external_value(PARAM_RAW, 'Data output')
-			)
-		);
-	}
+    public static function get_tasks_returns()
+    {
+        return new external_single_structure(
+            array(
+                'success' => new external_value(PARAM_BOOL, 'Success Variable'),
+                'data' => new external_value(PARAM_RAW, 'Data output')
+            )
+        );
+    }
 
-	public static function get_tasks($userid, $course)
-	{
-		global $DB;
+    public static function get_tasks($userid, $course)
+    {
+        global $DB;
 
-		$res = $DB->get_records('serial3_tasks', ['userid' => (int)$userid, 'course' => (int)$course]);
+        $res = $DB->get_records('serial3_tasks', ['userid' => (int)$userid, 'course' => (int)$course]);
 
-		if (!$res) {
-			$success = false;
-		} else {
-			$success = true;
+        if (!$res) {
+            $success = false;
+        } else {
+            $success = true;
 
-			foreach ($res as &$todo) {
-				if ($todo->duedate != 0) {
-					$todo->duedate = date('Y-m-d', $todo->duedate);
-				}
-			}
-		}
+            foreach ($res as &$todo) {
+                if ($todo->duedate != 0) {
+                    $todo->duedate = date('Y-m-d', $todo->duedate);
+                }
+            }
+        }
 
-		return array(
-			'success' => $success,
-			'data' => json_encode($res)
-		);
-	}
+        return array(
+            'success' => $success,
+            'data' => json_encode($res)
+        );
+    }
 
 
     //set_rule_response
     public static function set_rule_response_parameters()
-	{
-		return new external_function_parameters([
-			'course_id' => new external_value(PARAM_INT, 'course id'),
+    {
+        return new external_function_parameters([
+            'course_id' => new external_value(PARAM_INT, 'course id'),
             'action_id' => new external_value(PARAM_TEXT, 'id of the rule action'),
             'response_type' => new external_value(PARAM_TEXT, 'user response to a rule action'),
             'user_response' => new external_value(PARAM_RAW, 'user response to a rule action'),
-		]);
-	}
+        ]);
+    }
 
     public static function set_rule_response_is_allowed_from_ajax()
-	{
-		return true;
-	}
+    {
+        return true;
+    }
     public static function set_rule_response_returns()
-	{
-		return new external_single_structure([ 'success' => new external_value(PARAM_BOOL, 'Success Variable') ]);
-	}
-    public static function set_rule_response($course_id, $action_id, $response_type, $user_response){
+    {
+        return new external_single_structure(['success' => new external_value(PARAM_BOOL, 'Success Variable')]);
+    }
+    public static function set_rule_response($course_id, $action_id, $response_type, $user_response)
+    {
         global $DB, $USER;
         $date = new DateTime();
-		$record = new stdClass();
+        $record = new stdClass();
         $record->user_id = (int)$USER->id;
-		$record->course_id = (int)$course_id;
-		$record->action_id = $action_id;
+        $record->course_id = (int)$course_id;
+        $record->action_id = $action_id;
         $record->response_type = $response_type;
         $record->response = $user_response;
         $record->timecreated = $date->getTimestamp();
-		
-        $DB->insert_record('ari_response_rule_action', $record);
+
+        //$DB->insert_record('ari_response_rule_action', $record);
+        
         return array(
-			'success' => true
+            'success' => true
         );
     }
 
 
 
-	/**
-	 * Interface to fetch get the missed and total number of assignments and quizzes
-	 */
-	public static function get_missed_activities_parameters()
-	{
-		return new external_function_parameters([
-			'course' => new external_value(PARAM_INT, 'id of course'),
-		]);
-	}
+    /**
+     * Interface to fetch get the missed and total number of assignments and quizzes
+     */
+    public static function get_missed_activities_parameters()
+    {
+        return new external_function_parameters([
+            'course' => new external_value(PARAM_INT, 'id of course'),
+        ]);
+    }
 
-	public static function get_missed_activities_is_allowed_from_ajax()
-	{
-		return true;
-	}
+    public static function get_missed_activities_is_allowed_from_ajax()
+    {
+        return true;
+    }
 
-	public static function get_missed_activities_returns()
-	{
-		return new external_single_structure(
-			array(
-				'success' => new external_value(PARAM_BOOL, 'Success Variable'),
-				'data' => new external_value(PARAM_RAW, 'Data output')
-			)
-		);
-	}
+    public static function get_missed_activities_returns()
+    {
+        return new external_single_structure(
+            array(
+                'success' => new external_value(PARAM_BOOL, 'Success Variable'),
+                'data' => new external_value(PARAM_RAW, 'Data output')
+            )
+        );
+    }
 
-	public static function get_missed_activities($course)
-	{
-		global $DB, $USER;
+    public static function get_missed_activities($course)
+    {
+        global $DB, $USER;
 
-		$sql = "SELECT
+        $sql = "SELECT
     			COUNT(CASE WHEN s.id IS NULL THEN 1 END) AS num_missed_assignments,
     			COUNT(*) AS total_assignments
 				FROM {assign} a
 				LEFT JOIN {assign_submission} s ON s.assignment = a.id AND s.userid = :userid
 				WHERE a.course = :course AND a.allowsubmissionsfromdate < UNIX_TIMESTAMP() AND a.duedate < UNIX_TIMESTAMP()";
 
-		$params = array('course' => $course, 'userid' => (int)$USER->id);
-		$missedAssignments = $DB->get_records_sql($sql, $params);
+        $params = array('course' => $course, 'userid' => (int)$USER->id);
+        $missedAssignments = $DB->get_records_sql($sql, $params);
 
-		return array(
-			'success' => true,
-			'data' => json_encode($missedAssignments)
-		);
-	}
+        return array(
+            'success' => true,
+            'data' => json_encode($missedAssignments)
+        );
+    }
 
 
-	/**
-	 * Interface to fetch all quizzes and assignments
-	 */
-	public static function get_assignments_parameters()
-	{
-		return new external_function_parameters([
-			'course' => new external_value(PARAM_INT, 'id of course'),
-		]);
-	}
+    /**
+     * Interface to fetch all quizzes and assignments
+     */
+    public static function get_assignments_parameters()
+    {
+        return new external_function_parameters([
+            'course' => new external_value(PARAM_INT, 'id of course'),
+        ]);
+    }
 
-	public static function get_assignments_is_allowed_from_ajax()
-	{
-		return true;
-	}
+    public static function get_assignments_is_allowed_from_ajax()
+    {
+        return true;
+    }
 
-	public static function get_assignments_returns()
-	{
-		return new external_single_structure(
-			array(
-				'success' => new external_value(PARAM_BOOL, 'Success Variable'),
-				'data' => new external_value(PARAM_RAW, 'Data output')
-			)
-		);
-	}
+    public static function get_assignments_returns()
+    {
+        return new external_single_structure(
+            array(
+                'success' => new external_value(PARAM_BOOL, 'Success Variable'),
+                'data' => new external_value(PARAM_RAW, 'Data output')
+            )
+        );
+    }
 
-	public static function get_assignments($course)
-	{
-		global $DB, $USER;
+    public static function get_assignments($course)
+    {
+        global $DB, $USER;
 
-		$userid = $USER->id;
+        $userid = $USER->id;
 
-		$sql = "SELECT a.name, a.intro, a.allowsubmissionsfromdate, a.duedate, a.grade as max_grade, g.grade as user_grade, g.attemptnumber, cs.section,
+        $sql = "SELECT a.name, a.intro, a.allowsubmissionsfromdate, a.duedate, a.grade as max_grade, g.grade as user_grade, g.attemptnumber, cs.section,
 				(SELECT COUNT(*) FROM {assign_submission} WHERE assignment = a.id AND userid = :userid) as user_attempts,
 				(SELECT AVG(grade) FROM {assign_grades} WHERE assignment = a.id) as avg_grade,
 				(SELECT COUNT(DISTINCT userid) FROM {assign_grades} WHERE assignment = a.id) as num_participants
@@ -2441,49 +2446,49 @@ Group by cm.id
 				JOIN {course_sections} cs ON cs.id = cm.section
 				WHERE a.course = :course AND g.userid = :userid2";
 
-		$params = array('course' => $course, 'userid' => $userid, 'userid2' => $userid);
-		$assignments = $DB->get_records_sql($sql, $params);
+        $params = array('course' => $course, 'userid' => $userid, 'userid2' => $userid);
+        $assignments = $DB->get_records_sql($sql, $params);
 
 
-		return array(
-			'success' => true,
-			'data' => json_encode($assignments)
-		);
-	}
+        return array(
+            'success' => true,
+            'data' => json_encode($assignments)
+        );
+    }
 
 
-	/**
-	 * Interface to fetch all quizzes
-	 */
-	public static function get_quizzes_parameters()
-	{
-		return new external_function_parameters([
-			'course' => new external_value(PARAM_INT, 'id of course'),
-		]);
-	}
+    /**
+     * Interface to fetch all quizzes
+     */
+    public static function get_quizzes_parameters()
+    {
+        return new external_function_parameters([
+            'course' => new external_value(PARAM_INT, 'id of course'),
+        ]);
+    }
 
-	public static function get_quizzes_is_allowed_from_ajax()
-	{
-		return true;
-	}
+    public static function get_quizzes_is_allowed_from_ajax()
+    {
+        return true;
+    }
 
-	public static function get_quizzes_returns()
-	{
-		return new external_single_structure(
-			array(
-				'success' => new external_value(PARAM_BOOL, 'Success Variable'),
-				'data' => new external_value(PARAM_RAW, 'Data output')
-			)
-		);
-	}
+    public static function get_quizzes_returns()
+    {
+        return new external_single_structure(
+            array(
+                'success' => new external_value(PARAM_BOOL, 'Success Variable'),
+                'data' => new external_value(PARAM_RAW, 'Data output')
+            )
+        );
+    }
 
-	public static function get_quizzes($course)
-	{
-		global $DB, $USER;
+    public static function get_quizzes($course)
+    {
+        global $DB, $USER;
 
-		$userid = $USER->id;
+        $userid = $USER->id;
 
-		$sql = "SELECT q.name, q.intro, q.timeopen, q.timeclose, q.sumgrades, q.grade as max_grade, g.grade as user_grade, cs.section,
+        $sql = "SELECT q.name, q.intro, q.timeopen, q.timeclose, q.sumgrades, q.grade as max_grade, g.grade as user_grade, cs.section,
             (SELECT AVG(grade) FROM {quiz_grades} WHERE quiz = q.id) as avg_grade,
             (SELECT COUNT(*) FROM {quiz_attempts} WHERE quiz = q.id AND userid = :userid) as user_attempts,
             (SELECT COUNT(DISTINCT userid) FROM {quiz_grades} WHERE quiz = q.id) as num_participants
@@ -2493,154 +2498,154 @@ Group by cm.id
             JOIN {course_sections} cs ON cs.id = cm.section
             WHERE q.course = :course AND g.userid = :user";
 
-		$params = array('course' => $course, 'userid' => $userid, 'user' => $userid);
-		$quizrecords = $DB->get_records_sql($sql, $params);
+        $params = array('course' => $course, 'userid' => $userid, 'user' => $userid);
+        $quizrecords = $DB->get_records_sql($sql, $params);
 
-		return array(
-			'success' => true,
-			'data' => json_encode($quizrecords)
-		);
-	}
+        return array(
+            'success' => true,
+            'data' => json_encode($quizrecords)
+        );
+    }
 
-	/**
-	 * Set users understaning of course activity
-	 */
-	public static function set_user_understanding_parameters()
-	{
-		return new external_function_parameters([
-			'course' => new external_value(PARAM_INT, 'id of course'),
-			'activityid' => new external_value(PARAM_TEXT, 'id of activity'),
-			'rating' => new external_value(PARAM_INT, 'user understanding'),
-		]);
-	}
+    /**
+     * Set users understaning of course activity
+     */
+    public static function set_user_understanding_parameters()
+    {
+        return new external_function_parameters([
+            'course' => new external_value(PARAM_INT, 'id of course'),
+            'activityid' => new external_value(PARAM_TEXT, 'id of activity'),
+            'rating' => new external_value(PARAM_INT, 'user understanding'),
+        ]);
+    }
 
-	public static function set_user_understanding_is_allowed_from_ajax()
-	{
-		return true;
-	}
+    public static function set_user_understanding_is_allowed_from_ajax()
+    {
+        return true;
+    }
 
-	public static function set_user_understanding_returns()
-	{
-		return new external_single_structure(
-			array(
-				'success' => new external_value(PARAM_BOOL, 'Success Variable'),
-				'data' => new external_value(PARAM_RAW, 'Data output')
-			)
-		);
-	}
+    public static function set_user_understanding_returns()
+    {
+        return new external_single_structure(
+            array(
+                'success' => new external_value(PARAM_BOOL, 'Success Variable'),
+                'data' => new external_value(PARAM_RAW, 'Data output')
+            )
+        );
+    }
 
-	public static function set_user_understanding($course, $activityid, $rating)
-	{
-		global $DB, $USER;
+    public static function set_user_understanding($course, $activityid, $rating)
+    {
+        global $DB, $USER;
 
-		$userid = (int)$USER->id;
+        $userid = (int)$USER->id;
 
-		$params = [
-			'userid' => $userid,
-			'course' => $course,
-			'activityid' => (int)$activityid,
-		];
+        $params = [
+            'userid' => $userid,
+            'course' => $course,
+            'activityid' => (int)$activityid,
+        ];
 
-		$record = $DB->get_record('serial3_overview', $params);
+        $record = $DB->get_record('serial3_overview', $params);
 
-		if ($record) {
-			$record->rating = $rating;
-			$DB->update_record('serial3_overview', $record);
-		} else {
-			$record = new stdClass();
-			$record->userid = (int)$userid;
-			$record->course = (int)$course;
-			$record->activityid = (int)$activityid;
-			$record->rating = (int)$rating;
-			$success = $DB->insert_record('serial3_overview', $record);
-		}
+        if ($record) {
+            $record->rating = $rating;
+            $DB->update_record('serial3_overview', $record);
+        } else {
+            $record = new stdClass();
+            $record->userid = (int)$userid;
+            $record->course = (int)$course;
+            $record->activityid = (int)$activityid;
+            $record->rating = (int)$rating;
+            $success = $DB->insert_record('serial3_overview', $record);
+        }
 
-		return array(
-			'success' => true,
-			'data' => json_encode($success)
-		);
-	}
+        return array(
+            'success' => true,
+            'data' => json_encode($success)
+        );
+    }
 
-	/**
-	 * Get users understanding of course activity
-	 */
-	public static function get_user_understanding_parameters()
-	{
-		return new external_function_parameters([
-			'course' => new external_value(PARAM_INT, 'id of course'),
-		]);
-	}
+    /**
+     * Get users understanding of course activity
+     */
+    public static function get_user_understanding_parameters()
+    {
+        return new external_function_parameters([
+            'course' => new external_value(PARAM_INT, 'id of course'),
+        ]);
+    }
 
-	public static function get_user_understanding_is_allowed_from_ajax()
-	{
-		return true;
-	}
+    public static function get_user_understanding_is_allowed_from_ajax()
+    {
+        return true;
+    }
 
-	public static function get_user_understanding_returns()
-	{
-		return new external_single_structure(
-			array(
-				'success' => new external_value(PARAM_BOOL, 'Success Variable'),
-				'data' => new external_value(PARAM_RAW, 'Data output')
-			)
-		);
-	}
+    public static function get_user_understanding_returns()
+    {
+        return new external_single_structure(
+            array(
+                'success' => new external_value(PARAM_BOOL, 'Success Variable'),
+                'data' => new external_value(PARAM_RAW, 'Data output')
+            )
+        );
+    }
 
-	public static function get_user_understanding($course)
-	{
-		global $DB, $USER;
+    public static function get_user_understanding($course)
+    {
+        global $DB, $USER;
 
-		$params = [
-			'userid' => (int)$USER->id,
-			'course' => (int)$course,
-		];
+        $params = [
+            'userid' => (int)$USER->id,
+            'course' => (int)$course,
+        ];
 
-		$res = $DB->get_records('serial3_overview', $params);
+        $res = $DB->get_records('serial3_overview', $params);
 
-		if (!$res) {
-			$success = false;
-		} else {
-			$success = true;
-		}
+        if (!$res) {
+            $success = false;
+        } else {
+            $success = true;
+        }
 
-		return array(
-			'success' => $success,
-			'data' => json_encode($res)
-		);
-	}
+        return array(
+            'success' => $success,
+            'data' => json_encode($res)
+        );
+    }
 
 
-	/**
-	 * Get assignment and quiz deadlines
-	 */
-	public static function get_deadlines_parameters()
-	{
-		return new external_function_parameters([
-			'courseid' => new external_value(PARAM_INT, 'id of course'),
-		]);
-	}
+    /**
+     * Get assignment and quiz deadlines
+     */
+    public static function get_deadlines_parameters()
+    {
+        return new external_function_parameters([
+            'courseid' => new external_value(PARAM_INT, 'id of course'),
+        ]);
+    }
 
-	public static function get_deadlines_is_allowed_from_ajax()
-	{
-		return true;
-	}
+    public static function get_deadlines_is_allowed_from_ajax()
+    {
+        return true;
+    }
 
-	public static function get_deadlines_returns()
-	{
-		return new external_single_structure(
-			array(
-				'success' => new external_value(PARAM_BOOL, 'Success Variable'),
-				'data' => new external_value(PARAM_RAW, 'Data output')
-			)
-		);
-	}
+    public static function get_deadlines_returns()
+    {
+        return new external_single_structure(
+            array(
+                'success' => new external_value(PARAM_BOOL, 'Success Variable'),
+                'data' => new external_value(PARAM_RAW, 'Data output')
+            )
+        );
+    }
 
-	public static function get_deadlines($courseid)
-	{
-		global $DB;
+    public static function get_deadlines($courseid)
+    {
+        global $DB;
 
-		try {
-			$sql = "SELECT a.id, cm.id AS coursemoduleid, a.allowsubmissionsfromdate AS timestart, a.name, a.duedate AS timeclose, 'assignment' AS type
+        try {
+            $sql = "SELECT a.id, cm.id AS coursemoduleid, a.allowsubmissionsfromdate AS timestart, a.name, a.duedate AS timeclose, 'assignment' AS type
 				FROM {assign} a
 				JOIN {course_modules} cm ON cm.instance = a.id AND cm.module = (SELECT id FROM {modules} WHERE name = 'assign')
 				WHERE a.course = :course AND a.duedate != 0
@@ -2650,142 +2655,142 @@ Group by cm.id
 				JOIN {course_modules} cm ON cm.instance = q.id AND cm.module = (SELECT id FROM {modules} WHERE name = 'quiz')
 				WHERE q.course = :courseid AND q.timeclose != 0";
 
-			$params = array('courseid' => $courseid, 'course' => $courseid);
-			$data = $DB->get_records_sql($sql, $params);
+            $params = array('courseid' => $courseid, 'course' => $courseid);
+            $data = $DB->get_records_sql($sql, $params);
 
-			return array(
-				'success' => true,
-				'data' => json_encode($data)
-			);
-		} catch (Exception $e) {
-			error_log("Error fetching deadlines: " . $e->getMessage());
-			return null;
-		}
-	}
-
-
-	/**
-	 * Sets the learner goal for each user and course.
-	 */
-	public static function set_learner_goal_parameters()
-	{
-		return new external_function_parameters([
-			'course' => new external_value(PARAM_INT, 'id of course'),
-			'goal' => new external_value(PARAM_TEXT, 'The users learning goal.'),
-		]);
-	}
-
-	public static function set_learner_goal_is_allowed_from_ajax()
-	{
-		return true;
-	}
-
-	public static function set_learner_goal_returns()
-	{
-		return new external_single_structure(
-			array(
-				'success' => new external_value(PARAM_BOOL, 'Success variable'),
-			)
-		);
-	}
-
-	public static function set_learner_goal($course, $goal)
-	{
-		global $DB, $USER;
-        
-		$userid = (int)$USER->id;
-
-		$record = $DB->get_record('serial3_learner_goal', array('userid' => $userid, 'course' => $course));
-
-		if ($record) {
-			$record->goal = $goal;
-			$success = $DB->update_record('serial3_learner_goal', $record);
-		} else {
-			$record = new stdClass();
-			$record->userid = $userid;
-			$record->course = (int)$course;
-			$record->goal = $goal;
-			$success = $DB->insert_record('serial3_learner_goal', $record);
-		}
-
-		return array(
-			'success' => $success,
-		);
-	}
+            return array(
+                'success' => true,
+                'data' => json_encode($data)
+            );
+        } catch (Exception $e) {
+            error_log("Error fetching deadlines: " . $e->getMessage());
+            return null;
+        }
+    }
 
 
-	/**
-	 * Gets the learner goal for each user and course.
-	 */
-	public static function get_learner_goal_parameters()
-	{
-		return new external_function_parameters([
-			'course' => new external_value(PARAM_INT, 'id of course'),
-		]);
-	}
+    /**
+     * Sets the learner goal for each user and course.
+     */
+    public static function set_learner_goal_parameters()
+    {
+        return new external_function_parameters([
+            'course' => new external_value(PARAM_INT, 'id of course'),
+            'goal' => new external_value(PARAM_TEXT, 'The users learning goal.'),
+        ]);
+    }
 
-	public static function get_learner_goal_is_allowed_from_ajax()
-	{
-		return true;
-	}
+    public static function set_learner_goal_is_allowed_from_ajax()
+    {
+        return true;
+    }
 
-	public static function get_learner_goal_returns()
-	{
-		return new external_single_structure(
-			array(
-				'success' => new external_value(PARAM_BOOL, 'Success Variable'),
-				'data' => new external_value(PARAM_RAW, 'Data output')
-			)
-		);
-	}
+    public static function set_learner_goal_returns()
+    {
+        return new external_single_structure(
+            array(
+                'success' => new external_value(PARAM_BOOL, 'Success variable'),
+            )
+        );
+    }
 
-	public static function get_learner_goal($course)
-	{
-		global $DB, $USER;
+    public static function set_learner_goal($course, $goal)
+    {
+        global $DB, $USER;
 
-		$userid = (int)$USER->id;
+        $userid = (int)$USER->id;
 
-		$goal = $DB->get_field('serial3_learner_goal', 'goal', array('userid' => $userid, 'course' => $course));
+        $record = $DB->get_record('serial3_learner_goal', array('userid' => $userid, 'course' => $course));
 
-		return array(
-			'success' => true,
-			'data' => json_encode($goal),
-		);
-	}
+        if ($record) {
+            $record->goal = $goal;
+            $success = $DB->update_record('serial3_learner_goal', $record);
+        } else {
+            $record = new stdClass();
+            $record->userid = $userid;
+            $record->course = (int)$course;
+            $record->goal = $goal;
+            $success = $DB->insert_record('serial3_learner_goal', $record);
+        }
+
+        return array(
+            'success' => $success,
+        );
+    }
 
 
-	/**
-	 * Get the number of forum posts of a user.
-	 */
-	public static function get_forum_posts_parameters()
-	{
-		return new external_function_parameters([
-			'course' => new external_value(PARAM_INT, 'id of course'),
-		]);
-	}
+    /**
+     * Gets the learner goal for each user and course.
+     */
+    public static function get_learner_goal_parameters()
+    {
+        return new external_function_parameters([
+            'course' => new external_value(PARAM_INT, 'id of course'),
+        ]);
+    }
 
-	public static function get_forum_posts_is_allowed_from_ajax()
-	{
-		return true;
-	}
+    public static function get_learner_goal_is_allowed_from_ajax()
+    {
+        return true;
+    }
 
-	public static function get_forum_posts_returns()
-	{
-		return new external_single_structure(
-			array(
-				'success' => new external_value(PARAM_BOOL, 'Success Variable'),
-				'data' => new external_value(PARAM_RAW, 'Data output')
-			)
-		);
-	}
+    public static function get_learner_goal_returns()
+    {
+        return new external_single_structure(
+            array(
+                'success' => new external_value(PARAM_BOOL, 'Success Variable'),
+                'data' => new external_value(PARAM_RAW, 'Data output')
+            )
+        );
+    }
 
-	public static function get_forum_posts($course)
-	{
-		global $DB, $USER;
+    public static function get_learner_goal($course)
+    {
+        global $DB, $USER;
 
-		$userid = (int)$USER->id;
+        $userid = (int)$USER->id;
 
-		$sql = "SELECT 
+        $goal = $DB->get_field('serial3_learner_goal', 'goal', array('userid' => $userid, 'course' => $course));
+
+        return array(
+            'success' => true,
+            'data' => json_encode($goal),
+        );
+    }
+
+
+    /**
+     * Get the number of forum posts of a user.
+     */
+    public static function get_forum_posts_parameters()
+    {
+        return new external_function_parameters([
+            'course' => new external_value(PARAM_INT, 'id of course'),
+        ]);
+    }
+
+    public static function get_forum_posts_is_allowed_from_ajax()
+    {
+        return true;
+    }
+
+    public static function get_forum_posts_returns()
+    {
+        return new external_single_structure(
+            array(
+                'success' => new external_value(PARAM_BOOL, 'Success Variable'),
+                'data' => new external_value(PARAM_RAW, 'Data output')
+            )
+        );
+    }
+
+    public static function get_forum_posts($course)
+    {
+        global $DB, $USER;
+
+        $userid = (int)$USER->id;
+
+        $sql = "SELECT 
 			(SELECT COUNT(*) 
 			 FROM {forum_posts} fp 
 			 JOIN {forum_discussions} fd ON fd.id = fp.discussion 
@@ -2808,12 +2813,12 @@ Group by cm.id
 		JOIN {forum_discussions} fd ON fd.id = fp.discussion 
 		WHERE fd.course = :courseid1 AND fp.userid IS NOT NULL";
 
-		$params = array('courseid' => $course, 'courseid1' => $course, 'userid' => $userid);
-		$result = $DB->get_records_sql($sql, $params);
+        $params = array('courseid' => $course, 'courseid1' => $course, 'userid' => $userid);
+        $result = $DB->get_records_sql($sql, $params);
 
-		return array(
-			'success' => true,
-			'data' => json_encode($result),
-		);
-	}
+        return array(
+            'success' => true,
+            'data' => json_encode($result),
+        );
+    }
 }// end class

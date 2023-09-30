@@ -1,6 +1,6 @@
 <template>
     <div class="position-relative h-100 d-flex flex-column">
-        <widget-heading icon="fa fa-lightbulb" :info-content="info" title="Empfehlungen"></widget-heading>
+        <widget-heading icon="fa fa-lightbulb" :info-content="info" title="Feedback und Lernempfehlungen"></widget-heading>
         <div class="recommendations--container pr-1">
             <ul v-if="getRecommendations.length > 0" class="list-unstyled">
                 <li v-for="(recommendation, index) in filteredRecommendations" :key="index" class="recommendations--item">
@@ -13,7 +13,7 @@
                 </li>
             </ul>
             <p v-else class="recommendations--item">
-                Es läuft gut bei Ihnen. Machen Sie weiter so!
+                Zur Zeit liegt kein Feedback für Sie vor. Offenbar läuft es bei Ihnen ganz mit dem Lernen.
             </p>
         </div>
     </div>
@@ -78,7 +78,8 @@ export default {
             proficiency: state => state.learnermodel.proficiency,
             thresholds: state => state.learnermodel.thresholds,
             learnerGoal: 'learnerGoal',
-            strings: 'strings'
+            strings: 'strings',
+            research_condition: 'research_condition',
         }),
 
         userMetrics() {

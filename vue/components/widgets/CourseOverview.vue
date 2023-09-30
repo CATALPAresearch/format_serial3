@@ -28,7 +28,7 @@
         </div>
         <div class="row col-12 mb-2">
             <span class="col-3" style="text-align:right;"><strong>Kurseinheit</strong></span>
-            <span v-if="! aple1801.includes($store.state.courseid)" class="col-2">
+            <span v-if="!is1801Course()" class="col-2">
                 <strong class="word-wrap">Videos</strong>
                 <span class="d-none d-md-block">ansehen und verstehen</span>
             </span>
@@ -36,7 +36,7 @@
                 <strong class="word-wrap">Kurstext</strong>
                 <span class="d-none d-md-block">lesen und verstehen</span>
             </span>
-            <span v-if="aple1801.includes($store.state.courseid)" class="col-2">
+            <span v-if="is1801Course()" class="col-2">
                 <strong class="word-wrap">Selbsttests</strong>
                 <span class="d-none d-md-block">lösen und Lerninhalte anwenden</span>
             </span>
@@ -44,7 +44,7 @@
                 <strong class="word-wrap">Einsendeaufgaben</strong>
                 <span class="d-none d-md-block">bearbeiten und in der Klausur Zeit sparen</span>
             </span>
-            <span v-if="!controlgroup" class="col-3">
+            <span v-if="research_condition != 'control_group'" class="col-3">
                 <strong class="word-wrap">Abschlussreflexion</strong>
                 <span class="d-none d-md-block">bearbeiten und besser in der Klausur
                     abschneiden</span>
@@ -56,7 +56,7 @@
                 <!-- Course Unit -->
                 {{ shortenTitle(section.sectionname) }}
             </div>
-            <div v-if="!aple1801.includes($store.state.courseid)" class="col-2 mb-1" style="border: solid #111 0pt;">
+            <div v-if="!is1801Course()" class="col-2 mb-1" style="border: solid #111 0pt;">
                 <!-- Hypervideo -->
                 <span v-if="section.hypervideo" class="mb-1"
                     style="display:block;position:relative;width:100%;height:15px;background-color:#eee;">
@@ -84,7 +84,7 @@
                 </span>
                 <span v-if="section.longpage == null">-</span>
             </div>
-            <div v-if="aple1801.includes($store.state.courseid)" class="col-2 mb-1" style="border: solid #111 0pt;">
+            <div v-if="is1801Course()" class="col-2 mb-1" style="border: solid #111 0pt;">
                 <!-- Self Assessment -->
                 <span v-if="section.quiz" class="mb-1"
                     style="display:block;position:relative;width:100%;height:15px;background-color:#eee;">
@@ -132,7 +132,7 @@
                 </span>
                 <span v-if="section.assign == null">-</span>
             </div>
-            <div v-if="!controlgroup" class="col-3 mb-1" style="border: solid #111 0pt;">
+            <div v-if="research_condition != 'control_group'" class="col-3 mb-1" style="border: solid #111 0pt;">
                 <!-- Reflection task -->
                 <button class="btn btn-default" :disabled="sectionMinimumAchived(section.id) == false"
                     :style="'display:block; width:100%; height:30px; color:#222; background-color:' + getReflectionButtonColor(section.id) +';' "
@@ -143,19 +143,19 @@
         </div>
         <div class="row col-12 mb-3" style="">
             <span class="col-3"></span>
-            <span v-if="!aple1801.includes($store.state.courseid)" class="col-2">
+            <span v-if="!is1801Course()" class="col-2">
                 {{ Math.round(getRatio(sumScores.hypervideo.complete, sumScores.hypervideo.count)) }}% gesehen
             </span>
             <span class="col-2">
                 {{ Math.round(getRatio(sumScores.longpage.complete, sumScores.longpage.count)) }}% gelesen
             </span>
-            <span v-if="aple1801.includes($store.state.courseid)" class="col-2">
+            <span v-if="is1801Course()" class="col-2">
                 {{  Math.round(getRatio(sumScores.quiz.complete, sumScores.quiz.count)) }}% erledigt
             </span>
             <span class="col-2">
                 {{  Math.round(getRatio(sumScores.assign.complete, sumScores.assign.count)) }}% erledigt
             </span>
-            <span v-if="!controlgroup" class="col-3">
+            <span v-if="research_condition != 'control_group'" class="col-3">
                 {{ getNumberOfReflectedSections() }}/{{ sectionnames.length }} erledigt
             </span>
         </div>
@@ -259,6 +259,7 @@
 
 import WidgetHeading from "../WidgetHeading.vue";
 import Communication from "../../scripts/communication";
+import {mapState, mapGetters} from 'vuex';
 
 
 export default {
@@ -268,9 +269,7 @@ export default {
 
     data: function () {
         return {
-            aple1801: [], // dummy
             currentGoal: 'mastery', // dummy
-            controlgroup: false,
             color: {
                 default: '#CED4DA',//'#7cc0d8',
                 orange: '#B1D9F9',//'#e79c63',
@@ -332,22 +331,21 @@ export default {
     },
 
     mounted: function () {
-        // assign user to the control group if their user id is even 
-        this.controlgroup = this.$store.state.userid % 2 == 0 ? true : false;
-        // do not assign user to the control group if they are not in the course 24 (operating systems etc.)
-        this.controlgroup = this.aple1801.includes(this.$store.state.courseid) ? this.controlgroup : false;
-        // do not assign user to the control group if they are accessing the system on localhost
-        this.controlgroup = window.location.hostname == 'localhost' ? false : this.controlgroup;
-
         this.loadCourseData();
         this.loadReflection();
     },
 
+    computed: {
+        ...mapState(['courseid', 'userid', 'research_condition']),
+    },
+
     methods: {
+        ...mapGetters(['is1801Course']),
+
         loadCourseData: async function () {
             const response = await Communication.webservice(
                 'overview',
-                { courseid: this.$store.getters.getCourseid }
+                { courseid: this.courseid }
             );
             if (response.success) {
                 response.data = JSON.parse(response.data)
@@ -592,7 +590,7 @@ export default {
         loadReflection: async function () {
             const response = await Communication.webservice(
                 'reflectionread',
-                { 'courseid': this.$store.getters.getCourseid }
+                { 'courseid': this.courseid }
             );
             if (response.success) {
                 this.reflections = JSON.parse(response.data);
@@ -611,7 +609,7 @@ export default {
                 'reflectioncreate',
                 {
                     data: {
-                        'course': this.$store.getters.getCourseid,
+                        'course': this.courseid,
                         'section': parseInt(this.currentReflectionSection, 10),
                         'reflection': this.reflection
                     }
