@@ -40,13 +40,13 @@
             </a>
         </div>
         <div class="py-1">
-            <a :href="activity.url" @click="log({key: 'activity-popover-follow-link', value: {id: activity.id, name: activity.name }})">
+            <a :href="activity.url" @click="clickLink()">
                 Gehe zu {{ activity.name }}
                 <i aria-hidden="true" class="fa fa-arrow-right"></i>
             </a>
         </div>
         <div class="py-1">
-            <button class="btn btn-outline-dark btn-sm" @click="addToTaskList()">
+            <button class="btn btn-outline-dark btn-sm" @click="addToTaskList(activity.url)">
                 <i class="fa fa-star-o"></i>
                 Zur Aufgabenliste hinzufügen
             </button>
@@ -54,17 +54,8 @@
     </div>
 </template>
 
-<script setup>
-const emit = defineEmits('log');
-
-const log = () => {
-  emit('log')
-}
-</script>
-
 <script>
 import Communication from "../scripts/communication";
-
 
 export default {
     name: "PopoverContent",
@@ -72,14 +63,6 @@ export default {
     props: {
         activity: { type: Object, required: true },
         courseid: { type: Number, required: true }
-    },
-    setup (props, context) {
-        const log = (event) => {
-            context.emit("log", event.target.value)
-        }
-        return {
-            log
-        }
     },
     data() {
         return {
@@ -95,8 +78,8 @@ export default {
     },
 
     methods: {
+        
         async updateUnderstanding(newVal) {
-            this.$emit('log', {key: 'activity-popover-rate-understanding', value: {id: this.activity.id, name: this.activity.name, understanding: newVal }} );
             if (this.courseid == undefined || this.id == undefined || newVal == undefined) {
                 return;
             }
@@ -120,14 +103,25 @@ export default {
         },
 
         addToTaskList(url) {
-            this.log({key: 'activity-popover-addToTaskList', value: {id: this.activity.id, name: this.activity.name }});
+            
             this.$emit('add-to-task-list', {
                 course: this.courseid,
+                id: this.activity.id,
+                name: this.activity.name,
                 task: '<a href="' + url + '">' + this.activity.name + '</a>',
                 //task: '<a href="https://heise.de/">'+this.activity.name+'</a>',
                 completed: this.completed ? 1 : 0,
                 duedate: null,
             });
+        },
+
+        clickLink(){
+            this.$emit('logg', 
+                {
+                    key: 'activity-popover-follow-link', 
+                    value: {id: this.activity.id, name: this.activity.name }
+                }
+            );
         }
     }
 }

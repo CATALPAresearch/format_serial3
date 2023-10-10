@@ -91,7 +91,7 @@
                         class="">Alles verstanden</span></div>
             </div>
         </div>
-        <PopoverContent class="d-none" :activity="{}" :courseid="$store.getters.getCourseid" @log="log"></PopoverContent>
+        <PopoverContent class="d-none" :activity="{}" :courseid="$store.getters.getCourseid" @log="logg"></PopoverContent>
     </div>
 </template>
 
@@ -238,6 +238,7 @@ export default {
             
 
         popoverContent(activity) {
+            let _this = this;
             if (this.popoverComponent) {
                 const PopoverComponent = Vue.extend(this.popoverComponent)
 
@@ -249,8 +250,10 @@ export default {
                 }).$mount()
 
                 popover.$on('understanding-updated', (understanding, activityId) => {
+                    
                     this.courseData[activityId].rating = Number(understanding)
-
+                    _this.log({key: 'activity-popover-rate-understanding', value: {id: this.courseData[activityId].id, name: this.courseData[activityId].name, understanding: understanding }} );
+                    
                     if (understanding === 0) {
                         this.courseData[activityId].completion = 0
                     } else {
@@ -259,7 +262,14 @@ export default {
                 })
 
                 popover.$on('add-to-task-list', task => {
+                    _this.log({key: 'activity-popover-addToTaskList', value: {id: task.id, name: task.name }});
+                    delete task.id;
+                    delete task.name;
                     this.addItem(task)
+                });
+
+                popover.$on('logg', payload => {
+                    _this.log(payload);
                 });
 
                 return popover.$el

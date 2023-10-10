@@ -27,7 +27,7 @@ export default function (courseId, options) {
     /**
      * Adds a message to the log by constructing a log entry
      */
-    this.add = function (action, msg) {
+    this.add = function (action, msg) { 
         if (typeof msg === 'string') {
             //console.log('warning: uncaptured log entry: ' + msg);
             //return;
@@ -116,7 +116,6 @@ export default function (courseId, options) {
      * Makes an AJAX call to send the log data set to the server
      */
     this.sendLog = function (entry) {
-        console.log('loggt wirklich')
         let _this = this;
         ajax.call([{
             methodname: 'format_serial3_logger',

@@ -104,17 +104,21 @@ export default {
 
     methods: {
         ...mapActions('taskList', ['getItems', 'addItem', 'updateItem', 'deleteItem', 'toggleItem']),
+        ...mapActions(['log']),
 
         updateDate(item) {
-            this.updateItem(item)
+            this.updateItem(item);
+            this.log({key:"widget-taskslist-update", value: item});
         },
 
         toggleTask(item) {
+            this.log({key:"widget-taskslist-completion", value: item});
             this.toggleItem(item)
         },
 
         deleteTask(item) {
             this.deleteItem(item);
+            this.log({key:"widget-taskslist-delete", value: item});
         },
 
         addTask() {
@@ -127,6 +131,7 @@ export default {
             this.addItem(newItem)
             this.newItem = ''
             this.newDate = ''
+            this.log({key:"widget-taskslist-add", value: newItem});
         },
     }
 }

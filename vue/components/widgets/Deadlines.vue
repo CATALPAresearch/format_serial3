@@ -52,6 +52,7 @@
 <script>
 import WidgetHeading from "../WidgetHeading.vue";
 import Communication from "../../scripts/communication";
+import { mapActions } from 'vuex';
 
 
 export default {
@@ -79,6 +80,8 @@ export default {
         },
 
         filteredDeadlines() {
+            this.log({key:"widget-deadlines-filter", value: this.currentFilterType});
+            
             let deadlines = [];
             if (this.currentFilterType === "Alle") {
                 deadlines = this.allDeadlines;
@@ -100,6 +103,7 @@ export default {
     },
 
     methods: {
+        ...mapActions(['log']),
         async getCalendarData() {
             const response = await Communication.webservice(
                 'getcalendar',
