@@ -33,9 +33,9 @@ export default {
 			);
 			if (!response.success) {
 				if (response.data) {
-					console.log('Faulty response of webservice /logger/', response.data);
+					console.log('Faulty response of webservice /save_dashboard_settings/', response.data);
 				} else {
-					console.log('No connection to webservice /logger/');
+					console.log('No connection to webservice /save_dashboard_settings/');
 				}
 			}
 		},

@@ -122,9 +122,9 @@ export default {
 				context.commit('setUserUnderstanding', JSON.parse(response.data));
 			} else {
 				if (response.data) {
-					console.log('Faulty response of webservice /logger/', response.data);
+					console.log('Faulty response of webservice /get_user_understanding/', response.data);
 				} else {
-					console.log('No connection to webservice /logger/');
+					console.log('No connection to webservice /get_user_understanding/');
 				}
 			}
 		},
@@ -219,9 +219,9 @@ export default {
 				context.commit('setSocialActivity', numberOfUserPosts);
 			} else {
 				if (response.data) {
-					console.log('Faulty response of webservice /logger/', response.data);
+					console.log('Faulty response of webservice /get_forum_posts/', response.data);
 				} else {
-					console.log('No connection to webservice /logger/');
+					console.log('No connection to webservice /get_forum_posts/');
 				}
 			}
 		},

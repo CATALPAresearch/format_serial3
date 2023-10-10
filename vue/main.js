@@ -19,6 +19,7 @@ function init(courseid, fullPluginName, userid, isModerator, policyAccepted) {
 	store.dispatch("fetchLearnerGoal");
 	store.dispatch('learnermodel/loadUserUnderstanding');
 	store.dispatch('learnermodel/calculateLearnerModel');
+	store.dispatch("setupLogger");
 
 	const currenturl = window.location.pathname;
 	const base =
@@ -27,11 +28,21 @@ function init(courseid, fullPluginName, userid, isModerator, policyAccepted) {
 		courseid +
 		"/";
 
-	new Vue({
-		el: "#app",
-		store,
-		render: (h) => h(App),
-	});
+	console.log('-- policy accepted? '+policyAccepted)
+	if (policyAccepted == false && courseid == 42) {
+		$('.activity.quiz.modtype_quiz').hide();
+		$('.activity.modtype_longpage').hide();
+		$('.activity.modtype_usenet').hide();
+		$('.activity.modtype_safran').hide();
+	} else {
+		new Vue({
+			el: "#app",
+			store,
+			render: (h) => h(App),
+		});
+	}
+
+	
 }
 
 export {init};

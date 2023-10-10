@@ -64,9 +64,9 @@ export default {
 				commit('addItem', item);
 			} else {
 				if (response.data) {
-					console.log('Faulty response of webservice /logger/', response.data);
+					console.log('Faulty response of webservice /create_task/', response.data);
 				} else {
-					console.log('No connection to webservice /logger/');
+					console.log('No connection to webservice /create_task/');
 				}
 			}
 		},
@@ -82,9 +82,9 @@ export default {
 				commit('deleteItem', item);
 			} else {
 				if (response.data) {
-					console.log('Faulty response of webservice /logger/', response.data);
+					console.log('Faulty response of webservice /delete_task/', response.data);
 				} else {
-					console.log('No connection to webservice /logger/');
+					console.log('No connection to webservice /delete_task/');
 				}
 			}
 		},
@@ -102,9 +102,9 @@ export default {
 				commit('updateItem', item);
 			} else {
 				if (response.data) {
-					console.log('Faulty response of webservice /logger/', response.data);
+					console.log('Faulty response of webservice /update_task/', response.data);
 				} else {
-					console.log('No connection to webservice /logger/');
+					console.log('No connection to webservice /update_task/');
 				}
 			}
 		},
@@ -125,9 +125,9 @@ export default {
 				commit('updateItem', updatedItem);
 			} else {
 				if (response.data) {
-					console.log('Faulty response of webservice /logger/', response.data);
+					console.log('Faulty response of webservice /update_task/', response.data);
 				} else {
-					console.log('No connection to webservice /logger/');
+					console.log('No connection to webservice /update_task/');
 				}
 			}
 		},

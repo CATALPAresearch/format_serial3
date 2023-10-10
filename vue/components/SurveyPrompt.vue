@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div v-if='surveyRequired && is1801Course()' class='modal fade' id='questionnaireModal'
+        <div v-if='surveyRequired && is1801Course() && !getisModerator()' class='modal fade' id='questionnaireModal'
                 data-keyboard='false' data-backdrop='static' tabindex='-1' role='dialog'
                 aria-labelledby='questionnaireModalLabel' aria-hidden='true'>
             <div class='modal-dialog modal-lg modal-dialog-centered' role='document'>
@@ -43,7 +43,7 @@ export default {
     },
 
     methods: {
-        ...mapGetters(['is1801Course', 'isModerator']),
+        ...mapGetters(['is1801Course', 'getisModerator']),
 
         prepareSurvey: async function () {
             
@@ -62,15 +62,16 @@ export default {
                     moduleid: this.questionnaireid[this.courseid]
                 }
             );
+            // console.log('Questionnaire? ', response, this.is1801Course(), this.getisModerator(), this.surveyRequired)
             if (response.success) {
                 response.data = JSON.parse(response.data);
                 if (response.data.submitted) {
-                    console.log('Questionnaire was submitted at ' + response.data.submitted);
+                    // console.log('Questionnaire was submitted at ' + response.data.submitted);
                 } else if (this.is1801Course()) {
+                    // console.log('Questionnaire? show modal')
                     $('#questionnaireModal').modal('show');
                     //$('body').prepend('<a target='new' class='btn btn-lg fixed-top w-50 survey-button' href='https://aple.fernuni-hagen.de/mod/questionnaire/view.php?id='+ this.questionnaireid +''>Helfen Sie uns das Lernangebot zu verbessern und nehmen Sie an unserer Befragung teil.</a>');
                 }
-
             } else {
                 if (response.data) {
                     console.log('Faulty response of webservice /get_surveys/', response.data);

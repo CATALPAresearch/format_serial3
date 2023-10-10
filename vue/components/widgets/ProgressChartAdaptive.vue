@@ -50,9 +50,7 @@
                         v-if="isIncludedActivity(activity.type)" 
                         v-for="activity in currentActivities[type]" 
                         :key="activity.id" 
-                        
                         class="position-relative"
-                        
                         >
                         <button id="'popover' + activity.id" 
                             ref="popoverButton" 
@@ -60,6 +58,7 @@
                             class="subject-progress__popover" 
                             data-placement="bottom" 
                             data-toggle="popover" 
+                            @click="log({key: 'activity-popover-show', value: {id: activity.id, name: activity.name }})"
                             type="button"
                             :title="activity.completion !== 0 ? activity.name + ' (bereits bearbeitet)': activity.name"
                             >
@@ -71,7 +70,8 @@
                                 'activity-completed': activity.completion !== 0
                                 }" 
                                 :title="activity.name" 
-                                data-toggle="tooltip" data-placement="top"
+                                data-toggle="tooltip" 
+                                data-placement="top"
                                 class="completion-rect"
                                 ></span>
                         </button>
@@ -91,7 +91,7 @@
                         class="">Alles verstanden</span></div>
             </div>
         </div>
-        <PopoverContent class="d-none" :activity="{}" :courseid="$store.getters.getCourseid"></PopoverContent>
+        <PopoverContent class="d-none" :activity="{}" :courseid="$store.getters.getCourseid" @log="log"></PopoverContent>
     </div>
 </template>
 
@@ -234,6 +234,8 @@ export default {
 
     methods: {
         ...mapActions('taskList', ['addItem']),
+        ...mapActions(['log']),
+            
 
         popoverContent(activity) {
             if (this.popoverComponent) {
@@ -292,6 +294,7 @@ export default {
         setCurrentSection(section) {
             this.currentSection = section;
             this.$store.commit('overview/setCurrentSection', section);
+            this.log({key: 'progress-chart-select-section', value: section});
         },
 
         /**

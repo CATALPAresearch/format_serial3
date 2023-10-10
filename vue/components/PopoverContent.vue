@@ -40,7 +40,7 @@
             </a>
         </div>
         <div class="py-1">
-            <a :href="activity.url">
+            <a :href="activity.url" @click="log({key: 'activity-popover-follow-link', value: {id: activity.id, name: activity.name }})">
                 Gehe zu {{ activity.name }}
                 <i aria-hidden="true" class="fa fa-arrow-right"></i>
             </a>
@@ -54,9 +54,17 @@
     </div>
 </template>
 
+<script setup>
+const emit = defineEmits('log');
+
+const log = () => {
+  emit('log')
+}
+</script>
 
 <script>
 import Communication from "../scripts/communication";
+
 
 export default {
     name: "PopoverContent",
@@ -65,7 +73,14 @@ export default {
         activity: { type: Object, required: true },
         courseid: { type: Number, required: true }
     },
-
+    setup (props, context) {
+        const log = (event) => {
+            context.emit("log", event.target.value)
+        }
+        return {
+            log
+        }
+    },
     data() {
         return {
             rating: this.activity.rating,
@@ -81,6 +96,7 @@ export default {
 
     methods: {
         async updateUnderstanding(newVal) {
+            this.$emit('log', {key: 'activity-popover-rate-understanding', value: {id: this.activity.id, name: this.activity.name, understanding: newVal }} );
             if (this.courseid == undefined || this.id == undefined || newVal == undefined) {
                 return;
             }
@@ -104,6 +120,7 @@ export default {
         },
 
         addToTaskList(url) {
+            this.log({key: 'activity-popover-addToTaskList', value: {id: this.activity.id, name: this.activity.name }});
             this.$emit('add-to-task-list', {
                 course: this.courseid,
                 task: '<a href="' + url + '">' + this.activity.name + '</a>',

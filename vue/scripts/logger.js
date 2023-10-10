@@ -29,8 +29,8 @@ export default function (courseId, options) {
      */
     this.add = function (action, msg) {
         if (typeof msg === 'string') {
-            console.log('warning: uncaptured log entry: ' + msg);
-            return;
+            //console.log('warning: uncaptured log entry: ' + msg);
+            //return;
         }
         var time = this.getLogTime();
         var logEntry = {
@@ -116,9 +116,10 @@ export default function (courseId, options) {
      * Makes an AJAX call to send the log data set to the server
      */
     this.sendLog = function (entry) {
+        console.log('loggt wirklich')
         let _this = this;
         ajax.call([{
-            methodname: 'format_lattopics_log',
+            methodname: 'format_serial3_logger',
             args: {
                 data: {
                     courseid: _this.courseId,
@@ -128,7 +129,7 @@ export default function (courseId, options) {
                 }
             },
             done: function (msg) {
-                 //console.log('server log ok ', msg);
+                 console.log('server log ok ', msg);
             },
             fail: function (e) {
                 console.error('fail', e);

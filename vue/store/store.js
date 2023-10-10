@@ -4,6 +4,7 @@ import moodleAjax from 'core/ajax';
 import moodleStorage from 'core/localstorage';
 import Notification from 'core/notification';
 import $ from 'jquery';
+import Logger from "../scripts/logger";
 
 import dashboardSettings from './dashboardSettings';
 import taskList from './taskList';
@@ -26,13 +27,14 @@ export const store = new Vuex.Store({
 
 	state: {
 		pluginName: '',
+		logger: null,
 		courseModuleID: 0,
 		contextID: 0,
 		courseid: 0,
 		userid: -1,
 		research_condition: 'control_groupX',
 		aple1801courses: [2, 5, 8, 9, 20, 24, 26, 42],
-		surveyRequired: false,
+		surveyRequired: true,
 		surveyLink: '',
 		questionnaireid: { 2: 0, 5: 0, 8: 0, 9: 0, 20: 0, 24: 0, 26: 1659, 42: 4046 },
 
@@ -160,6 +162,20 @@ export const store = new Vuex.Store({
 		},
 	},
 	actions: {
+		setupLogger(context){
+			context.state.logger = new Logger(context.state.courseId, {
+				context: context.state.pluginName,
+				outputType: 1,
+				url: context.state.url
+			});
+			context.state.logger.init();
+		},
+		
+		log(context, {key, value}){  
+			console.log('logged: ', key, value);
+            var a = context.state.logger ? context.state.logger.add(key, value) : null;
+        },
+		
 		/**
 		 * Fetches the i18n data for the current language.
 		 *
