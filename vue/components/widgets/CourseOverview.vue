@@ -61,7 +61,14 @@
                 <span v-if="section.hypervideo" class="mb-1"
                     style="display:block;position:relative;width:100%;height:15px;background-color:#eee;">
                     <span
-                        :style="'position:absolute;background-color:'+getBarColor('hypervideo_completion', getRatio(section.hypervideo.complete, section.hypervideo.count))+';display:block;height:100%;width:'+ getRatio(section.hypervideo.complete, section.hypervideo.count, 100) +'%;'">
+                        :style="{
+                            'position': 'absolute',
+                            'background-color': getBarColor('hypervideo_completion', getRatio(section.hypervideo.complete, section.hypervideo.count)),
+                            'color': getBarFontColor('hypervideo_completion', getRatio(section.hypervideo.complete, section.hypervideo.count)),
+                            'display':'block',
+                            'height': '100%',
+                            'width': getRatio(section.hypervideo.complete, section.hypervideo.count, 100) + '%'
+                        }">
                     </span>
                     <span class="p-1 d-none d-md-block"
                         style="z-index:10;position:absolute;color:#222;font-size:0.7rem;vertical-align:middle;display:block;height:100%;">
@@ -75,10 +82,24 @@
                 <span v-if="section.longpage" class="mb-1"
                     style="display:block;position:relative;width:100%;height:15px;background-color:#eee;">
                     <span
-                        :style="'position:absolute;background-color:'+getBarColor('longpage_completion', getRatio(section.longpage.complete, section.longpage.count, 100))+';display:block;height:100%;width:'+ getRatio(section.longpage.complete, section.longpage.count, 100) +'%;'">
+                        :style="{
+                            'position': 'absolute',
+                            'background-color': getBarColor('longpage_completion', getRatio(section.longpage.complete, section.longpage.count)),
+                            'display': 'block',
+                            'height': '100%',
+                            'width': getRatio(section.longpage.complete, section.longpage.count, 100) + '%'
+                        }">
                     </span>
                     <span class="p-1 d-none d-md-block"
-                        style="z-index:10;position:absolute;color:#222;font-size:0.7rem;vertical-align:middle;display:block;height:100%;">
+                        :style="{
+                            'z-index': 10,
+                            'position': 'absolute',
+                            'color': getBarFontColor('longpage_completion', getRatio(section.longpage.complete, section.longpage.count)),
+                            'font-size': '0.7rem',
+                            'vertical-align': 'middle',
+                            'display': 'block',
+                            'height': '100%'
+                            }">
                         {{ Math.round(getRatio(section.longpage.complete, section.longpage.count, 100)) }}% gelesen
                     </span>
                 </span>
@@ -89,10 +110,25 @@
                 <span v-if="section.quiz" class="mb-1"
                     style="display:block;position:relative;width:100%;height:15px;background-color:#eee;">
                     <span
-                        :style="'position:absolute;background-color:'+getBarColor('quiz_completion', getRatio(section.quiz.complete, section.quiz.count))+';display:block;height:100%;width:'+ getRatio(section.quiz.complete, section.quiz.count, 100) +'%;'">
+                        :style="{
+                            'position': 'absolute',
+                            'background-color': getBarColor('quiz_completion', getRatio(section.quiz.complete, section.quiz.count)),
+                            'color': getBarFontColor('quiz_completion', getRatio(section.quiz.complete, section.quiz.count)),
+                            'display':'block',
+                            'height': '100%',
+                            'width': getRatio(section.quiz.complete, section.quiz.count, 100) + '%'
+                        }">
                     </span>
                     <span class="p-1 d-none d-md-block"
-                        style="z-index:10;position:absolute;color:#222;font-size:0.7rem;vertical-align:middle;display:block;height:100%;">
+                        :style="{
+                            'z-index': 10,
+                            'position': 'absolute',
+                            'color': getBarFontColor('quiz_completion', getRatio(section.quiz.complete, section.quiz.count)),
+                            'font-size': '0.7rem',
+                            'vertical-align': 'middle',
+                            'display': 'block',
+                            'height': '100%'
+                            }">
                         {{ section.quiz.complete }} von {{ section.quiz.count }} bearbeitet
                     </span>
                 </span>
@@ -102,7 +138,15 @@
                         :style="'position:absolute;background-color:'+getBarColor('quiz_score', section.quiz.achieved_score)+';display:block;height:100%;width:'+ getRatio(section.quiz.achieved_score, section.quiz.max_score, 100) +'%;'">
                     </span>
                     <span class="p-1 d-none d-md-block"
-                        style="z-index:10;position:absolute;color:#222;font-size:0.7rem;vertical-align:middle;display:block;height:100%;">
+                        :style="{
+                            'z-index': 10,
+                            'position': 'absolute',
+                            'color': getBarFontColor('quiz_completion', getRatio(section.quiz.complete, section.quiz.count)),
+                            'font-size': '0.7rem',
+                            'vertical-align': 'middle',
+                            'display': 'block',
+                            'height': '100%'
+                            }">
                         {{ section.quiz.achieved_score }} , {{section.quiz.max_score }}% korrekt
                     </span>
                 </span>
@@ -113,10 +157,25 @@
                 <span v-if="section.assign" class="mb-1"
                     style="display:block;position:relative;width:100%;height:15px;background-color:#eee;">
                     <span
-                        :style="'position:absolute;background-color:'+getBarColor('assign_completion', getRatio(section.assign.complete, section.assign.count))+';display:block;height:100%;width:'+ getRatio(section.assign.complete, section.assign.count, 100) +'%;'">
+                        :style="{
+                            'position': 'absolute',
+                            'background-color': getBarColor('assign_completion', getRatio(section.assign.complete, section.assign.count)),
+                            'color': getBarFontColor('assign_completion', getRatio(section.assign.complete, section.assign.count)),
+                            'display':'block',
+                            'height': '100%',
+                            'width': getRatio(section.assign.complete, section.assign.count, 100) + '%'
+                        }">
                     </span>
                     <span class="p-1 d-none d-md-block"
-                        style="z-index:10;position:absolute;color:#222;font-size:0.7rem;vertical-align:middle;display:block;height:100%;">
+                    :style="{
+                            'z-index': 10,
+                            'position': 'absolute',
+                            'color': getBarFontColor('assign_completion', getRatio(section.assign.complete, section.assign.count)),
+                            'font-size': '0.7rem',
+                            'vertical-align': 'middle',
+                            'display': 'block',
+                            'height': '100%'
+                            }">
                         {{ section.assign.complete }} von {{ section.assign.count }} bearbeitet
                     </span>
                 </span>
@@ -125,8 +184,15 @@
                     <span
                         :style="'position:absolute;background-color:'+getBarColor('assign_score', getRatio(section.assign.achieved_score, section.assign.max_score))+';display:block;height:100%;width:'+ getRatio(section.assign.achieved_score, section.assign.max_score, 100) +'%;'">
                     </span>
-                    <span class="p-1 d-none d-md-block"
-                        style="z-index:10;position:absolute;color:#222;font-size:0.7rem;vertical-align:middle;display:block;height:100%;">
+                    <span class="p-1 d-none d-md-block" :style="{
+                            'z-index': 10,
+                            'position': 'absolute',
+                            'color': getBarFontColor('assign_completion', getRatio(section.assign.complete, section.assign.count)),
+                            'font-size': '0.7rem',
+                            'vertical-align': 'middle',
+                            'display': 'block',
+                            'height': '100%'
+                            }">
                         {{ Math.round(getRatio(section.assign.achieved_score, section.assign.max_score), 0) }}% korrekt
                     </span>
                 </span>
@@ -134,8 +200,11 @@
             </div>
             <div v-if="research_condition != 'control_group'" class="col-3 mb-1" style="border: solid #111 0pt;">
                 <!-- Reflection task -->
-                <button class="btn btn-default" :disabled="sectionMinimumAchived(section.id) == false"
-                    :style="'display:block; width:100%; height:30px; color:#222; background-color:' + getReflectionButtonColor(section.id) +';' "
+                <button class="btn btn-default reflection-btn" :disabled="sectionMinimumAchived(section.id) == false"
+                    :style="{
+                        'color': getReflectionButtonFontColor(section.id),
+                        'background-color': getReflectionButtonColor(section.id)  
+                    }"
                     data-toggle="modal" data-target="#refelctionModal" @click="setCurrentReflectionSection(index)">
                     <span class="d-none d-md-block">Reflexion</span>
                 </button>
@@ -172,7 +241,7 @@
                 <form @submit.prevent="saveReflection">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="refelctionModalLabel">Abschlussreflektion zu KE {{ currentReflectionSection }}</h5>
+                            <h5 class="modal-title" id="refelctionModalLabel">Abschlussreflexion zu KE {{ currentReflectionSection }}</h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Schließen">
                                 <span aria-hidden="true">&times;</span>
                             </button>
@@ -275,6 +344,12 @@ export default {
                 orange: '#B1D9F9',//'#e79c63',
                 green: '#06375E',//'#88c2b7',
                 yellow: '#2487D3',//'#e7c87a'
+            },
+            fontcolor: {
+                default: '#222',//'#7cc0d8',
+                orange: '#222',//'#e79c63',
+                green: '#fff',//'#88c2b7',
+                yellow: '#fff',//'#e7c87a'
             },
             sections: [],
             dashboardsectionexclude: [],
@@ -437,7 +512,8 @@ export default {
                 }
             }
             stats = stats.filter(function (n) { return n; });
-            this.sectionnames = this.sectionnames.filter(function (n) { return n; });
+            
+            
             //
             let out = [];
             let sum = {
@@ -498,6 +574,15 @@ export default {
             }
             this.sumScores = sum;
             
+            
+            // reduce the number of sections
+            for(let i = 0; i < this.sectionnames.length; i++) {
+                if(!this.sectionnames[i].includes('Kurseinheit')){
+                    this.sectionnames.splice(i, 1);
+                }
+            }
+            
+
             return out;
         },
         shortenTitle: function(title){
@@ -538,6 +623,18 @@ export default {
                 return this.color.yellow;
             }
         },
+        getBarFontColor: function (type, ratio) {
+            if (this.currentGoal == 'overview') {
+                return this.fontcolor.default;
+            }
+            if (ratio < this.goals[this.currentGoal][type].low) {
+                return this.fontcolor.orange;
+            } else if (ratio > this.goals[this.currentGoal][type].med) {
+                return this.fontcolor.green;
+            } else {
+                return this.fontcolor.yellow;
+            }
+        },
         /**
          * Green color – when Reflection task is done.
          * Yellow color – when the time is to reflect – assign_completion 45 (for passing) or 65 (for mastery).
@@ -566,6 +663,28 @@ export default {
             }
             // default
             return '#ddd';
+        },
+        getReflectionButtonFontColor: function (section_id) {
+            if (this.reflectionOfSectionDone(section_id)) {
+                return this.currentGoal == 'overview' ? this.fontcolor.default : this.fontcolor.green;
+            }
+            if (this.sectionMinimumAchived(section_id)) {
+                let sum = 0;
+                for (let i = section_id + 1; i < this.sections.length; i++) {
+                    var res = this.stats.filter(function (d) { return d.id == i })[0];
+                    if (res == null) {
+                        continue;
+                    }
+                    sum += res.hasOwnProperty('quiz') ? res.quiz.complete / res.quiz.count * 100 : 0;
+                    sum += res.hasOwnProperty('assign') ? res.assign.complete / res.assign.count * 100 : 0;
+                    if (sum > 20) {
+                        return this.fontcolor.orange;
+                    }
+                }
+                return this.fontcolor.yellow;
+            }
+            // default
+            return '#222';
         },
         sectionMinimumAchived: function (sectionId) {
             return true;
@@ -651,7 +770,7 @@ export default {
 </script>
 
 
-<style>
+<style scoped>
 .word-wrap {
 
     /* These are technically the same, but use both */
@@ -677,6 +796,10 @@ export default {
 
 .modal-backdrop.show{
     z-index: -22;
+}
+
+.reflection-btn{
+    display:block; width:100%; height:30px; color:#222; 
 }
 </style>
 
