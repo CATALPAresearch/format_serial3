@@ -3,7 +3,6 @@ import Vuex from 'vuex';
 import moodleAjax from 'core/ajax';
 import moodleStorage from 'core/localstorage';
 import Notification from 'core/notification';
-import $ from 'jquery';
 import Logger from "../scripts/logger";
 
 import dashboardSettings from './dashboardSettings';
@@ -136,9 +135,9 @@ export const store = new Vuex.Store({
 		getModeratorStatus: function (state) {
 			return state.isModerator;
 		},
-		getAlertType: function (state) {
+		/*getAlertType: function (state) {
 			return `alert-${state.alert.type}`;
-		},
+		},*/
 		getAlertState: function (state) {
 			return state.alert.show;
 		},
@@ -183,7 +182,8 @@ export const store = new Vuex.Store({
 		 * @returns {Promise<void>}
 		 */
 		async loadComponentStrings(context) {
-			const lang = $('html').attr('lang').replace(/-/g, '_');
+			const html = document.getElementsByTagName('html');
+			const lang = html[0].getAttribute('lang').replace(/-/g, '_');
 			const cacheKey = 'format_serial3/strings/' + lang;
 			const cachedStrings = moodleStorage.get(cacheKey);
 			if (cachedStrings) {
