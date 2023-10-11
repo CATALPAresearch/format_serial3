@@ -171,8 +171,7 @@ export const store = new Vuex.Store({
 		},
 		
 		log(context, {key, value}){  
-			console.log('logged: ', key, value);
-            var a = context.state.logger ? context.state.logger.add(key, value) : null;
+			var a = context.state.logger ? context.state.logger.add(key, value) : null;
         },
 		
 		/**
