@@ -1,7 +1,11 @@
 <template>
     <div class="mr-5">
         <h5 v-if="mode!='minimal'"><i :class="'fa pr-2 ' + classOfCategory[recommendation.category]"></i>{{ recommendation.title }}</h5>
-        <p @click="set_rule_response('click', 'description')" v-html="recommendation.description"></p>
+        <p 
+            @click="set_rule_response('click', 'description')" 
+            v-html="recommendation.description"
+            :style="{ 'color': recommendation.valid ? '#222' : '#555' }"
+            ></p>
         <div class="dropdown">
             <div
                 id="dropdownThumbsup"
