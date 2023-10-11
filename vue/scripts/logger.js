@@ -128,7 +128,7 @@ export default function (courseId, options) {
                 }
             },
             done: function (msg) {
-                 console.log('server log ok ', msg);
+                //console.log('server log ok ', msg);
             },
             fail: function (e) {
                 console.error('fail', e);
