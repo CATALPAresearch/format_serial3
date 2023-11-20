@@ -235,6 +235,7 @@
         
 
         <!-- MODAL POPUP for REFLECTIONS -->
+        <Teleport to="body">
         <div class="modal fade" id="refelctionModal" tabindex="-1" role="dialog" aria-labelledby="refelctionModalLabel"
             aria-hidden="true">
             <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
@@ -319,6 +320,7 @@
                 </form>
             </div>
         </div>
+        </Teleport>
     </div>
 </template>
 
@@ -329,12 +331,16 @@
 import WidgetHeading from "../WidgetHeading.vue";
 import Communication from "../../scripts/communication";
 import {mapState, mapGetters} from 'vuex';
+import Teleport from 'vue2-teleport';
 
 
 export default {
     name: 'WidgetCourseOverview',
     props: ['course', 'log', 'surveyRequired', 'surveyLink'],
-    components: {WidgetHeading},
+    components: {
+        WidgetHeading,
+        Teleport
+    },
 
     data: function () {
         return {
@@ -770,7 +776,7 @@ export default {
 </script>
 
 
-<style scoped>
+<style>
 .word-wrap {
 
     /* These are technically the same, but use both */
@@ -794,8 +800,12 @@ export default {
   content: "\f0d7";
 }
 
-.modal-backdrop.show{
-    z-index: -22;
+.modal-backdrop {
+    z-index: -6  !important;
+}
+
+.modal {
+    z-index: 1000;
 }
 
 .reflection-btn{
