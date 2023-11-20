@@ -429,7 +429,7 @@ export default {
       // FIXME: add the current semester as a parameter of the path instead of "SS23"
       var path =
         wwwroot +
-        "/local/ari/lm_get_user_data.php?format=json&&period=SS23&course_id=" +
+        "/local/ari/lm/learner_model.php?format=json&period=SS23&course_id=" +
         parseInt(this.$store.getters.getCourseid, 10) +
         "&user_id=" +
         parseInt(this.$store.getters.getUserid, 10);

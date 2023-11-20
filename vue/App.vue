@@ -49,7 +49,7 @@
     >
       <grid-item
         v-for="(item, index) in layout"
-        :id="'widget-'+item.c"
+        :id="'widget-' + item.c"
         :key="index"
         :h="item.h"
         :i="item.i"
@@ -119,7 +119,7 @@ export default {
         {
           x: 0,
           y: 0,
-          w: 8,
+          w: 7,
           h: 12,
           i: "10",
           name: "Adaptiver Überblick",
@@ -129,9 +129,9 @@ export default {
           moved: false,
         },
         {
-          x: 8,
+          x: 7,
           y: 0,
-          w: 6,
+          w: 5,
           h: 12,
           i: "2",
           name: "Lernziele",
@@ -151,7 +151,7 @@ export default {
           moved: false,
         },
         {
-          x: 10,
+          x: 5,
           y: 12,
           w: 4,
           h: 10,
@@ -162,9 +162,9 @@ export default {
           moved: false,
         },
         {
-          x: 6,
+          x: 9,
           y: 12,
-          w: 4,
+          w: 3,
           h: 10,
           i: "4",
           name: "Termine",
@@ -175,7 +175,7 @@ export default {
         {
           x: 0,
           y: 12,
-          w: 6,
+          w: 5,
           h: 10,
           i: "9",
           name: "Feedback",
@@ -192,7 +192,7 @@ export default {
           w: 8,
           h: 12,
           i: "10",
-          name: "Adaptiver Überblick",
+          name: "Überblick über den Kurs und die Kurseinheiten",
           c: "ProgressChartAdaptive",
           resizable: true,
           fixed: false,
@@ -226,7 +226,7 @@ export default {
           w: 4,
           h: 10,
           i: "3",
-          name: "Aufgabenliste",
+          name: "Aufgaben",
           c: "TaskList",
           resizable: true,
           moved: false,
@@ -248,7 +248,7 @@ export default {
           w: 6,
           h: 10,
           i: "9",
-          name: "Feedback",
+          name: "Feedback und Lernempfehlungen",
           c: "Recommendations",
           resizable: true,
           moved: false,
@@ -330,54 +330,51 @@ export default {
     ...mapGetters(["setResearchCondition"]),
     ...mapActions(["log"]),
     initObserver() {
-        if (
-            "IntersectionObserver" in window &&
-            "IntersectionObserverEntry" in window &&
-            "intersectionRatio" in window.IntersectionObserverEntry.prototype
-            ) {
-            let _this = this;
-            let options = {
-                root: null,
-                rootMargin: "0px",
-                threshold: [0.25, 0.5, 0.75, 1.0],
-                trackVisibility: true,
-                delay: 100,
-            };
+      if (
+        "IntersectionObserver" in window &&
+        "IntersectionObserverEntry" in window &&
+        "intersectionRatio" in window.IntersectionObserverEntry.prototype
+      ) {
+        let _this = this;
+        let options = {
+          root: null,
+          rootMargin: "0px",
+          threshold: [0.25, 0.5, 0.75, 1.0],
+          trackVisibility: true,
+          delay: 100,
+        };
 
-            let handleScrolling = function (entries) {
-                entries.forEach((entry) => {
-                    if (entry.isIntersecting) {
-                        console.log(
-                        entry.target.id,
-                        entry.intersectionRatio
-                        );
-                        _this.log({
-                            key: 'view-dashboard-widget', 
-                            value: { 
-                                widget: entry.target.id, 
-                                intersection: entry.intersectionRatio
-                            }
-                        });
-                    }
-                    //   entry.boundingClientRect
-                    //   entry.intersectionRatio
-                    //   entry.intersectionRect
-                    //   entry.isIntersecting
-                    //   entry.rootBounds
-                    //   entry.target
-                    //   entry.time
-                    });
-            };
+        let handleScrolling = function (entries) {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              console.log(entry.target.id, entry.intersectionRatio);
+              _this.log({
+                key: "view-dashboard-widget",
+                value: {
+                  widget: entry.target.id,
+                  intersection: entry.intersectionRatio,
+                },
+              });
+            }
+            //   entry.boundingClientRect
+            //   entry.intersectionRatio
+            //   entry.intersectionRect
+            //   entry.isIntersecting
+            //   entry.rootBounds
+            //   entry.target
+            //   entry.time
+          });
+        };
 
-            let observer = new IntersectionObserver(handleScrolling, options);
-            observer.observe(document.querySelector("#widgetGrid"));
-            $("#widgetGrid .vue-grid-item").each(function(i, val){
-                if(typeof $(this).attr('id') == 'string'){
-                    let element = "#"+$(this).attr('id');
-                    observer.observe(document.querySelector(element));
-                }
-            });
-        }
+        let observer = new IntersectionObserver(handleScrolling, options);
+        observer.observe(document.querySelector("#widgetGrid"));
+        $("#widgetGrid .vue-grid-item").each(function (i, val) {
+          if (typeof $(this).attr("id") == "string") {
+            let element = "#" + $(this).attr("id");
+            observer.observe(document.querySelector(element));
+          }
+        });
+      }
     },
     addItem(e) {
       const newItem = this.allComponents.find(
