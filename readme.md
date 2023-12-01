@@ -25,7 +25,12 @@ that can be selected and arranged to the users liking.
 2. Open the page https://<moodle>/admin/index.php?cache=1 and follow the install instructions for the plugin.
 3. Open a course of you choice and go to the *course settings* (watch out for the little cog-icon). Set the 'course
    format' to 'Serial 3'.
+   
+```bash
+# push code to test system
+rsync -r ./* aple-test:/var/moodle/htdocs/moodle/course/format/serial3 --exclude={'.env','node_modules','*.git','.DS_Store','.gitignore','.vscode'}
 
+```
 
 # Development
 
