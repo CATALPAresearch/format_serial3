@@ -801,7 +801,7 @@ export default {
 }
 
 .modal-backdrop {
-    z-index: -6  !important;
+    z-index: -46  !important;
 }
 
 .modal {
