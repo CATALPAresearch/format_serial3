@@ -86,6 +86,7 @@ import Recommendations from "./components/widgets/Recommendations.vue";
 import TaskList from "./components/widgets/TaskList.vue";
 import LearningStrategies from "./components/widgets/LearningStrategies.vue";
 import CourseOverview from "./components/widgets/CourseOverview.vue";
+import TeacherActivity from "./components/widgets/TeacherActivity.vue";
 import { GridItem, GridLayout } from "./js/vue-grid-layout.umd.min";
 import { mapState, mapGetters, mapActions } from "vuex";
 
@@ -104,6 +105,7 @@ export default {
     CourseOverview,
     LearningStrategies,
     //QuizStatistics
+    TeacherActivity,
   },
 
   data() {
@@ -116,6 +118,17 @@ export default {
       index: 0,
       editMode: false,
       defaultLayout: [
+        {
+          x: 0,
+          y: 0,
+          w: 14,
+          h: 10,
+          i: "13",
+          name: "Lehraktivität",
+          c: "TeacherActivity",
+          resizable: true,
+          moved: false,
+        },
         {
           x: 0,
           y: 0,
@@ -189,7 +202,7 @@ export default {
         {
           x: 0,
           y: 0,
-          w: 8,
+          w: 14,
           h: 12,
           i: "10",
           name: "Überblick über den Kurs und die Kurseinheiten",
@@ -244,8 +257,19 @@ export default {
         },
         {
           x: 0,
+          y: 0,
+          w: 14,
+          h: 10,
+          i: "13",
+          name: "Lehraktivität",
+          c: "TeacherActivity",
+          resizable: true,
+          moved: false,
+        },
+        {
+          x: 0,
           y: 12,
-          w: 6,
+          w: 8,
           h: 10,
           i: "9",
           name: "Feedback und Lernempfehlungen",
@@ -269,7 +293,7 @@ export default {
           x: 0,
           y: 0,
           w: 12,
-          h: 10,
+          h: 20,
           i: "11",
           name: "Lernstrategien",
           c: "LearningStrategies",

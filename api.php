@@ -2824,4 +2824,115 @@ Group by cm.id
             'data' => json_encode($result),
         );
     }
-}// end class
+
+    /*
+     * Get the lastaccess of all teachers from a course
+     **/
+    public static function get_last_access_of_teachers_of_course_parameters()
+    {
+        return new external_function_parameters([
+            'courseid' => new external_value(PARAM_INT, 'id of course'),
+        ]);
+    }
+    public static function get_last_access_of_teachers_of_course_returns()
+    {
+        return new external_single_structure(
+            array(
+                'success' => new external_value(PARAM_BOOL, 'success'),
+                'data' => new external_value(PARAM_RAW, 'data')
+            )
+        );
+    }
+    public static function get_last_access_of_teachers_of_course($courseid)
+    {
+        global $CFG, $DB, $USER;
+        $transaction = $DB->start_delegated_transaction();
+        //getting teachers of course
+        $getCourseTeachersQuery = 'SELECT DISTINCT u.id
+                    
+        FROM mdl_course c
+        JOIN mdl_context ct ON c.id = ct.instanceid
+        JOIN mdl_role_assignments ra ON ra.contextid = ct.id
+        JOIN mdl_user u ON u.id = ra.userid
+        JOIN mdl_role r ON r.id = ra.roleid
+        
+        WHERE r.id IN (1,2,3,4) AND c.id = :courseid';
+
+        //getting id, firstname, lastname and lastacces of teachers in the course
+        $query = 'SELECT id, firstname, lastname, lastaccess FROM mdl_user WHERE id IN (' . $getCourseTeachersQuery . ');';
+        $params = array('courseid' => $courseid);
+
+        $data = $DB->get_records_sql($query, $params);
+        $transaction->allow_commit();
+
+        $arrayAcccess = array();
+        foreach ($data as $line) {
+            $entry = array(
+                'id' => $line->id,
+                'firstname' => $line->firstname,
+                'lastname' => $line->lastname,
+                'lastaccess' => $line->lastaccess,
+            );
+            array_push($arrayAcccess, $entry);
+        }
+
+        return array(
+            'success' => true,
+            'data' => json_encode($arrayAcccess),
+        );
+    }
+    public static function get_last_access_of_teachers_of_course_is_allowed_from_ajax()
+    {
+        return true;
+    }
+
+    /*
+     * Get all teachers of a course
+     **/
+    public static function get_all_teachers_of_course_parameters()
+    {
+        return new external_function_parameters([
+            'courseid' => new external_value(PARAM_INT, 'id of course'),
+        ]);
+    }
+    public static function get_all_teachers_of_course_returns()
+    {
+        return new external_single_structure(
+            array(
+                'success' => new external_value(PARAM_BOOL, 'success'),
+                'data' => new external_value(PARAM_RAW, 'data')
+            )
+        );
+    }
+    public static function get_all_teachers_of_course($courseid)
+    {
+        global $CFG, $DB, $USER;
+
+        $transaction = $DB->start_delegated_transaction();
+        $query = 'SELECT DISTINCT u.id, u.firstname, u.lastname
+                    
+        FROM mdl_course c
+        JOIN mdl_context ct ON c.id = ct.instanceid
+        JOIN mdl_role_assignments ra ON ra.contextid = ct.id
+        JOIN mdl_user u ON u.id = ra.userid
+        JOIN mdl_role r ON r.id = ra.roleid
+        
+        WHERE r.id IN (1,2,3,4) AND c.id = :courseid;';
+
+        $params = array('courseid' => $courseid);
+
+        $data = $DB->get_records_sql($query, $params);
+        $transaction->allow_commit();
+
+
+        return array(
+            'success' => true,
+            'data' => json_encode($data),
+        );
+    }
+    public static function get_all_teachers_of_course_is_allowed_from_ajax()
+    {
+        return true;
+    }
+
+} // end class
