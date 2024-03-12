@@ -12,3 +12,4 @@ x.html
 x.json
 .tscache
 .vs-code-workspace.code-workspace
+.DS_Store
