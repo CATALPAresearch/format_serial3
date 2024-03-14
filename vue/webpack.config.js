@@ -3,6 +3,7 @@ var webpack = require('webpack');
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const FileManagerPlugin = require('filemanager-webpack-plugin');
+var BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 const isDevServer = process.argv.find(v => v.includes('webpack-dev-server'));
 
@@ -16,6 +17,7 @@ module.exports = (env, options) => {
 			filename: 'app-lazy.min.js',
 			chunkFilename: "[id].app-lazy.min.js?v=[hash]",
 			libraryTarget: 'amd',
+			pathinfo: false, // new
 		},
 		module: {
 			rules: [{
@@ -62,6 +64,13 @@ module.exports = (env, options) => {
 		},
 		devtool: (isDevServer ? '#eval-source-map' : false),
 		plugins: [
+			/*
+			new BundleAnalyzerPlugin({
+				analyzerMode: 'server',
+				generateStatsFile: true,
+				statsOptions: { source: false }
+			  }),
+			*/
 			new VueLoaderPlugin(),
 			new FileManagerPlugin({
 				events: {
