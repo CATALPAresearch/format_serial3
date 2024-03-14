@@ -3,7 +3,7 @@ import {store} from "./store/store";
 import App from "./App.vue";
 import Communication from "./scripts/communication";
 
-function init(courseid, fullPluginName, userid, isModerator, policyAccepted) {
+function init(courseid, fullPluginName, userid, isModerator, policyAccepted, sectionCollapsEnabled=false, sectionInitiallyCollapsed=false) {
 	// We need to overwrite the variable for lazy loading.
 	__webpack_public_path__ =
 		M.cfg.wwwroot + "/course/format/serial3/amd/build/";
@@ -41,6 +41,38 @@ function init(courseid, fullPluginName, userid, isModerator, policyAccepted) {
 			render: (h) => h(App),
 		});
 	}
+
+	// Setting: Collapsable Sections
+	//const sectionCollapsEnabled = true;
+	//const sectionInitiallyCollapsed = true;
+	if(sectionCollapsEnabled){
+		$('.course-content .topics li.section div.content h3').attr('style', 'cursor: pointer;')
+
+		if(sectionInitiallyCollapsed){
+			$('.course-content .topics li.section div.content ul.section')
+				.slideToggle('fast');
+			$('.course-content .topics #section-0 div.summary')
+				.slideToggle('fast');
+			$('.course-content .topics li.section div.content h3')
+				.prepend('<i style="display:inline-block; font-size:1.2em; padding: 0 4px 0 0px; width: 18px;" class="section-toggle-icon fa fa-caret-right">')
+		} else {
+			$('.course-content .topics li.section div.content h3')
+				.prepend('<i style="display:inline-block; font-size:1.2em; padding: 0 4px 0 0px; width: 18px;" class="section-toggle-icon fa fa-caret-down">')
+		}
+		
+		$('.course-content .topics li.section div.content').each(function(){
+			$(this).find('h3').click(function(){
+				$(this).parent().parent().find('ul.section').slideToggle('fast');
+				$(this).parent().parent().find('div.summary').slideToggle('fast');
+				if($(this).find('i').hasClass('fa-caret-right')){
+					$(this).find('i').removeClass('fa-caret-right').addClass('fa-caret-down');
+				}else{
+					$(this).find('i').removeClass('fa-caret-down').addClass('fa-caret-right');
+				}
+			});
+		});
+	}  
+	
 
 	
 }

@@ -273,6 +273,15 @@ class format_serial3 extends format_base {
                     'default' => '',//$courseconfig->dashboardsectionexclude,
                     'type' => PARAM_TEXT,
                 ),
+                'sectioncollapsenabled' => array(
+                    'default' => $courseconfig->sectioncollapsenabled,
+                    'type' => PARAM_BOOL,
+                ),
+                'sectioninitiallycollapsed' => array(
+                    'default' => $courseconfig->sectioninitiallycollapsed,
+                    'type' => PARAM_BOOL,
+                ),
+                
             );
         }
         if ($foreditform && !isset($courseformatoptions['coursedisplay']['label'])) {
@@ -304,6 +313,14 @@ class format_serial3 extends format_base {
                 'dashboardsectionexclude' => array(
                     'label' => get_string('dashboardsectionexclude', 'format_serial3'),
                     'element_type' => 'text'
+                ),
+                'sectioncollapsenabled' => array(
+                    'label' => get_string('sectioncollapsenabled', 'format_serial3'),
+                    'element_type' => 'checkbox'
+                ),
+                'sectioninitiallycollapsed' => array( // TODO: make this checkbox dependent of the previous.
+                    'label' => get_string('sectioninitiallycollapsed', 'format_serial3'),
+                    'element_type' => 'checkbox'
                 ),
             );
             $courseformatoptions = array_merge_recursive($courseformatoptions, $courseformatoptionsedit);
@@ -461,3 +478,6 @@ function format_serial3_inplace_editable($itemtype, $itemid, $newvalue) {
         return course_get_format($section->course)->inplace_editable_update_section_name($section, $itemtype, $newvalue);
     }
 }
+
+
+

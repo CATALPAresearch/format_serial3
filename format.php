@@ -98,14 +98,17 @@ function checkModeratorStatus(){
     }
 }
 
-
+$options = course_get_format($course)->course_format_options(false); // FIXME: How to access the options?
+//print_r($options); //['sectioncollapsenabled']
 
 $PAGE->requires->js_call_amd('format_serial3/app-lazy', 'init', [
     'courseid' => $COURSE->id,
     'fullPluginName' => 'format_serial3',
     'userid' => $USER->id,
     'isModerator' => checkModeratorStatus(),
-    'policyAccepted' => format_serial3\blocking::tool_policy_accepted()
+    'policyAccepted' => format_serial3\blocking::tool_policy_accepted(),
+    'sectioncollapsenabled' => true,
+    'sectioninitiallycollapsed' => true
 ]);
 
 echo html_writer::start_tag('div', array('class' => ''))
