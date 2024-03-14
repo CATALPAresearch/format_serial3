@@ -48,6 +48,18 @@ $string['dashboardsectionexclude_help'] = 'todo';
 $string['dashboardsectionexclude_link'] = 'todo';
 $string['dashboardsectionexclude_desc'] = 'todo';
 
+$string['sectioncollapsenabled'] = "Sektionen auf der Kursübersichtsseite einklappbar machen";
+$string['sectioncollapsenabled_help'] = 'todo';
+$string['sectioncollapsenabled_link'] = 'todo';
+$string['sectioncollapsenabled_desc'] = 'todo';
+
+$string['sectioninitiallycollapsed'] = "Sektionen auf der Kursübersichtseite initial eingeklappt lassen";
+$string['sectioninitiallycollapsed_help'] = 'todo';
+$string['sectioninitiallycollapsed_link'] = 'todo';
+$string['sectioninitiallycollapsed_desc'] = 'todo';
+
+
+
 
 // General
 $string['save'] = 'Speichern';

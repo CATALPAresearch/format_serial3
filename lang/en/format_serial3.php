@@ -60,6 +60,15 @@ $string['dashboardsectionexclude_help'] = 'todo';
 $string['dashboardsectionexclude_link'] = 'todo';
 $string['dashboardsectionexclude_desc'] = 'todo';
 
+$string['sectioncollapsenabled'] = "Make course section collapsable";
+$string['sectioncollapsenabled_help'] = 'todo';
+$string['sectioncollapsenabled_link'] = 'todo';
+$string['sectioncollapsenabled_desc'] = 'todo';
+
+$string['sectioninitiallycollapsed'] = "Collaps course sections initially";
+$string['sectioninitiallycollapsed_help'] = 'todo';
+$string['sectioninitiallycollapsed_link'] = 'todo';
+$string['sectioninitiallycollapsed_desc'] = 'todo';
 
 // General
 $string['save'] = 'Save';
