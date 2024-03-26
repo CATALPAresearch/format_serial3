@@ -2935,4 +2935,128 @@ Group by cm.id
         return true;
     }
 
+    /*
+     * Get added or changed resources of a course
+     **/
+    public static function get_added_or_changed_course_resources_parameters()
+    {
+        return new external_function_parameters([
+            'courseid' => new external_value(PARAM_INT, 'id of course'),
+        ]);
+    }
+    public static function get_added_or_changed_course_resources_returns()
+    {
+        return new external_single_structure(
+            array(
+                'success' => new external_value(PARAM_BOOL, 'success'),
+                'data' => new external_value(PARAM_RAW, 'data')
+            )
+        );
+    }
+    public static function get_added_or_changed_course_resources($courseid)
+    {
+        global $CFG, $DB, $USER;
+
+        //getting resources of course
+        $transaction = $DB->start_delegated_transaction();
+        $query = "SELECT f.filename, f.author, f.timecreated, f.timemodified, r.name, r.revision FROM mdl_files f
+        INNER JOIN mdl_context ctx ON ctx.id = f.contextid
+        inner join mdl_course_modules cm on cm.id = ctx.instanceid 
+        inner join mdl_course c on c.id = cm.course 
+        inner join mdl_resource r on r.id = cm.instance 
+        WHERE c.id = :courseid
+        AND f.filename NOT LIKE '.'";
+
+        $params = array('courseid' => $courseid);
+
+        $data = $DB->get_records_sql($query, $params);
+        $transaction->allow_commit();
+
+        $resources = array();
+        foreach ($data as $line) {
+            $entry = array(
+                'filename' => $line->filename,
+                'author' => $line->author,
+                'timecreated' => $line->timecreated,
+                'timemodified' => $line->timemodified,
+                'name' => $line->name,
+                'revision' => $line->revision,
+            );
+            array_push($resources, $entry);
+        }
+
+        return array(
+            'success' => true,
+            'data' => json_encode($resources),
+        );
+
+    }
+    public static function get_added_or_changed_course_resources_is_allowed_from_ajax()
+    {
+        return true;
+    }
+
+    /*
+     * Get deleted resources of a course
+     **/
+    public static function get_deleted_course_resources_parameters()
+    {
+        return new external_function_parameters([
+            'courseid' => new external_value(PARAM_INT, 'id of course'),
+        ]);
+    }
+    public static function get_deleted_course_resources_returns()
+    {
+        return new external_single_structure(
+            array(
+                'success' => new external_value(PARAM_BOOL, 'success'),
+                'data' => new external_value(PARAM_RAW, 'data')
+            )
+        );
+    }
+    public static function get_deleted_course_resources($courseid)
+    {
+        global $CFG, $DB, $USER;
+
+        $transaction = $DB->start_delegated_transaction();
+        $query = "SELECT f.filename, f.userid, f.author, f.timecreated, f.timemodified, r.name, r.revision FROM mdl_files f
+        INNER JOIN mdl_context ctx ON ctx.id = f.contextid
+        inner join mdl_course_modules cm on cm.id = ctx.instanceid 
+        inner join mdl_course c on c.id = cm.course 
+        inner join mdl_resource r on r.id = cm.instance 
+        INNER JOIN (
+            SELECT *
+            FROM mdl_logstore_standard_log
+            WHERE ACTION = 'updated' AND target = 'course_module'
+        ) l ON l.other LIKE CONCAT('%', r.name, '%')
+        WHERE c.id = :courseid
+        AND f.filename NOT LIKE '.';";
+
+        $params = array('courseid' => $courseid);
+
+        $data = $DB->get_records_sql($query, $params);
+        $transaction->allow_commit();
+
+        $deletedResources = array();
+        foreach ($data as $line) {
+            $entry = array(
+                'filename' => $line->filename,
+                'author' => $line->author,
+                'timecreated' => $line->timecreated,
+                'timemodified' => $line->timemodified,
+                'name' => $line->name,
+                'revision' => $line->revision,
+            );
+            array_push($deletedResources, $entry);
+        }
+
+        return array(
+            'success' => true,
+            'data' => json_encode($deletedResources),
+        );
+    }
+    public static function get_deleted_course_resources_is_allowed_from_ajax()
+    {
+        return true;
+    }
 } // end class

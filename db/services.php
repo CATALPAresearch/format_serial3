@@ -369,4 +369,22 @@ $functions = [
 		'ajax' => true,
 		'loginrequired' => true
 	],
+	'format_serial3_get_added_or_changed_course_resources' => [
+		'classname' => 'format_serial3_external',
+		'methodname' => 'get_added_or_changed_course_resources',
+		'classpath' => 'course/format/serial3/api.php',
+		'description' => 'Get added or changed resources of a course.',
+		'type' => 'write',
+		'ajax' => true,
+		'loginrequired' => true
+	],
+	'format_serial3_get_deleted_course_resources' => [
+		'classname' => 'format_serial3_external',
+		'methodname' => 'get_deleted_course_resources',
+		'classpath' => 'course/format/serial3/api.php',
+		'description' => 'Get deleted resources of a course.',
+		'type' => 'write',
+		'ajax' => true,
+		'loginrequired' => true
+	],
 ];

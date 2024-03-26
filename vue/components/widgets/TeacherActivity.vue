@@ -15,7 +15,7 @@
         <option value="OnlineStatus">Online Status</option>
         <option value="CorrectionFeedback">Korrekturen und Feedback</option>
         <option value="Discussions">Engagement in Diskussionsforen</option>
-        <option value="Coursematerial">Änderungen im Kursmaterial</option>
+        <option value="CourseMaterial">Änderungen von Kursmaterial</option>
         <option value="CorrectionExcercises">
           Korrektur von Übungsaufgaben
         </option>
@@ -31,9 +31,6 @@
             <tr>
               <th scope="col">Lehrperson</th>
               <th scope="col">zuletzt aktiv</th>
-              <th scope="col">Aktivität letzte 7 Tage</th>
-              <th scope="col">Aktivität letzte 30 Tage</th>
-              <th scope="col">Aktivität Semester</th>
             </tr>
           </thead>
           <tbody>
@@ -42,16 +39,46 @@
                 {{ teacher.firstname + " " + teacher.lastname }}
               </th>
               <td>{{ relativeToToday(teacher.lastaccess) }}</td>
-              <td>...</td>
-              <td>...</td>
-              <td>...</td>
             </tr>
           </tbody>
         </table>
       </div>
     </div>
-    <div v-for="teacher in teacherIDList" :key="teacher.id">
-      <p>{{ teacher.id }} + {{ teacher.firstname }} + {{ teacher.lastname }}</p>
+
+    <div class="form-group">
+      <div v-if="showedInformation == 'CourseMaterial'">
+        <table class="table table-striped table-hover">
+          <thead>
+            <tr>
+              <th scope="col">Kursmaterial</th>
+              <th scope="col">Status</th>
+              <th scope="col">letzte Änderung</th>
+              <th></th>
+              <th scope="col">Von</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="resource in courseResourceList" :key="resource.name">
+              <th>
+                <a href="">{{ resource.name }}</a>
+              </th>
+              <td>
+                <span v-if="isDeleted(resource)" class="red">gelöscht</span>
+                <span v-else-if="resource.revision === '1'" class="green"
+                  >neu</span
+                >
+                <span v-else-if="resource.revision > '1'" class="yellow"
+                  >geändert</span
+                >
+                <span v-else>-</span>
+              </td>
+              <td>{{ absoluteDate(resource.timemodified) }}</td>
+              <td>{{ relativeToToday(resource.timemodified) }}</td>
+              <td>{{ resource.author }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 </template>
@@ -70,6 +97,8 @@ export default {
     return {
       teacherIDList: [],
       teacherLastAccessList: [],
+      courseResourceList: [],
+      courseDeletedResourceList: [],
       showedInformation: "OnlineStatus",
       info: "Dieses Widget stellt dir das Verhalten der Lehrpersonen in diesem Kurs transparenter dar. Du kannst zum Beispiel sehen, wie oft diese online sind oder Änderungen am Kursmaterial vornehmen. Diese Inforamtionen stammen aus den Logdaten von Moodle.",
     };
@@ -78,6 +107,8 @@ export default {
   mounted() {
     this.getTeachers(this.$store.state.courseid);
     this.getTeachersLastAccess(this.$store.state.courseid);
+    this.getAddedOrChangedCourseResources(this.$store.state.courseid);
+    this.getDeletedCourseResources(this.$store.state.courseid);
   },
 
   methods: {
@@ -110,6 +141,43 @@ export default {
     },
 
 
+    async getAddedOrChangedCourseResources() {
+      const response = await Communication.webservice(
+        "get_added_or_changed_course_resources",
+        {
+          courseid: this.$store.state.courseid,
+        }
+      );
+
+      if (response.success) {
+        this.courseResourceList = Object.values(JSON.parse(response.data));
+      }
+    },
+
+    async getDeletedCourseResources() {
+      const response = await Communication.webservice(
+        "get_deleted_course_resources",
+        {
+          courseid: this.$store.state.courseid,
+        }
+      );
+
+      if (response.success) {
+        this.courseDeletedResourceList = Object.values(
+          JSON.parse(response.data)
+        );
+      }
+    },
+
+    isDeleted(resource) {
+      for (let i = 0; i < this.courseDeletedResourceList.length; i++) {
+        if (this.courseDeletedResourceList[i].filename === resource.filename) {
+          return true;
+        }
+      }
+      return false;
+    },
+
     relativeToToday(timestamp) {
       const currentTimestamp = Math.floor(Date.now() / 1000);
       const elapsedSeconds = currentTimestamp - timestamp;
@@ -130,6 +198,24 @@ export default {
         return `vor ${years} Jahr${years !== 1 ? "en" : ""}`;
       }
     },
+
+    absoluteDate(timestamp) {
+      // Convert Unix timestamp to milliseconds
+      var date = new Date(timestamp * 1000);
+
+      // Extract date components
+      var day = ("0" + date.getDate()).slice(-2);
+      var month = ("0" + (date.getMonth() + 1)).slice(-2);
+      var year = date.getFullYear();
+      var hours = ("0" + date.getHours()).slice(-2);
+      var minutes = ("0" + date.getMinutes()).slice(-2);
+
+      // Format the date
+      var formattedDate =
+        day + "." + month + "." + year + " " + hours + ":" + minutes + " Uhr";
+
+      return formattedDate;
+    },
   },
 };
 </script>
@@ -137,4 +223,17 @@ export default {
 <style lang="scss" scoped>
 @import "../../scss/variables.scss";
 @import "../../scss/scrollbar.scss";
+
+.yellow {
+  background-color: yellow;
+  color: black;
+}
+.green {
+  background-color: greenyellow;
+  color: black;
+}
+.red {
+  background-color: salmon;
+  color: black;
+}
 </style>
