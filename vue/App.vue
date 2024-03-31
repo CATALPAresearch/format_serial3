@@ -56,7 +56,7 @@
         </div>
       </div>
     </div>
-    <welcome-video></welcome-video>
+    <welcome-video v-show="(new Date().getTime()) < (new Date('2024.04.31').getTime())"></welcome-video>
   </div>
 </template>
 
