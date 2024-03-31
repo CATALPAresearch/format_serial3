@@ -104,7 +104,7 @@
               id="'popover' + activity.id"
               ref="popoverButton"
               v-popover-html="popoverContent(activity)"
-              class="subject-progress__popover"
+              class="subject-progress__popover popoverx"
               data-placement="bottom"
               data-toggle="popover"
               @click="
@@ -184,6 +184,7 @@ export default {
     popoverHtml: {
       bind: function (el, binding) {
         setTimeout(function () {
+          
           $(el).popover({
             html: true,
             sanitize: false,
@@ -191,15 +192,26 @@ export default {
               return binding.value;
             },
           });
+          
           $(el).on("shown.bs.popover", function () {
-            var popover = $(el).siblings(".popover");
+            var popover = $(el).siblings(".popoverx");
             popover.on("click", function (event) {
+              console.log("shown click.popover", event)
               event.stopPropagation();
             });
+            
           });
+
+          $(el).on("show.bs.popover", function () {
+            console.log('zeige');
+            $(".popoverx").popover('hide');
+          });
+          
           $(document).on("click.popover", function (event) {
+            var popovers = $(el).siblings(".popoverx");
+            
             var isClickInsidePopover =
-              $(event.target).closest(".popover").length > 0 ||
+              $(event.target).closest(".popoverx").length > 0 ||
               $(event.target).hasClass("popover-content");
             var isClickOnPopoverButton = $(event.target).is($(el));
             if (!isClickInsidePopover && !isClickOnPopoverButton) {
@@ -207,13 +219,17 @@ export default {
               $(document).off("click.popover");
             }
           });
+          
           $(el).on("hidden.bs.popover", function () {
+            console.log("hidden")
             var popover = $(el).siblings(".popover");
             popover.off("click");
+            
           });
         }, 500); // end set timeout
       },
       unbind: function (el) {
+        
         $(document).ready(function () {
           $(el).popover("dispose");
           $(el).off("shown.bs.popover");
