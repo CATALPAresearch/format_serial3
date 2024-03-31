@@ -43,8 +43,7 @@ function init(courseid, fullPluginName, userid, isModerator, policyAccepted, sec
 	}
 
 	// Setting: Collapsable Sections
-	//const sectionCollapsEnabled = true;
-	//const sectionInitiallyCollapsed = true;
+	// TODO: store and load opened and closed sections using the local storage
 	if(sectionCollapsEnabled){
 		$('.course-content .topics li.section div.content h3').attr('style', 'cursor: pointer;')
 
