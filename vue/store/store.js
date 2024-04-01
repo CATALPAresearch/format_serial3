@@ -234,12 +234,13 @@ export const store = new Vuex.Store({
         context.commit("setLearnerGoal", JSON.parse(response.data));
       } else {
         if (response.data) {
-          console.log(
+          console.error(
+			this.name,
             "Faulty response of webservice /set_learner_goal/",
             response.data
           );
         } else {
-          console.log("No connection to webservice /set_learner_goal/");
+          console.error(this.name, "No connection to webservice /set_learner_goal/");
         }
       }
     },
@@ -259,12 +260,13 @@ export const store = new Vuex.Store({
         context.commit("setLearnerGoal", goal);
       } else {
         if (response.data) {
-          console.log(
+          console.error(
+			this.name,
             "Faulty response of webservice /set_learner_goal/",
             response.data
           );
         } else {
-          console.log("No connection to webservice /set_learner_goal/");
+          console.error(this.name, "No connection to webservice /set_learner_goal/");
         }
       }
     },

@@ -75,7 +75,7 @@ export default {
 
                 db.onversionchange = function () {
                     db.close();
-                    console.log("ERROR: Database is outdated, please reload the page.")
+                    console.error(this.name, "ERROR: Database is outdated, please reload the page.")
                 };
                 try {
                     let transaction = db.transaction("prompts", "readwrite").objectStore("prompts");
@@ -97,10 +97,10 @@ export default {
                     };
 
                     request.onerror = function () {
-                        console.log("SERIAL3: Error reading prompts", request.error);
+                        console.error(this.name, "SERIAL3: Error reading prompts", request.error);
                     };
                 } catch(e){
-                    console.warn('Store not existing');
+                    console.warn(this.name, 'Store not existing');
                 }
             }
         },

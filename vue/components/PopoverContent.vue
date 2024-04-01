@@ -95,9 +95,9 @@ export default {
                 this.$emit('understanding-updated', newVal, this.id)
             } else {
                 if (response.data) {
-                    console.log('Faulty response of webservice /logger/', response.data);
+                    console.error(this.name, 'Faulty response of webservice /logger/', response.data);
                 } else {
-                    console.log('No connection to webservice /logger/');
+                    console.error(this.name, 'No connection to webservice /logger/');
                 }
             }
         },

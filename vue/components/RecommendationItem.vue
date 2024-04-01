@@ -85,7 +85,7 @@ export default {
                 };
             const response = await Communication.webservice('set_rule_response', data);
             if (!response.success) {
-                console.log('No connection to webservice /set_rule_response/');
+                console.error(this.name, 'No connection to webservice /set_rule_response/');
             }
         },
 

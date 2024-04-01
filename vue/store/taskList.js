@@ -48,9 +48,9 @@ export default {
 				commit('setItems', Object.values(JSON.parse(response.data)));
 			} else {
 				if (response.data) {
-					console.log('No dashboard settings stored');
+					console.error(this.name, 'No dashboard settings stored');
 				} else {
-					console.log('No connection to webservice /overview/');
+					console.error(this.name, 'No connection to webservice /overview/');
 				}
 			}
 		},
@@ -64,9 +64,9 @@ export default {
 				commit('addItem', item);
 			} else {
 				if (response.data) {
-					console.log('Faulty response of webservice /create_task/', response.data);
+					console.error(this.name, 'Faulty response of webservice /create_task/', response.data);
 				} else {
-					console.log('No connection to webservice /create_task/');
+					console.error(this.name, 'No connection to webservice /create_task/');
 				}
 			}
 		},
@@ -82,9 +82,9 @@ export default {
 				commit('deleteItem', item);
 			} else {
 				if (response.data) {
-					console.log('Faulty response of webservice /delete_task/', response.data);
+					console.error(this.name, 'Faulty response of webservice /delete_task/', response.data);
 				} else {
-					console.log('No connection to webservice /delete_task/');
+					console.error(this.name, 'No connection to webservice /delete_task/');
 				}
 			}
 		},
@@ -102,9 +102,9 @@ export default {
 				commit('updateItem', item);
 			} else {
 				if (response.data) {
-					console.log('Faulty response of webservice /update_task/', response.data);
+					console.error(this.name, 'Faulty response of webservice /update_task/', response.data);
 				} else {
-					console.log('No connection to webservice /update_task/');
+					console.error(this.name, 'No connection to webservice /update_task/');
 				}
 			}
 		},
@@ -125,9 +125,9 @@ export default {
 				commit('updateItem', updatedItem);
 			} else {
 				if (response.data) {
-					console.log('Faulty response of webservice /update_task/', response.data);
+					console.error(this.name, 'Faulty response of webservice /update_task/', response.data);
 				} else {
-					console.log('No connection to webservice /update_task/');
+					console.error(this.name, 'No connection to webservice /update_task/');
 				}
 			}
 		},

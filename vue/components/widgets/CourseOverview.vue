@@ -449,9 +449,9 @@ export default {
                 //console.log('ss2',_this.sections);
             } else {
                 if (response.data) {
-                    console.log('Faulty response of webservice /overview/', response.data);
+                    console.error(this.name, 'Faulty response of webservice /overview/', response.data);
                 } else {
-                    console.log('No connection to webservice /overview/');
+                    console.error(this.name, 'No connection to webservice /overview/');
                 }
             }
         },
@@ -721,9 +721,9 @@ export default {
                 this.reflections = JSON.parse(response.data);
             } else {
                 if (response.data) {
-                    console.log('Faulty response of webservice /reflectionread/', response.data);
+                    console.error(this.name, 'Faulty response of webservice /reflectionread/', response.data);
                 } else {
-                    console.log('No connection to webservice /reflectionread/');
+                    console.error(this.name, 'No connection to webservice /reflectionread/');
                 }
             }
         },
@@ -748,9 +748,9 @@ export default {
             } else {
                 this.reflectionError = true; 
                 if (response.data) {
-                    console.log('Faulty response of webservice /reflectionread/', response.data);
+                    console.errro(this.name, 'Faulty response of webservice /reflectionread/', response.data);
                 } else {
-                    console.log('No connection to webservice /reflectionread/', response.data);
+                    console.error(this.name, 'No connection to webservice /reflectionread/', response.data);
                 }
             }
         },

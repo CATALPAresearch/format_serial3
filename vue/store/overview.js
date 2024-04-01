@@ -108,9 +108,9 @@ export default {
         commit("updateActivity", newVal);
       } else {
         if (response.data) {
-          console.log("Faulty response of webservice /set_user_understanding/", response.data);
+          console.error(this.name, "Faulty response of webservice /set_user_understanding/", response.data);
         } else {
-          console.log("No connection to webservice /set_user_understanding/");
+          console.error(this.name, "No connection to webservice /set_user_understanding/");
         }
       }
     },

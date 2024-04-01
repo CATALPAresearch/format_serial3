@@ -284,7 +284,7 @@ class format_serial3 extends format_base {
                 
             );
         }
-        if ($foreditform && !isset($courseformatoptions['coursedisplay']['label'])) {
+        if ($foreditform) { //&& !isset($courseformatoptions['coursedisplay']['label'])
             $courseformatoptionsedit = array(
                 'hiddensections' => array(
                     'label' => new lang_string('hiddensections'),
@@ -316,11 +316,16 @@ class format_serial3 extends format_base {
                 ),
                 'sectioncollapsenabled' => array(
                     'label' => get_string('sectioncollapsenabled', 'format_serial3'),
-                    'element_type' => 'checkbox'
+                    'element_type' => 'checkbox',
+                    'help' => 'sectioncollapsenabled',
+                    'help_component' => 'moodle',
                 ),
-                'sectioninitiallycollapsed' => array( // TODO: make this checkbox dependent of the previous.
+                // TODO: make this checkbox dependent of the previous.
+                'sectioninitiallycollapsed' => array( 
                     'label' => get_string('sectioninitiallycollapsed', 'format_serial3'),
-                    'element_type' => 'checkbox'
+                    'element_type' => 'checkbox',
+                    'help' => 'sectioninitiallycollapsed',
+                    'help_component' => 'moodle',
                 ),
             );
             $courseformatoptions = array_merge_recursive($courseformatoptions, $courseformatoptionsedit);
@@ -372,6 +377,7 @@ class format_serial3 extends format_base {
      */
     public function update_course_format_options($data, $oldcourse = null) {
         $data = (array)$data;
+        
         if ($oldcourse !== null) {
             $oldcourse = (array)$oldcourse;
             $options = $this->course_format_options();
@@ -379,7 +385,13 @@ class format_serial3 extends format_base {
                 if (!array_key_exists($key, $data)) {
                     if (array_key_exists($key, $oldcourse)) {
                         $data[$key] = $oldcourse[$key];
-                    }
+                    } /*else if ($key === 'sectioncollapsenabled') {
+                        $maxsection = $DB->get_field_sql('SELECT max(section) from
+                        {course_sections} WHERE course = ?', array($this->courseid));
+                        if ($maxsection) {
+                            $data['numsections'] = $maxsection;
+                        }
+                    }*/
                 }
             }
         }

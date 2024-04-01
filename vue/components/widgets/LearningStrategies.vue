@@ -157,8 +157,8 @@ export default {
                 if(toParams.strategy){
                     this.setCurrentStrategy(toParams.strategy);
                 }
-                console.log(toParams.strategy, previousParams.strategy)
-                console.log('::end ',this.currentStrategy)
+                //console.log(toParams.strategy, previousParams.strategy)
+                //console.log('::end ',this.currentStrategy)
             }
         );
     },

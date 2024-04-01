@@ -28,7 +28,7 @@ function init(courseid, fullPluginName, userid, isModerator, policyAccepted, sec
 		courseid +
 		"/";
 
-	console.log('-- policy accepted? '+policyAccepted)
+	//console.log('-- policy accepted? '+policyAccepted)
 	if (policyAccepted == false && courseid == 42) {
 		$('.activity.quiz.modtype_quiz').hide();
 		$('.activity.modtype_longpage').hide();

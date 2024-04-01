@@ -122,9 +122,9 @@ export default {
 				context.commit('setUserUnderstanding', JSON.parse(response.data));
 			} else {
 				if (response.data) {
-					console.log('Faulty response of webservice /get_user_understanding/', response.data);
+					console.error(this.name, 'Faulty response of webservice /get_user_understanding/', response.data);
 				} else {
-					console.log('No connection to webservice /get_user_understanding/');
+					console.error(this.name, 'No connection to webservice /get_user_understanding/');
 				}
 			}
 		},
@@ -184,9 +184,9 @@ export default {
 				context.commit('setTimeManagement', missed_assignments / total_assignments * 100);
 			} else {
 				if (response.data) {
-					console.log('Faulty response of webservice /get_missed_activities/', response.data);
+					console.error(this.name, 'Faulty response of webservice /get_missed_activities/', response.data);
 				} else {
-					console.log('No connection to webservice /get_missed_activities/');
+					console.error(this.name, 'No connection to webservice /get_missed_activities/');
 				}
 			}
 		},
@@ -219,9 +219,9 @@ export default {
 				context.commit('setSocialActivity', numberOfUserPosts);
 			} else {
 				if (response.data) {
-					console.log('Faulty response of webservice /get_forum_posts/', response.data);
+					console.error(this.name, 'Faulty response of webservice /get_forum_posts/', response.data);
 				} else {
-					console.log('No connection to webservice /get_forum_posts/');
+					console.error(this.name, 'No connection to webservice /get_forum_posts/');
 				}
 			}
 		},
@@ -242,9 +242,9 @@ export default {
 				quizzes = JSON.parse(quizzes.data);
 			} else {
 				if (quizzes.data) {
-					console.log('Faulty response of webservice /get_quizzes/', quizzes.data);
+					console.error(this.name, 'Faulty response of webservice /get_quizzes/', quizzes.data);
 				} else {
-					console.log('No connection to webservice /get_quizzes/');
+					console.error(this.name, 'No connection to webservice /get_quizzes/');
 				}
 			}
 
@@ -259,9 +259,9 @@ export default {
 				assignments = JSON.parse(assignments.data);
 			} else {
 				if (assignments.data) {
-					console.log('Faulty response of webservice /get_assignments/', assignments.data);
+					console.error(this.name, 'Faulty response of webservice /get_assignments/', assignments.data);
 				} else {
-					console.log('No connection to webservice /get_assignments/');
+					console.error(this.name, 'No connection to webservice /get_assignments/');
 				}
 			}
 

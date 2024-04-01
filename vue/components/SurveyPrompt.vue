@@ -57,7 +57,7 @@ export default {
 
         getSurveyURL: function(){
             const base = "https://aple.fernuni-hagen.de/mod/questionnaire/view.php?id=";
-            console.log(this.courseid, this.questionnaireid[this.courseid], this.questionnaireid[this.questionnaireid[this.courseid]])
+            //console.log(this.courseid, this.questionnaireid[this.courseid], this.questionnaireid[this.questionnaireid[this.courseid]])
             return base + this.questionnaireid[this.courseid]
         },
 
@@ -85,11 +85,11 @@ export default {
                     moduleid: this.questionnaireid[this.courseid]
                 }
             );
-            console.log(this.name, '--','Questionnaire? ', response, this.is1801Course(), this.getisModerator(), this.surveyRequired)
+            //console.log(this.name, '--','Questionnaire? ', response, this.is1801Course(), this.getisModerator(), this.surveyRequired)
             if (response.success) {
                 response.data = JSON.parse(response.data);
                 if (response.data.submitted) {
-                    console.log(this.name, '--','Questionnaire was submitted at ' + response.data.submitted);
+                    //console.log(this.name, '--','Questionnaire was submitted at ' + response.data.submitted);
                 } else if (this.is1801Course()) {
                     // console.log('Questionnaire? show modal')
                     $('#questionnaireModal').modal('show');

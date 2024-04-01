@@ -101,7 +101,7 @@ export default function (courseId, options) {
     this.output = function (logEntry) {
         switch (this.options.outputType) {
             case 0:
-                console.log('case 0: ',logEntry);
+                //console.log('case 0: ',logEntry);
                 break;
             case 1:
                 this.sendLog(logEntry);

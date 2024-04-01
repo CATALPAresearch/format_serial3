@@ -196,14 +196,12 @@ export default {
           $(el).on("shown.bs.popover", function () {
             var popover = $(el).siblings(".popoverx");
             popover.on("click", function (event) {
-              console.log("shown click.popover", event)
               event.stopPropagation();
             });
             
           });
 
           $(el).on("show.bs.popover", function () {
-            console.log('zeige');
             $(".popoverx").popover('hide');
           });
           
@@ -221,7 +219,6 @@ export default {
           });
           
           $(el).on("hidden.bs.popover", function () {
-            console.log("hidden")
             var popover = $(el).siblings(".popover");
             popover.off("click");
             
@@ -351,20 +348,22 @@ export default {
         }).$mount();
 
         popover.$on("understanding-updated", (understanding, activityId) => {
-          this.courseData[activityId].rating = Number(understanding);
-          _this.log({
-            key: "activity-popover-rate-understanding",
-            value: {
-              id: this.courseData[activityId].id,
-              name: this.courseData[activityId].name,
-              understanding: understanding,
-            },
-          });
+          if(this.courseData.hasOwnProperty(activityId)){
+            this.courseData[activityId].rating = Number(understanding);
+            _this.log({
+              key: "activity-popover-rate-understanding",
+              value: {
+                id: this.courseData[activityId].id,
+                name: this.courseData[activityId].name,
+                understanding: understanding,
+              },
+            });
 
-          if (understanding === 0) {
-            this.courseData[activityId].completion = 0;
-          } else {
-            this.courseData[activityId].completion = 1;
+            if (understanding === 0) {
+              this.courseData[activityId].completion = 0;
+            } else {
+              this.courseData[activityId].completion = 1;
+            }
           }
         });
 
@@ -475,24 +474,27 @@ export default {
         this.total = this.getTotalActivites();
       } else {
         if (response.data) {
-          console.log(
+          console.error(
+            this.name,
             "Faulty response of webservice /overview/",
             response.data
           );
         } else {
-          console.log("No connection to webservice /overview/");
+          console.error(this.name, "No connection to webservice /overview/");
         }
       }
 
       const completionData = this.$store.state.learnermodel.userUnderstanding;
       for (let key in completionData) {
         let activityid = completionData[key]["activityid"];
-        this.courseData[activityid]["completion"] = Number(
-          completionData[key]["completed"]
-        );
-        this.courseData[activityid]["rating"] = Number(
-          completionData[key]["rating"]
-        );
+        if(this.courseData.hasOwnProperty(activityid)){
+          this.courseData[activityid]["completion"] = Number(
+            completionData[key]["completed"]
+          );
+          this.courseData[activityid]["rating"] = Number(
+            completionData[key]["rating"]
+          );
+        }
       }
     },
   },

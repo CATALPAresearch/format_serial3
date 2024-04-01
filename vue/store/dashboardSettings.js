@@ -33,9 +33,9 @@ export default {
 			);
 			if (!response.success) {
 				if (response.data) {
-					console.log('Faulty response of webservice /save_dashboard_settings/', response.data);
+					console.error(this.name, 'Faulty response of webservice /save_dashboard_settings/', response.data);
 				} else {
-					console.log('No connection to webservice /save_dashboard_settings/');
+					console.error(this.name, 'No connection to webservice /save_dashboard_settings/');
 				}
 			}
 		},
@@ -63,9 +63,9 @@ export default {
 				}
 			} else {
 				if (response.data) {
-					console.log('No dashboard settings stored');
+					console.error(this.name, 'No dashboard settings stored');
 				} else {
-					console.log('No connection to webservice /overview/');
+					console.error(this.name, 'No connection to webservice /overview/');
 				}
 			}
 		}

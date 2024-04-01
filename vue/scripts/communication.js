@@ -6,9 +6,9 @@ export default class Communication {
   }
 
   static webservice(method, param = {}) {
-    console.log(Communication.fullName + "_x_" + method);
+    //console.log(Communication.fullName + "_x_" + method);
     if (typeof Communication.fullName !== "string") {
-      console.log("No plugin name given at communication class.");
+      console.error("Communication.js", " No plugin name given at communication class.");
       throw new Error("No plugin name given at communication class.");
     }
     return new Promise((resolve, reject) => {
@@ -21,7 +21,8 @@ export default class Communication {
             return resolve(data);
           },
           fail: function (error) {
-            console.log(
+            console.error(
+              "Communication.js",
               "Error at Webservice: " + Communication.fullName + "_" + method,
               error,
               param

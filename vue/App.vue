@@ -36,7 +36,7 @@
         <menu-bar @editmode="toggleEditMode"></menu-bar>
       </div>
     </div>
-    <div class="grid-stack vue-grid-layout">
+    <div id="widgetGrid" class="grid-stack vue-grid-layout">
       <div class="grid-stack-item vue-grid-item border p-3" 
         v-for="(item, index) in layout"
         :id="'widget-' + item.c"
@@ -272,8 +272,9 @@ export default {
       },
       float: true 
     });
-    
-    this.initObserver();
+    this.$nextTick(function () {
+      this.initObserver();
+    });
   },
 
   computed: {
@@ -325,7 +326,7 @@ export default {
         let handleScrolling = function (entries) {
           entries.forEach((entry) => {
             if (entry.isIntersecting) {
-              console.log(entry.target.id, entry.intersectionRatio);
+              //console.log('Scroll Output: ',entry.target.id, entry.intersectionRatio);
               _this.log({
                 key: "view-dashboard-widget",
                 value: {
@@ -345,7 +346,11 @@ export default {
         };
 
         let observer = new IntersectionObserver(handleScrolling, options);
-        observer.observe(document.querySelector("#widgetGrid"));
+        var element =  document.querySelector("#widgetGrid");
+        if (typeof(element) != 'undefined' && element != null){
+          observer.observe(element);
+        }
+        
         $("#widgetGrid .vue-grid-item").each(function (i, val) {
           if (typeof $(this).attr("id") == "string") {
             let element = "#" + $(this).attr("id");
