@@ -275,11 +275,11 @@ class format_serial3 extends format_base {
                 ),
                 'sectioncollapsenabled' => array(
                     'default' => $courseconfig->sectioncollapsenabled,
-                    'type' => PARAM_BOOL,
+                    'type' => PARAM_INT,
                 ),
                 'sectioninitiallycollapsed' => array(
                     'default' => $courseconfig->sectioninitiallycollapsed,
-                    'type' => PARAM_BOOL,
+                    'type' => PARAM_INT,
                 ),
                 
             );
@@ -299,7 +299,7 @@ class format_serial3 extends format_base {
                     ),
                 ),
                 'coursedisplay' => array(
-                    'label' => new lang_string('coursedisplay'),
+                    'label' => new lang_string('coursedisplay', 'format_serial3'),
                     'element_type' => 'select',
                     'element_attributes' => array(
                         array(
@@ -311,19 +311,19 @@ class format_serial3 extends format_base {
                     'help_component' => 'moodle',
                 ),
                 'dashboardsectionexclude' => array(
-                    'label' => get_string('dashboardsectionexclude', 'format_serial3'),
+                    'label' =>  get_string('dashboardsectionexclude', 'format_serial3'),
                     'element_type' => 'text'
                 ),
                 'sectioncollapsenabled' => array(
-                    'label' => get_string('sectioncollapsenabled', 'format_serial3'),
-                    'element_type' => 'checkbox',
+                    'label' =>  get_string('sectioncollapsenabled', 'format_serial3'),
+                    'element_type' => 'advcheckbox',
                     'help' => 'sectioncollapsenabled',
                     'help_component' => 'moodle',
                 ),
                 // TODO: make this checkbox dependent of the previous.
                 'sectioninitiallycollapsed' => array( 
-                    'label' => get_string('sectioninitiallycollapsed', 'format_serial3'),
-                    'element_type' => 'checkbox',
+                    'label' =>  get_string('sectioninitiallycollapsed', 'format_serial3'),
+                    'element_type' => 'advcheckbox',
                     'help' => 'sectioninitiallycollapsed',
                     'help_component' => 'moodle',
                 ),
@@ -385,19 +385,18 @@ class format_serial3 extends format_base {
                 if (!array_key_exists($key, $data)) {
                     if (array_key_exists($key, $oldcourse)) {
                         $data[$key] = $oldcourse[$key];
-                    } /*else if ($key === 'sectioncollapsenabled') {
-                        $maxsection = $DB->get_field_sql('SELECT max(section) from
-                        {course_sections} WHERE course = ?', array($this->courseid));
-                        if ($maxsection) {
-                            $data['numsections'] = $maxsection;
-                        }
-                    }*/
+                    } else if ($key === 'sectioncollapsenabled') {
+                        $data['sectioncollapsenabled'] = 0;
+                    }  else if ($key === 'sectioninitiallycollapsed') {
+                        $data['sectioninitiallycollapsed'] = 0;
+                    }
                 }
             }
         }
         return $this->update_format_options($data);
     }
 
+    
     /**
      * Whether this format allows to delete sections
      *
