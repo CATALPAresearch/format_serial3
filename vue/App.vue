@@ -150,7 +150,7 @@ export default {
           name: "Feedback",
           c: "Recommendations",
         },
-        {
+        /*{
           x: 0,
           y: 22,
           w: 14,
@@ -158,7 +158,7 @@ export default {
           i: "12",
           name: "Kursübersicht",
           c: "CourseOverview",
-        },
+        },*/
       ],
 
       allComponents: [
@@ -180,7 +180,7 @@ export default {
           name: "Lernziele",
           c: "IndicatorDisplay",
         },
-        {
+        /*{
           x: 0,
           y: 22,
           w: 14,
@@ -188,7 +188,7 @@ export default {
           i: "12",
           name: "Kursübersicht",
           c: "CourseOverview",
-        },
+        },*/
         {
           x: 10,
           y: 12,
@@ -265,8 +265,10 @@ export default {
       cellHeight: 80,
       animate: false, // show immediate (animate: true is nice for user dragging though)
       columnOpts: {
-        breakpointForWindow: true,  // test window vs grid size
-        breakpoints: [{w:300, c:6},{w:400, c:8},{w:600, c:12},{w:1100, c:12}]
+        breakpointForWindow: false,  // test window vs grid size
+        //breakpoints: [{w:300, c:6},{w:400, c:8},{w:600, c:12},{w:1100, c:12}]
+        //breakpoints: [{w:220, c:1},{w:600, c:6}, {w:800, c:12}]
+        breakpoints: [{w:600, c:1}]
       },
       float: true 
     });
