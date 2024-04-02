@@ -16,9 +16,6 @@
         <option value="CorrectionFeedback">Korrekturen und Feedback</option>
         <option value="Discussions">Engagement in Diskussionsforen</option>
         <option value="CourseMaterial">Änderungen von Kursmaterial</option>
-        <option value="CorrectionExcercises">
-          Korrektur von Übungsaufgaben
-        </option>
         <option value="DataUseTeachers">Datennutzung durch Lehrpersonen</option>
         <option value="DataUseAgents">Datennutzung durch Agenten</option>
       </select>
@@ -105,20 +102,20 @@ export default {
   },
 
   mounted() {
-    this.getTeachers(this.$store.state.courseid);
-    this.getTeachersLastAccess(this.$store.state.courseid);
-    this.getAddedOrChangedCourseResources(this.$store.state.courseid);
-    this.getDeletedCourseResources(this.$store.state.courseid);
+    this.getTeachers();
+    this.getTeachersLastAccess();
+    this.getAddedOrChangedCourseResources();
+    this.getDeletedCourseResources();
   },
 
   methods: {
     ...mapActions(["log"]),
 
-    async getTeachers(courseid) {
+    async getTeachers() {
       const response = await Communication.webservice(
         "get_all_teachers_of_course",
         {
-          courseid: courseid,
+          courseid: this.$store.state.courseid,
         }
       );
 
@@ -127,11 +124,11 @@ export default {
       }
     },
 
-    async getTeachersLastAccess(courseid) {
+    async getTeachersLastAccess() {
       const response = await Communication.webservice(
         "get_last_access_of_teachers_of_course",
         {
-          courseid: courseid,
+          courseid: this.$store.state.courseid,
         }
       );
 
@@ -139,7 +136,6 @@ export default {
         this.teacherLastAccessList = Object.values(JSON.parse(response.data));
       }
     },
-
 
     async getAddedOrChangedCourseResources() {
       const response = await Communication.webservice(
