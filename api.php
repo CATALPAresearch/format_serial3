@@ -2,7 +2,7 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-require_once($CFG->libdir . '/externallib.php');
+require_once ($CFG->libdir . '/externallib.php');
 
 function get_meta($courseID)
 {
@@ -10,7 +10,7 @@ function get_meta($courseID)
         global $USER, $COURSE;
         $obj = new stdClass();
         $obj->course = new stdClass();
-        $obj->course->id = (int)$courseID;
+        $obj->course->id = (int) $courseID;
         require_login($obj->course->id);
         $obj->course->context = context_course::instance($obj->course->id);
         $obj->course->global = $COURSE;
@@ -76,8 +76,9 @@ class format_serial3_external extends external_api
         $out = array();
         try {
             global $USER, $CFG, $DB;
-            $permission = new format_serial3\permission\course((int)$USER->id, $courseid);
-            if (!$permission->isAnyKindOfModerator()) throw new Exception("No permission");
+            $permission = new format_serial3\permission\course((int) $USER->id, $courseid);
+            if (!$permission->isAnyKindOfModerator())
+                throw new Exception("No permission");
             $context = $permission->getCourseContext();
             $enrollments = get_enrolled_users($context);
             $users = array();
@@ -100,8 +101,8 @@ class format_serial3_external extends external_api
                     $sql = 'SELECT t.milestones, t.settings, t.timemodified 
                             FROM ' . $CFG->prefix . 'serial3_milestones AS t
                             WHERE   
-                                t.course = ' . (int)$courseid . ' 
-                                AND t.userid = ' . (int)$user->id . '
+                                t.course = ' . (int) $courseid . ' 
+                                AND t.userid = ' . (int) $user->id . '
                             ORDER BY t.timemodified DESC
                             LIMIT 1';
                     $ms = $DB->get_record_sql($sql);
@@ -127,14 +128,20 @@ class format_serial3_external extends external_api
                     // Get the planing
                     // Preferences
 
-                    $surveyDone = $DB->get_record("user_preferences", array(
-                        'name' => 'serial3_survey_done-course-' . (int)$courseid,
-                        'userid' => (int)$user->id
-                    ));
-                    $surveyData = $DB->get_record("user_preferences", array(
-                        'name' => 'serial3_survey_results-course-' . (int)$courseid,
-                        'userid' => (int)$user->id
-                    ));
+                    $surveyDone = $DB->get_record(
+                        "user_preferences",
+                        array(
+                            'name' => 'serial3_survey_done-course-' . (int) $courseid,
+                            'userid' => (int) $user->id
+                        )
+                    );
+                    $surveyData = $DB->get_record(
+                        "user_preferences",
+                        array(
+                            'name' => 'serial3_survey_results-course-' . (int) $courseid,
+                            'userid' => (int) $user->id
+                        )
+                    );
                     if ($surveyDone !== false && is_object($surveyData) && isset($surveyData->value)) {
                         $data = json_decode($surveyData->value);
                         if ($data === null) {
@@ -160,7 +167,7 @@ class format_serial3_external extends external_api
                      ON s.survey_id = a.survey_id 
                         AND a.course_id = ? 
                      LIMIT 1';
-                    $lime = $DB->get_records_sql($sql, array((int)$courseid));
+                    $lime = $DB->get_records_sql($sql, array((int) $courseid));
                     if (is_array($lime) && count($lime) > 0) {
                         $u->lime = $lime;
                     } else {
@@ -212,7 +219,8 @@ class format_serial3_external extends external_api
         $out = array();
         try {
             $perm = new format_serial3\permission\course($USER->id, $courseid);
-            if ($perm->isAnyKindOfModerator()) return array('data' => json_encode($out));
+            if ($perm->isAnyKindOfModerator())
+                return array('data' => json_encode($out));
 
             $out['warnSurvey'] = false;
             $records = $DB->get_records_sql('SELECT * FROM ' . $CFG->prefix . 'limesurvey_assigns WHERE course_id = ?', array($courseid));
@@ -227,7 +235,8 @@ class format_serial3_external extends external_api
                 if (isset($record->stopdate) && is_int(+$record->stopdate) && !is_null($record->stopdate)) {
                     if (time() > $record->stopdate) {
                         continue;
-                    };
+                    }
+                    ;
                 }
 
                 if ($DB->record_exists_sql('SELECT * FROM ' . $CFG->prefix . 'limesurvey_submissions WHERE user_id = ? AND survey_id = ?', array($USER->id, $record->survey_id)) === false) {
@@ -310,8 +319,8 @@ class format_serial3_external extends external_api
                     SELECT t.milestones, t.settings, t.timemodified 
                     FROM ' . $CFG->prefix . 'serial3_milestones AS t
                     WHERE   
-                        t.course = ' . (int)$courseid . ' 
-                        AND t.userid = ' . (int)$user->id . '
+                        t.course = ' . (int) $courseid . ' 
+                        AND t.userid = ' . (int) $user->id . '
                     ORDER BY t.timemodified DESC
                     LIMIT 1
                     ;';
@@ -323,25 +332,31 @@ class format_serial3_external extends external_api
                     SELECT t.timemodified 
                     FROM ' . $CFG->prefix . 'serial3_milestones AS t
                     WHERE   
-                        t.course = ' . (int)$courseid . ' 
-                        AND t.userid = ' . (int)$user->id . '
+                        t.course = ' . (int) $courseid . ' 
+                        AND t.userid = ' . (int) $user->id . '
                     ORDER BY t.timemodified DESC                 
                     ;';
                 $uo->milestonesChanged = $DB->get_records_sql($sql);
                 $transaction->allow_commit();
                 // preferences
                 $transaction = $DB->start_delegated_transaction();
-                $resSD = $DB->get_record("user_preferences", array(
-                    'name' => 'serial3_survey_done-course-' . (int)$courseid,
-                    'userid' => (int)$user->id
-                ));
+                $resSD = $DB->get_record(
+                    "user_preferences",
+                    array(
+                        'name' => 'serial3_survey_done-course-' . (int) $courseid,
+                        'userid' => (int) $user->id
+                    )
+                );
                 $transaction->allow_commit();
                 $uo->surveyDone = $resSD;
                 $transaction = $DB->start_delegated_transaction();
-                $res = $DB->get_record("user_preferences", array(
-                    'name' => 'serial3_survey_results-course-' . (int)$courseid,
-                    'userid' => (int)$user->id
-                ));
+                $res = $DB->get_record(
+                    "user_preferences",
+                    array(
+                        'name' => 'serial3_survey_results-course-' . (int) $courseid,
+                        'userid' => (int) $user->id
+                    )
+                );
                 $transaction->allow_commit();
                 $uo->survey = $res;
                 $out['users'][] = $uo;
@@ -488,7 +503,7 @@ class format_serial3_external extends external_api
             if (is_null($param)) {
                 throw new Exception("No courseid");
             }
-            $context = get_meta((int)$param);
+            $context = get_meta((int) $param);
             if ($context->user->loggedin === false || ($context->user->manager === false && $context->user->siteadmin === false && $context->user->coursecreator === false)) {
                 throw new Exception("No Admin");
             }
@@ -618,11 +633,11 @@ class format_serial3_external extends external_api
             if (!is_null($data->milestones)) {
                 $date = new DateTime();
                 $r = new stdClass();
-                $r->userid = (int)$userid;
-                $r->course = (int)$data->courseid;
+                $r->userid = (int) $userid;
+                $r->course = (int) $data->courseid;
                 $r->milestones = $data->milestones;
                 $r->settings = [];
-                $r->timemodified = (int)$date->getTimestamp();
+                $r->timemodified = (int) $date->getTimestamp();
                 $transaction = $DB->start_delegated_transaction();
                 $res = $DB->insert_record("serial3_milestones", $r);
                 $transaction->allow_commit();
@@ -634,11 +649,14 @@ class format_serial3_external extends external_api
                     global $CFG, $DB, $USER;
                     $r = new stdClass();
                     $r->userid = $userid;
-                    $r->name = $field . '-course-' . (int)$courseid;
-                    $exists = $DB->record_exists('user_preferences', array(
-                        'name' => $field . '-course-' . (int)$courseid,
-                        'userid' => $userid
-                    ));
+                    $r->name = $field . '-course-' . (int) $courseid;
+                    $exists = $DB->record_exists(
+                        'user_preferences',
+                        array(
+                            'name' => $field . '-course-' . (int) $courseid,
+                            'userid' => $userid
+                        )
+                    );
                     $res = 'nix';
                     if ($exists != true) {
                         $r->value = $value == null ? 0 : $value;
@@ -647,15 +665,20 @@ class format_serial3_external extends external_api
                         $transaction->allow_commit();
                     } elseif ($exists == true) {
                         $transaction = $DB->start_delegated_transaction();
-                        $res = $DB->set_field("user_preferences", 'value', $value, array(
-                            'userid' => $userid,
-                            'name' => $field . '-course-' . $courseid
-                        ));
+                        $res = $DB->set_field(
+                            "user_preferences",
+                            'value',
+                            $value,
+                            array(
+                                'userid' => $userid,
+                                'name' => $field . '-course-' . $courseid
+                            )
+                        );
                         $transaction->allow_commit();
                     }
                 }
-                func("serial3_survey_results", (int)$data->courseid, (int)$userid, $data->plan);
-                func("serial3_survey_done", (int)$data->courseid, (int)$userid, 0);
+                func("serial3_survey_results", (int) $data->courseid, (int) $userid, $data->plan);
+                func("serial3_survey_done", (int) $data->courseid, (int) $userid, 0);
             }
         } catch (Exception $ex) {
             $out['debug'] = $ex->getMessage();
@@ -702,8 +725,8 @@ class format_serial3_external extends external_api
     {
         global $CFG, $DB, $USER;
         $transaction = $DB->start_delegated_transaction();
-        $cid = (int)$data;
-        $uid = (int)$USER->id;
+        $cid = (int) $data;
+        $uid = (int) $USER->id;
         $sql = '
             SELECT * FROM ' . $CFG->prefix . 'event
             WHERE (' . $CFG->prefix . 'event.eventtype = \'site\') 
@@ -789,9 +812,9 @@ class format_serial3_external extends external_api
         //
         $user_data = array(
             'username' => $USER->username,
-            'firstname' =>  $USER->firstname,
-            'lastname' =>  $USER->lastname,
-            'userid' =>  $USER->id
+            'firstname' => $USER->firstname,
+            'lastname' => $USER->lastname,
+            'userid' => $USER->id
         );
 
         return array('data' => json_encode($arr), 'user' => json_encode($user_data));
@@ -832,14 +855,14 @@ class format_serial3_external extends external_api
             array(
                 'courseid' => new external_value(PARAM_INT, 'course id'),
                 'select' =>
-                new external_single_structure(
-                    array(
-                        'modules' => new external_value(PARAM_RAW, 'modules'),
-                        'sectionid' => new external_value(PARAM_INT, 'section id', VALUE_OPTIONAL),
-                        'moduleid' => new external_value(PARAM_INT, 'module id', VALUE_OPTIONAL)
-                    ),
-                    'select special items'
-                )
+                    new external_single_structure(
+                        array(
+                            'modules' => new external_value(PARAM_RAW, 'modules'),
+                            'sectionid' => new external_value(PARAM_INT, 'section id', VALUE_OPTIONAL),
+                            'moduleid' => new external_value(PARAM_INT, 'module id', VALUE_OPTIONAL)
+                        ),
+                        'select special items'
+                    )
             )
         );
     }
@@ -865,9 +888,22 @@ class format_serial3_external extends external_api
 
         // all allowed modules
         $allowed_modules = array(
-            "assign", "data", "hvp", "checklist",
-            "url", "studentquiz", "page", "feedback", "forum", "resource", "wiki",
-            "glossary", "quiz", "usenet", "book", "usenet"
+            "assign",
+            "data",
+            "hvp",
+            "checklist",
+            "url",
+            "studentquiz",
+            "page",
+            "feedback",
+            "forum",
+            "resource",
+            "wiki",
+            "glossary",
+            "quiz",
+            "usenet",
+            "book",
+            "usenet"
         ); // TODO: This should be part of the course settings
 
         if (is_array($select)) {
@@ -877,9 +913,9 @@ class format_serial3_external extends external_api
                 if (in_array($value, $allowed_modules)) {
                     $activityId = 0;
                     $params = array();
-                    $params[] = (int)$courseid;
-                    $params[] = (int)$courseid;
-                    $params[] = (int)$courseid;
+                    $params[] = (int) $courseid;
+                    $params[] = (int) $courseid;
+                    $params[] = (int) $courseid;
                     $params[] = $value;
                     $query = '
                         SELECT 
@@ -906,17 +942,18 @@ class format_serial3_external extends external_api
                     ';
                     if (isset($select["sectionid"]) && !is_null($select["sectionid"])) {
                         $query .= ' AND cs.id = ?';
-                        $params[] = (int)$select["sectionid"];
+                        $params[] = (int) $select["sectionid"];
                     }
                     if (isset($select["moduleid"]) && !is_null($select["moduleid"])) {
                         $query .= ' AND cm.id = ?';
-                        $params[] = (int)$select["moduleid"];
+                        $params[] = (int) $select["moduleid"];
                     }
                     $transaction = $DB->start_delegated_transaction();
                     $res = $DB->get_records_sql($query, $params);
                     $transaction->allow_commit();
                     foreach ($res as $entry) {
-                        if (!$entry->cm_visibility) continue;
+                        if (!$entry->cm_visibility)
+                            continue;
                         $pos = -1;
                         // I am not sure whether sizeof() and count() have the same results, but in php 7.2 sizeof() requires an array.
                         if (gettype($entry->section_sequence) === "string" && sizeof($entry->section_sequence) > 0) {
@@ -926,7 +963,7 @@ class format_serial3_external extends external_api
                         $activityId++;
 
                         $out = array(
-                            'id' =>  $entry->instance_id + 100000 * $entry->module_id, // simple hash to make unique IDs
+                            'id' => $entry->instance_id + 100000 * $entry->module_id, // simple hash to make unique IDs
                             'course_id' => $entry->course_id,
                             'module_id' => $entry->module_id,
                             'section_id' => $entry->section_id,
@@ -961,14 +998,14 @@ class format_serial3_external extends external_api
         return new external_function_parameters(
             array(
                 'data' =>
-                new external_single_structure(
-                    array(
-                        'courseid' => new external_value(PARAM_INT, 'id of course', VALUE_OPTIONAL),
-                        'utc' => new external_value(PARAM_INT, 'utc time', VALUE_OPTIONAL),
-                        'action' => new external_value(PARAM_TEXT, 'action', VALUE_OPTIONAL),
-                        'entry' => new external_value(PARAM_RAW, 'log data', VALUE_OPTIONAL)
+                    new external_single_structure(
+                        array(
+                            'courseid' => new external_value(PARAM_INT, 'id of course', VALUE_OPTIONAL),
+                            'utc' => new external_value(PARAM_INT, 'utc time', VALUE_OPTIONAL),
+                            'action' => new external_value(PARAM_TEXT, 'action', VALUE_OPTIONAL),
+                            'entry' => new external_value(PARAM_RAW, 'log data', VALUE_OPTIONAL)
+                        )
                     )
-                )
             )
         );
     }
@@ -999,7 +1036,7 @@ class format_serial3_external extends external_api
         $r->contextlevel = 70;
         $r->contextinstanceid = 86;
         $r->userid = $USER->id;
-        $r->courseid = (int)$data['courseid'];
+        $r->courseid = (int) $data['courseid'];
         //$r->relateduserid=NULL;
         $r->anonymous = 0;
         $r->other = $data['entry'];
@@ -1031,11 +1068,11 @@ class format_serial3_external extends external_api
         return new external_function_parameters(
             array(
                 'data' =>
-                new external_single_structure(
-                    array(
-                        'courseid' => new external_value(PARAM_INT, 'id of course', VALUE_OPTIONAL)
+                    new external_single_structure(
+                        array(
+                            'courseid' => new external_value(PARAM_INT, 'id of course', VALUE_OPTIONAL)
+                        )
                     )
-                )
             )
         );
     }
@@ -1089,12 +1126,12 @@ class format_serial3_external extends external_api
         return new external_function_parameters(
             array(
                 'data' =>
-                new external_single_structure(
-                    array(
-                        'courseid' => new external_value(PARAM_INT, 'id of course', VALUE_OPTIONAL),
-                        'userid' => new external_value(PARAM_INT, 'id of course', VALUE_OPTIONAL)
+                    new external_single_structure(
+                        array(
+                            'courseid' => new external_value(PARAM_INT, 'id of course', VALUE_OPTIONAL),
+                            'userid' => new external_value(PARAM_INT, 'id of course', VALUE_OPTIONAL)
+                        )
                     )
-                )
             )
         );
     }
@@ -1153,12 +1190,12 @@ class format_serial3_external extends external_api
         return new external_function_parameters(
             array(
                 'data' =>
-                new external_single_structure(
-                    array(
-                        'courseid' => new external_value(PARAM_INT, 'id of course', VALUE_OPTIONAL)
-                        //'userid' => new external_value(PARAM_INT, 'utc time', VALUE_OPTIONAL)
+                    new external_single_structure(
+                        array(
+                            'courseid' => new external_value(PARAM_INT, 'id of course', VALUE_OPTIONAL)
+                            //'userid' => new external_value(PARAM_INT, 'utc time', VALUE_OPTIONAL)
+                        )
                     )
-                )
             )
         );
     }
@@ -1171,25 +1208,29 @@ class format_serial3_external extends external_api
     public static function getmilestones($data)
     {
         global $CFG, $DB, $USER;
-        (int)$data['userid'] = $USER->id;
+        (int) $data['userid'] = $USER->id;
         $transaction = $DB->start_delegated_transaction();
         $sql = '
             SELECT t.milestones, t.settings, t.timemodified 
             FROM ' . $CFG->prefix . 'serial3_milestones AS t
             WHERE   
                 t.course = ' . $data['courseid'] . ' 
-                AND t.userid = ' . (int)$data['userid'] . '
+                AND t.userid = ' . (int) $data['userid'] . '
             ORDER BY t.timemodified DESC
             LIMIT 1
             ;';
         $res = $DB->get_record_sql($sql);
         $transaction->allow_commit();
 
-        return array('milestones' => json_encode(array(
-            'settings' => $res->settings,
-            'milestones' => $res->milestones,
-            'utc' => $res->timemodified
-        )));
+        return array(
+            'milestones' => json_encode(
+                array(
+                    'settings' => $res->settings,
+                    'milestones' => $res->milestones,
+                    'utc' => $res->timemodified
+                )
+            )
+        );
     }
     public static function getmilestones_is_allowed_from_ajax()
     {
@@ -1206,14 +1247,14 @@ class format_serial3_external extends external_api
         return new external_function_parameters(
             array(
                 'data' =>
-                new external_single_structure(
-                    array(
-                        'courseid' => new external_value(PARAM_INT, 'id of course', VALUE_OPTIONAL),
-                        //'userid' => new external_value(PARAM_INT, 'user id', VALUE_OPTIONAL),
-                        'milestones' => new external_value(PARAM_RAW, 'milestones', VALUE_OPTIONAL),
-                        'settings' => new external_value(PARAM_RAW, 'settings', VALUE_OPTIONAL)
+                    new external_single_structure(
+                        array(
+                            'courseid' => new external_value(PARAM_INT, 'id of course', VALUE_OPTIONAL),
+                            //'userid' => new external_value(PARAM_INT, 'user id', VALUE_OPTIONAL),
+                            'milestones' => new external_value(PARAM_RAW, 'milestones', VALUE_OPTIONAL),
+                            'settings' => new external_value(PARAM_RAW, 'settings', VALUE_OPTIONAL)
+                        )
                     )
-                )
             )
         );
     }
@@ -1229,20 +1270,20 @@ class format_serial3_external extends external_api
         global $CFG, $DB, $USER;
 
         $date = new DateTime();
-        $data['userid'] = (int)$USER->id;
+        $data['userid'] = (int) $USER->id;
 
         $r = new stdClass();
-        $r->userid = (int)$data['userid'];
-        $r->course = (int)$data['courseid'];
+        $r->userid = (int) $data['userid'];
+        $r->course = (int) $data['courseid'];
         $r->milestones = $data['milestones'];
         $r->settings = $data['settings'];
-        $r->timemodified = (int)$date->getTimestamp();
+        $r->timemodified = (int) $date->getTimestamp();
 
         $transaction = $DB->start_delegated_transaction();
         $res = $DB->insert_records("serial3_milestones", array($r));
         $sql = '
             INSERT INTO ' . $CFG->prefix . 'serial3_milestones (user,course,milestones,settings,timemodified) 
-            VALUES (' . (int)$data['userid'] . ',' . (int)$data['courseid'] . ',\'' . $data['milestones'] . '\',\'' . $data['settings'] . '\',' . (int)$date->getTimestamp() . ')
+            VALUES (' . (int) $data['userid'] . ',' . (int) $data['courseid'] . ',\'' . $data['milestones'] . '\',\'' . $data['settings'] . '\',' . (int) $date->getTimestamp() . ')
             ;';
         //$res = $DB->execute($sql);
         $transaction->allow_commit();
@@ -1262,12 +1303,12 @@ class format_serial3_external extends external_api
         return new external_function_parameters(
             array(
                 'data' =>
-                new external_single_structure(
-                    array(
-                        'courseid' => new external_value(PARAM_INT, 'id of course', VALUE_OPTIONAL),
-                        'plan' => new external_value(PARAM_TEXT, 'the desired plan')
+                    new external_single_structure(
+                        array(
+                            'courseid' => new external_value(PARAM_INT, 'id of course', VALUE_OPTIONAL),
+                            'plan' => new external_value(PARAM_TEXT, 'the desired plan')
+                        )
                     )
-                )
             )
         );
     }
@@ -1283,7 +1324,7 @@ class format_serial3_external extends external_api
         global $CFG, $DB, $USER;
         $transaction = $DB->start_delegated_transaction();
         $params = array();
-        $params[] = (int)$param['courseid'];
+        $params[] = (int) $param['courseid'];
         $params[] = $param['plan'];
         $sql = '
             SELECT milestones 
@@ -1316,13 +1357,13 @@ class format_serial3_external extends external_api
         return new external_function_parameters(
             array(
                 'data' =>
-                new external_single_structure(
-                    array(
-                        'courseid' => new external_value(PARAM_INT, 'id of course'),
-                        'milestones' => new external_value(PARAM_RAW, 'milestones'),
-                        'plan' => new external_value(PARAM_TEXT, 'plan')
+                    new external_single_structure(
+                        array(
+                            'courseid' => new external_value(PARAM_INT, 'id of course'),
+                            'milestones' => new external_value(PARAM_RAW, 'milestones'),
+                            'plan' => new external_value(PARAM_TEXT, 'plan')
+                        )
                     )
-                )
             )
         );
     }
@@ -1347,15 +1388,15 @@ class format_serial3_external extends external_api
             if ($meta->user->loggedin === true && ($meta->user->manager === true || $meta->user->coursecreator === true || $meta->user->siteadmin === true)) {
                 $date = new DateTime();
                 $c = new stdClass();
-                $c->course = (int)$meta->course->id;
-                $c->author = (int)$meta->user->id;
-                $c->created = (int)$date->getTimestamp();
+                $c->course = (int) $meta->course->id;
+                $c->author = (int) $meta->user->id;
+                $c->created = (int) $date->getTimestamp();
                 $c->plan = $param['plan'];
                 $c->milestones = $param['milestones'];
                 $sql = 'SELECT id FROM ' . $CFG->prefix . 'serial3_milestone_plans WHERE course = ? AND plan = ? LIMIT 1';
                 $transaction = $DB->start_delegated_transaction();
                 $params = array();
-                $params[] = (int)$meta->course->id;
+                $params[] = (int) $meta->course->id;
                 $params[] = strtolower($param['plan']);
                 $res = $DB->get_records_sql($sql, $params);
                 $transaction->allow_commit();
@@ -1401,14 +1442,14 @@ class format_serial3_external extends external_api
         return new external_function_parameters(
             array(
                 'data' =>
-                new external_single_structure(
-                    array(
-                        'courseid' => new external_value(PARAM_INT, 'id of course', VALUE_OPTIONAL),
-                        'fieldname' => new external_value(PARAM_TEXT, 'Name of the field'),
-                        'setget' => new external_value(PARAM_TEXT, 'Get or Set'),
-                        'value' => new external_value(PARAM_TEXT, 'Value of field', VALUE_OPTIONAL)
+                    new external_single_structure(
+                        array(
+                            'courseid' => new external_value(PARAM_INT, 'id of course', VALUE_OPTIONAL),
+                            'fieldname' => new external_value(PARAM_TEXT, 'Name of the field'),
+                            'setget' => new external_value(PARAM_TEXT, 'Get or Set'),
+                            'value' => new external_value(PARAM_TEXT, 'Value of field', VALUE_OPTIONAL)
+                        )
                     )
-                )
             )
         );
     }
@@ -1421,15 +1462,18 @@ class format_serial3_external extends external_api
     public static function userpreferences($data)
     {
         global $CFG, $DB, $USER;
-        $userid = (int)$USER->id;
+        $userid = (int) $USER->id;
 
         $r = new stdClass();
         $r->userid = $userid;
         $r->name = $data['fieldname'] . '-course-' . $data['courseid'];
-        $exists = $DB->record_exists('user_preferences', array(
-            'name' => $data['fieldname'] . '-course-' . $data['courseid'],
-            'userid' => $userid
-        ));
+        $exists = $DB->record_exists(
+            'user_preferences',
+            array(
+                'name' => $data['fieldname'] . '-course-' . $data['courseid'],
+                'userid' => $userid
+            )
+        );
         $res = 'nix';
         if ($exists != true) {
             $r->value = $data['value'] == null ? 0 : $data['value'];
@@ -1438,10 +1482,13 @@ class format_serial3_external extends external_api
             $transaction->allow_commit();
         } elseif ($exists == true && $data['setget'] == 'get') {
             $transaction = $DB->start_delegated_transaction();
-            $res = $DB->get_record("user_preferences", array(
-                'name' => $data['fieldname'] . '-course-' . $data['courseid'],
-                'userid' => $userid
-            ));
+            $res = $DB->get_record(
+                "user_preferences",
+                array(
+                    'name' => $data['fieldname'] . '-course-' . $data['courseid'],
+                    'userid' => $userid
+                )
+            );
             $transaction->allow_commit();
         } elseif ($exists == true && $data['setget'] == 'set') {
             //$transaction = $DB->start_delegated_transaction();
@@ -1453,10 +1500,15 @@ class format_serial3_external extends external_api
             //$r->value=$data['value'];
             $transaction = $DB->start_delegated_transaction();
             //$res = $DB->set_record("user_preferences", array($r));
-            $res = $DB->set_field("user_preferences", 'value', $data['value'], array(
-                'userid' => $userid,
-                'name' => $data['fieldname'] . '-course-' . $data['courseid']
-            ));
+            $res = $DB->set_field(
+                "user_preferences",
+                'value',
+                $data['value'],
+                array(
+                    'userid' => $userid,
+                    'name' => $data['fieldname'] . '-course-' . $data['courseid']
+                )
+            );
             //$sql = 'UPDATE '. $CFG->prefix .'user_preferences SET value=\''. $data['value'] .'\' WHERE name=\'serial3_survey_done\' ;';
             //$res = $DB->set_records_sql($sql);
             $transaction->allow_commit();
@@ -1499,7 +1551,7 @@ class format_serial3_external extends external_api
     public static function completionprogress($data)
     {
         global $CFG, $DB, $USER, $COURSE;
-        $userid = (int)$USER->id;
+        $userid = (int) $USER->id;
         $courseid = $data;
         $meta = get_meta($courseid);
 
@@ -1513,19 +1565,19 @@ class format_serial3_external extends external_api
                 #$url = is_string($cm->url) ? (method_exists($cm->url, 'out') ? $cm->url->out() : '') : '';
                 $url = $cm->url->out();
                 $activities[] = array(
-                    'type'       => $module,
+                    'type' => $module,
                     'modulename' => $modulename,
-                    'id'         => $cm->id,
-                    'instance'   => $cm->instance,
-                    'name'       => format_string($cm->name),
-                    'expected'   => $cm->completionexpected,
-                    'section'    => $cm->sectionnum,
+                    'id' => $cm->id,
+                    'instance' => $cm->instance,
+                    'name' => format_string($cm->name),
+                    'expected' => $cm->completionexpected,
+                    'section' => $cm->sectionnum,
                     'sectionname' => get_section_name($courseid, $cm->sectionnum),
-                    'position'   => array_search($cm->id, $sections[$cm->sectionnum]),
-                    'url'        => '',
-                    'context'    => $cm->context,
-                    'icon'       => $cm->get_icon_url(),
-                    'available'  => $cm->available,
+                    'position' => array_search($cm->id, $sections[$cm->sectionnum]),
+                    'url' => '',
+                    'context' => $cm->context,
+                    'icon' => $cm->get_icon_url(),
+                    'available' => $cm->available,
                     'completion' => 0,
                 );
             }
@@ -1622,9 +1674,9 @@ class format_serial3_external extends external_api
             qr.userid=:userid AND 
             qr.complete='y'",
             [
-                "courseid" => (int)$courseid,
-                "moduleid" => (int)$moduleid,
-                "userid" => (int)$USER->id
+                "courseid" => (int) $courseid,
+                "moduleid" => (int) $moduleid,
+                "userid" => (int) $USER->id
             ]
         );
 
@@ -1679,7 +1731,7 @@ class format_serial3_external extends external_api
     public static function overview($data)
     {
         global $CFG, $DB, $USER, $COURSE;
-        $userid = (int)$USER->id;
+        $userid = (int) $USER->id;
         $courseid = $data;
         $debug = [];
         $meta = get_meta($courseid);
@@ -1694,22 +1746,22 @@ class format_serial3_external extends external_api
                 $url = is_string($cm->url) ? (method_exists($cm->url, 'out') ? $cm->url->out() : '') : '';
                 //$url = $cm->url->out();
                 $activities[] = array(
-                    'type'       => $module,
+                    'type' => $module,
                     'modulename' => $modulename,
-                    'id'         => $cm->id,
-                    'instance'   => $cm->instance,
-                    'name'       => format_string($cm->name),
-                    'expected'   => $cm->completionexpected,
-                    'section'    => $cm->sectionnum,
+                    'id' => $cm->id,
+                    'instance' => $cm->instance,
+                    'name' => format_string($cm->name),
+                    'expected' => $cm->completionexpected,
+                    'section' => $cm->sectionnum,
                     'sectionname' => get_section_name($courseid, $cm->sectionnum),
-                    'position'   => array_search($cm->id, $sections[$cm->sectionnum]),
-                    'url'        => '',
-                    'context'    => $cm->context,
-                    'icon'       => $cm->get_icon_url(),
-                    'available'  => $cm->available,
+                    'position' => array_search($cm->id, $sections[$cm->sectionnum]),
+                    'url' => '',
+                    'context' => $cm->context,
+                    'icon' => $cm->get_icon_url(),
+                    'available' => $cm->available,
                     'completion' => 0,
-                    'visible'     => $cm->visible,
-                    'rating'     => 0,
+                    'visible' => $cm->visible,
+                    'rating' => 0,
                 );
             }
         }
@@ -1885,10 +1937,12 @@ Group by cm.id
 
         return array(
             'success' => true,
-            'data' => json_encode(array(
-                'debug' => json_encode($debug),
-                'completions' => json_encode($completions)
-            ))
+            'data' => json_encode(
+                array(
+                    'debug' => json_encode($debug),
+                    'completions' => json_encode($completions)
+                )
+            )
         );
     }
 
@@ -1924,12 +1978,12 @@ Group by cm.id
     {
         global $DB, $USER;
         $debug = [];
-        $userid = (int)$USER->id;
+        $userid = (int) $USER->id;
         $courseid = $data;
         $transaction = $DB->start_delegated_transaction();
         $res = $DB->get_records_sql(
             "SELECT * FROM {serial3_reflections} WHERE courseid=:course AND userid=:user ORDER BY timecreated ASC",
-            array("course" => (int)$courseid, "user" => (int)$userid)
+            array("course" => (int) $courseid, "user" => (int) $userid)
         );
         $transaction->allow_commit();
 
@@ -1948,13 +2002,13 @@ Group by cm.id
         return new external_function_parameters(
             array(
                 'data' =>
-                new external_single_structure(
-                    array(
-                        'course' => new external_value(PARAM_INT, 'course id'),
-                        'section' => new external_value(PARAM_INT, 'section id'),
-                        'reflection' => new external_value(PARAM_TEXT, 'reflection text submitted by the learner')
+                    new external_single_structure(
+                        array(
+                            'course' => new external_value(PARAM_INT, 'course id'),
+                            'section' => new external_value(PARAM_INT, 'section id'),
+                            'reflection' => new external_value(PARAM_TEXT, 'reflection text submitted by the learner')
+                        )
                     )
-                )
             )
         );
     }
@@ -1977,12 +2031,12 @@ Group by cm.id
     {
         global $CFG, $DB, $USER, $COURSE;
         $debug = [];
-        $userid = (int)$USER->id;
+        $userid = (int) $USER->id;
         $date = date_create();
 
         $r = new stdClass();
-        $r->userid = (int)$userid;
-        $r->courseid = (int)$data['course'];
+        $r->userid = (int) $userid;
+        $r->courseid = (int) $data['course'];
         $r->section = $data['section'];
         $r->reflection = $data['reflection'];
         $r->timecreated = date_timestamp_get($date);
@@ -2022,7 +2076,7 @@ Group by cm.id
         global $CFG, $DB, $USER;
 
         $transaction = $DB->start_delegated_transaction();
-        $res = $DB->get_record("tool_policy_acceptances", array("policyversionid" => (int)$data, "userid" => (int)$USER->id), "timemodified");
+        $res = $DB->get_record("tool_policy_acceptances", array("policyversionid" => (int) $data, "userid" => (int) $USER->id), "timemodified");
         $transaction->allow_commit();
 
         return array('data' => json_encode($res));
@@ -2126,8 +2180,8 @@ Group by cm.id
             	userid=:userid AND
             	course=:course",
             [
-                "course" => (int)$course,
-                "userid" => (int)$userid
+                "course" => (int) $course,
+                "userid" => (int) $userid
             ]
         );
 
@@ -2169,12 +2223,12 @@ Group by cm.id
         global $DB, $USER;
 
         $record = new stdClass();
-        $record->userid = (int)$USER->id;
-        $record->course = (int)$course;
-        $record->task = (string)($task);
+        $record->userid = (int) $USER->id;
+        $record->course = (int) $course;
+        $record->task = (string) ($task);
         $record->duedate = strtotime($duedate);
         $record->timemodified = time();
-        $record->completed = (int)$completed;
+        $record->completed = (int) $completed;
 
         $insertResult = $DB->insert_record("serial3_tasks", $record);
 
@@ -2218,7 +2272,7 @@ Group by cm.id
         // update task status in database
         global $DB;
 
-        $record = $DB->get_record('serial3_tasks', ['id' => (int)$id]);
+        $record = $DB->get_record('serial3_tasks', ['id' => (int) $id]);
 
         if ($record) {
             $record->completed = $completed;
@@ -2298,7 +2352,7 @@ Group by cm.id
     {
         global $DB;
 
-        $res = $DB->get_records('serial3_tasks', ['userid' => (int)$userid, 'course' => (int)$course]);
+        $res = $DB->get_records('serial3_tasks', ['userid' => (int) $userid, 'course' => (int) $course]);
 
         if (!$res) {
             $success = false;
@@ -2343,15 +2397,15 @@ Group by cm.id
         global $DB, $USER;
         $date = new DateTime();
         $record = new stdClass();
-        $record->user_id = (int)$USER->id;
-        $record->course_id = (int)$course_id;
+        $record->user_id = (int) $USER->id;
+        $record->course_id = (int) $course_id;
         $record->action_id = $action_id;
         $record->response_type = $response_type;
         $record->response = $user_response;
         $record->timecreated = $date->getTimestamp();
 
         //$DB->insert_record('ari_response_rule_action', $record);
-        
+
         return array(
             'success' => true
         );
@@ -2394,9 +2448,9 @@ Group by cm.id
 				FROM {assign} a
 				LEFT JOIN {assign_submission} s ON s.assignment = a.id AND s.userid = :userid
 				WHERE a.course = :course";
-                //AND a.allowsubmissionsfromdate < UNIX_TIMESTAMP() AND a.duedate < UNIX_TIMESTAMP()
+        //AND a.allowsubmissionsfromdate < UNIX_TIMESTAMP() AND a.duedate < UNIX_TIMESTAMP()
 
-        $params = array('course' => $course, 'userid' => (int)$USER->id);
+        $params = array('course' => $course, 'userid' => (int) $USER->id);
         $missedAssignments = $DB->get_records_sql($sql, $params);
 
         return array(
@@ -2539,12 +2593,12 @@ Group by cm.id
     {
         global $DB, $USER;
 
-        $userid = (int)$USER->id;
+        $userid = (int) $USER->id;
 
         $params = [
             'userid' => $userid,
             'course' => $course,
-            'activityid' => (int)$activityid,
+            'activityid' => (int) $activityid,
         ];
 
         $record = $DB->get_record('serial3_overview', $params);
@@ -2554,10 +2608,10 @@ Group by cm.id
             $DB->update_record('serial3_overview', $record);
         } else {
             $record = new stdClass();
-            $record->userid = (int)$userid;
-            $record->course = (int)$course;
-            $record->activityid = (int)$activityid;
-            $record->rating = (int)$rating;
+            $record->userid = (int) $userid;
+            $record->course = (int) $course;
+            $record->activityid = (int) $activityid;
+            $record->rating = (int) $rating;
             $success = $DB->insert_record('serial3_overview', $record);
         }
 
@@ -2597,8 +2651,8 @@ Group by cm.id
         global $DB, $USER;
 
         $params = [
-            'userid' => (int)$USER->id,
-            'course' => (int)$course,
+            'userid' => (int) $USER->id,
+            'course' => (int) $course,
         ];
 
         $res = $DB->get_records('serial3_overview', $params);
@@ -2699,7 +2753,7 @@ Group by cm.id
     {
         global $DB, $USER;
 
-        $userid = (int)$USER->id;
+        $userid = (int) $USER->id;
 
         $record = $DB->get_record('serial3_learner_goal', array('userid' => $userid, 'course' => $course));
 
@@ -2709,7 +2763,7 @@ Group by cm.id
         } else {
             $record = new stdClass();
             $record->userid = $userid;
-            $record->course = (int)$course;
+            $record->course = (int) $course;
             $record->goal = $goal;
             $success = $DB->insert_record('serial3_learner_goal', $record);
         }
@@ -2749,7 +2803,7 @@ Group by cm.id
     {
         global $DB, $USER;
 
-        $userid = (int)$USER->id;
+        $userid = (int) $USER->id;
 
         $goal = $DB->get_field('serial3_learner_goal', 'goal', array('userid' => $userid, 'course' => $course));
 
@@ -2789,7 +2843,7 @@ Group by cm.id
     {
         global $DB, $USER;
 
-        $userid = (int)$USER->id;
+        $userid = (int) $USER->id;
 
         $sql = "SELECT 
 			(SELECT COUNT(*) 
@@ -2815,8 +2869,8 @@ Group by cm.id
 		WHERE fd.course = :courseid1 AND fp.userid IS NOT NULL
         ;";
 
-        $params = array('courseid' => (int)$course, 'courseid1' => (int)$course, 'userid' => $userid);
-        
+        $params = array('courseid' => (int) $course, 'courseid1' => (int) $course, 'userid' => $userid);
+
         $result = $DB->get_records_sql($sql, $params);
         $result = [];
         return array(
@@ -3056,6 +3110,77 @@ Group by cm.id
         );
     }
     public static function get_deleted_course_resources_is_allowed_from_ajax()
+    {
+        return true;
+    }
+
+    /*
+     * Get new forum discussions (since lastaccess -3600 seconds)
+     **/
+    public static function get_new_forum_discussions_parameters()
+    {
+        return new external_function_parameters([
+            'courseid' => new external_value(PARAM_INT, 'id of course'),
+            'userid' => new external_value(PARAM_INT, 'id of user'),
+
+        ]);
+    }
+    public static function get_new_forum_discussions_returns()
+    {
+        return new external_single_structure(
+            array(
+                'success' => new external_value(PARAM_BOOL, 'success'),
+                'data' => new external_value(PARAM_RAW, 'data')
+            )
+        );
+    }
+    public static function get_new_forum_discussions($courseid, $userid)
+    {
+        global $CFG, $DB, $USER;
+
+        $transaction = $DB->start_delegated_transaction();
+        $query = "SELECT f.name AS forumname, fd.name AS discussionname, fd.timemodified, u.firstname AS teacherfirstname, u.lastname AS teacherlastname FROM mdl_forum_discussions fd 
+        JOIN mdl_user AS u ON u.id = fd.userid
+        JOIN mdl_forum as f ON f.id = fd.forum
+        JOIN mdl_course as c ON c.id = f.course
+        JOIN mdl_user_lastaccess as ul ON (c.id = ul.courseid AND ul.userid = :userid)
+        WHERE fd.course = :courseid
+        AND ul.userid IN (
+        SELECT DISTINCT u.id
+                            
+                FROM mdl_course c
+                JOIN mdl_context ct ON c.id = ct.instanceid
+                JOIN mdl_role_assignments ra ON ra.contextid = ct.id
+                JOIN mdl_user u ON u.id = ra.userid
+                JOIN mdl_role r ON r.id = ra.roleid
+                
+                WHERE r.id IN (1,2,3,4) AND c.id = :courseid2
+                  )
+        AND fd.timemodified > ul.timeaccess -3600";
+
+        $params = array('courseid' => $courseid, 'userid' => $userid, 'courseid2' => $courseid);
+
+        $data = $DB->get_records_sql($query, $params);
+        $transaction->allow_commit();
+
+        $newDiscussions = array();
+        foreach ($data as $line) {
+            $entry = array(
+                'forumname' => $line->forumname,
+                'discussionname' => $line->discussionname,
+                'timemodified' => $line->timemodified,
+                'teacherfirstname' => $line->teacherfirstname,
+                'teacherlastname' => $line->teacherlastname,
+            );
+            array_push($newDiscussions, $entry);
+        }
+
+        return array(
+            'success' => true,
+            'data' => json_encode($newDiscussions),
+        );
+    }
+    public static function get_new_forum_discussions_is_allowed_from_ajax()
     {
         return true;
     }

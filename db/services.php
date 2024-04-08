@@ -387,4 +387,13 @@ $functions = [
 		'ajax' => true,
 		'loginrequired' => true
 	],
+	'format_serial3_get_new_forum_discussions' => [
+		'classname' => 'format_serial3_external',
+		'methodname' => 'get_new_forum_discussions',
+		'classpath' => 'course/format/serial3/api.php',
+		'description' => 'Get new forum discussions (since last access)',
+		'type' => 'write',
+		'ajax' => true,
+		'loginrequired' => true
+	],
 ];

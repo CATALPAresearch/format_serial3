@@ -14,7 +14,7 @@
       >
         <option value="OnlineStatus">Online Status</option>
         <option value="CorrectionFeedback">Korrekturen und Feedback</option>
-        <option value="Discussions">Engagement in Diskussionsforen</option>
+        <option value="Discussions">Neuigkeiten aus Diskussionsforen</option>
         <option value="CourseMaterial">Änderungen von Kursmaterial</option>
         <option value="DataUseTeachers">Datennutzung durch Lehrpersonen</option>
         <option value="DataUseAgents">Datennutzung durch Agenten</option>
@@ -77,6 +77,42 @@
         </table>
       </div>
     </div>
+
+    <div class="form-group">
+      <div v-if="showedInformation == 'Discussions'">
+        <table class="table table-striped table-hover">
+          <thead>
+            <tr>
+              <th scope="col">Forum</th>
+              <th scope="col">Discussion</th>
+              <th scope="col">Lehrperson</th>
+              <th scope="col">Uhrzeit</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              v-for="discussion in newForumDiscussions"
+              :key="discussion.forumname"
+            >
+              <th>
+                <a href="">{{ discussion.forumname }}</a>
+              </th>
+              <td>{{ discussion.discussionname }}</td>
+              <td>
+                {{
+                  discussion.teacherfirstname + " " + discussion.teacherlastname
+                }}
+              </td>
+              <td>
+                <span class="green">{{
+                  relativeToToday(discussion.timemodified)
+                }}</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -96,6 +132,7 @@ export default {
       teacherLastAccessList: [],
       courseResourceList: [],
       courseDeletedResourceList: [],
+      newForumDiscussions: [],
       showedInformation: "OnlineStatus",
       info: "Dieses Widget stellt dir das Verhalten der Lehrpersonen in diesem Kurs transparenter dar. Du kannst zum Beispiel sehen, wie oft diese online sind oder Änderungen am Kursmaterial vornehmen. Diese Inforamtionen stammen aus den Logdaten von Moodle.",
     };
@@ -106,6 +143,7 @@ export default {
     this.getTeachersLastAccess();
     this.getAddedOrChangedCourseResources();
     this.getDeletedCourseResources();
+    this.getNewForumDiscussions();
   },
 
   methods: {
@@ -162,6 +200,19 @@ export default {
         this.courseDeletedResourceList = Object.values(
           JSON.parse(response.data)
         );
+      }
+    },
+
+    async getNewForumDiscussions() {
+      const response = await Communication.webservice(
+        "get_new_forum_discussions",
+        {
+          courseid: this.$store.state.courseid,
+          userid: this.$store.state.userid,
+        }
+      );
+      if (response.success) {
+        this.newForumDiscussions = Object.values(JSON.parse(response.data));
       }
     },
 
