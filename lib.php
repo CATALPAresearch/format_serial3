@@ -274,11 +274,11 @@ class format_serial3 extends format_base {
                     'type' => PARAM_TEXT,
                 ),
                 'sectioncollapsenabled' => array(
-                    'default' => $courseconfig->sectioncollapsenabled,
+                    'default' => property_exists($courseconfig, "sectioncollapsenabled") ? $courseconfig->sectioncollapsenabled : 0,
                     'type' => PARAM_INT,
                 ),
                 'sectioninitiallycollapsed' => array(
-                    'default' => $courseconfig->sectioninitiallycollapsed,
+                    'default' => property_exists($courseconfig, "sectioninitiallycollapsed") ? $courseconfig->sectioninitiallycollapsed : 0,
                     'type' => PARAM_INT,
                 ),
                 

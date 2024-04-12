@@ -2,6 +2,7 @@ import Communication from "../scripts/communication";
 
 export default {
 	namespaced: true,
+	name: 'Communication',
 
 	state: {
 		dashboardSettings: [],

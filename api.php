@@ -1719,6 +1719,22 @@ class format_serial3_external extends external_api
             }
         }
 
+        // Step 1B: Expand Safran activity for containing tasks
+        // TODO
+        /*
+        foreach ($activities as $activity) {
+            if($activity['type'] == 'safran'){
+                //$query = "SELECT id as safranid,  FROM {safran_q_attempt} WHERE questionid = :questionid";
+                $query = "SELECT 
+                        id as safranid,  
+                    FROM {safran_question} 
+                    WHERE safranid = :safranid";
+                $resultset = $DB->get_recordset_sql($query, [
+                    "safranid" => $activity["instance"]
+                ]);
+            }
+        }
+        */
 
         // Step 2: get completions
         $completions = array();

@@ -33,6 +33,7 @@ export default {
         "assignment",
         "quiz",
         "assign",
+        "safran"
       ];
 
       const filtered_activities = Object.keys(data)

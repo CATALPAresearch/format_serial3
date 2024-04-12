@@ -3,6 +3,7 @@ import Communication from "../scripts/communication";
 export default {
 	namespaced: true,
 
+
 	state: {
 		tasks: [],
 	},
@@ -48,9 +49,9 @@ export default {
 				commit('setItems', Object.values(JSON.parse(response.data)));
 			} else {
 				if (response.data) {
-					console.error(this.name, 'No dashboard settings stored');
+					console.warn('taskList store', 'No dashboard settings stored', rootState.userid, rootState.courseid, response);
 				} else {
-					console.error(this.name, 'No connection to webservice /overview/');
+					console.error('taskList store', 'No connection to webservice /overview/');
 				}
 			}
 		},

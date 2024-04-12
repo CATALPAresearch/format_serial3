@@ -183,50 +183,46 @@ export default {
   directives: {
     popoverHtml: {
       bind: function (el, binding) {
-        setTimeout(function () {
-          
-          $(el).popover({
-            html: true,
-            sanitize: false,
-            content: function () {
-              return binding.value;
-            },
+        
+        $(el).popover({
+          html: true,
+          sanitize: false,
+          content: function () {
+            return binding.value;
+          },
+        });
+        
+        $(el).on("shown.bs.popover", function () {
+          var popover = $(el).siblings(".popoverx");
+          popover.on("click", function (event) {
+            event.stopPropagation();
           });
           
-          $(el).on("shown.bs.popover", function () {
-            var popover = $(el).siblings(".popoverx");
-            popover.on("click", function (event) {
-              event.stopPropagation();
-            });
-            
-          });
+        });
 
-          $(el).on("show.bs.popover", function () {
-            $(".popoverx").popover('hide');
-          });
+        $(el).on("show.bs.popover", function () {
+          $(".popoverx").popover('hide');
+        });
+        
+        $(document).on("click.popover", function (event) {
+          var isClickInsidePopover =
+            $(event.target).closest(".popoverx").length > 0 ||
+            $(event.target).hasClass("popover-content");
+          var isClickOnPopoverButton = $(event.target).is($(el));
+          if (!isClickInsidePopover && !isClickOnPopoverButton) {
+            $(el).popover("hide");
+            $(document).off("click.popover");
+          }
+        });
+        
+        $(el).on("hidden.bs.popover", function () {
+          var popover = $(el).siblings(".popover");
+          popover.off("click");
           
-          $(document).on("click.popover", function (event) {
-            var popovers = $(el).siblings(".popoverx");
-            
-            var isClickInsidePopover =
-              $(event.target).closest(".popoverx").length > 0 ||
-              $(event.target).hasClass("popover-content");
-            var isClickOnPopoverButton = $(event.target).is($(el));
-            if (!isClickInsidePopover && !isClickOnPopoverButton) {
-              $(el).popover("hide");
-              $(document).off("click.popover");
-            }
-          });
-          
-          $(el).on("hidden.bs.popover", function () {
-            var popover = $(el).siblings(".popover");
-            popover.off("click");
-            
-          });
-        }, 0); // end set timeout
+        });
+      
       },
       unbind: function (el) {
-        
         $(document).ready(function () {
           $(el).popover("dispose");
           $(el).off("shown.bs.popover");
@@ -249,11 +245,15 @@ export default {
       currentSection: -1,
       mapActivityNames: {
         longpage: "Kurstext",
+        Longpage: "Kurstext",
         Assignment: "Einsendeaufgaben",
+        Aufgabe: "Einsendeaufgaben",
+        assign: "Einsendeaufgaben",
         hypervideo: "Video",
         Safran: "Self-Assessments",
         safran: "Self-Assessments",
         quiz: "Selbsttests",
+        Test: "Selbsttests",
       },
     };
   },

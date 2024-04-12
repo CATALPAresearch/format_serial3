@@ -25,9 +25,9 @@
                     </p>
                     <i v-if="deadline.type === 'calendar'" aria-hidden="true" class="icon fa fa-calendar fa-fw"></i>
                     <img v-if="deadline.type === 'quiz'" alt="" aria-hidden="true" class="icon"
-                         src="http://localhost/theme/image.php/boost/quiz/1679696176/icon">
+                         src="/theme/image.php/boost/quiz/1679696176/icon">
                     <img v-if="deadline.type === 'assignment'" alt="" aria-hidden="true" class="icon"
-                         src="http://localhost/theme/image.php/boost/assign/1679696176/icon">
+                         src="/theme/image.php/boost/assign/1679696176/icon">
                     <span>{{ deadline.name }}</span>
                 </a>
                 <div v-else>
@@ -39,9 +39,9 @@
                     </p>
                     <i v-if="deadline.type === 'calendar'" aria-hidden="true" class="icon fa fa-calendar fa-fw"></i>
                     <img v-if="deadline.type === 'quiz'" alt="" aria-hidden="true" class="icon"
-                         src="http://localhost/theme/image.php/boost/quiz/1679696176/icon">
+                         src="/theme/image.php/boost/quiz/1679696176/icon">
                     <img v-if="deadline.type === 'assignment'" alt="" aria-hidden="true" class="icon"
-                         src="http://localhost/theme/image.php/boost/assign/1679696176/icon">
+                         src="/theme/image.php/boost/assign/1679696176/icon">
                     <span>{{ deadline.name }}</span>
                 </div>
             </li>
@@ -105,6 +105,7 @@ export default {
     methods: {
         ...mapActions(['log']),
         async getCalendarData() {
+            console.log('cid', this.$store.state.courseid)
             const response = await Communication.webservice(
                 'getcalendar',
                 {

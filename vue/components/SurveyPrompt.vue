@@ -67,6 +67,7 @@ export default {
         },
 
         prepareSurvey: async function () {
+            return; // temporally disabled.
             if(this.getisModerator()){
                 //this.close();
                 //return;

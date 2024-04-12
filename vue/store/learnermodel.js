@@ -122,9 +122,9 @@ export default {
 				context.commit('setUserUnderstanding', JSON.parse(response.data));
 			} else {
 				if (response.data) {
-					console.error(this.name, 'Faulty response of webservice /get_user_understanding/', response.data);
+					console.error('learnerModel store:', 'Faulty response of webservice /get_user_understanding/', response.data);
 				} else {
-					console.error(this.name, 'No connection to webservice /get_user_understanding/');
+					console.error('learnerModel store:', 'No connection to webservice /get_user_understanding/');
 				}
 			}
 		},

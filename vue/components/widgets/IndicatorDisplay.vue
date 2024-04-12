@@ -39,11 +39,11 @@
                         class="completion-rect rect-sm rect--you mr-1"></span><span class="">Dein Status</span>
                 </div>
                 <div class="d-flex align-items-center mr-3"><span
-                        class="completion-rect rect-sm rect--weak mr-1"></span><span class="">Verfehlt das Ziel</span></div>
+                        class="completion-rect rect-sm rect--weak mr-1"></span><span class="">Verfehlt das Ziel (noch)</span></div>
                 <div class="d-flex align-items-center mr-3"><span class="completion-rect rect-sm rect--ok mr-1"></span><span
                         class="">Nah am Ziel</span></div>
                 <div class="d-flex align-items-center"><span class="completion-rect rect-sm rect--strong mr-1"></span><span
-                        class="">Erreicht das Ziel</span></div>
+                        class="">Im Zielbereich</span></div>
             </div>
         </div>
     </div>
@@ -75,7 +75,7 @@ export default {
                 {
                     id: 'progressUnderstanding', // meint das Verständis in Bezug auf alle Aktiviäten
                     title: 'Verständnis insg.',
-                    subtitle: 'Selbsteinschätzung in %',
+                    subtitle: 'alle Aktivitäten, in %',
                     ranges: [],
                     measures: [],
                     markers: [],
@@ -83,7 +83,7 @@ export default {
                 {
                     id: 'proficiency', // meint das Verständnis der bereits bearbeiteten Aufgaben
                     title: 'Verständnis indiv.',
-                    subtitle: 'Bearbeitete Aktivitäten. in %',
+                    subtitle: 'bearbeitete Aktivitäten, in %',
                     ranges: [],
                     measures: [],
                     markers: [],

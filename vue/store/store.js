@@ -32,11 +32,12 @@ export const store = new Vuex.Store({
     courseid: 0,
     userid: -1,
     research_condition: "control_groupX",
-    aple1801courses: [2, 5, 8, 9, 20, 24, 26, 42, 55],
+    aple1801courses: [2, 3, 5, 8, 9, 20, 24, 26, 42, 55],
     surveyRequired: true,
     surveyLink: "",
     questionnaireid: {
       2: 1000,
+	  3: 1000,
       5: 0,
       8: 0,
       9: 0,
@@ -175,7 +176,7 @@ export const store = new Vuex.Store({
   },
   actions: {
     setupLogger(context) {
-      context.state.logger = new Logger(context.state.courseId, {
+      context.state.logger = new Logger(context.state.courseid, {
         context: context.state.pluginName,
         outputType: 1,
         url: context.state.url,
