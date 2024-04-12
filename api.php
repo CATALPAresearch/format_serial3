@@ -1531,7 +1531,7 @@ class format_serial3_external extends external_api
             }
         }
 
-        // Step 2:get all submissions of an user in a course
+        // Step 2: Get all submissions of an user in a course
         $submissions = array();
         $params = array('courseid' => $courseid, 'userid' => $userid);
 
@@ -1583,10 +1583,15 @@ class format_serial3_external extends external_api
             $activity['hidden'] = $completiondata->hidden;
             */
 
+            
+
             $completions[$activity['id']] = $activity;
             if ($completions[$activity['id']] === COMPLETION_INCOMPLETE && in_array($activity['id'], $submissions)) {
                 $completions[$activity['id']] = 'submitted';
             }
+
+
+            
         }
 
         return array(
@@ -1691,8 +1696,8 @@ class format_serial3_external extends external_api
         foreach ($modinfo->instances as $module => $instances) {
             $modulename = get_string('pluginname', $module);
             foreach ($instances as $index => $cm) {
-                $url = is_string($cm->url) ? (method_exists($cm->url, 'out') ? $cm->url->out() : '') : '';
-                //$url = $cm->url->out();
+                $cmx = get_coursemodule_from_id($module, $cm->id);
+                $url = $CFG->wwwroot.'/mod/' . $module . '/view.php?id='.$cmx->id;
                 $activities[] = array(
                     'type'       => $module,
                     'modulename' => $modulename,
@@ -1703,7 +1708,7 @@ class format_serial3_external extends external_api
                     'section'    => $cm->sectionnum,
                     'sectionname' => get_section_name($courseid, $cm->sectionnum),
                     'position'   => array_search($cm->id, $sections[$cm->sectionnum]),
-                    'url'        => '',
+                    'url'        => $url,
                     'context'    => $cm->context,
                     'icon'       => $cm->get_icon_url(),
                     'available'  => $cm->available,
@@ -1875,10 +1880,12 @@ Group by cm.id
                     $completions[$sec]['count'] = $item->count;
                     $completions[$sec]['submission_time'] = $item->submission_time;
                     $completions[$sec]['name'] = $activity['type'];
-                    if ($item->complete) {
+                    
+                    if (isset($item->complete)) {
                         $completions[$sec]['complete'] = $item->complete;
                     }
-                    $debug[] = $completions[$sec];
+                    
+                    $debug[] = $completions[$sec]; 
                 }
             }
         }

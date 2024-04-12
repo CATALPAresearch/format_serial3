@@ -223,7 +223,7 @@ export default {
             popover.off("click");
             
           });
-        }, 500); // end set timeout
+        }, 0); // end set timeout
       },
       unbind: function (el) {
         
@@ -460,7 +460,7 @@ export default {
       if (response.success) {
         response.data = JSON.parse(response.data);
         //console.log('input debug::', JSON.parse(response.data.debug));
-        //console.log('input completions::', JSON.parse(response.data.completions));
+        console.log('XXX input completions::', JSON.parse(response.data.completions));
 
         this.$store.commit(
           "overview/setCourseData",
