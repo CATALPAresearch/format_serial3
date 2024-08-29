@@ -1,31 +1,47 @@
 {
-  "name": "serial3",
+  "name": "moodle-serial3-learnerdashboard",
+  "description": "A learner dashboard for moodle with Vue.js",
   "version": "1.0.0",
-  "description": "Semester planing tool for Moodle",
-  "main": "format.js",
-  "directories": {
-    "lib": "lib",
-    "test": "tests"
-  },
+  "author": "Valerie Meyer",
+  "license": "GPL",
+  "private": true,
   "scripts": {
-    "test": "tsc -p amd/src",
-    "prod": "tsc -p amd/src && grunt plugin-build"
+    "dev": "cross-env webpack --mode development --progress",
+    "watch": "cross-env webpack --mode development --watch",
+    "build": "cross-env webpack --mode production --progress",
+    "nodemon": "nodemon"
   },
-  "author": "",
-  "license": "ISC",
-  "eslintConfig": {
-    "env": {
-      "browser": true,
-      "es6": true
-    }
+  "dependencies": {
+    "javascript-time-ago": "^2.5.9",
+    "nodemon": "^2.0.13",
+    "vue": "^2.6.10",
+    "vue-grid-layout": "^2.4.0",
+    "vue-router": "^3.0.5",
+    "vue2-teleport": "^1.0.1",
+    "vuex": "^3.1.0"
   },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not ie <= 8"
+  ],
   "devDependencies": {
-    "grunt": "^1.6.1",
-    "grunt-contrib-cssmin": "^3.0.0",
-    "grunt-contrib-jshint": "^3.2.0",
-    "grunt-contrib-uglify": "^4.0.1",
-    "grunt-terser": "^1.0.0",
-    "grunt-ts": "^6.0.0-beta.22",
-    "typescript": "^3.9.7"
+    "@babel/core": "^7.20.5",
+    "@babel/plugin-syntax-dynamic-import": "^7.8.3",
+    "@babel/preset-env": "^7.20.2",
+    "babel-loader": "^9.1.0",
+    "cross-env": "^7.0.3",
+    "css-loader": "^6.7.2",
+    "file-loader": "*",
+    "filemanager-webpack-plugin": "*",
+    "fstream": "^1.0.12",
+    "sass": "^1.56.1",
+    "sass-loader": "^13.2.0",
+    "tar": "^6.1.12",
+    "vue-loader": "^15.10.1",
+    "vue-template-compiler": "^2.7.14",
+    "webpack": "^5.75.0",
+    "webpack-cli": "^5.0.0",
+    "webpack-dev-server": "^4.11.1"
   }
 }
