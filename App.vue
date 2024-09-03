@@ -1,5 +1,5 @@
 <template>
-  <div style="width: 100%">
+  <div style="width: 100%; height: 100%">
     <survey-prompt></survey-prompt>
     <div class="d-flex justify-content-between">
       <h2 class="main__title">{{ strings.dashboardTitle }}</h2>
@@ -36,41 +36,27 @@
         <menu-bar @editmode="toggleEditMode"></menu-bar>
       </div>
     </div>
-    <grid-layout
-      id="widgetGrid"
-      :col-num="12"
-      :layout="layout"
-      :is-draggable="draggable"
-      :is-resizable="resizable"
-      :row-height="25"
-      :responsive="false"
-      :use-css-transforms="true"
-      :vertical-compact="true"
-    >
-      <grid-item
+    <div id="widgetGrid" class="grid-stack vue-grid-layout">
+      <div class="grid-stack-item vue-grid-item border p-3" 
         v-for="(item, index) in layout"
         :id="'widget-' + item.c"
-        :key="index"
-        :h="item.h"
-        :i="item.i"
-        :static="item.static"
-        :w="item.w"
-        :x="item.x"
-        :y="item.y"
-        class="border p-3"
-      >
-        <span
-          v-if="editMode & !item.fixed"
-          class="remove"
-          title="Element aus Dashboard entfernen"
-          @click="removeItem(item.i)"
+        :gs-w="item.w"
+        :gs-h="item.h"
         >
-          <i class="fa fa-close"></i>
-        </span>
-        <component :is="item.c"></component>
-      </grid-item>
-    </grid-layout>
-    <welcome-video></welcome-video>
+        <div class="grid-stack-item-content">
+          <span
+            v-if="editMode & !item.fixed"
+            class="remove"
+            title="Element aus Dashboard entfernen"
+            @click="removeItem(item.i)"
+          >
+            <i class="fa fa-close"></i>
+          </span>
+          <component :is="item.c"></component>
+        </div>
+      </div>
+    </div>
+    <welcome-video v-show="(new Date().getTime()) < (new Date('2024.04.31').getTime())"></welcome-video>
   </div>
 </template>
 
@@ -86,14 +72,12 @@ import Recommendations from "./components/widgets/Recommendations.vue";
 import TaskList from "./components/widgets/TaskList.vue";
 import LearningStrategies from "./components/widgets/LearningStrategies.vue";
 import CourseOverview from "./components/widgets/CourseOverview.vue";
-import TeacherActivity from "./components/widgets/TeacherActivity.vue";
-import { GridItem, GridLayout } from "./js/vue-grid-layout.umd.min";
+import 'gridstack/dist/gridstack.min.css';
+import { GridStack } from 'gridstack';
 import { mapState, mapGetters, mapActions } from "vuex";
 
 export default {
   components: {
-    GridLayout,
-    GridItem,
     AppDeadlines,
     IndicatorDisplay,
     MenuBar,
@@ -105,7 +89,6 @@ export default {
     CourseOverview,
     LearningStrategies,
     //QuizStatistics
-    TeacherActivity,
   },
 
   data() {
@@ -113,103 +96,80 @@ export default {
       courseid: -1,
       context: {},
       logger: null,
-      draggable: false,
-      resizable: false,
-      index: 0,
+      
+      grid: undefined,
+      count: 0,
+      info: "",
+      timerId: undefined,
+      
       editMode: false,
+      
       defaultLayout: [
         {
           x: 0,
           y: 0,
-          w: 14,
-          h: 10,
-          i: "13",
-          name: "Lehraktivität",
-          c: "TeacherActivity",
-          resizable: true,
-          moved: false,
-        },
-        {
-          x: 0,
-          y: 0,
-          w: 7,
-          h: 12,
+          w: 12,
+          h: 4,
           i: "10",
           name: "Adaptiver Überblick",
           c: "ProgressChartAdaptive",
-          resizable: true,
-          fixed: false,
-          moved: false,
         },
         {
-          x: 7,
-          y: 0,
-          w: 5,
-          h: 12,
+          x: 0,
+          y: 6,
+          w: 12,
+          h: 3,
           i: "2",
           name: "Lernziele",
           c: "IndicatorDisplay",
-          resizable: true,
-          moved: false,
-        },
-        {
-          x: 0,
-          y: 22,
-          w: 14,
-          h: 11,
-          i: "12",
-          name: "Kursübersicht",
-          c: "CourseOverview",
-          resizable: true,
-          moved: false,
         },
         {
           x: 5,
-          y: 12,
+          y: 18,
           w: 4,
-          h: 10,
+          h: 4,
           i: "3",
           name: "Aufgabenliste",
           c: "TaskList",
-          resizable: true,
-          moved: false,
         },
         {
           x: 9,
-          y: 12,
+          y: 18,
           w: 3,
-          h: 10,
+          h: 4,
           i: "4",
           name: "Termine",
           c: "AppDeadlines",
-          resizable: true,
-          moved: false,
         },
         {
           x: 0,
-          y: 12,
+          y: 18,
           w: 5,
-          h: 10,
+          h: 4,
           i: "9",
           name: "Feedback",
           c: "Recommendations",
-          resizable: true,
-          moved: false,
         },
+        /*{
+          x: 0,
+          y: 22,
+          w: 14,
+          h: 5,
+          i: "12",
+          name: "Kursübersicht",
+          c: "CourseOverview",
+        },*/
       ],
 
       allComponents: [
         {
           x: 0,
           y: 0,
-          w: 14,
+          w: 8,
           h: 12,
           i: "10",
           name: "Überblick über den Kurs und die Kurseinheiten",
           c: "ProgressChartAdaptive",
-          resizable: true,
-          fixed: false,
-          moved: false,
         },
         {
           x: 8,
@@ -219,10 +179,8 @@ export default {
           i: "2",
           name: "Lernziele",
           c: "IndicatorDisplay",
-          resizable: true,
-          moved: false,
         },
-        {
+        /*{
           x: 0,
           y: 22,
           w: 14,
@@ -230,9 +188,7 @@ export default {
           i: "12",
           name: "Kursübersicht",
           c: "CourseOverview",
-          resizable: true,
-          moved: false,
-        },
+        },*/
         {
           x: 10,
           y: 12,
@@ -241,8 +197,6 @@ export default {
           i: "3",
           name: "Aufgaben",
           c: "TaskList",
-          resizable: true,
-          moved: false,
         },
         {
           x: 6,
@@ -252,30 +206,15 @@ export default {
           i: "4",
           name: "Termine",
           c: "AppDeadlines",
-          resizable: true,
-          moved: false,
-        },
-        {
-          x: 0,
-          y: 0,
-          w: 14,
-          h: 10,
-          i: "13",
-          name: "Lehraktivität",
-          c: "TeacherActivity",
-          resizable: true,
-          moved: false,
         },
         {
           x: 0,
           y: 12,
-          w: 8,
+          w: 6,
           h: 10,
           i: "9",
           name: "Feedback und Lernempfehlungen",
           c: "Recommendations",
-          resizable: true,
-          moved: false,
         },
 
         /*{
@@ -293,11 +232,10 @@ export default {
           x: 0,
           y: 0,
           w: 12,
-          h: 20,
+          h: 10,
           i: "11",
           name: "Lernstrategien",
           c: "LearningStrategies",
-          resizable: true,
         },
       ],
     };
@@ -321,7 +259,22 @@ export default {
 
     this.context.courseId = this.$store.state.courseid; // TODO
 
-    this.initObserver();
+    
+    this.grid = GridStack.init({ 
+      column: 12,
+      cellHeight: 80,
+      animate: false, // show immediate (animate: true is nice for user dragging though)
+      columnOpts: {
+        breakpointForWindow: false,  // test window vs grid size
+        //breakpoints: [{w:300, c:6},{w:400, c:8},{w:600, c:12},{w:1100, c:12}]
+        //breakpoints: [{w:220, c:1},{w:600, c:6}, {w:800, c:12}]
+        breakpoints: [{w:600, c:1}]
+      },
+      float: true 
+    });
+    this.$nextTick(function () {
+      this.initObserver();
+    });
   },
 
   computed: {
@@ -332,6 +285,7 @@ export default {
     },
 
     layout() {
+      return this.defaultLayout; // xxx
       let r =
         this.dashboardSettings && this.dashboardSettings.length > 0
           ? this.dashboardSettings
@@ -353,6 +307,7 @@ export default {
   methods: {
     ...mapGetters(["setResearchCondition"]),
     ...mapActions(["log"]),
+    
     initObserver() {
       if (
         "IntersectionObserver" in window &&
@@ -371,7 +326,7 @@ export default {
         let handleScrolling = function (entries) {
           entries.forEach((entry) => {
             if (entry.isIntersecting) {
-              console.log(entry.target.id, entry.intersectionRatio);
+              //console.log('Scroll Output: ',entry.target.id, entry.intersectionRatio);
               _this.log({
                 key: "view-dashboard-widget",
                 value: {
@@ -391,7 +346,11 @@ export default {
         };
 
         let observer = new IntersectionObserver(handleScrolling, options);
-        observer.observe(document.querySelector("#widgetGrid"));
+        var element =  document.querySelector("#widgetGrid");
+        if (typeof(element) != 'undefined' && element != null){
+          observer.observe(element);
+        }
+        
         $("#widgetGrid .vue-grid-item").each(function (i, val) {
           if (typeof $(this).attr("id") == "string") {
             let element = "#" + $(this).attr("id");
@@ -427,14 +386,7 @@ export default {
       this.$store.dispatch("dashboardSettings/saveDashboardSettings", settings);
       this.toggleEditMode();
     },
-    breakpointChangedEvent: function (newBreakpoint, newLayout) {
-      console.log(
-        "BREAKPOINT CHANGED breakpoint=",
-        newBreakpoint,
-        ", layout: ",
-        newLayout
-      );
-    },
+    
   },
 };
 </script>
