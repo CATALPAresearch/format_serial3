@@ -17,6 +17,7 @@ export default {
       state.currentSection = section;
     },
     setCourseData(state, data) {
+      
       const excluded_sections = [
         "Willkommen!",
         "Allgemeines",
@@ -30,11 +31,12 @@ export default {
       const allowedActivitities = [
         "hypervideo",
         "longpage",
-        "assignment",
+        "assig",
         "quiz",
         "assign",
+        "safran",
       ];
-
+      
       const filtered_activities = Object.keys(data)
         .filter((key) => allowedActivitities.includes(data[key].type))
         .reduce(function (filtered_object, key) {
@@ -44,6 +46,15 @@ export default {
           return filtered_object;
         }, {});
 
+      console.log('filtered_activities', filtered_activities)
+      console.log(
+        Object.keys(filtered_activities),
+        Object.keys(filtered_activities)
+        .filter(
+          (key) =>
+            !excluded_sections.includes(filtered_activities[key].sectionname)
+        )
+      )
       const filtered_sections = Object.keys(filtered_activities)
         .filter(
           (key) =>
@@ -55,8 +66,9 @@ export default {
           }
           return filtered_object;
         }, {});
-
-      state.courseData = filtered_sections;
+      
+      state.courseData = Object.values(filtered_sections);
+      console.log('filtered_sections', filtered_activities, groupBy(Object.values(state.courseData), "section"))
     },
     setCurrentActivities(state, data) {
       state.currentActivities = data;

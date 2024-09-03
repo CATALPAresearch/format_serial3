@@ -91,7 +91,7 @@
         <span
           v-if="isIncludedActivity(getActivities[type][0].type)"
           class="col-3"
-          >{{ mapActivityNames[getActivities[type][0].modulename] }}</span
+          >{{ mapActivityNames[getActivities[type][0].type] }}</span
         >
         <div class="col-9">
           <span
@@ -126,7 +126,7 @@
                   'rect--weak': activity.rating === 1,
                   'rect--ok': activity.rating === 2,
                   'rect--strong': activity.rating === 3,
-                  'activity-completed': activity.completion !== 0,
+                  'activity-completed': activity.completion > 0, // TODO: distinguish different numbers of completions
                 }"
                 :title="activity.name"
                 data-toggle="tooltip"
@@ -236,9 +236,8 @@ export default {
       currentSection: -1,
       mapActivityNames: {
         longpage: "Kurstext",
-        Assignment: "Einsendeaufgaben",
+        assign: "Einsendeaufgaben",
         hypervideo: "Video",
-        Safran: "Self-Assessments",
         safran: "Self-Assessments",
         quiz: "Selbsttests",
       },
@@ -394,6 +393,7 @@ export default {
         "safran",
         "longpage",
         "questionnaire",
+        "quiz",
       ];
       if (includedActivities.indexOf(activity) > -1) {
         return true;
@@ -444,19 +444,22 @@ export default {
       });
       if (response.success) {
         response.data = JSON.parse(response.data);
-        //console.log('input debug::', JSON.parse(response.data.debug));
-        //console.log('input completions::', JSON.parse(response.data.completions));
-
+        console.log('input debug::', JSON.parse(response.data.debug));
+        console.log('input completions::', JSON.parse(response.data.completions));
+        
         this.$store.commit(
           "overview/setCourseData",
           JSON.parse(response.data.completions)
         );
+        
         this.$store.commit("overview/setCurrentActivities", this.getActivities);
         this.$store.commit(
           "overview/setActivityTypes",
           Object.keys(this.getActivities)
         );
+        
         this.total = this.getTotalActivites();
+        
       } else {
         if (response.data) {
           console.log(
@@ -467,17 +470,22 @@ export default {
           console.log("No connection to webservice /overview/");
         }
       }
-
+      
+      // TODO
       const completionData = this.$store.state.learnermodel.userUnderstanding;
       for (let key in completionData) {
         let activityid = completionData[key]["activityid"];
-        this.courseData[activityid]["completion"] = Number(
+        //console.log(2, activityid, key, completionData[key])
+        /*this.courseData[activityid]["completion"] = Number(
           completionData[key]["completed"]
         );
+        console.log(3)
         this.courseData[activityid]["rating"] = Number(
           completionData[key]["rating"]
         );
+        */
       }
+      
     },
   },
 };
