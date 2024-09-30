@@ -1,8 +1,11 @@
-import Vue from "vue";
+import {Vue} from "vue";
 import {store} from "./store/store";
 import App from "./App.vue";
 import Communication from "./scripts/communication";
 
+/**
+ * This function is called in format.php
+*/
 function init(courseid, fullPluginName, userid, isModerator, policyAccepted) {
 	// We need to overwrite the variable for lazy loading.
 	__webpack_public_path__ =
