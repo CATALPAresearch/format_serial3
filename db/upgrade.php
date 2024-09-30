@@ -49,7 +49,7 @@ function xmldb_format_serial3_upgrade($oldversion) {
     // Put any upgrade step following this.
 
     // Automatically generated Moodle v4.3.0 release upgrade line.
-    // Put any upgrade step following this.
+    // Put any upgrade step following this. 
 
     if ($oldversion < 2023100901) {
         // During the migration to version 4.4, ensure that sections with null names are renamed to their corresponding
