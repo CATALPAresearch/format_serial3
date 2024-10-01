@@ -235,7 +235,6 @@ class format_serial3 extends core_courseformat\base {
      */
     public function course_format_options($foreditform = false) {
         static $courseformatoptions = false;
-        static $courseformatoptions_serial3 = false;
         if ($courseformatoptions === false) {
             $courseconfig = get_config('format_serial3');
             $courseformatoptions = [
@@ -247,20 +246,17 @@ class format_serial3 extends core_courseformat\base {
                     'default' => $courseconfig->coursedisplay,
                     'type' => PARAM_INT,
                 ],
-            ];
-            $courseconfig_serial3 = get_config('format_serial3'); // format_serial3 moodlecourse
-            $courseformatoptions_serial3 = [
                 'usenetlink' => [
                     'default' => $courseconfig_serial3->usenetlink,
-                    'type' => PARAM_INT,
+                    'type' => PARAM_TEXT,
                 ],
                 'excludesections' => [
                     'default' => $courseconfig_serial3->excludesections,
-                    'type' => PARAM_INT,
+                    'type' => PARAM_TEXT,
                 ],
                 'hiddenmodules' => [
                     'default' => $courseconfig_serial3->hiddenmodules,
-                    'type' => PARAM_INT,
+                    'type' => PARAM_TEXT,
                 ],
             ];
         }
@@ -290,11 +286,6 @@ class format_serial3 extends core_courseformat\base {
                     'help' => 'coursedisplay',
                     'help_component' => 'moodle',
                 ],
-            ];
-            $courseformatoptions = array_merge_recursive($courseformatoptions, $courseformatoptionsedit);
-        }
-        if ($foreditform) {
-            $courseformatoptionsedit_serial3 = [
                 'usenetlink' => [
                     'label' => new lang_string('usenetlink', 'format_serial3'),
                     'help' => 'usenetlink',
@@ -314,7 +305,7 @@ class format_serial3 extends core_courseformat\base {
                     'element_type' => 'textarea',
                 ],
             ];
-            $courseformatoptions = array_merge_recursive($courseformatoptions, $courseformatoptionsedit_serial3);
+            $courseformatoptions = array_merge_recursive($courseformatoptions, $courseformatoptionsedit);
         }
         return $courseformatoptions;
     }

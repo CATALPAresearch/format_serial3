@@ -22,6 +22,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+
+ 
+
 /**
  * Upgrade script for serial3 course format.
  *
@@ -29,7 +32,24 @@
  * @return bool result
  */
 function xmldb_format_serial3_upgrade($oldversion) {
-    global $DB;
+    global $CFG, $DB;
+    $dbman = $DB->get_manager();
+    $time = time();
+
+
+    $table = new xmldb_table('serial3_milestones');
+    if($dbman->table_exists($table)){
+        $time = time();        
+        // usenetlink
+        $field = new xmldb_field('usenetlink', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, $time);
+        if(!$dbman->field_exists($table,$field)){$dbman->add_field($table,$field);}
+        // excludesections
+        $field = new xmldb_field('excludesections', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, $time);
+        if(!$dbman->field_exists($table,$field)){$dbman->add_field($table,$field);}
+        // hiddenmodules
+        $field = new xmldb_field('hiddenmodules', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, $time);
+        if(!$dbman->field_exists($table,$field)){$dbman->add_field($table,$field);}
+    }
 
     // Automatically generated Moodle v4.1.0 release upgrade line.
     // Put any upgrade step following this.

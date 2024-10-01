@@ -12,6 +12,9 @@
                 <FIELD NAME="milestones" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
                 <FIELD NAME="settings" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
                 <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+                <FIELD NAME="usenetlink" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+                <FIELD NAME="excludesections" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+                <FIELD NAME="hiddenmodules" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
             </FIELDS>
             <KEYS>
                 <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
