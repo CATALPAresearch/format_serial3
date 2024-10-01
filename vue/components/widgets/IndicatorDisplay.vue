@@ -240,12 +240,14 @@ export default {
         },
 
         updateRanges(selectedGoal) {
+            if(selectedGoal==null){
+                selectedGoal = "passing";
+            }
             let proficiencyData = this.data.find((d) => d.id === 'proficiency');
             let progressData = this.data.find((d) => d.id === 'progressUnderstanding');
             let userGradesData = this.data.find((d) => d.id === 'userGrades');
             let timeData = this.data.find((d) => d.id === 'timeliness');
             //let socialData = this.data.find((d) => d.id === 'socialActivity');
-
             proficiencyData.ranges = this.ranges[selectedGoal].proficiency;
             progressData.ranges = this.ranges[selectedGoal].progress;
             userGradesData.ranges = this.ranges[selectedGoal].grades;

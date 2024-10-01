@@ -225,7 +225,7 @@ export default {
 
   data: function () {
     return {
-      total: 0,
+      total: 0, // TODO: move text to language files
       info:
         "Das Widget bietet Ihnen eine Übersicht über alle Kursaktivitäten. Für jede Aktivität können Sie Ihr Verständnis bewerten, den Bearbeitungsstand sehen oder es zur Aufgabenliste hinzufügen. Über den Aktivitäten wird Ihnen eine Fortschrittsanzeige angezeigt, die anzeigt, wie viele Aktivitäten Sie insgesamt und für jede Kurseinheit separat bereits abgeschlossen haben. Diese dienen Ihnen auch als Filter, um die dir nur die Aktivitäten für die jeweilige Kurseinheit anzuzeigen.\n" +
         "\n" +
@@ -264,12 +264,14 @@ export default {
   },
 
   created() {
+    console.log('test2')
     import("../PopoverContent.vue").then((component) => {
       this.popoverComponent = Vue.extend(component.default);
     });
   },
 
   mounted: async function () {
+    console.log('test1')
     await this.loadCourseData();
     //await this.loadLearnerModel()
   },
@@ -425,7 +427,7 @@ export default {
         window.location.host +
         "/" +
         window.location.pathname;
-      wwwroot = "http://localhost/moodle311";
+      wwwroot = "http://localhost/moodle404";
       // FIXME: add the current semester as a parameter of the path instead of "SS23"
       var path =
         wwwroot +
@@ -438,10 +440,13 @@ export default {
     },
 
     loadCourseData: async function () {
-      //console.log('DEBUG')
-      const response = await Communication.webservice("overview", {
-        courseid: parseInt(this.$store.getters.getCourseid, 10),
-      });
+      console.log('DEBUG')
+      const response = await Communication.webservice(
+        "progress_overview", 
+        {
+          courseid: parseInt(this.$store.getters.getCourseid, 10),
+        }
+      );
       if (response.success) {
         response.data = JSON.parse(response.data);
         console.log('input debug::', JSON.parse(response.data.debug));

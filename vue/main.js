@@ -1,4 +1,4 @@
-import {Vue} from "vue";
+import Vue from 'vue'
 import {store} from "./store/store";
 import App from "./App.vue";
 import Communication from "./scripts/communication";
@@ -10,7 +10,6 @@ function init(courseid, fullPluginName, userid, isModerator, policyAccepted) {
 	// We need to overwrite the variable for lazy loading.
 	__webpack_public_path__ =
 		M.cfg.wwwroot + "/course/format/serial3/amd/build/";
-
 	Communication.setPluginName(fullPluginName);
 
 	store.commit("setCourseid", courseid);
@@ -24,14 +23,8 @@ function init(courseid, fullPluginName, userid, isModerator, policyAccepted) {
 	store.dispatch('learnermodel/calculateLearnerModel');
 	store.dispatch("setupLogger");
 
-	const currenturl = window.location.pathname;
-	const base =
-		currenturl.substring(0, currenturl.indexOf(".php")) +
-		".php/?id=" +
-		courseid +
-		"/";
-
-	console.log('-- policy accepted? '+policyAccepted)
+	//console.log('-- policy accepted? '+policyAccepted);
+	
 	if (policyAccepted == false && courseid == 42) {
 		$('.activity.quiz.modtype_quiz').hide();
 		$('.activity.modtype_longpage').hide();
@@ -44,8 +37,6 @@ function init(courseid, fullPluginName, userid, isModerator, policyAccepted) {
 			render: (h) => h(App),
 		});
 	}
-
-	
 }
 
 export {init};

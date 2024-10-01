@@ -106,7 +106,7 @@ export default {
         ...mapActions(['log']),
         async getCalendarData() {
             const response = await Communication.webservice(
-                'getcalendar',
+                'get_calendar',
                 {
                     'courseid': this.$store.state.courseid,
                 }

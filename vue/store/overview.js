@@ -102,6 +102,7 @@ export default {
       return "#";
     },
     getTotalNumberOfActivities: function (state) {
+      console.log('state', state)
       return Object.keys(state.courseData).length;
     },
   },

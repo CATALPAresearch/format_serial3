@@ -43,11 +43,10 @@ rsync -r ./* aple-test:/var/moodle/htdocs/moodle/course/format/serial3 --exclude
 
 **Getting started**
 
-api.php: In this file you'll find the SQL queries. All API get or post requests implement webservices. The naming
+`ws` folder: In this folder you'll find the webservice definitions for accessing the Moodle database. The naming
 conventions are very strict. Take care to to follow the nameing schema for the functions.
 
-db/services.php: Here your are defining the webservice by referencing the involved files (api.php and its containing
-classes and functions)
+db/services.php: Here your are defining the webservice by referencing the involved files (`ws` folder and its containing files with classes and functions)
 
 version.php: Every time you are changing the webservice description in service.php you need to increment the version by
 1 and update the plugin in moodle (See the *notifications* page in the administration panel)

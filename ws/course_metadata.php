@@ -3,6 +3,8 @@ defined('MOODLE_INTERNAL') || die;
 
 require_once ($CFG->libdir . '/externallib.php');
 
+// TODO: Do we need to move this somewhere else?
+
 function get_meta($courseID)
 {
     try {

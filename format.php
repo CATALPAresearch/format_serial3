@@ -100,18 +100,9 @@ $PAGE->requires->js_call_amd('format_serial3/app-lazy', 'init', [
     'policyAccepted' => format_serial3\blocking::tool_policy_accepted()
 ]);
 
-
-$c = get_config('format_serial3');
-$c = get_config('moodlecourse');
-echo '<pre>';
-print_r($c);
-echo '</pre>';
-
-
-
-echo html_writer::start_tag('div', array('class' => ''))
-    . '<div id="app"></div>' . html_writer::end_tag('div')
-;
+echo '<div id="app"></div>';
+//echo html_writer::start_tag('div', array('class' => ''))
+//    . '<div id="app">' . html_writer::end_tag('div');
 //
 
 $renderer = $PAGE->get_renderer('format_serial3');

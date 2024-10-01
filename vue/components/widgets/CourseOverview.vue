@@ -425,7 +425,7 @@ export default {
 
         loadCourseData: async function () {
             const response = await Communication.webservice(
-                'overview',
+                'progress_overview',
                 { courseid: this.courseid }
             );
             if (response.success) {
@@ -714,7 +714,7 @@ export default {
         },
         loadReflection: async function () {
             const response = await Communication.webservice(
-                'reflectionread',
+                'reflection_read',
                 { 'courseid': this.courseid }
             );
             if (response.success) {
@@ -731,7 +731,7 @@ export default {
             var _this = this;
             this.reflectionError = false;  
             const response = await Communication.webservice(
-                'reflectioncreate',
+                'reflection_create',
                 {
                     data: {
                         'course': this.courseid,

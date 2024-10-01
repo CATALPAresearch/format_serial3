@@ -61,28 +61,32 @@
 </template>
 
 <script>
-import AppDeadlines from "./components/widgets/Deadlines.vue";
-import IndicatorDisplay from "./components/widgets/IndicatorDisplay.vue";
 import MenuBar from "./components/MenuBar.vue";
 import WelcomeVideo from "./components/WelcomeVideo.vue";
 import SurveyPrompt from "./components/SurveyPrompt.vue";
+
+import AppDeadlines from "./components/widgets/Deadlines.vue";
+import IndicatorDisplay from "./components/widgets/IndicatorDisplay.vue";
 //import QuizStatistics from "./components/widgets/QuizStatistics.vue";
 import ProgressChartAdaptive from "./components/widgets/ProgressChartAdaptive.vue";
 import Recommendations from "./components/widgets/Recommendations.vue";
 import TaskList from "./components/widgets/TaskList.vue";
-import LearningStrategies from "./components/widgets/LearningStrategies.vue";
 import CourseOverview from "./components/widgets/CourseOverview.vue";
+
+import LearningStrategies from "./components/widgets/LearningStrategies.vue";
+
 import 'gridstack/dist/gridstack.min.css';
 import { GridStack } from 'gridstack';
 import { mapState, mapGetters, mapActions } from "vuex";
 
 export default {
   components: {
-    AppDeadlines,
-    IndicatorDisplay,
     MenuBar,
     WelcomeVideo,
     SurveyPrompt,
+    
+    AppDeadlines,
+    IndicatorDisplay,
     ProgressChartAdaptive,
     Recommendations,
     TaskList,
