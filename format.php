@@ -108,7 +108,7 @@ echo '<div id="app"></div>';
 $renderer = $PAGE->get_renderer('format_serial3');
 
 if (!is_null($displaysection)) {
-    $format->set_sectionnum($displaysection);
+    //$format->set_sectionnum($displaysection);
 }
 $outputclass = $format->get_output_classname('content');
 $widget = new $outputclass($format);
