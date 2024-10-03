@@ -55,100 +55,104 @@ class format_serial3_progress_overview extends external_api
         $debug = [];
 
         // Step 1: obtain all course activities whether they have been viewed/submitted by the students or _not_.
-        $modinfo = get_fast_modinfo($courseid, $userid);
-        $sections = $modinfo->get_sections();
-        foreach ($modinfo->instances as $module => $instances) {
-            $module_name = get_string('pluginname', $module);
-            foreach ($instances as $index => $cm) {
-                $activities[$cm->id] = array(
-                    'module_name' => $module_name,
-                    'type' => $cm->modname,
-                    'module_id' => (int)$cm->id,
-                    'instance' => (int)$cm->instance,
-                    'name' => $cm->name,
-                    'section' => (int)$cm->sectionnum,
-                    'sectionname' => get_section_name($courseid, $cm->sectionnum),
-                    'position' => array_search($cm->id, $sections[$cm->sectionnum]),
-                    'completion' => 0,
-                    'visible' => $cm->visible,
-                    'available' => $cm->available, // available on course overview page
-                    'rating' => 0,
-                    'url' => $CFG->wwwroot . "/mod/" . $cm->modname . "/view.php?id=" .  $cm->id,
-                    //'icon' => $cm->get_icon_url(),
-                    //'context' => $cm->context,
-                    //'expected' => $cm->completionexpected,
-                );
-            }
+    $modinfo = get_fast_modinfo($courseid, $userid);
+    $sections = $modinfo->get_sections();
+    foreach ($modinfo->instances as $module => $instances) {
+        $module_name = get_string('pluginname', $module);
+        foreach ($instances as $index => $cm) {
+            $activities[$cm->id] = array(
+                'module_name' => $module_name,
+                'type' => $cm->modname,
+                'module_id' => (int)$cm->id,
+                'instance' => (int)$cm->instance,
+                'name' => $cm->name,
+                'section' => (int)$cm->sectionnum,
+                'sectionname' => get_section_name($courseid, $cm->sectionnum),
+                'position' => array_search($cm->id, $sections[$cm->sectionnum]),
+                'completion' => 0,
+                'visible' => $cm->visible,
+                'available' => $cm->available, // available on course overview page
+                'rating' => 0,
+                'url' => $CFG->wwwroot . "/mod/" . $cm->modname . "/view.php?id=" .  $cm->id,
+                //'icon' => $cm->get_icon_url(),
+                //'context' => $cm->context,
+                //'expected' => $cm->completionexpected,
+            );
         }
+    }
+    
 
-        // Step 2: Expand quiz and safran tasks, because on the course page the included tasks are not listed seperately
-        $activities_expanded = [];
-        foreach ($activities as $activity) {
-            if($activity['type'] == "quiz"){
-                $params = [
-                    "courseid" => $courseid,
-                    "quizinstance" => $activity['instance']
-                ];
-                $query = "SELECT DISTINCT
+    // Step 2: Expand quiz and safran tasks, because on the course page the included tasks are not listed seperately
+    $activities_expanded = [];
+    foreach ($activities as $activity) {
+        if ($activity['type'] == "quiz") {
+            $params = [
+                "courseid" => $courseid,
+                "courseid2" => $courseid,
+                "quizinstance" => $activity['instance']
+            ];
+            $query = "SELECT 
                         q.id as question_id,
                         q.name as question_title,
-                        sq.id as quiz_id,
-                        con.instanceid
-                    FROM {quiz} sq
-                    JOIN {context} con ON con.instanceid = :courseid
-                    JOIN {question_categories} qc ON qc.contextid = con.id
-                    JOIN {question_bank_entries} qbe ON qc.id = qbe.questioncategoryid
-                    JOIN {question_versions} qv ON qv.questionbankentryid = qbe.id
-                    JOIN {question} q ON q.id = qv.questionid
-                    WHERE 
-                        q.parent = 0 AND
-                        sq.id = :quizinstance
-                    ";
-                $items = $DB->get_records_sql($query, $params);
-                foreach($items as $item){
-                    $activity['name'] = $item->question_title;
-                    $activity['url'] = $CFG->wwwroot . "/mod/quiz/view.php?id=" . $activity['module_id'];// . "/task/" . $item->safran_question_id;
-                    $activities_expanded[] = $activity;
-                }
-            } elseif($activity['type'] == "safran"){
-                $params = [
-                    "courseid" => $courseid
-                ];
-                $query = "SELECT DISTINCT
+                        slot.quizid as quiz_id
+                    FROM {quiz_slots} slot
+                    LEFT JOIN {question_references} qr ON qr.component = 'mod_quiz'
+                    AND qr.questionarea = 'slot' AND qr.itemid = slot.id
+                    LEFT JOIN {question_bank_entries} qbe ON qbe.id = qr.questionbankentryid
+                    LEFT JOIN {question_versions} qv ON qv.questionbankentryid = qbe.id
+                    LEFT JOIN {question} q ON q.id = qv.questionid
+                    WHERE slot.quizid = :quizinstance
+            ;";
+            $items = $DB->get_records_sql($query, $params);
+            foreach ($items as $item) {
+                $activity['name'] = $item->question_title;
+                $activity['url'] = $CFG->wwwroot . "/mod/quiz/view.php?id=" . $activity['module_id']; // . "/task/" . $item->safran_question_id;
+                $activities_expanded[] = $activity;
+            }
+        } elseif ($activity['type'] == "safran") {
+            $params = [
+                "courseid" => $courseid,
+                "quizinstance" => $activity['instance']
+            ];
+            $query = "SELECT DISTINCT
                     sq.id as safran_question_id, 
                     s.id as quiz_id, 
                     sq.question_title
                 FROM {safran} s
                 JOIN {safran_question} sq ON sq.safranid = s.id
                 WHERE 
-                    s.course = :courseid
+                    s.course = :courseid AND
+                    sq.safranid = :quizinstance
                 ";
-                $items = $DB->get_records_sql($query, $params);
-                foreach($items as $item){
-                    $activity['name'] = $item->question_title;
-                    $activity['url'] = $CFG->wwwroot . "/mod/safran/view.php?id=" . $activity['module_id'] . "/task/" . $item->safran_question_id;
-                    $activities_expanded[] = $activity;
-                }
-            }else{
+            $items = $DB->get_records_sql($query, $params);
+            foreach ($items as $item) {
+                $activity['name'] = $item->question_title;
+                // URL schema: https://aple.fernuni-hagen.de/mod/safran/view.php/5630/task/172
+                $activity['url'] = $CFG->wwwroot . "/mod/safran/view.php/" . $activity['module_id'] . "/task/" . $item->safran_question_id;
                 $activities_expanded[] = $activity;
+                
             }
+        } else {
+            $activities_expanded[] = $activity;
         }
-        $activities = $activities_expanded;
+    }
+    $activities = $activities_expanded;
+    
 
-        // Step 3: get completions using the Completion API
-        $completions = [];
-        $completion = new completion_info(get_course($courseid));
-        foreach ($activities as $activity) {
-            $cm = get_coursemodule_from_id(null, $activity['module_id'], $courseid, false, MUST_EXIST);
-            $activity['completion'] = $completion->is_enabled($cm) ? (int)$cm->completion : -1;
-            $completions[] = $activity;
-        }
-        $activities = $completions;
+    // Step 3: get completions using the Completion API
+    $completions = [];
+    $completion = new completion_info(get_course($courseid));
+    foreach ($activities as $activity) {
+        $cm = get_coursemodule_from_id(null, $activity['module_id'], $courseid, false, MUST_EXIST);
+        $activity['completion'] = $completion->is_enabled($cm) ? (int)$cm->completion : -1;
+        $completions[] = $activity;
+    }
+    $activities = $completions;
 
 
-        // Step 4: Get scores
-        $query_activities = array(
-            'assign' => "SELECT
+    // Step 4: Get scores
+    $query_activities = array(
+        'assign' => "SELECT
                     m.name module_name,
                     cm.id module_id,
                     a.id instance_id,
@@ -234,11 +238,11 @@ class format_serial3_progress_overview extends external_api
                 -- 0 complete,
                 -- cm.visible,
                 -- 0 rating
-            FROM m_longpage l
-            JOIN m_longpage_reading_progress lrp ON l.id = lrp.longpageid
-            RIGHT JOIN m_course_modules cm ON l.id = cm.instance
-            JOIN m_course_sections cs ON cs.section = cm.section
-            RIGHT JOIN m_modules m ON m.id = cm.module 
+            FROM {longpage} l
+            JOIN {longpage_reading_progress} lrp ON l.id = lrp.longpageid
+            RIGHT JOIN {course_modules} cm ON l.id = cm.instance
+            JOIN {course_sections} cs ON cs.section = cm.section
+            RIGHT JOIN {modules} m ON m.id = cm.module 
             WHERE 
                 l.course = :courseid AND
                 cs.course = :courseid2 AND
@@ -270,44 +274,45 @@ class format_serial3_progress_overview extends external_api
                 m.name = 'hypervideo'
             GROUP BY m.name, h.id, cm.id, cm.section
                 ;"
-        );
+    );
 
-        // execute queries to get the scores
-        $scores = [];
-        $params = array('courseid' => $courseid, 'courseid2' => $courseid, 'userid' => $userid);
-        foreach ($query_activities as $moduletype => $query) {
-            try {
-                $resultset = $DB->get_recordset_sql($query, $params);
-                foreach ($resultset as $key => $value) {
-                    if (!property_exists('value', 'activity') && $value->module_id != null) {
-                        $scores[$value->module_id] = (array)$value;
-                    }
+    // execute queries to get the scores
+    $scores = [];
+    $params = array('courseid' => $courseid, 'courseid2' => $courseid, 'userid' => $userid);
+    foreach ($query_activities as $moduletype => $query) {
+        try {
+            $resultset = $DB->get_recordset_sql($query, $params);
+            foreach ($resultset as $key => $value) {
+                if (!property_exists('value', 'activity') && $value->module_id != null) {
+                    $scores[$value->module_id] = (array)$value;
                 }
-            } catch (Exception $e) {
-                $debug[] = $e;
             }
+        } catch (Exception $e) {
+            $debug[] = $e;
         }
-        
-        
-        // add scores to the activities
-        $activities_score = [];
-        foreach($activities as $activity){
-            if(isset($scores[$activity['module_id']])){
-                $activity['count'] = (int)$scores[$activity['module_id']]['count'];
-                $activity['achieved_score'] = (double)$scores[$activity['module_id']]['achieved_score'];
-                $activity['max_score'] = (double)$scores[$activity['module_id']]['max_score'];
-                $activity['submission_time'] = (int)$scores[$activity['module_id']]['submission_time'];
-                $activity['grading_time'] = (int)$scores[$activity['module_id']]['grading_time'];
-            }else {
-                $activity['count'] = 0;
-                $activity['achieved_score'] = 0.0;
-                $activity['max_score'] = 0.0;
-                $activity['submission_time'] = 0;
-                $activity['grading_time'] = 0;
-            }
-            $activities_score[] = $activity;
+    }
+
+
+    // add scores to the activities
+    $activities_score = [];
+    foreach ($activities as $activity) {
+        if (isset($scores[$activity['module_id']])) {
+            $activity['count'] = (int)$scores[$activity['module_id']]['count'];
+            $activity['achieved_score'] = (float)$scores[$activity['module_id']]['achieved_score'];
+            $activity['max_score'] = (float)$scores[$activity['module_id']]['max_score'];
+            $activity['submission_time'] = (int)$scores[$activity['module_id']]['submission_time'];
+            $activity['grading_time'] = (int)$scores[$activity['module_id']]['grading_time'];
+        } else {
+            $activity['count'] = 0;
+            $activity['achieved_score'] = 0.0;
+            $activity['max_score'] = 0.0;
+            $activity['submission_time'] = 0;
+            $activity['grading_time'] = 0;
         }
-        $activities = $activities_score;
+        $activities_score[] = $activity;
+    }
+    $activities = $activities_score;
+
 
         /* Data structure of the output 
         "5706": {

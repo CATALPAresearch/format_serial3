@@ -32,10 +32,10 @@ export const store = new Vuex.Store({
 		courseid: 0,
 		userid: -1,
 		research_condition: 'control_groupX',
-		aple1801courses: [5, 8, 9, 20, 24, 26, 42],
+		aple1801courses: [5, 8, 9, 20, 24, 26, 42, 58],
 		surveyRequired: true,
 		surveyLink: '',
-		questionnaireid: { 2: 0, 5: 0, 8: 0, 9: 0, 20: 0, 24: 0, 26: 1659, 42: 4046 },
+		questionnaireid: { 2: 0, 5: 0, 8: 0, 9: 0, 20: 0, 24: 0, 26: 1659, 42: 4046, 58: 5608 },
 
 		isModerator: false,
 		policyAccepted: false,
