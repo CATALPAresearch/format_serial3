@@ -9,7 +9,8 @@
     "watch": "cross-env NODE_ENV=development NODE_OPTIONS=--openssl-legacy-provider webpack --watch --config webpack.config.js",
     "dev": "cross-env NODE_ENV=development NODE_OPTIONS=--openssl-legacy-provider webpack --mode development --config webpack.config.js",
     "build": "cross-env NODE_ENV=production NODE_OPTIONS=--openssl-legacy-provider webpack --mode production --progress --config webpack.config.js",
-    "tag-latest": "git tag -d latest && git push --delete origin latest && git tag latest && git push origin latest",
+    "tag-latest": "git tag -d latest && git push --delete all latest && git tag latest && git push all latest",
+    "tag-v4": "git tag -d moodle-v4 && git push --delete all moodle-v4 && git tag moodle-v4 && git push all moodle-v4",
     "nodemon": "nodemon"
   },
   "dependencies": {
