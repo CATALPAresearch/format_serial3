@@ -73,7 +73,7 @@ class format_serial3_progress_overview extends external_api
                     'visible' => $cm->visible,
                     'available' => $cm->available, // available on course overview page
                     'rating' => 0,
-                    'url' => $CFG->wwwroot . "/mod/" . $cm->modname . "/view.php/" .  $cm->id,
+                    'url' => $CFG->wwwroot . "/mod/" . $cm->modname . "/view.php?id=" .  $cm->id,
                     //'icon' => $cm->get_icon_url(),
                     //'context' => $cm->context,
                     //'expected' => $cm->completionexpected,
@@ -87,8 +87,9 @@ class format_serial3_progress_overview extends external_api
             if($activity['type'] == "quiz"){
                 $params = [
                     "courseid" => $courseid,
+                    "quizinstance" => $activity['instance']
                 ];
-                $query = "SELECT
+                $query = "SELECT DISTINCT
                         q.id as question_id,
                         q.name as question_title,
                         sq.id as quiz_id,
@@ -99,30 +100,33 @@ class format_serial3_progress_overview extends external_api
                     JOIN {question_bank_entries} qbe ON qc.id = qbe.questioncategoryid
                     JOIN {question_versions} qv ON qv.questionbankentryid = qbe.id
                     JOIN {question} q ON q.id = qv.questionid
-                    WHERE q.parent = 0
+                    WHERE 
+                        q.parent = 0 AND
+                        sq.id = :quizinstance
                     ";
                 $items = $DB->get_records_sql($query, $params);
                 foreach($items as $item){
                     $activity['name'] = $item->question_title;
-                    $activity['url'] = $CFG->wwwroot . "/mod/quiz/view.php/" . $activity['module_id'];// . "/task/" . $item->safran_question_id;
+                    $activity['url'] = $CFG->wwwroot . "/mod/quiz/view.php?id=" . $activity['module_id'];// . "/task/" . $item->safran_question_id;
                     $activities_expanded[] = $activity;
                 }
             } elseif($activity['type'] == "safran"){
                 $params = [
                     "courseid" => $courseid
                 ];
-                $query = "SELECT 
+                $query = "SELECT DISTINCT
                     sq.id as safran_question_id, 
                     s.id as quiz_id, 
                     sq.question_title
                 FROM {safran} s
                 JOIN {safran_question} sq ON sq.safranid = s.id
-                WHERE s.course = :courseid
+                WHERE 
+                    s.course = :courseid
                 ";
                 $items = $DB->get_records_sql($query, $params);
                 foreach($items as $item){
                     $activity['name'] = $item->question_title;
-                    $activity['url'] = $CFG->wwwroot . "/mod/safran/view.php/" . $activity['module_id'] . "/task/" . $item->safran_question_id;
+                    $activity['url'] = $CFG->wwwroot . "/mod/safran/view.php?id=" . $activity['module_id'] . "/task/" . $item->safran_question_id;
                     $activities_expanded[] = $activity;
                 }
             }else{
@@ -148,8 +152,8 @@ class format_serial3_progress_overview extends external_api
                     m.name module_name,
                     cm.id module_id,
                     a.id instance_id,
-                    -- cm.section, 
-                    -- cs.name as sectionname,
+                    cm.section, 
+                    cs.name as sectionname,
                     (SELECT count(*) FROM {course_modules} cmm JOIN {modules} m ON m.id = cmm.module WHERE m.name = 'assign' AND cmm.course = cm.course AND cmm.section = cm.section) count,
                     a.grade max_score, 
                     ag.grade achieved_score,
@@ -175,8 +179,8 @@ class format_serial3_progress_overview extends external_api
                 cm.id module_id,
                 q.id instance_id,
                 q.name name,
-                -- cm.section,
-                -- cs.name sectionname,
+                cm.section,
+                cs.name sectionname,
                 -- 0 position,
                 -- 0 complete,
                 -- cm.visible,
@@ -197,13 +201,17 @@ class format_serial3_progress_overview extends external_api
                 qsub.userid = :userid AND
                 qsub.state = 'finished' AND
                 m.name = 'quiz'
+            GROUP BY
+                m.name, cm.id, q.id, q.name, cm.section, cs.name
                 ;",
         'safran' => "SELECT
                 m.name module_name,
                 cm.id module_id,
                 s.id instance_id,
-                sq.id as safran_question_id, 
-                sq.question_title
+                sq.id as safran_question_id,
+                sq.question_title,
+                cm.section,
+                cs.name sectionname
             FROM {safran} s
             JOIN {safran_question sq ON sq.safranid = s.id
             JOIN {safran_q_attempt} sa ON sa.questionid = s.id
@@ -211,8 +219,8 @@ class format_serial3_progress_overview extends external_api
             LEFT JOIN {course_sections} cs ON cs.section = cm.section
             LEFT JOIN {modules} m ON m.id = cm.module
             WHERE 
-                s.course = 2 AND
-                sa.userid = 2 AND
+                s.course = :courseid AND
+                sa.userid = :userid AND
                 m.name = 'safran'
                 ;",
         'longpage' => "SELECT DISTINCT 
@@ -220,8 +228,8 @@ class format_serial3_progress_overview extends external_api
                 cm.id module_id,
                 l.id instance_id,
                 l.name name,
-                -- cm.section,
-                -- cs.name sectionname,
+                cm.section,
+                cs.name sectionname
                 -- 0 position,
                 -- 0 complete,
                 -- cm.visible,
@@ -241,8 +249,8 @@ class format_serial3_progress_overview extends external_api
                 m.name module_name,
                 cm.id module_id,
                 h.id instance_id,
-                -- cm.section,
-                -- cs.name AS sectionname,
+                cm.section,
+                cs.name AS sectionname,
                 SUM(hl.duration) count, 
                 COUNT(DISTINCT hl.values) * 2 complete, -- static parameter - attention
                 0 AS max_score,
