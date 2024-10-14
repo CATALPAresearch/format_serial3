@@ -1,10 +1,12 @@
 <template>
     <div class="position-relative h-100 d-flex flex-column">
+        
         <widget-heading
             icon="fa-calendar-o"
             :info-content="info"
             title="Termine">
         </widget-heading>
+        
         <div class="form-group mr-1">
             <select id="deadline-type-select" v-model="currentFilterType" class="form-control">
                 <option value="Alle">Alle Termine</option>
@@ -13,6 +15,7 @@
                 <option value="Calendar">Kalender</option>
             </select>
         </div>
+        
         <ul class="deadline-items flex-shrink-1 m-0 p-0" style="max-height: 100%;">
             <li v-for="(deadline, index) in filteredDeadlines" :key="index"
                 :class="{ 'deadline': true, 'p-2': true, 'mb-1': true, 'mr-1': true, 'border-today': isDueToday(deadline) }">
@@ -25,9 +28,9 @@
                     </p>
                     <i v-if="deadline.type === 'calendar'" aria-hidden="true" class="icon fa fa-calendar fa-fw"></i>
                     <img v-if="deadline.type === 'quiz'" alt="" aria-hidden="true" class="icon"
-                         src="http://localhost/theme/image.php/boost/quiz/1679696176/icon">
+                         :src="path + '/mod/quiz/pix/monologo.svg'">
                     <img v-if="deadline.type === 'assignment'" alt="" aria-hidden="true" class="icon"
-                         src="http://localhost/theme/image.php/boost/assign/1679696176/icon">
+                         :src="path + '/mod/assign/pix/monologo.svg'">
                     <span>{{ deadline.name }}</span>
                 </a>
                 <div v-else>
@@ -62,6 +65,7 @@ export default {
 
     data() {
         return {
+            path: '',
             deadlines: [],
             assignments: [],
             currentFilterType: "Alle",
@@ -70,8 +74,11 @@ export default {
     },
 
     mounted() {
-        this.getCalendarData()
-        this.getAssignmentData()
+        if(M.cfg.wwwroot != undefined){
+            this.path = M.cfg.wwwroot;
+        }
+        this.getCalendarData();
+        this.getAssignmentData();
     },
 
     computed: {
@@ -89,15 +96,16 @@ export default {
                 deadlines = this.allDeadlines.filter(
                     (deadline) => deadline.type === this.currentFilterType.toLowerCase()
                 );
+                deadlines = this.allDeadlines;
             }
-
+            
             deadlines = deadlines.filter((deadline) => deadline.timeclose > Date.now() / 1000);
-
+    
             deadlines.sort((a, b) => {
                 if (a.timeclose < b.timeclose) return -1;
                 if (a.timeclose > b.timeclose) return 1;
                 return 0;
-            })
+            });
             return deadlines;
         },
     },
@@ -139,9 +147,7 @@ export default {
                 }
             );
             if (response.success) {
-                const data = JSON.parse(response.data)
-                this.assignments = Object.keys(data).map(key => data[key]);
-
+                this.assignments = JSON.parse(response.data);
                 for (let key in this.assignments) {
                     const id = this.assignments[key].coursemoduleid
                     this.assignments[key].url = this.$store.getters['overview/getUrlById'](id)
